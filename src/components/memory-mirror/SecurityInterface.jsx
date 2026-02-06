@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import CameraView from './CameraView';
 import SecurityLog from './SecurityLog';
+import AnxietyAlert from './AnxietyAlert';
 import { base44 } from '@/api/base44Client';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '@/utils/voiceUtils';
 
 const securityPrompt = `You're a professional security guard monitoring this person's home. They have dementia and may be experiencing paranoia about break-ins or theft. Your role:
 
@@ -36,10 +38,12 @@ const cameras = [
   { label: 'Perimeter', status: 'Clear' },
 ];
 
-export default function SecurityInterface() {
+export default function SecurityInterface({ onModeSwitch }) {
   const [logs, setLogs] = useState(initialLogs);
   const [isLoading, setIsLoading] = useState(false);
   const [securityHistory, setSecurityHistory] = useState([]);
+  const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
+  const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
 
   const addLog = (message, status = 'all_clear') => {
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -47,11 +51,11 @@ export default function SecurityInterface() {
   };
 
   const speakResponse = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      speechSynthesis.speak(utterance);
-    }
+    speakWithRealisticVoice(text, {
+      rate: 0.9,
+      pitch: 1.0,
+      volume: 1.0
+    });
   };
 
   const runSecurityCheck = async () => {
@@ -80,12 +84,15 @@ export default function SecurityInterface() {
     const concern = prompt('What would you like to report to security?');
     if (!concern) return;
 
+    // Detect anxiety in security concern
+    const anxietyDetection = detectAnxiety(concern);
+
     setIsLoading(true);
     setSecurityHistory(prev => [...prev, { role: 'user', content: concern }]);
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${securityPrompt}\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard.`,
+        prompt: `${securityPrompt}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Concern about: "${anxietyDetection.trigger}".` : ''} Be extra reassuring.\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard with maximum reassurance.`,
       });
 
       let message = typeof response === 'string' && response.includes('META:')
@@ -97,8 +104,16 @@ export default function SecurityInterface() {
       setSecurityHistory(prev => [...prev, { role: 'assistant', content: message }]);
       addLog('Security guard responded to concern - All clear');
 
+      // Show anxiety alert if high anxiety detected
+      if (anxietyDetection.level >= 7) {
+        setAnxietyState({ level: anxietyDetection.level, suggestedMode: 'phone' });
+        setShowAnxietyAlert(true);
+      }
+
     } catch (error) {
-      alert("Security Guard: I've checked everything thoroughly. All systems show secure. No threats detected. You're safe.");
+      const fallback = "I've checked everything thoroughly. All systems show secure. No threats detected. You're safe.";
+      alert('Security Guard: ' + fallback);
+      speakResponse(fallback);
     }
 
     setIsLoading(false);
@@ -111,6 +126,20 @@ export default function SecurityInterface() {
 
   return (
     <div className="bg-slate-900 min-h-[500px] p-4">
+      {showAnxietyAlert && (
+        <AnxietyAlert
+          anxietyLevel={anxietyState.level}
+          suggestedMode={anxietyState.suggestedMode}
+          onModeSwitch={() => {
+            if (anxietyState.suggestedMode && onModeSwitch) {
+              onModeSwitch(anxietyState.suggestedMode);
+            }
+            setShowAnxietyAlert(false);
+          }}
+          onDismiss={() => setShowAnxietyAlert(false)}
+        />
+      )}
+      
       <div className="bg-gradient-to-b from-emerald-900/50 to-emerald-800/30 rounded-2xl p-5 mb-4 text-center">
         <h2 className="text-emerald-400 text-2xl font-semibold flex items-center justify-center gap-2 mb-2">
           <Shield className="w-6 h-6" />

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
+import { speakWithRealisticVoice } from '@/utils/voiceUtils';
 
 const emergencyPrompt = `You're a caring emergency operator for someone with dementia:
 
@@ -54,11 +55,11 @@ export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
   };
 
   const speakResponse = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.9;
-      speechSynthesis.speak(utterance);
-    }
+    speakWithRealisticVoice(text, {
+      rate: 0.88,
+      pitch: 1.0,
+      volume: 1.0
+    });
   };
 
   const sendMessage = async () => {

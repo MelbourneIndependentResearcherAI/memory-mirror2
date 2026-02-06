@@ -4,7 +4,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
+import AnxietyAlert from './AnxietyAlert';
 import { base44 } from '@/api/base44Client';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '@/utils/voiceUtils';
 
 const systemPrompt = `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
 
@@ -19,12 +21,14 @@ const systemPrompt = `You are Memory Mirror, a compassionate AI companion for pe
 
 After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "safeTopics": ["topic1", "topic2"]}`;
 
-export default function ChatInterface({ onEraChange }) {
+export default function ChatInterface({ onEraChange, onModeSwitch }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
+  const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
+  const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -35,23 +39,21 @@ export default function ChatInterface({ onEraChange }) {
   }, [messages]);
 
   const speakResponse = (text) => {
-    if ('speechSynthesis' in window) {
-      const utterance = new SpeechSynthesisUtterance(text);
-      const voices = speechSynthesis.getVoices();
-      const preferredVoice = voices.find(v => 
-        v.name.includes('Female') || v.name.includes('Google')
-      );
-      if (preferredVoice) utterance.voice = preferredVoice;
-      utterance.rate = 0.9;
-      utterance.pitch = 1.1;
-      speechSynthesis.speak(utterance);
-    }
+    speakWithRealisticVoice(text, {
+      rate: 0.92,
+      pitch: 1.05,
+      volume: 1.0
+    });
   };
 
   const sendMessage = async () => {
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
+    
+    // Detect anxiety in user message
+    const anxietyDetection = detectAnxiety(userMessage);
+    
     setInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     
@@ -59,13 +61,28 @@ export default function ChatInterface({ onEraChange }) {
     setConversationHistory(newHistory);
     setIsLoading(true);
 
+    // Handle high anxiety proactively
+    if (anxietyDetection.level >= 7) {
+      const calmingMessage = getCalmingRedirect(anxietyDetection.trigger);
+      setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true }]);
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: calmingMessage }]);
+      speakResponse(calmingMessage);
+      
+      // Suggest phone mode for high anxiety
+      setAnxietyState({ level: anxietyDetection.level, suggestedMode: 'phone' });
+      setShowAnxietyAlert(true);
+      setIsLoading(false);
+      return;
+    }
+
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${systemPrompt}\n\nConversation so far:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond to the user's latest message.`,
+        prompt: `${systemPrompt}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Trigger: "${anxietyDetection.trigger}".` : ''} Respond with extra warmth and reassurance.\n\nConversation so far:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond to the user's latest message with compassion.`,
       });
 
       let assistantMessage = response;
       let era = 'present';
+      let detectedAnxiety = anxietyDetection.level;
       
       // Parse META data if present
       if (typeof response === 'string' && response.includes('META:')) {
@@ -74,6 +91,7 @@ export default function ChatInterface({ onEraChange }) {
         try {
           const meta = JSON.parse(parts[1].trim());
           era = meta.era || 'present';
+          detectedAnxiety = meta.anxiety || detectedAnxiety;
           onEraChange(era);
         } catch (e) {
           // Ignore parse errors
@@ -83,6 +101,15 @@ export default function ChatInterface({ onEraChange }) {
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
       speakResponse(assistantMessage);
+
+      // Show anxiety alert if needed
+      if (detectedAnxiety >= 6) {
+        setAnxietyState({ 
+          level: detectedAnxiety, 
+          suggestedMode: detectedAnxiety >= 8 ? 'phone' : null 
+        });
+        setShowAnxietyAlert(true);
+      }
 
     } catch (error) {
       setMessages(prev => [...prev, { 
@@ -122,6 +149,20 @@ export default function ChatInterface({ onEraChange }) {
   return (
     <div className="flex flex-col h-full">
       <VoiceSetup />
+      
+      {showAnxietyAlert && (
+        <AnxietyAlert
+          anxietyLevel={anxietyState.level}
+          suggestedMode={anxietyState.suggestedMode}
+          onModeSwitch={() => {
+            if (anxietyState.suggestedMode && onModeSwitch) {
+              onModeSwitch(anxietyState.suggestedMode);
+            }
+            setShowAnxietyAlert(false);
+          }}
+          onDismiss={() => setShowAnxietyAlert(false)}
+        />
+      )}
       
       <div 
         ref={chatContainerRef}

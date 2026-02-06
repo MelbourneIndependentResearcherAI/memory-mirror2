@@ -1,12 +1,30 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ModeHeader from '@/components/memory-mirror/ModeHeader';
 import ChatInterface from '@/components/memory-mirror/ChatInterface';
 import PhoneInterface from '@/components/memory-mirror/PhoneInterface';
 import SecurityInterface from '@/components/memory-mirror/SecurityInterface';
+import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
+import { loadVoices } from '@/utils/voiceUtils';
 
 export default function Home() {
   const [currentMode, setCurrentMode] = useState('chat');
   const [detectedEra, setDetectedEra] = useState('present');
+  const [wakeWordActive, setWakeWordActive] = useState(false);
+
+  useEffect(() => {
+    // Load voices on component mount
+    loadVoices();
+  }, []);
+
+  const handleWakeWord = () => {
+    setCurrentMode('chat');
+    setWakeWordActive(true);
+    setTimeout(() => setWakeWordActive(false), 2000);
+  };
+
+  const handleModeSwitch = (mode) => {
+    setCurrentMode(mode);
+  };
 
   const getBackgroundClass = () => {
     const backgrounds = {
@@ -38,13 +56,16 @@ export default function Home() {
 
           <div className="transition-all duration-300">
             {currentMode === 'chat' && (
-              <ChatInterface onEraChange={setDetectedEra} />
+              <ChatInterface 
+                onEraChange={setDetectedEra}
+                onModeSwitch={handleModeSwitch}
+              />
             )}
             {currentMode === 'phone' && (
               <PhoneInterface />
             )}
             {currentMode === 'security' && (
-              <SecurityInterface />
+              <SecurityInterface onModeSwitch={handleModeSwitch} />
             )}
           </div>
         </div>
@@ -53,6 +74,11 @@ export default function Home() {
           Memory Mirror — Compassionate AI companion for dementia care
         </p>
       </div>
+
+      <WakeWordListener 
+        onWakeWordDetected={handleWakeWord}
+        isActive={wakeWordActive}
+      />
     </div>
   );
 }
