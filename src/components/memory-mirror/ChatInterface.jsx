@@ -180,7 +180,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
               message={msg.content}
               isAssistant={msg.role === 'assistant'}
               hasVoice={msg.hasVoice}
-              onSpeak={() => speakResponse(msg.content)}
+              onSpeak={() => speakWithEmotion(msg.content, 'calm')}
             />
           ))
         )}

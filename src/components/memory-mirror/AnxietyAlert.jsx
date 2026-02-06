@@ -1,28 +1,20 @@
 import React from 'react';
-import { AlertCircle, Phone, MessageCircle, X } from 'lucide-react';
+import { AlertCircle, Heart, Phone as PhoneIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
-export default function AnxietyAlert({ anxietyLevel, suggestedMode, onModeSwitch, onDismiss }) {
-  if (anxietyLevel < 6) return null;
+export default function AnxietyAlert({ level, onCalm, onSwitchToPhone, onDismiss }) {
+  if (level < 5) return null;
 
-  const getModeIcon = (mode) => {
-    if (mode === 'phone') return <Phone className="w-4 h-4" />;
-    if (mode === 'chat') return <MessageCircle className="w-4 h-4" />;
-    return null;
+  const getSeverityColor = () => {
+    if (level >= 8) return 'from-red-100 to-red-50 border-red-300';
+    if (level >= 6) return 'from-orange-100 to-orange-50 border-orange-300';
+    return 'from-yellow-100 to-yellow-50 border-yellow-300';
   };
 
-  const getModeLabel = (mode) => {
-    if (mode === 'phone') return 'Talk to Someone';
-    if (mode === 'chat') return 'Chat with Me';
-    return 'Switch Mode';
-  };
-
-  const getMessage = () => {
-    if (anxietyLevel >= 8) {
-      return "I sense you might be feeling worried. Would you like to talk to someone who can help?";
-    }
-    return "I'm here for you. Let's take a moment to focus on something comforting.";
+  const getIcon = () => {
+    if (level >= 8) return <AlertCircle className="w-6 h-6 text-red-600" />;
+    return <Heart className="w-6 h-6 text-orange-600" />;
   };
 
   return (
@@ -30,37 +22,49 @@ export default function AnxietyAlert({ anxietyLevel, suggestedMode, onModeSwitch
       initial={{ opacity: 0, y: -20 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -20 }}
-      className="mx-4 my-3 bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-300 rounded-2xl p-4 shadow-lg"
+      className={`mx-4 mb-4 p-4 rounded-xl border-2 bg-gradient-to-r ${getSeverityColor()} shadow-lg`}
     >
       <div className="flex items-start gap-3">
         <div className="flex-shrink-0">
-          <div className="w-10 h-10 bg-amber-500 rounded-full flex items-center justify-center">
-            <AlertCircle className="w-5 h-5 text-white" />
-          </div>
+          {getIcon()}
         </div>
         
         <div className="flex-1">
-          <p className="text-slate-700 font-medium mb-3">{getMessage()}</p>
+          <h3 className="font-semibold text-slate-800 mb-2">
+            {level >= 8 ? 'High Anxiety Detected' : 'Some Worry Detected'}
+          </h3>
+          <p className="text-sm text-slate-700 mb-3">
+            I notice you might be feeling {level >= 8 ? 'very worried' : 'a bit anxious'}. Let me help you feel better.
+          </p>
           
           <div className="flex flex-wrap gap-2">
-            {suggestedMode && (
+            <Button
+              size="sm"
+              onClick={onCalm}
+              className="bg-blue-500 hover:bg-blue-600 text-white"
+            >
+              <Heart className="w-4 h-4 mr-1" />
+              Share a calming memory
+            </Button>
+            
+            {level >= 7 && (
               <Button
-                onClick={onModeSwitch}
                 size="sm"
-                className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+                onClick={onSwitchToPhone}
+                className="bg-green-500 hover:bg-green-600 text-white"
               >
-                {getModeIcon(suggestedMode)}
-                {getModeLabel(suggestedMode)}
+                <PhoneIcon className="w-4 h-4 mr-1" />
+                Call for support
               </Button>
             )}
+            
             <Button
-              onClick={onDismiss}
               size="sm"
-              variant="outline"
-              className="gap-2"
+              variant="ghost"
+              onClick={onDismiss}
+              className="text-slate-600"
             >
-              <X className="w-4 h-4" />
-              I'm Okay
+              I'm okay
             </Button>
           </div>
         </div>

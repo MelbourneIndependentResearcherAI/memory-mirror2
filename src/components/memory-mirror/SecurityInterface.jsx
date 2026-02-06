@@ -66,18 +66,18 @@ export default function SecurityInterface({ onModeSwitch }) {
     
     const message = 'Full security check complete - All 4 doors locked, all 12 windows secure, no motion detected, perimeter clear';
     addLog(message);
-    speakResponse('Security check complete. All doors are locked. All windows are secure. No motion detected anywhere. Your home is completely safe.');
+    speakWithEmotion('Security check complete. All doors are locked. All windows are secure. No motion detected anywhere. Your home is completely safe.', 'professional');
     setIsLoading(false);
   };
 
   const lockAllDoors = () => {
     addLog('All doors verified locked and bolted');
-    speakResponse('All doors are now locked and secured. Front door, back door, and garage door are all locked and bolted.');
+    speakWithEmotion('All doors are now locked and secured. Front door, back door, and garage door are all locked and bolted.', 'professional');
   };
 
   const lightCheck = () => {
     addLog('Exterior lights activated, motion sensors armed');
-    speakResponse('All exterior lights are on. Motion sensors are active around the entire property. Any movement will be immediately detected.');
+    speakWithEmotion('All exterior lights are on. Motion sensors are active around the entire property. Any movement will be immediately detected.', 'professional');
   };
 
   const talkToSecurity = async () => {
@@ -99,8 +99,22 @@ export default function SecurityInterface({ onModeSwitch }) {
         ? response.split('META:')[0].trim()
         : response;
 
+      // Parse anxiety from META
+      if (typeof response === 'string' && response.includes('META:')) {
+        try {
+          const meta = JSON.parse(response.split('META:')[1].trim());
+          const anxiety = meta.anxiety || 0;
+          setAnxietyLevel(anxiety);
+          if (anxiety >= 6) {
+            setShowAnxietyAlert(true);
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
+
       alert('Security Guard: ' + message);
-      speakResponse(message);
+      speakWithEmotion(message, 'professional');
       setSecurityHistory(prev => [...prev, { role: 'assistant', content: message }]);
       addLog('Security guard responded to concern - All clear');
 
@@ -121,7 +135,7 @@ export default function SecurityInterface({ onModeSwitch }) {
 
   const contactFamily = () => {
     alert("Calling your family member now...\n\nIn a real deployment, this would immediately call or text the designated caregiver/family member.");
-    speakResponse("Calling your family now. They'll be with you shortly.");
+    speakWithEmotion("Calling your family now. They'll be with you shortly.", 'reassuring');
   };
 
   return (
