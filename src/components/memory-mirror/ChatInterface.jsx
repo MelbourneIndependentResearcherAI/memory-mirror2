@@ -6,7 +6,7 @@ import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
 import AnxietyAlert from './AnxietyAlert';
 import { base44 } from '@/api/base44Client';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '@/lib/voiceUtils';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
 const systemPrompt = `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
 
