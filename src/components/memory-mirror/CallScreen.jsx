@@ -3,9 +3,8 @@ import { Phone, PhoneOff, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
-import { speakWithEmotion } from './VoiceSynthesis';
 import { base44 } from '@/api/base44Client';
-import { speakWithRealisticVoice } from '@/utils/voiceUtils';
+import { speakWithRealisticVoice } from '../utils/voiceUtils';
 
 const emergencyPrompt = `You're a caring emergency operator for someone with dementia:
 
@@ -33,7 +32,7 @@ export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
       const greeting = getOperatorGreeting(phoneNumber);
       setMessages([{ role: 'operator', content: greeting }]);
       setConversationHistory([{ role: 'assistant', content: greeting }]);
-      speakWithEmotion(greeting, 'professional');
+      speakResponse(greeting);
     }, 2000);
 
     return () => clearTimeout(timer);
@@ -86,7 +85,7 @@ export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
 
       setMessages(prev => [...prev, { role: 'operator', content: assistantMessage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-      speakWithEmotion(assistantMessage, 'reassuring');
+      speakResponse(assistantMessage);
       setCallStatus('Connected');
 
     } catch (error) {

@@ -4,7 +4,7 @@ import ChatInterface from '@/components/memory-mirror/ChatInterface';
 import PhoneInterface from '@/components/memory-mirror/PhoneInterface';
 import SecurityInterface from '@/components/memory-mirror/SecurityInterface';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
-import { loadVoices } from '@/utils/voiceUtils';
+import { loadVoices } from '@/components/utils/voiceUtils';
 
 export default function Home() {
   const [currentMode, setCurrentMode] = useState('chat');
