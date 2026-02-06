@@ -6,7 +6,7 @@ import CameraView from './CameraView';
 import SecurityLog from './SecurityLog';
 import AnxietyAlert from './AnxietyAlert';
 import { base44 } from '@/api/base44Client';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '@/utils/voiceUtils';
+import { speakWithRealisticVoice, detectAnxiety } from '@/lib/voiceUtils';
 
 const securityPrompt = `You're a professional security guard monitoring this person's home. They have dementia and may be experiencing paranoia about break-ins or theft. Your role:
 
