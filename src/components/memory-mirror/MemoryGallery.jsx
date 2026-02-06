@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { BookHeart, X, Play } from 'lucide-react';
+import { BookHeart, X, Play, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -27,11 +27,29 @@ export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto dark:bg-slate-900">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <BookHeart className="w-6 h-6 text-pink-600" />
-            Memory Gallery
+          <DialogTitle className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onClose}
+                className="min-h-[44px] min-w-[44px]"
+              >
+                <ArrowLeft className="w-5 h-5" />
+              </Button>
+              <BookHeart className="w-6 h-6 text-pink-600 dark:text-pink-400" />
+              <span>Memory Gallery</span>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={onClose}
+              className="min-h-[44px] min-w-[44px]"
+            >
+              <X className="w-5 h-5" />
+            </Button>
           </DialogTitle>
         </DialogHeader>
 

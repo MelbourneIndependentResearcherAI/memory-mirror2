@@ -32,7 +32,21 @@ export default function MemoryManager() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.Memory.create(data),
-    onSuccess: () => {
+    onMutate: async (newMemory) => {
+      await queryClient.cancelQueries({ queryKey: ['memories'] });
+      const previousMemories = queryClient.getQueryData(['memories']);
+      
+      queryClient.setQueryData(['memories'], (old) => [
+        { ...newMemory, id: `temp-${Date.now()}`, created_date: new Date().toISOString() },
+        ...(old || [])
+      ]);
+      
+      return { previousMemories };
+    },
+    onError: (err, newMemory, context) => {
+      queryClient.setQueryData(['memories'], context.previousMemories);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['memories'] });
       resetForm();
     },
@@ -98,7 +112,7 @@ export default function MemoryManager() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Memory Gallery</CardTitle>
-            <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700 min-h-[44px]">
               <Plus className="w-4 h-4 mr-2" />
               Add Memory
             </Button>

@@ -29,7 +29,21 @@ export default function EmergencyContactsManager() {
 
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.EmergencyContact.create(data),
-    onSuccess: () => {
+    onMutate: async (newContact) => {
+      await queryClient.cancelQueries({ queryKey: ['emergencyContacts'] });
+      const previousContacts = queryClient.getQueryData(['emergencyContacts']);
+      
+      queryClient.setQueryData(['emergencyContacts'], (old) => [
+        { ...newContact, id: `temp-${Date.now()}`, created_date: new Date().toISOString() },
+        ...(old || [])
+      ]);
+      
+      return { previousContacts };
+    },
+    onError: (err, newContact, context) => {
+      queryClient.setQueryData(['emergencyContacts'], context.previousContacts);
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['emergencyContacts'] });
       resetForm();
     },
@@ -83,7 +97,7 @@ export default function EmergencyContactsManager() {
         <CardHeader>
           <div className="flex justify-between items-center">
             <CardTitle>Emergency Contacts (Phone Mode)</CardTitle>
-            <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700">
+            <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700 min-h-[44px]">
               <Plus className="w-4 h-4 mr-2" />
               Add Contact
             </Button>
