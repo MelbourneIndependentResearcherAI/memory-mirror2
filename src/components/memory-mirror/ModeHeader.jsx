@@ -1,6 +1,8 @@
 import React from 'react';
-import { MessageCircle, Phone, Shield } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Settings } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../../utils';
 
 const modes = [
   { id: 'chat', label: 'Chat', icon: MessageCircle },
@@ -21,6 +23,15 @@ export default function ModeHeader({ currentMode, onModeChange, detectedEra }) {
 
   return (
     <div className="bg-gradient-to-r from-slate-600 to-slate-700 text-white p-6 rounded-t-2xl">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex-1"></div>
+        <Link to={createPageUrl('CaregiverPortal')}>
+          <Button variant="ghost" size="sm" className="text-white hover:bg-white/20">
+            <Settings className="w-4 h-4 mr-2" />
+            Caregiver Portal
+          </Button>
+        </Link>
+      </div>
       <div className="flex justify-center gap-2 mb-4 flex-wrap">
         {modes.map(({ id, label, icon: Icon }) => (
           <Button

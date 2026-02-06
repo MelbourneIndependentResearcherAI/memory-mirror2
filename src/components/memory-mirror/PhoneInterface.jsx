@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Phone, X, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import DialPad from './DialPad';
 import QuickDial from './QuickDial';
 import CallScreen from './CallScreen';
@@ -10,6 +12,11 @@ export default function PhoneInterface() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [contactName, setContactName] = useState('');
   const [isInCall, setIsInCall] = useState(false);
+
+  const { data: contacts = [] } = useQuery({
+    queryKey: ['emergencyContacts'],
+    queryFn: () => base44.entities.EmergencyContact.list(),
+  });
 
   const formatPhoneNumber = (number) => {
     if (!number) return '_';
@@ -86,7 +93,7 @@ export default function PhoneInterface() {
         )}
       </div>
 
-      <QuickDial onSelect={handleQuickDial} />
+      <QuickDial onSelect={handleQuickDial} customContacts={contacts} />
 
       <DialPad onPress={handleDialPress} />
 

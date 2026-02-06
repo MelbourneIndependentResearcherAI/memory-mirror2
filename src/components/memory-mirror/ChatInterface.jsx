@@ -1,25 +1,38 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Mic, MicOff, Loader2 } from 'lucide-react';
+import { Send, Mic, MicOff, Loader2, BookHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
 import AnxietyAlert from './AnxietyAlert';
+import MemoryGallery from './MemoryGallery';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
-const systemPrompt = `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
+  const getSystemPrompt = () => {
+    const safeZoneContext = safeZones.length > 0 
+      ? `\n\nSAFE MEMORY ZONES (redirect here when anxiety detected):\n${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}`
+      : '';
+    
+    const memoryContext = memories.length > 0
+      ? `\n\nAVAILABLE MEMORIES TO SUGGEST:\n${memories.slice(0, 10).map(m => `- "${m.title}" (${m.era}, ${m.emotional_tone}): ${m.description.substring(0, 100)}...`).join('\n')}`
+      : '';
+
+    return `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
 
 1. NEVER correct or reality-orient. Meet people where they are mentally.
 2. Detect their mental time period from context clues and adapt your responses accordingly.
 3. When confusion or anxiety is detected, redirect to "safe memory zones" - positive, familiar topics.
-4. Validate all emotions without judgment.
-5. Use warm, simple, clear language.
-6. Reassure them that everything is taken care of.
-7. Be patient and repeat information if needed.
-8. Reference familiar things from their era if detected.
+4. Proactively suggest specific positive memories when appropriate.
+5. Validate all emotions without judgment.
+6. Use warm, simple, clear language.
+7. Reassure them that everything is taken care of.
+8. Be patient and repeat information if needed.
+9. Reference familiar things from their era if detected.${safeZoneContext}${memoryContext}
 
-After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "safeTopics": ["topic1", "topic2"]}`;
+After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
+  };
 
 export default function ChatInterface({ onEraChange, onModeSwitch }) {
   const [messages, setMessages] = useState([]);
@@ -29,8 +42,20 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
   const [conversationHistory, setConversationHistory] = useState([]);
   const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
+  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
+  const [detectedEra, setDetectedEra] = useState('present');
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const { data: safeZones = [] } = useQuery({
+    queryKey: ['safeZones'],
+    queryFn: () => base44.entities.SafeMemoryZone.list(),
+  });
+
+  const { data: memories = [] } = useQuery({
+    queryKey: ['memories'],
+    queryFn: () => base44.entities.Memory.list('-created_date', 50),
+  });
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -77,7 +102,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${systemPrompt}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Trigger: "${anxietyDetection.trigger}".` : ''} Respond with extra warmth and reassurance.\n\nConversation so far:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond to the user's latest message with compassion.`,
+        prompt: `${getSystemPrompt()}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Trigger: "${anxietyDetection.trigger}".` : ''} Respond with extra warmth and reassurance.\n\nConversation so far:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond to the user's latest message with compassion.`,
       });
 
       let assistantMessage = response;
@@ -92,11 +117,23 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
           const meta = JSON.parse(parts[1].trim());
           era = meta.era || 'present';
           detectedAnxiety = meta.anxiety || detectedAnxiety;
+          setDetectedEra(era);
           onEraChange(era);
         } catch (e) {
           // Ignore parse errors
         }
       }
+
+      // Track anxiety trends
+      if (detectedAnxiety >= 4) {
+        const today = new Date().toISOString().split('T')[0];
+        base44.entities.AnxietyTrend.create({
+          date: today,
+          anxiety_level: detectedAnxiety,
+          trigger_category: anxietyDetection.trigger ? 'distress' : 'none',
+          mode_used: 'chat',
+          interaction_count: 1
+        }).catch(() => {});
 
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
@@ -149,6 +186,24 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
   return (
     <div className="flex flex-col h-full">
       <VoiceSetup />
+      
+      <div className="p-3 border-b border-slate-100 bg-slate-50">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowMemoryGallery(true)}
+          className="w-full flex items-center justify-center gap-2"
+        >
+          <BookHeart className="w-4 h-4" />
+          Browse Happy Memories
+        </Button>
+      </div>
+
+      <MemoryGallery
+        isOpen={showMemoryGallery}
+        onClose={() => setShowMemoryGallery(false)}
+        filterEra={detectedEra}
+      />
       
       {showAnxietyAlert && (
         <AnxietyAlert

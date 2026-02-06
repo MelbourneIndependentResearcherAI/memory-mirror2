@@ -1,14 +1,21 @@
 import React, { useState } from 'react';
-import { Shield, Search, Lock, Lightbulb, MessageCircle, AlertTriangle, Loader2 } from 'lucide-react';
+import { Shield, Search, Lock, Lightbulb, MessageCircle, AlertTriangle, Loader2, BookHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import CameraView from './CameraView';
 import SecurityLog from './SecurityLog';
 import AnxietyAlert from './AnxietyAlert';
+import MemoryGallery from './MemoryGallery';
 import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety } from './voiceUtils';
 
-const securityPrompt = `You're a professional security guard monitoring this person's home. They have dementia and may be experiencing paranoia about break-ins or theft. Your role:
+  const getSecurityPrompt = () => {
+    const safeZoneContext = safeZones.length > 0 
+      ? `\n\nSAFE TOPICS TO REDIRECT TO:\n${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}`
+      : '';
+    
+    return `You're a professional security guard monitoring this person's home. They have dementia and may be experiencing paranoia about break-ins or theft. Your role:
 
 1. Be professional and reassuring - like a real security guard
 2. Report that all systems are secure and you're actively monitoring
@@ -20,9 +27,10 @@ const securityPrompt = `You're a professional security guard monitoring this per
 4. Use security terminology to sound authentic
 5. Offer to do "additional patrols" or "enhanced monitoring"
 6. Remind them family/caregivers have been notified you're on duty
-7. If they're scared of the dark, mention lights and sensors
+7. If they're scared of the dark, mention lights and sensors${safeZoneContext}
 
 After responses, output META: {"realThreat": true/false, "anxiety": 0-10, "concern": "..."}`;
+  };
 
 const initialLogs = [
   { time: '12:45 PM', message: 'All doors checked and secured', status: 'all_clear' },
@@ -44,6 +52,12 @@ export default function SecurityInterface({ onModeSwitch }) {
   const [securityHistory, setSecurityHistory] = useState([]);
   const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
+  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
+
+  const { data: safeZones = [] } = useQuery({
+    queryKey: ['safeZones'],
+    queryFn: () => base44.entities.SafeMemoryZone.list(),
+  });
 
   const addLog = (message, status = 'all_clear') => {
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -92,7 +106,7 @@ export default function SecurityInterface({ onModeSwitch }) {
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${securityPrompt}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Concern about: "${anxietyDetection.trigger}".` : ''} Be extra reassuring.\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard with maximum reassurance.`,
+        prompt: `${getSecurityPrompt()}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Concern about: "${anxietyDetection.trigger}".` : ''} Be extra reassuring.\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard with maximum reassurance.`,
       });
 
       let message = typeof response === 'string' && response.includes('META:')
@@ -140,6 +154,23 @@ export default function SecurityInterface({ onModeSwitch }) {
 
   return (
     <div className="bg-slate-900 min-h-[500px] p-4">
+      <div className="mb-3">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowMemoryGallery(true)}
+          className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white border-slate-700 hover:bg-slate-700"
+        >
+          <BookHeart className="w-4 h-4" />
+          View Happy Memories
+        </Button>
+      </div>
+
+      <MemoryGallery
+        isOpen={showMemoryGallery}
+        onClose={() => setShowMemoryGallery(false)}
+      />
+
       {showAnxietyAlert && (
         <AnxietyAlert
           anxietyLevel={anxietyState.level}
