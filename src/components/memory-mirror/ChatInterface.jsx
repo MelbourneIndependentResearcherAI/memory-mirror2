@@ -10,6 +10,29 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
+export default function ChatInterface({ onEraChange, onModeSwitch }) {
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [isListening, setIsListening] = useState(false);
+  const [conversationHistory, setConversationHistory] = useState([]);
+  const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
+  const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
+  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
+  const [detectedEra, setDetectedEra] = useState('present');
+  const chatContainerRef = useRef(null);
+  const recognitionRef = useRef(null);
+
+  const { data: safeZones = [] } = useQuery({
+    queryKey: ['safeZones'],
+    queryFn: () => base44.entities.SafeMemoryZone.list(),
+  });
+
+  const { data: memories = [] } = useQuery({
+    queryKey: ['memories'],
+    queryFn: () => base44.entities.Memory.list('-created_date', 50),
+  });
+
   const getSystemPrompt = () => {
     const safeZoneContext = safeZones.length > 0 
       ? `\n\nSAFE MEMORY ZONES (redirect here when anxiety detected):\n${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}`
@@ -33,29 +56,6 @@ import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './vo
 
 After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
   };
-
-export default function ChatInterface({ onEraChange, onModeSwitch }) {
-  const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [isListening, setIsListening] = useState(false);
-  const [conversationHistory, setConversationHistory] = useState([]);
-  const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
-  const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
-  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
-  const [detectedEra, setDetectedEra] = useState('present');
-  const chatContainerRef = useRef(null);
-  const recognitionRef = useRef(null);
-
-  const { data: safeZones = [] } = useQuery({
-    queryKey: ['safeZones'],
-    queryFn: () => base44.entities.SafeMemoryZone.list(),
-  });
-
-  const { data: memories = [] } = useQuery({
-    queryKey: ['memories'],
-    queryFn: () => base44.entities.Memory.list('-created_date', 50),
-  });
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -134,6 +134,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
           mode_used: 'chat',
           interaction_count: 1
         }).catch(() => {});
+      }
 
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
