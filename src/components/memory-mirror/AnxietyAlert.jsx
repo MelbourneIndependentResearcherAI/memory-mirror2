@@ -3,7 +3,8 @@ import { AlertCircle, Heart, Phone as PhoneIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 
-export default function AnxietyAlert({ level, onCalm, onSwitchToPhone, onDismiss }) {
+export default function AnxietyAlert({ anxietyLevel, suggestedMode, onModeSwitch, onDismiss }) {
+  const level = anxietyLevel || 0;
   if (level < 5) return null;
 
   const getSeverityColor = () => {
@@ -38,23 +39,14 @@ export default function AnxietyAlert({ level, onCalm, onSwitchToPhone, onDismiss
           </p>
           
           <div className="flex flex-wrap gap-2">
-            <Button
-              size="sm"
-              onClick={onCalm}
-              className="bg-blue-500 hover:bg-blue-600 text-white"
-            >
-              <Heart className="w-4 h-4 mr-1" />
-              Share a calming memory
-            </Button>
-            
-            {level >= 7 && (
+            {suggestedMode && (
               <Button
                 size="sm"
-                onClick={onSwitchToPhone}
+                onClick={onModeSwitch}
                 className="bg-green-500 hover:bg-green-600 text-white"
               >
                 <PhoneIcon className="w-4 h-4 mr-1" />
-                Call for support
+                {suggestedMode === 'phone' ? 'Call for support' : 'Get help'}
               </Button>
             )}
             

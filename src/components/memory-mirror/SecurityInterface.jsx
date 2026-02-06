@@ -6,7 +6,7 @@ import CameraView from './CameraView';
 import SecurityLog from './SecurityLog';
 import AnxietyAlert from './AnxietyAlert';
 import { base44 } from '@/api/base44Client';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '../utils/voiceUtils';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from '@/utils/voiceUtils';
 
 const securityPrompt = `You're a professional security guard monitoring this person's home. They have dementia and may be experiencing paranoia about break-ins or theft. Your role:
 
@@ -98,6 +98,20 @@ export default function SecurityInterface({ onModeSwitch }) {
       let message = typeof response === 'string' && response.includes('META:')
         ? response.split('META:')[0].trim()
         : response;
+
+      // Parse anxiety from META
+      if (typeof response === 'string' && response.includes('META:')) {
+        try {
+          const meta = JSON.parse(response.split('META:')[1].trim());
+          const anxiety = meta.anxiety || 0;
+          setAnxietyState({ level: anxiety, suggestedMode: anxiety >= 8 ? 'phone' : null });
+          if (anxiety >= 6) {
+            setShowAnxietyAlert(true);
+          }
+        } catch (e) {
+          // Ignore
+        }
+      }
 
       alert('Security Guard: ' + message);
       speakResponse(message);

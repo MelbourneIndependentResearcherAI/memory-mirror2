@@ -3,8 +3,9 @@ import { Phone, PhoneOff, Send, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion } from 'framer-motion';
+import { speakWithEmotion } from './VoiceSynthesis';
 import { base44 } from '@/api/base44Client';
-import { speakWithRealisticVoice } from '../utils/voiceUtils';
+import { speakWithRealisticVoice } from '@/utils/voiceUtils';
 
 const emergencyPrompt = `You're a caring emergency operator for someone with dementia:
 
