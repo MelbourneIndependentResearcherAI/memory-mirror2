@@ -15,7 +15,15 @@ export default function PhoneInterface() {
 
   const { data: contacts = [] } = useQuery({
     queryKey: ['emergencyContacts'],
-    queryFn: () => base44.entities.EmergencyContact.list(),
+    queryFn: async () => {
+      try {
+        return await base44.entities.EmergencyContact.list();
+      } catch (error) {
+        console.error('Error loading contacts:', error);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60 * 5,
   });
 
   const formatPhoneNumber = (number) => {
@@ -58,6 +66,12 @@ export default function PhoneInterface() {
     if (phoneNumber.length >= 3) {
       if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
       setIsInCall(true);
+      
+      // Log phone call activity
+      base44.entities.ActivityLog.create({
+        activity_type: 'phone_call',
+        details: { number: phoneNumber, contact: contactName }
+      }).catch(() => {});
     }
   };
 
