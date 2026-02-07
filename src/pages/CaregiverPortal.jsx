@@ -38,8 +38,13 @@ export default function CaregiverPortal() {
           </div>
         </div>
 
-        <Tabs defaultValue="memories" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 h-auto bg-white dark:bg-slate-900">
+        <Tabs defaultValue="insights" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto bg-white dark:bg-slate-900">
+            <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px] col-span-3 md:col-span-1">
+              <TrendingUp className="w-4 h-4" />
+              <span className="md:hidden">🔔 Alerts</span>
+              <span className="hidden md:inline">Insights</span>
+            </TabsTrigger>
             <TabsTrigger value="memories" className="flex items-center gap-2 py-3 min-h-[44px]">
               <BookHeart className="w-4 h-4" />
               <span className="hidden sm:inline">Memories</span>
@@ -52,15 +57,19 @@ export default function CaregiverPortal() {
               <Users className="w-4 h-4" />
               <span className="hidden sm:inline">Contacts</span>
             </TabsTrigger>
-            <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px]">
+            <TabsTrigger value="trends" className="flex items-center gap-2 py-3 min-h-[44px]">
               <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Insights</span>
+              <span className="hidden sm:inline">Trends</span>
             </TabsTrigger>
             <TabsTrigger value="settings" className="flex items-center gap-2 py-3 min-h-[44px]">
               <SettingsIcon className="w-4 h-4" />
               <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="insights">
+            <InsightsPanel />
+          </TabsContent>
 
           <TabsContent value="memories">
             <MemoryManager />
@@ -74,11 +83,7 @@ export default function CaregiverPortal() {
             <EmergencyContactsManager />
           </TabsContent>
 
-          <TabsContent value="insights">
-            <AnxietyDashboard />
-          </TabsContent>
-
-          <TabsContent value="insights">
+          <TabsContent value="trends">
             <AnxietyDashboard />
           </TabsContent>
 
