@@ -180,10 +180,10 @@ export default function MemoryManager() {
                 onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
               />
               <div className="flex gap-2">
-                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">
+                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 min-h-[44px]">
                   {editingMemory ? 'Update' : 'Create'} Memory
                 </Button>
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button type="button" variant="outline" onClick={resetForm} className="min-h-[44px]">
                   Cancel
                 </Button>
               </div>

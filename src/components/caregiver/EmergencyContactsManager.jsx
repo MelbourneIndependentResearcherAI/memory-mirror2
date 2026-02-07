@@ -145,10 +145,10 @@ export default function EmergencyContactsManager() {
                 <label htmlFor="primary" className="text-sm">Primary Contact</label>
               </div>
               <div className="flex gap-2">
-                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700">
+                <Button type="submit" className="bg-indigo-600 hover:bg-indigo-700 min-h-[44px]">
                   {editingContact ? 'Update' : 'Add'} Contact
                 </Button>
-                <Button type="button" variant="outline" onClick={resetForm}>
+                <Button type="button" variant="outline" onClick={resetForm} className="min-h-[44px]">
                   Cancel
                 </Button>
               </div>
