@@ -1,13 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Mic, MicOff, Loader2, BookHeart } from 'lucide-react';
+import { Send, Mic, MicOff, Loader2, BookHeart, Gamepad2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
 import AnxietyAlert from './AnxietyAlert';
+import GameInterface from '../games/GameInterface';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tantml:react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
@@ -20,6 +21,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
+  const [showGames, setShowGames] = useState(false);
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -81,6 +83,12 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     if (!input.trim() || isLoading) return;
 
     const userMessage = input.trim();
+    
+    // Log chat activity
+    base44.entities.ActivityLog.create({
+      activity_type: 'chat',
+      details: { message_length: userMessage.length }
+    }).catch(() => {});
     
     // Detect anxiety in user message
     const anxietyDetection = detectAnxiety(userMessage);
@@ -194,17 +202,32 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     <div className="flex flex-col h-full">
       <VoiceSetup />
       
-      <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
+      <div className="p-3 border-b border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 grid grid-cols-2 gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-          className="w-full flex items-center justify-center gap-2 min-h-[44px]"
+          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
         >
           <BookHeart className="w-4 h-4" />
-          Browse Happy Memories
+          <span className="hidden sm:inline">Memories</span>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowGames(true)}
+          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+        >
+          <Gamepad2 className="w-4 h-4" />
+          <span className="hidden sm:inline">Play Games</span>
         </Button>
       </div>
+      
+      {showGames && (
+        <div className="absolute inset-0 z-50 bg-white dark:bg-slate-900">
+          <GameInterface onClose={() => setShowGames(false)} />
+        </div>
+      )}
       
       {showAnxietyAlert && (
         <AnxietyAlert
@@ -222,7 +245,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       <PullToRefresh 
         onRefresh={handleRefresh}
-        className="flex-1 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 min-h-[400px]"
+        className="flex-1 bg-gradient-to-b from-orange-50 via-pink-50 to-white dark:from-orange-950 dark:via-pink-950 dark:to-slate-900 min-h-[400px]"
       >
         <div 
           ref={chatContainerRef}
@@ -254,7 +277,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         </div>
       </PullToRefresh>
 
-      <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
+      <div className="p-4 border-t-4 border-orange-300 dark:border-orange-700 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950">
         <div className="flex gap-2">
           <Input
             value={input}
@@ -275,7 +298,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           <Button
             onClick={sendMessage}
             disabled={isLoading || !input.trim()}
-            className="rounded-full px-6 h-12 bg-slate-600 hover:bg-slate-700"
+            className="rounded-full px-6 h-12 bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700 shadow-lg"
           >
             <Send className="w-5 h-5" />
           </Button>

@@ -44,13 +44,13 @@ export default function Home() {
   const getBackgroundClass = () => {
     const backgrounds = {
       chat: {
-        '1940s': 'from-amber-50 to-amber-100 dark:from-amber-950 dark:to-amber-900',
-        '1960s': 'from-orange-50 to-orange-100 dark:from-orange-950 dark:to-orange-900',
-        '1980s': 'from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900',
-        'present': 'from-blue-50 to-slate-100 dark:from-slate-950 dark:to-slate-900',
+        '1940s': 'from-amber-100 via-orange-100 to-yellow-100 dark:from-amber-900 dark:via-orange-900 dark:to-yellow-900',
+        '1960s': 'from-orange-100 via-pink-100 to-rose-100 dark:from-orange-900 dark:via-pink-900 dark:to-rose-900',
+        '1980s': 'from-purple-100 via-pink-100 to-fuchsia-100 dark:from-purple-900 dark:via-pink-900 dark:to-fuchsia-900',
+        'present': 'from-blue-100 via-cyan-100 to-teal-100 dark:from-blue-900 dark:via-cyan-900 dark:to-teal-900',
       },
-      phone: 'from-slate-800 to-slate-900 dark:from-slate-950 dark:to-black',
-      security: 'from-emerald-950 to-slate-900 dark:from-emerald-950 dark:to-black',
+      phone: 'from-blue-100 via-indigo-100 to-purple-100 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900',
+      security: 'from-emerald-100 via-teal-100 to-cyan-100 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900',
     };
 
     if (currentMode === 'chat') {
@@ -88,7 +88,7 @@ export default function Home() {
     <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-20`}>
       <div className="max-w-lg mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-slate-600 to-slate-700 dark:from-slate-800 dark:to-slate-900 text-white p-6 rounded-t-2xl shadow-lg">
+        <div className="bg-gradient-to-r from-orange-400 via-pink-400 to-rose-400 dark:from-orange-600 dark:via-pink-600 dark:to-rose-600 text-white p-6 rounded-t-2xl shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-1"></div>
             <Link to={createPageUrl('CaregiverPortal')}>
@@ -111,7 +111,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-2xl transition-all duration-500">
+        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-orange-200 dark:border-orange-800">
           <div className="transition-all duration-300">
             <Routes>
               <Route path="/chat" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
@@ -129,7 +129,7 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <div 
-        className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 shadow-lg"
+        className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-orange-50 via-pink-50 to-rose-50 dark:from-orange-950 dark:via-pink-950 dark:to-rose-950 border-t-4 border-orange-300 dark:border-orange-700 shadow-2xl"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex justify-around items-center max-w-lg mx-auto">

@@ -7,6 +7,7 @@ import SafeZonesManager from '../components/caregiver/SafeZonesManager';
 import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
 import MemoryManager from '../components/caregiver/MemoryManager';
 import AnxietyDashboard from '../components/caregiver/AnxietyDashboard';
+import InsightsPanel from '../components/caregiver/InsightsPanel';
 import Settings from '../components/caregiver/Settings';
 
 export default function CaregiverPortal() {
@@ -71,6 +72,10 @@ export default function CaregiverPortal() {
 
           <TabsContent value="contacts">
             <EmergencyContactsManager />
+          </TabsContent>
+
+          <TabsContent value="insights">
+            <AnxietyDashboard />
           </TabsContent>
 
           <TabsContent value="insights">
