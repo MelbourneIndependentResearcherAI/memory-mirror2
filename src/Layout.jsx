@@ -3,9 +3,23 @@ import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import Footer from '@/components/Footer';
-import { queryConfig } from '@/lib/queryConfig';
 
-const queryClient = new QueryClient(queryConfig);
+// Optimized query configuration for fast, reliable data fetching
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 2,
+      cacheTime: 1000 * 60 * 10,
+      refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      retry: 2,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
+    },
+    mutations: {
+      retry: 1,
+    },
+  },
+});
 
 export default function Layout({ children, currentPageName }) {
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
