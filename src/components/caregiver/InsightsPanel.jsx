@@ -12,12 +12,28 @@ export default function InsightsPanel() {
 
   const { data: alerts = [] } = useQuery({
     queryKey: ['caregiverAlerts'],
-    queryFn: () => base44.entities.CaregiverAlert.list('-created_date', 20),
+    queryFn: async () => {
+      try {
+        return await base44.entities.CaregiverAlert.list('-created_date', 20);
+      } catch (error) {
+        console.error('Error loading alerts:', error);
+        return [];
+      }
+    },
+    staleTime: 1000 * 30, // 30 seconds for real-time alerts
   });
 
   const { data: recentActivity = [] } = useQuery({
     queryKey: ['activityLogs'],
-    queryFn: () => base44.entities.ActivityLog.list('-created_date', 50),
+    queryFn: async () => {
+      try {
+        return await base44.entities.ActivityLog.list('-created_date', 50);
+      } catch (error) {
+        console.error('Error loading activity:', error);
+        return [];
+      }
+    },
+    staleTime: 1000 * 60, // 1 minute
   });
 
   const markAsReadMutation = useMutation({

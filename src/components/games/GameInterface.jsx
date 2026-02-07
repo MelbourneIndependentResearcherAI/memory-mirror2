@@ -76,15 +76,16 @@ export default function GameInterface({ onClose }) {
       speakWithRealisticVoice(gameResponse);
 
     } catch (error) {
+      console.error('Game error:', error);
       const fallback = "You're doing wonderfully! Keep going!";
       setGameState(prev => ({
         ...prev,
         messages: [...prev.messages, { role: 'assistant', content: fallback }]
       }));
       speakWithRealisticVoice(fallback);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   return (
