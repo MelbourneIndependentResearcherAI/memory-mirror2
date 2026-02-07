@@ -62,7 +62,7 @@ export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
         prompt: `${emergencyPrompt}\n\nConversation:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond as the operator with maximum warmth and reassurance.`,
       });
 
-      const operatorMessage = typeof response === 'string' ? response : 'I'm here with you. Everything is going to be okay.';
+      const operatorMessage = typeof response === 'string' ? response : "I'm here with you. Everything is going to be okay.";
       
       setMessages(prev => [...prev, { role: 'assistant', content: operatorMessage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: operatorMessage }]);
