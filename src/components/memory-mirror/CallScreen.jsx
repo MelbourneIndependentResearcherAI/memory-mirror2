@@ -1,168 +1,191 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Phone, PhoneOff, Send, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { Input } from '@/components/ui/input';
+import { Loader2, Send } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
 
-const emergencyPrompt = `You're a caring emergency operator for someone with dementia:
+const emergencyPrompt = `You are an empathetic emergency operator specially trained in dementia care. The person you're speaking with may be confused, scared, or disoriented. Your role:
 
-1. NEVER dismiss their concerns - validate all feelings
-2. Assess if there's a real emergency (fire, injury, immediate danger)
-3. If no real emergency, reassure them: "Help is on the way", "It's already being handled", "Your family has been notified"
-4. Guide them to a calmer emotional state
-5. Be professional but warm and patient
-6. If they mention being scared or unsafe, reassure them extensively
+1. Remain calm, patient, and reassuring at all times
+2. Validate their concerns without dismissing them
+3. Use simple, clear language - short sentences
+4. Repeat information if needed without frustration
+5. Redirect anxiety with gentle reassurance
+6. Remind them they're safe and help is available
+7. If they mention family, assure them family has been notified
+8. For paranoia/fear concerns, acknowledge feelings then reassure
+9. Use their concerns to build trust, then gently redirect to calming topics
 
-After your response, output META: {"realEmergency": true/false, "anxiety": 0-10, "concern": "brief description"}`;
+Keep responses under 40 words. Be warm, human, and professional.`;
 
 export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
-  const [callStatus, setCallStatus] = useState('Calling...');
+  const [isConnecting, setIsConnecting] = useState(true);
+  const [isConnected, setIsConnected] = useState(false);
   const [messages, setMessages] = useState([]);
-  const [input, setInput] = useState('');
+  const [userInput, setUserInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [conversationHistory, setConversationHistory] = useState([]);
-  const chatRef = useRef(null);
 
   useEffect(() => {
-    // Simulate connection
     const timer = setTimeout(() => {
-      setCallStatus('Connected');
-      const greeting = getOperatorGreeting(phoneNumber);
-      setMessages([{ role: 'operator', content: greeting }]);
+      setIsConnecting(false);
+      setIsConnected(true);
+      
+      const greeting = "Hello, this is your emergency support operator. I'm here to help you. Can you tell me what's going on?";
+      setMessages([{ role: 'assistant', content: greeting }]);
       setConversationHistory([{ role: 'assistant', content: greeting }]);
-      speakResponse(greeting);
+      
+      speakWithRealisticVoice(greeting, {
+        rate: 0.85,
+        pitch: 0.98,
+        volume: 1.0
+      });
     }, 2000);
 
     return () => clearTimeout(timer);
-  }, [phoneNumber]);
+  }, []);
 
-  useEffect(() => {
-    if (chatRef.current) {
-      chatRef.current.scrollTop = chatRef.current.scrollHeight;
-    }
-  }, [messages]);
+  const handleSendMessage = async () => {
+    if (!userInput.trim() || isLoading) return;
 
-  const getOperatorGreeting = (number) => {
-    const greetings = {
-      '911': "911, what's your emergency? I'm here to help you.",
-      '999': "Police emergency line, how can I help you today?",
-      '411': "Directory assistance, how may I help you?",
-      '211': "Support services, what do you need help with today?"
-    };
-    return greetings[number] || "Hello, how can I help you today?";
-  };
-
-  const speakResponse = (text) => {
-    speakWithRealisticVoice(text, {
-      rate: 0.88,
-      pitch: 1.0,
-      volume: 1.0
-    });
-  };
-
-  const sendMessage = async () => {
-    if (!input.trim() || isLoading) return;
-
-    const userMessage = input.trim();
-    setInput('');
+    const userMessage = userInput.trim();
+    setUserInput('');
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
-    
+    setIsLoading(true);
+
     const newHistory = [...conversationHistory, { role: 'user', content: userMessage }];
     setConversationHistory(newHistory);
-    setIsLoading(true);
-    setCallStatus('Operator responding...');
 
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${emergencyPrompt}\n\nCall to: ${phoneNumber} (${contactName})\n\nConversation:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond as the operator.`,
+        prompt: `${emergencyPrompt}\n\nConversation:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond as the operator with maximum warmth and reassurance.`,
       });
 
-      let assistantMessage = typeof response === 'string' && response.includes('META:')
-        ? response.split('META:')[0].trim()
-        : response;
-
-      setMessages(prev => [...prev, { role: 'operator', content: assistantMessage }]);
-      setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-      speakResponse(assistantMessage);
-      setCallStatus('Connected');
+      const operatorMessage = typeof response === 'string' ? response : 'I'm here with you. Everything is going to be okay.';
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: operatorMessage }]);
+      setConversationHistory(prev => [...prev, { role: 'assistant', content: operatorMessage }]);
+      
+      speakWithRealisticVoice(operatorMessage, {
+        rate: 0.85,
+        pitch: 0.98,
+        volume: 1.0
+      });
 
     } catch (error) {
-      const fallback = "Can you repeat that? I want to make sure I help you properly.";
-      setMessages(prev => [...prev, { role: 'operator', content: fallback }]);
-      setCallStatus('Connected');
+      const fallback = "I'm right here with you. You're safe. Take a deep breath with me.";
+      setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
+      speakWithRealisticVoice(fallback);
     }
 
     setIsLoading(false);
   };
 
   return (
-    <div className="bg-slate-900 min-h-[500px] p-6 flex flex-col">
-      <motion.div
-        animate={{ opacity: [1, 0.5, 1] }}
-        transition={{ repeat: callStatus === 'Calling...' ? Infinity : 0, duration: 2 }}
-        className={`text-center text-lg mb-4 ${callStatus === 'Connected' ? 'text-emerald-400' : 'text-slate-400'}`}
-      >
-        {callStatus}
-      </motion.div>
-
-      <div className="bg-slate-800 rounded-2xl p-4 mb-4 text-center">
-        <div className="text-emerald-400 text-lg mb-1">{contactName}</div>
-        <div className="text-white text-2xl font-mono tracking-wider">{phoneNumber}</div>
-      </div>
-
-      <div 
-        ref={chatRef}
-        className="flex-1 bg-slate-800 rounded-2xl p-4 mb-4 max-h-64 overflow-y-auto"
-      >
-        {messages.map((msg, idx) => (
-          <motion.div
-            key={idx}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className={`mb-3 p-3 rounded-xl ${
-              msg.role === 'user' 
-                ? 'bg-emerald-800 text-white text-right ml-8' 
-                : 'bg-blue-900 text-white mr-8'
-            }`}
+    <div className="flex flex-col items-center justify-between min-h-[500px] py-8 bg-gradient-to-b from-slate-900 to-slate-800 dark:from-black dark:to-slate-950">
+      <div className="text-center flex-1 flex flex-col items-center justify-center">
+        <motion.div 
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="w-32 h-32 rounded-full bg-gradient-to-br from-slate-600 to-slate-700 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center text-5xl mb-8 shadow-2xl border-4 border-slate-500/50"
+        >
+          {contactName ? contactName[0].toUpperCase() : '👤'}
+        </motion.div>
+        
+        <h2 className="text-3xl font-semibold mb-2 text-white">{contactName || 'Emergency Operator'}</h2>
+        <p className="text-slate-400 text-lg mb-8">{phoneNumber}</p>
+        
+        {isConnecting && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex items-center gap-3 text-slate-400"
           >
-            {msg.content}
+            <Loader2 className="w-5 h-5 animate-spin" />
+            <span className="text-base">Connecting...</span>
           </motion.div>
-        ))}
-        {isLoading && (
-          <div className="text-slate-400 flex items-center gap-2">
-            <Loader2 className="w-4 h-4 animate-spin" />
-            Responding...
-          </div>
+        )}
+
+        {isConnected && (
+          <>
+            <div className="mb-8">
+              <div className="text-slate-400 mb-4 text-sm uppercase tracking-wide">Operator Status</div>
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="text-green-400 flex items-center justify-center gap-3 text-lg"
+              >
+                <motion.span 
+                  animate={{ scale: [1, 1.2, 1], opacity: [1, 0.7, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="w-4 h-4 rounded-full bg-green-400"
+                />
+                Connected & Listening
+              </motion.p>
+            </div>
+
+            <div className="bg-slate-800/50 dark:bg-slate-950/50 backdrop-blur-sm rounded-2xl p-5 max-w-md w-full space-y-4 max-h-64 overflow-y-auto border border-slate-700/50 mb-6">
+              {messages.map((msg, idx) => (
+                <motion.div
+                  key={idx}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`${
+                    msg.role === 'user'
+                      ? 'bg-slate-700 dark:bg-slate-800 text-white'
+                      : 'bg-gradient-to-r from-emerald-900 to-emerald-800 text-emerald-100'
+                  } rounded-2xl p-4 text-sm shadow-lg`}
+                >
+                  <p className="font-semibold mb-1.5 text-xs opacity-80 uppercase tracking-wide">
+                    {msg.role === 'user' ? 'You' : 'Operator'}
+                  </p>
+                  <p className="leading-relaxed">{msg.content}</p>
+                </motion.div>
+              ))}
+              
+              {isLoading && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="bg-gradient-to-r from-emerald-900 to-emerald-800 rounded-2xl p-4 text-sm shadow-lg"
+                >
+                  <div className="flex items-center gap-2 text-emerald-200">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span className="italic">Operator is responding...</span>
+                  </div>
+                </motion.div>
+              )}
+            </div>
+
+            <div className="flex gap-2 max-w-md w-full px-4 mb-6">
+              <Input
+                value={userInput}
+                onChange={(e) => setUserInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
+                placeholder="Type your message..."
+                className="flex-1 bg-slate-800/50 border-slate-600 text-white placeholder:text-slate-500 min-h-[44px]"
+              />
+              <motion.button
+                onClick={handleSendMessage}
+                disabled={isLoading || !userInput.trim()}
+                whileTap={{ scale: 0.95 }}
+                className="bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-700 text-white px-4 py-2 rounded-lg transition-all disabled:opacity-50 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              >
+                <Send className="w-5 h-5" />
+              </motion.button>
+            </div>
+          </>
         )}
       </div>
 
-      <div className="flex gap-2 mb-4">
-        <Input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          placeholder="Speak your concern..."
-          className="flex-1 bg-slate-800 border-slate-600 text-white placeholder:text-slate-500"
-        />
-        <Button 
-          onClick={sendMessage} 
-          disabled={isLoading}
-          className="bg-emerald-600 hover:bg-emerald-700"
-        >
-          <Send className="w-5 h-5" />
-        </Button>
-      </div>
-
-      <div className="flex justify-center">
-        <Button
-          onClick={onEndCall}
-          className="w-16 h-16 rounded-full bg-red-500 hover:bg-red-600 shadow-lg"
-        >
-          <PhoneOff className="w-6 h-6" />
-        </Button>
-      </div>
+      <motion.button
+        onClick={onEndCall}
+        whileTap={{ scale: 0.95 }}
+        className="bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white px-16 py-6 rounded-full text-lg font-semibold shadow-2xl transition-all min-h-[64px] border-2 border-red-400"
+      >
+        End Call
+      </motion.button>
     </div>
   );
 }
