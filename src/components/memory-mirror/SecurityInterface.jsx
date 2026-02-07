@@ -5,9 +5,9 @@ import { motion } from 'framer-motion';
 import CameraView from './CameraView';
 import SecurityLog from './SecurityLog';
 import AnxietyAlert from './AnxietyAlert';
-import MemoryGallery from './MemoryGallery';
+import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety } from './voiceUtils';
 
   const getSecurityPrompt = () => {
@@ -46,18 +46,23 @@ const cameras = [
   { label: 'Perimeter', status: 'Clear' },
 ];
 
-export default function SecurityInterface({ onModeSwitch }) {
+export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen }) {
   const [logs, setLogs] = useState(initialLogs);
   const [isLoading, setIsLoading] = useState(false);
   const [securityHistory, setSecurityHistory] = useState([]);
   const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
-  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: safeZones = [] } = useQuery({
     queryKey: ['safeZones'],
     queryFn: () => base44.entities.SafeMemoryZone.list(),
   });
+
+  const handleRefresh = async () => {
+    await queryClient.refetchQueries({ queryKey: ['safeZones'] });
+    return new Promise(resolve => setTimeout(resolve, 500));
+  };
 
   const addLog = (message, status = 'all_clear') => {
     const time = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -153,100 +158,97 @@ export default function SecurityInterface({ onModeSwitch }) {
   };
 
   return (
-    <div className="bg-slate-900 min-h-[500px] p-4">
-      <div className="mb-3">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setShowMemoryGallery(true)}
-          className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white border-slate-700 hover:bg-slate-700"
-        >
-          <BookHeart className="w-4 h-4" />
-          View Happy Memories
-        </Button>
-      </div>
+    <PullToRefresh onRefresh={handleRefresh} className="bg-slate-900 dark:bg-black min-h-[500px]">
+      <div className="p-4">
+        <div className="mb-3">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
+            className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white border-slate-700 hover:bg-slate-700 min-h-[44px]"
+          >
+            <BookHeart className="w-4 h-4" />
+            View Happy Memories
+          </Button>
+        </div>
 
-      <MemoryGallery
-        isOpen={showMemoryGallery}
-        onClose={() => setShowMemoryGallery(false)}
-      />
-
-      {showAnxietyAlert && (
-        <AnxietyAlert
-          anxietyLevel={anxietyState.level}
-          suggestedMode={anxietyState.suggestedMode}
-          onModeSwitch={() => {
-            if (anxietyState.suggestedMode && onModeSwitch) {
-              onModeSwitch(anxietyState.suggestedMode);
-            }
-            setShowAnxietyAlert(false);
-          }}
-          onDismiss={() => setShowAnxietyAlert(false)}
-        />
-      )}
-      
-      <div className="bg-gradient-to-b from-emerald-900/50 to-emerald-800/30 rounded-2xl p-5 mb-4 text-center">
-        <h2 className="text-emerald-400 text-2xl font-semibold flex items-center justify-center gap-2 mb-2">
-          <Shield className="w-6 h-6" />
-          Home Security System
-        </h2>
-        <div className="flex items-center justify-center gap-3 text-emerald-300 text-lg">
-          <motion.div
-            animate={{ scale: [1, 1.2, 1], opacity: [1, 0.6, 1] }}
-            transition={{ repeat: Infinity, duration: 2 }}
-            className="w-4 h-4 rounded-full bg-emerald-400"
+        {showAnxietyAlert && (
+          <AnxietyAlert
+            anxietyLevel={anxietyState.level}
+            suggestedMode={anxietyState.suggestedMode}
+            onModeSwitch={() => {
+              if (anxietyState.suggestedMode && onModeSwitch) {
+                onModeSwitch(anxietyState.suggestedMode);
+              }
+              setShowAnxietyAlert(false);
+            }}
+            onDismiss={() => setShowAnxietyAlert(false)}
           />
-          All Systems Secure
+        )}
+        
+        <div className="bg-gradient-to-b from-emerald-900/50 to-emerald-800/30 rounded-2xl p-5 mb-4 text-center">
+          <h2 className="text-emerald-400 text-2xl font-semibold flex items-center justify-center gap-2 mb-2">
+            <Shield className="w-6 h-6" />
+            Home Security System
+          </h2>
+          <div className="flex items-center justify-center gap-3 text-emerald-300 text-lg">
+            <motion.div
+              animate={{ scale: [1, 1.2, 1], opacity: [1, 0.6, 1] }}
+              transition={{ repeat: Infinity, duration: 2 }}
+              className="w-4 h-4 rounded-full bg-emerald-400"
+            />
+            All Systems Secure
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mb-4">
+          {cameras.map((camera, idx) => (
+            <CameraView key={idx} label={camera.label} status={camera.status} />
+          ))}
+        </div>
+
+        <SecurityLog entries={logs} />
+
+        <div className="grid grid-cols-2 gap-3 mt-4">
+          <Button
+            onClick={runSecurityCheck}
+            disabled={isLoading}
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+          >
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
+            Run Check
+          </Button>
+          <Button
+            onClick={lockAllDoors}
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+          >
+            <Lock className="w-4 h-4" />
+            Lock All
+          </Button>
+          <Button
+            onClick={lightCheck}
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+          >
+            <Lightbulb className="w-4 h-4" />
+            Lights Check
+          </Button>
+          <Button
+            onClick={talkToSecurity}
+            disabled={isLoading}
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+          >
+            <MessageCircle className="w-4 h-4" />
+            Talk to Guard
+          </Button>
+          <Button
+            onClick={contactFamily}
+            className="col-span-2 bg-red-900 hover:bg-red-800 border-2 border-red-600 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+          >
+            <AlertTriangle className="w-4 h-4" />
+            Call Family
+          </Button>
         </div>
       </div>
-
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        {cameras.map((camera, idx) => (
-          <CameraView key={idx} label={camera.label} status={camera.status} />
-        ))}
-      </div>
-
-      <SecurityLog entries={logs} />
-
-      <div className="grid grid-cols-2 gap-3 mt-4">
-        <Button
-          onClick={runSecurityCheck}
-          disabled={isLoading}
-          className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 h-auto flex items-center justify-center gap-2"
-        >
-          {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-          Run Check
-        </Button>
-        <Button
-          onClick={lockAllDoors}
-          className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 h-auto flex items-center justify-center gap-2"
-        >
-          <Lock className="w-4 h-4" />
-          Lock All
-        </Button>
-        <Button
-          onClick={lightCheck}
-          className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 h-auto flex items-center justify-center gap-2"
-        >
-          <Lightbulb className="w-4 h-4" />
-          Lights Check
-        </Button>
-        <Button
-          onClick={talkToSecurity}
-          disabled={isLoading}
-          className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 h-auto flex items-center justify-center gap-2"
-        >
-          <MessageCircle className="w-4 h-4" />
-          Talk to Guard
-        </Button>
-        <Button
-          onClick={contactFamily}
-          className="col-span-2 bg-red-900 hover:bg-red-800 border-2 border-red-600 text-white p-4 h-auto flex items-center justify-center gap-2"
-        >
-          <AlertTriangle className="w-4 h-4" />
-          Call Family
-        </Button>
-      </div>
-    </div>
+    </PullToRefresh>
   );
 }
