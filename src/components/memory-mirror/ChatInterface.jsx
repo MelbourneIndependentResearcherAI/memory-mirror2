@@ -161,17 +161,27 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           suggestedMode: detectedAnxiety >= 8 ? 'phone' : null 
         });
         setShowAnxietyAlert(true);
+        
+        // Log high anxiety
+        base44.entities.ActivityLog.create({
+          activity_type: 'anxiety_detected',
+          anxiety_level: detectedAnxiety,
+          details: { trigger: userMessage.substring(0, 100) }
+        }).catch(() => {});
       }
 
     } catch (error) {
+      console.error('Chat error:', error);
+      const fallback = "I'm here with you. Let's try again in just a moment.";
       setMessages(prev => [...prev, { 
         role: 'assistant', 
-        content: "I'm here with you. Let's try again in just a moment.",
+        content: fallback,
         hasVoice: true 
       }]);
+      speakResponse(fallback);
+    } finally {
+      setIsLoading(false);
     }
-
-    setIsLoading(false);
   };
 
   const toggleVoiceInput = () => {
