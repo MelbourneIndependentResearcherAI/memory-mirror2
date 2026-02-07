@@ -8,7 +8,7 @@ import AnxietyAlert from './AnxietyAlert';
 import GameInterface from '../games/GameInterface';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
-import { useQuery, useQueryClient } from '@tantml:react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
