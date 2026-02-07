@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
 import AnxietyAlert from './AnxietyAlert';
-import MemoryGallery from './MemoryGallery';
+import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 
-export default function ChatInterface({ onEraChange, onModeSwitch }) {
+export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
+  const queryClient = useQueryClient();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -18,10 +19,15 @@ export default function ChatInterface({ onEraChange, onModeSwitch }) {
   const [conversationHistory, setConversationHistory] = useState([]);
   const [anxietyState, setAnxietyState] = useState({ level: 0, suggestedMode: null });
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
-  const [showMemoryGallery, setShowMemoryGallery] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
+
+  const handleRefresh = async () => {
+    await queryClient.refetchQueries({ queryKey: ['safeZones'] });
+    await queryClient.refetchQueries({ queryKey: ['memories'] });
+    return new Promise(resolve => setTimeout(resolve, 500));
+  };
 
   const { data: safeZones = [] } = useQuery({
     queryKey: ['safeZones'],
@@ -188,23 +194,17 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     <div className="flex flex-col h-full">
       <VoiceSetup />
       
-      <div className="p-3 border-b border-slate-100 bg-slate-50">
+      <div className="p-3 border-b border-slate-100 dark:border-slate-800 bg-slate-50 dark:bg-slate-900">
         <Button
           variant="outline"
           size="sm"
-          onClick={() => setShowMemoryGallery(true)}
-          className="w-full flex items-center justify-center gap-2"
+          onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
+          className="w-full flex items-center justify-center gap-2 min-h-[44px]"
         >
           <BookHeart className="w-4 h-4" />
           Browse Happy Memories
         </Button>
       </div>
-
-      <MemoryGallery
-        isOpen={showMemoryGallery}
-        onClose={() => setShowMemoryGallery(false)}
-        filterEra={detectedEra}
-      />
       
       {showAnxietyAlert && (
         <AnxietyAlert
@@ -220,10 +220,14 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         />
       )}
       
-      <div 
-        ref={chatContainerRef}
-        className="flex-1 overflow-y-auto p-6 bg-gradient-to-b from-slate-50 to-white min-h-[400px]"
+      <PullToRefresh 
+        onRefresh={handleRefresh}
+        className="flex-1 bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-950 min-h-[400px]"
       >
+        <div 
+          ref={chatContainerRef}
+          className="p-6"
+        >
         {messages.length === 0 ? (
           <div className="text-center text-slate-500 py-12">
             <p className="text-lg font-medium mb-2">Welcome to Memory Mirror</p>
@@ -242,14 +246,15 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         )}
         
         {isLoading && (
-          <div className="text-center text-slate-400 py-4 italic flex items-center justify-center gap-2">
+          <div className="text-center text-slate-400 dark:text-slate-500 py-4 italic flex items-center justify-center gap-2">
             <Loader2 className="w-4 h-4 animate-spin" />
             Thinking...
           </div>
         )}
-      </div>
+        </div>
+      </PullToRefresh>
 
-      <div className="p-4 border-t border-slate-100 bg-white">
+      <div className="p-4 border-t border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900">
         <div className="flex gap-2">
           <Input
             value={input}

@@ -50,6 +50,9 @@
 import CaregiverPortal from './pages/CaregiverPortal';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
+import ChatMode from './pages/ChatMode';
+import PhoneMode from './pages/PhoneMode';
+import SecurityMode from './pages/SecurityMode';
 import __Layout from './Layout.jsx';
 
 
@@ -57,6 +60,9 @@ export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
     "Home": Home,
     "Landing": Landing,
+    "ChatMode": ChatMode,
+    "PhoneMode": PhoneMode,
+    "SecurityMode": SecurityMode,
 }
 
 export const pagesConfig = {

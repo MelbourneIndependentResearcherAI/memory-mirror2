@@ -1,30 +1,44 @@
 import React, { useState, useEffect } from 'react';
 import { MessageCircle, Phone, Shield, Settings } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
-import ChatInterface from '@/components/memory-mirror/ChatInterface';
-import PhoneInterface from '@/components/memory-mirror/PhoneInterface';
-import SecurityInterface from '@/components/memory-mirror/SecurityInterface';
+import ChatMode from './ChatMode';
+import PhoneMode from './PhoneMode';
+import SecurityMode from './SecurityMode';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import { loadVoices } from '../components/utils/voiceUtils';
 
 export default function Home() {
-  const [currentMode, setCurrentMode] = useState('chat');
   const [detectedEra, setDetectedEra] = useState('present');
   const [wakeWordActive, setWakeWordActive] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const currentMode = location.pathname === '/phone' ? 'phone' 
+    : location.pathname === '/security' ? 'security' 
+    : 'chat';
 
   useEffect(() => {
     loadVoices();
+    if (location.pathname === '/') {
+      navigate('/chat', { replace: true });
+    }
   }, []);
 
   const handleWakeWord = () => {
-    setCurrentMode('chat');
+    navigate('/chat');
     setWakeWordActive(true);
     setTimeout(() => setWakeWordActive(false), 2000);
   };
 
   const handleModeSwitch = (mode) => {
-    setCurrentMode(mode);
+    navigate(`/${mode}`);
+    
+    const modeNames = { chat: 'chat mode', phone: 'phone mode', security: 'security mode' };
+    const utterance = new SpeechSynthesisUtterance(`Switching to ${modeNames[mode]}`);
+    utterance.rate = 1.0;
+    utterance.volume = 0.8;
+    window.speechSynthesis.speak(utterance);
   };
 
   const getBackgroundClass = () => {
@@ -56,10 +70,19 @@ export default function Home() {
   };
 
   const modes = [
-    { id: 'chat', label: 'Chat', icon: MessageCircle },
-    { id: 'phone', label: 'Phone', icon: Phone },
-    { id: 'security', label: 'Security', icon: Shield },
+    { id: 'chat', label: 'Chat', icon: MessageCircle, path: '/chat' },
+    { id: 'phone', label: 'Phone', icon: Phone, path: '/phone' },
+    { id: 'security', label: 'Security', icon: Shield, path: '/security' },
   ];
+
+  const handleButtonClick = (mode) => {
+    navigate(mode.path);
+    
+    const utterance = new SpeechSynthesisUtterance(`${mode.label} mode`);
+    utterance.rate = 1.0;
+    utterance.volume = 0.6;
+    window.speechSynthesis.speak(utterance);
+  };
 
   return (
     <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-20`}>
@@ -90,18 +113,12 @@ export default function Home() {
         {/* Main Content */}
         <div className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm shadow-2xl transition-all duration-500">
           <div className="transition-all duration-300">
-            {currentMode === 'chat' && (
-              <ChatInterface 
-                onEraChange={setDetectedEra}
-                onModeSwitch={handleModeSwitch}
-              />
-            )}
-            {currentMode === 'phone' && (
-              <PhoneInterface />
-            )}
-            {currentMode === 'security' && (
-              <SecurityInterface onModeSwitch={handleModeSwitch} />
-            )}
+            <Routes>
+              <Route path="/chat" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
+              <Route path="/phone" element={<PhoneMode />} />
+              <Route path="/security" element={<SecurityMode onModeSwitch={handleModeSwitch} />} />
+              <Route path="/" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
+            </Routes>
           </div>
         </div>
 
@@ -116,20 +133,24 @@ export default function Home() {
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex justify-around items-center max-w-lg mx-auto">
-          {modes.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => setCurrentMode(id)}
-              className={`flex flex-col items-center justify-center py-2 px-4 flex-1 transition-all duration-300 min-h-[60px] ${
-                currentMode === id 
-                  ? 'text-slate-700 dark:text-slate-100' 
-                  : 'text-slate-400 dark:text-slate-500'
-              }`}
-            >
-              <Icon className={`w-6 h-6 mb-1 ${currentMode === id ? 'scale-110' : ''}`} />
-              <span className="text-xs font-medium">{label}</span>
-            </button>
-          ))}
+          {modes.map((mode) => {
+            const Icon = mode.icon;
+            const isActive = currentMode === mode.id;
+            return (
+              <button
+                key={mode.id}
+                onClick={() => handleButtonClick(mode)}
+                className={`flex flex-col items-center justify-center py-2 px-4 flex-1 transition-all duration-300 min-h-[60px] ${
+                  isActive 
+                    ? 'text-slate-700 dark:text-slate-100' 
+                    : 'text-slate-400 dark:text-slate-500'
+                }`}
+              >
+                <Icon className={`w-6 h-6 mb-1 ${isActive ? 'scale-110' : ''}`} />
+                <span className="text-xs font-medium">{mode.label}</span>
+              </button>
+            );
+          })}
         </div>
       </div>
 
