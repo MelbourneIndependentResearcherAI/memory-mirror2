@@ -53,6 +53,7 @@ import Home from './pages/Home';
 import Landing from './pages/Landing';
 import PhoneMode from './pages/PhoneMode';
 import SecurityMode from './pages/SecurityMode';
+import FamilyConnect from './pages/FamilyConnect';
 import __Layout from './Layout.jsx';
 
 
@@ -63,6 +64,7 @@ export const PAGES = {
     "Landing": Landing,
     "PhoneMode": PhoneMode,
     "SecurityMode": SecurityMode,
+    "FamilyConnect": FamilyConnect,
 }
 
 export const pagesConfig = {
