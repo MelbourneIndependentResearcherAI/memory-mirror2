@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2 } from 'lucide-react';
+import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -7,6 +7,8 @@ import AnxietyAlert from './AnxietyAlert';
 import GameInterface from '../games/GameInterface';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import EraSelector from './EraSelector';
+import MusicPlayer from './MusicPlayer';
+import StoryTeller from './StoryTeller';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
@@ -22,6 +24,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [selectedEra, setSelectedEra] = useState('auto');
   const [detectedEra, setDetectedEra] = useState('present');
   const [showGames, setShowGames] = useState(false);
+  const [showMusic, setShowMusic] = useState(false);
+  const [showStory, setShowStory] = useState(false);
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -261,7 +265,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
-      <div className="p-3 border-b border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 grid grid-cols-2 gap-2">
+      <div className="p-3 border-b border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 grid grid-cols-4 gap-2">
         <Button
           variant="outline"
           size="sm"
@@ -274,11 +278,29 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         <Button
           variant="outline"
           size="sm"
+          onClick={() => setShowMusic(!showMusic)}
+          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+        >
+          <Music className="w-4 h-4" />
+          <span className="hidden sm:inline">Music</span>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => setShowStory(!showStory)}
+          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+        >
+          <BookOpen className="w-4 h-4" />
+          <span className="hidden sm:inline">Stories</span>
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setShowGames(true)}
           className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
         >
           <Gamepad2 className="w-4 h-4" />
-          <span className="hidden sm:inline">Play Games</span>
+          <span className="hidden sm:inline">Games</span>
         </Button>
       </div>
       
@@ -308,8 +330,22 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       >
         <div 
           ref={chatContainerRef}
-          className="p-6"
+          className="p-6 space-y-4"
         >
+        {showMusic && (
+          <MusicPlayer 
+            currentEra={selectedEra === 'auto' ? detectedEra : selectedEra} 
+            onClose={() => setShowMusic(false)} 
+          />
+        )}
+        
+        {showStory && (
+          <StoryTeller 
+            currentEra={selectedEra === 'auto' ? detectedEra : selectedEra}
+            currentMood={anxietyState.level < 4 ? 'peaceful' : 'comforting'}
+            onClose={() => setShowStory(false)} 
+          />
+        )}
         {messages.length === 0 ? (
           <div className="text-center text-slate-500 py-12">
             <Mic className="w-16 h-16 mx-auto mb-4 text-orange-400 animate-pulse" />

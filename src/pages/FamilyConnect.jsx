@@ -1,10 +1,12 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Heart, Bell } from 'lucide-react';
+import { ArrowLeft, Users, Heart, Bell, Music, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WellbeingOverview from '../components/family/WellbeingOverview';
 import MessageManager from '../components/family/MessageManager';
+import MusicLibrary from '../components/family/MusicLibrary';
+import StoryLibrary from '../components/family/StoryLibrary';
 import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
 
 export default function FamilyConnect() {
@@ -36,7 +38,7 @@ export default function FamilyConnect() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 h-auto bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-5 h-auto bg-white dark:bg-slate-900">
             <TabsTrigger value="overview" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Heart className="w-4 h-4" />
               <span className="hidden sm:inline">Well-being</span>
@@ -44,6 +46,14 @@ export default function FamilyConnect() {
             <TabsTrigger value="messages" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Heart className="w-4 h-4" />
               <span className="hidden sm:inline">Messages</span>
+            </TabsTrigger>
+            <TabsTrigger value="music" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Music className="w-4 h-4" />
+              <span className="hidden sm:inline">Music</span>
+            </TabsTrigger>
+            <TabsTrigger value="stories" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <BookOpen className="w-4 h-4" />
+              <span className="hidden sm:inline">Stories</span>
             </TabsTrigger>
             <TabsTrigger value="contacts" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Bell className="w-4 h-4" />
@@ -66,6 +76,24 @@ export default function FamilyConnect() {
                 Family Messages
               </h2>
               <MessageManager />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="music">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+                Music Library
+              </h2>
+              <MusicLibrary />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="stories">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+                Story Collection
+              </h2>
+              <StoryLibrary />
             </div>
           </TabsContent>
 
