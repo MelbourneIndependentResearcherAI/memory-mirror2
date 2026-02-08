@@ -49,22 +49,22 @@
  */
 import CaregiverPortal from './pages/CaregiverPortal';
 import ChatMode from './pages/ChatMode';
+import FamilyConnect from './pages/FamilyConnect';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
 import PhoneMode from './pages/PhoneMode';
 import SecurityMode from './pages/SecurityMode';
-import FamilyConnect from './pages/FamilyConnect';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
     "ChatMode": ChatMode,
+    "FamilyConnect": FamilyConnect,
     "Home": Home,
     "Landing": Landing,
     "PhoneMode": PhoneMode,
     "SecurityMode": SecurityMode,
-    "FamilyConnect": FamilyConnect,
 }
 
 export const pagesConfig = {

@@ -7,34 +7,37 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50">
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 via-rose-50 to-pink-50 dark:from-orange-950 dark:via-rose-950 dark:to-pink-950">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16">
         <div className="text-center max-w-4xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-3 bg-white/80 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg mb-6">
-            <Heart className="w-6 h-6 text-rose-500" />
-            <span className="text-lg font-medium text-slate-700">Compassionate AI Companion</span>
+          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-orange-100 to-pink-100 dark:from-orange-900 dark:to-pink-900 backdrop-blur-sm px-6 py-3 rounded-full shadow-lg mb-6 border-2 border-orange-200 dark:border-orange-700">
+            <Heart className="w-6 h-6 text-rose-500 animate-pulse" />
+            <span className="text-lg font-medium text-slate-800 dark:text-slate-100">Compassionate AI Companion</span>
           </div>
           
-          <h1 className="text-5xl md:text-6xl font-light text-slate-800 mb-6 leading-tight">
+          <h1 className="text-6xl md:text-7xl font-light text-transparent bg-clip-text bg-gradient-to-r from-orange-600 via-rose-600 to-pink-600 dark:from-orange-400 dark:via-rose-400 dark:to-pink-400 mb-6 leading-tight">
             Memory Mirror
           </h1>
           
-          <p className="text-xl md:text-2xl text-slate-600 mb-8 leading-relaxed">
-            Meeting your loved one where they are, <br />with dignity and understanding
+          <p className="text-2xl md:text-3xl text-slate-700 dark:text-slate-300 mb-4 leading-relaxed font-light">
+            Meeting your loved one where they are,
+          </p>
+          <p className="text-xl md:text-2xl text-rose-600 dark:text-rose-400 mb-8 italic">
+            with dignity, warmth, and understanding
           </p>
 
           <div className="flex flex-wrap gap-4 justify-center">
             <Link to={createPageUrl('Home')}>
-              <Button size="lg" className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-6 text-lg rounded-full shadow-xl">
-                Get Started
+              <Button size="lg" className="bg-gradient-to-r from-orange-500 to-rose-600 hover:from-orange-600 hover:to-rose-700 text-white px-10 py-7 text-xl rounded-full shadow-2xl border-4 border-white/50 hover:scale-105 transition-transform">
+                💝 Start Companion
               </Button>
             </Link>
             <Link to={createPageUrl('FamilyConnect')}>
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="px-8 py-6 text-lg rounded-full border-2 border-pink-400 text-pink-600 hover:bg-pink-50"
+                className="px-8 py-7 text-lg rounded-full border-3 border-rose-400 text-rose-600 hover:bg-rose-50 dark:border-rose-500 dark:text-rose-400 dark:hover:bg-rose-950 shadow-xl hover:scale-105 transition-transform"
               >
                 👨‍👩‍👧‍👦 Family Portal
               </Button>
@@ -42,56 +45,56 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="px-8 py-6 text-lg rounded-full border-2 border-slate-300 hover:bg-white"
+              className="px-8 py-7 text-lg rounded-full border-3 border-orange-300 hover:bg-orange-50 dark:border-orange-700 dark:hover:bg-orange-950 shadow-xl hover:scale-105 transition-transform"
               onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
             >
-              Learn More
+              ℹ️ Learn More
             </Button>
           </div>
         </div>
 
         {/* Key Features */}
         <div className="grid md:grid-cols-3 gap-8 mb-20">
-          <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-none hover:shadow-2xl transition-all">
+          <Card className="bg-gradient-to-br from-orange-50 to-rose-50 dark:from-orange-950 dark:to-rose-950 backdrop-blur-sm shadow-2xl border-2 border-orange-200 dark:border-orange-800 hover:shadow-[0_20px_60px_rgba(251,146,60,0.3)] hover:scale-105 transition-all duration-300">
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <MessageCircle className="w-8 h-8 text-blue-600" />
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-400 to-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <MessageCircle className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-3">Companion Chat</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Never corrects or contradicts. Meets them in their mental time period with warmth and validation.
+              <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Voice Companion</h3>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                Hands-free voice conversations. Never corrects or contradicts. Adapts to their mental time period with warmth.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-none hover:shadow-2xl transition-all">
+          <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 backdrop-blur-sm shadow-2xl border-2 border-emerald-200 dark:border-emerald-800 hover:shadow-[0_20px_60px_rgba(16,185,129,0.3)] hover:scale-105 transition-all duration-300">
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Phone className="w-8 h-8 text-green-600" />
+              <div className="w-20 h-20 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Phone className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-3">Safe Phone</h3>
-              <p className="text-slate-600 leading-relaxed">
+              <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Safe Phone</h3>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
                 Emergency calls redirect to AI support that validates concerns while providing reassurance.
               </p>
             </CardContent>
           </Card>
 
-          <Card className="bg-white/90 backdrop-blur-sm shadow-xl border-none hover:shadow-2xl transition-all">
+          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 backdrop-blur-sm shadow-2xl border-2 border-purple-200 dark:border-purple-800 hover:shadow-[0_20px_60px_rgba(168,85,247,0.3)] hover:scale-105 transition-all duration-300">
             <CardContent className="p-8 text-center">
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <Shield className="w-8 h-8 text-purple-600" />
+              <div className="w-20 h-20 bg-gradient-to-br from-purple-400 to-pink-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <Shield className="w-10 h-10 text-white" />
               </div>
-              <h3 className="text-xl font-semibold text-slate-800 mb-3">Security Monitor</h3>
-              <p className="text-slate-600 leading-relaxed">
-                Professional security interface that reassures about home safety and responds to paranoia.
+              <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Security Monitor</h3>
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg">
+                Professional interface that reassures about home safety and responds to concerns with care.
               </p>
             </CardContent>
           </Card>
         </div>
 
         {/* How It Works */}
-        <div id="how-it-works" className="bg-white/90 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-2xl mb-20">
-          <h2 className="text-3xl md:text-4xl font-light text-slate-800 mb-12 text-center">How It Works</h2>
+        <div id="how-it-works" className="bg-gradient-to-br from-white to-orange-50 dark:from-slate-900 dark:to-orange-950 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-2xl mb-20 border-4 border-orange-200 dark:border-orange-800">
+          <h2 className="text-4xl md:text-5xl font-light text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-rose-600 dark:from-orange-400 dark:to-rose-400 mb-12 text-center">How It Works</h2>
           
           <div className="space-y-8 max-w-3xl mx-auto">
             <div className="flex gap-6 items-start">
@@ -184,14 +187,15 @@ export default function Landing() {
         </div>
 
         {/* CTA */}
-        <div className="text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-3xl p-12 shadow-2xl">
-          <h2 className="text-3xl md:text-4xl font-light mb-6">Ready to Begin?</h2>
-          <p className="text-xl mb-8 text-blue-50">
-            Start using Memory Mirror today and provide your loved one with a compassionate companion.
+        <div className="text-center bg-gradient-to-r from-orange-500 via-rose-500 to-pink-600 dark:from-orange-600 dark:via-rose-600 dark:to-pink-700 text-white rounded-3xl p-12 shadow-2xl border-4 border-white/30">
+          <Heart className="w-16 h-16 mx-auto mb-6 animate-pulse" />
+          <h2 className="text-4xl md:text-5xl font-light mb-6">Ready to Begin?</h2>
+          <p className="text-2xl mb-8 text-white/90 leading-relaxed">
+            Start using Memory Mirror today and provide your loved one<br />with a compassionate, understanding companion.
           </p>
           <Link to={createPageUrl('Home')}>
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-10 py-6 text-lg rounded-full shadow-xl">
-              Launch Memory Mirror
+            <Button size="lg" className="bg-white text-rose-600 hover:bg-rose-50 px-12 py-7 text-xl rounded-full shadow-2xl hover:scale-105 transition-transform border-4 border-rose-200">
+              💝 Launch Memory Mirror
             </Button>
           </Link>
         </div>

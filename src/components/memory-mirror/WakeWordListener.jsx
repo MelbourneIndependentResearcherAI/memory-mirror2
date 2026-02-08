@@ -27,11 +27,27 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
         .join('')
         .toLowerCase();
 
-      // Check for wake words
-      if (transcript.includes('memory mirror') || 
-          transcript.includes('hey mirror') || 
-          transcript.includes('ok mirror')) {
+      // Check for wake words with variations
+      const wakeWords = [
+        'memory mirror',
+        'hey mirror', 
+        'ok mirror',
+        'hey memory',
+        'okay mirror',
+        'hi mirror'
+      ];
+      
+      const detected = wakeWords.some(word => transcript.includes(word));
+      
+      if (detected) {
         setWakeWordDetected(true);
+        
+        // Speak confirmation
+        const utterance = new SpeechSynthesisUtterance("I'm here. How can I help?");
+        utterance.rate = 0.95;
+        utterance.volume = 1.0;
+        window.speechSynthesis.speak(utterance);
+        
         onWakeWordDetected();
         
         // Visual feedback
@@ -40,14 +56,19 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
     };
 
     recognitionRef.current.onerror = (event) => {
-      if (event.error === 'no-speech') {
-        // Restart listening
+      console.log('Wake word recognition error:', event.error);
+      if (event.error === 'no-speech' || event.error === 'aborted') {
+        // Restart listening after a short delay
         if (isListening) {
-          try {
-            recognitionRef.current.start();
-          } catch (e) {
-            // Already started
-          }
+          setTimeout(() => {
+            try {
+              if (recognitionRef.current && isListening) {
+                recognitionRef.current.start();
+              }
+            } catch (e) {
+              console.log('Error restarting:', e);
+            }
+          }, 500);
         }
       }
     };
@@ -55,11 +76,15 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
     recognitionRef.current.onend = () => {
       // Auto-restart if still supposed to be listening
       if (isListening) {
-        try {
-          recognitionRef.current.start();
-        } catch (e) {
-          // Already started
-        }
+        setTimeout(() => {
+          try {
+            if (recognitionRef.current && isListening) {
+              recognitionRef.current.start();
+            }
+          } catch (e) {
+            console.log('Error restarting on end:', e);
+          }
+        }, 500);
       }
     };
 
@@ -79,10 +104,22 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
     if (isListening) {
       recognitionRef.current.stop();
       setIsListening(false);
+      
+      // Audio feedback
+      const utterance = new SpeechSynthesisUtterance("Wake word disabled");
+      utterance.rate = 1.0;
+      utterance.volume = 0.7;
+      window.speechSynthesis.speak(utterance);
     } else {
       try {
         recognitionRef.current.start();
         setIsListening(true);
+        
+        // Audio feedback
+        const utterance = new SpeechSynthesisUtterance("Wake word enabled. Say Hey Mirror to activate.");
+        utterance.rate = 1.0;
+        utterance.volume = 0.9;
+        window.speechSynthesis.speak(utterance);
       } catch (e) {
         console.error('Error starting recognition:', e);
       }
