@@ -30,6 +30,15 @@ export default function Landing() {
                 Get Started
               </Button>
             </Link>
+            <Link to={createPageUrl('FamilyConnect')}>
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="px-8 py-6 text-lg rounded-full border-2 border-pink-400 text-pink-600 hover:bg-pink-50"
+              >
+                👨‍👩‍👧‍👦 Family Portal
+              </Button>
+            </Link>
             <Button 
               size="lg" 
               variant="outline" 
