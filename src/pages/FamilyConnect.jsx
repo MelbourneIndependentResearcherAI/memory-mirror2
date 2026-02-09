@@ -1,12 +1,15 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Users, Heart, Bell, Music, BookOpen } from 'lucide-react';
+import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WellbeingOverview from '../components/family/WellbeingOverview';
 import MessageManager from '../components/family/MessageManager';
 import MusicLibrary from '../components/family/MusicLibrary';
 import StoryLibrary from '../components/family/StoryLibrary';
+import CalendarManager from '../components/family/CalendarManager';
+import MediaAlbum from '../components/family/MediaAlbum';
+import NotificationCenter from '../components/family/NotificationCenter';
 import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
 
 export default function FamilyConnect() {
@@ -38,13 +41,25 @@ export default function FamilyConnect() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 h-auto bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto bg-white dark:bg-slate-900">
             <TabsTrigger value="overview" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Heart className="w-4 h-4" />
-              <span className="hidden sm:inline">Well-being</span>
+              <span className="hidden sm:inline">Overview</span>
+            </TabsTrigger>
+            <TabsTrigger value="notifications" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Bell className="w-4 h-4" />
+              <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger value="calendar" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Calendar className="w-4 h-4" />
+              <span className="hidden sm:inline">Calendar</span>
+            </TabsTrigger>
+            <TabsTrigger value="album" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Image className="w-4 h-4" />
+              <span className="hidden sm:inline">Album</span>
             </TabsTrigger>
             <TabsTrigger value="messages" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Heart className="w-4 h-4" />
+              <MessageSquare className="w-4 h-4" />
               <span className="hidden sm:inline">Messages</span>
             </TabsTrigger>
             <TabsTrigger value="music" className="flex items-center gap-2 py-3 min-h-[44px]">
@@ -56,7 +71,7 @@ export default function FamilyConnect() {
               <span className="hidden sm:inline">Stories</span>
             </TabsTrigger>
             <TabsTrigger value="contacts" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Bell className="w-4 h-4" />
+              <Users className="w-4 h-4" />
               <span className="hidden sm:inline">Contacts</span>
             </TabsTrigger>
           </TabsList>
@@ -67,6 +82,33 @@ export default function FamilyConnect() {
                 Well-being Overview
               </h2>
               <WellbeingOverview />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="notifications">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+                Notifications & Alerts
+              </h2>
+              <NotificationCenter />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+                Family Calendar
+              </h2>
+              <CalendarManager />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="album">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+                Family Photo & Video Album
+              </h2>
+              <MediaAlbum />
             </div>
           </TabsContent>
 
