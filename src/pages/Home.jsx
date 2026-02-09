@@ -88,7 +88,7 @@ export default function Home() {
     <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-20`}>
       <div className="max-w-lg mx-auto">
         {/* Header */}
-        <div className="bg-gradient-to-r from-orange-400 via-pink-400 to-rose-400 dark:from-orange-600 dark:via-pink-600 dark:to-rose-600 text-white p-6 rounded-t-2xl shadow-lg">
+        <div className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg">
           <div className="flex justify-between items-center mb-4">
             <div className="flex-1"></div>
             <Link to={createPageUrl('CaregiverPortal')}>
@@ -111,7 +111,7 @@ export default function Home() {
         </div>
 
         {/* Main Content */}
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-orange-200 dark:border-orange-800">
+        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-blue-200 dark:border-blue-800">
           <div className="transition-all duration-300">
             <Routes>
               <Route path="/chat" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
@@ -129,7 +129,7 @@ export default function Home() {
 
       {/* Bottom Navigation */}
       <div 
-        className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-orange-50 via-pink-50 to-rose-50 dark:from-orange-950 dark:via-pink-950 dark:to-rose-950 border-t-4 border-orange-300 dark:border-orange-700 shadow-2xl"
+        className="fixed bottom-0 left-0 right-0 bg-gradient-to-r from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 border-t-4 border-blue-300 dark:border-blue-700 shadow-2xl"
         style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
       >
         <div className="flex justify-around items-center max-w-lg mx-auto">

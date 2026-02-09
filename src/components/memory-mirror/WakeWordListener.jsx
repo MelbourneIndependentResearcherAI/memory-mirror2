@@ -139,7 +139,7 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
           className={`
             w-16 h-16 rounded-full shadow-2xl transition-all duration-300
             ${isListening 
-              ? 'bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600' 
+              ? 'bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600' 
               : 'bg-slate-600 hover:bg-slate-700'}
           `}
         >
@@ -170,7 +170,7 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
             exit={{ opacity: 0, scale: 0.8 }}
             className="fixed inset-0 z-40 flex items-center justify-center pointer-events-none"
           >
-            <div className="bg-gradient-to-r from-blue-500 to-purple-500 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-8 py-4 rounded-2xl shadow-2xl flex items-center gap-3">
               <Volume2 className="w-6 h-6" />
               <span className="text-xl font-semibold">I'm listening...</span>
             </div>

@@ -265,12 +265,12 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
-      <div className="p-3 border-b border-orange-200 dark:border-orange-800 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 grid grid-cols-4 gap-2">
+      <div className="p-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 grid grid-cols-4 gap-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
         >
           <BookHeart className="w-4 h-4" />
           <span className="hidden sm:inline">Memories</span>
@@ -279,7 +279,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           variant="outline"
           size="sm"
           onClick={() => setShowMusic(!showMusic)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
         >
           <Music className="w-4 h-4" />
           <span className="hidden sm:inline">Music</span>
@@ -288,7 +288,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           variant="outline"
           size="sm"
           onClick={() => setShowStory(!showStory)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
         >
           <BookOpen className="w-4 h-4" />
           <span className="hidden sm:inline">Stories</span>
@@ -297,7 +297,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           variant="outline"
           size="sm"
           onClick={() => setShowGames(true)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-orange-300 dark:border-orange-700 hover:bg-orange-100 dark:hover:bg-orange-900"
+          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
         >
           <Gamepad2 className="w-4 h-4" />
           <span className="hidden sm:inline">Games</span>
@@ -326,7 +326,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       <PullToRefresh 
         onRefresh={handleRefresh}
-        className="flex-1 bg-gradient-to-b from-orange-50 via-pink-50 to-white dark:from-orange-950 dark:via-pink-950 dark:to-slate-900 min-h-[400px]"
+        className="flex-1 bg-gradient-to-b from-blue-50 via-cyan-50 to-white dark:from-blue-950 dark:via-cyan-950 dark:to-slate-900 min-h-[400px]"
       >
         <div 
           ref={chatContainerRef}
@@ -348,7 +348,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         )}
         {messages.length === 0 ? (
           <div className="text-center text-slate-500 py-12">
-            <Mic className="w-16 h-16 mx-auto mb-4 text-orange-400 animate-pulse" />
+            <Mic className="w-16 h-16 mx-auto mb-4 text-blue-400 animate-pulse" />
             <p className="text-lg font-medium mb-2">Welcome to Memory Mirror</p>
             <p className="text-sm mb-4">I'm here to keep you company</p>
             <p className="text-xs text-slate-400">Tap the microphone below to speak</p>
@@ -374,7 +374,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         </div>
       </PullToRefresh>
 
-      <div className="p-6 border-t-4 border-orange-300 dark:border-orange-700 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950">
+      <div className="p-6 border-t-4 border-blue-300 dark:border-blue-700 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
         <div className="flex justify-center">
           <Button
             size="lg"
@@ -384,7 +384,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
               w-24 h-24 rounded-full shadow-2xl transition-all duration-300
               ${isListening 
                 ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 animate-pulse' 
-                : 'bg-gradient-to-r from-orange-500 to-pink-600 hover:from-orange-600 hover:to-pink-700'
+                : 'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700'
               }
               ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
             `}

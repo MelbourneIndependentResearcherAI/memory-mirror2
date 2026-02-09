@@ -43,7 +43,7 @@ const eras = [
 
 export default function EraSelector({ selectedEra, onEraChange }) {
   return (
-    <div className="p-4 bg-gradient-to-r from-orange-50 to-pink-50 dark:from-orange-950 dark:to-pink-950 border-b border-orange-200 dark:border-orange-800">
+    <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-b border-blue-200 dark:border-blue-800">
       <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
         <Clock className="w-4 h-4" />
         Communication Era
