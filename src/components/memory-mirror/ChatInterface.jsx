@@ -11,6 +11,7 @@ import EraSelector from './EraSelector';
 import MusicPlayer from './MusicPlayer';
 import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
+import VisualResponse from './VisualResponse';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
@@ -30,6 +31,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
+  const [visualResponse, setVisualResponse] = useState({ show: false, suggestions: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
   const [cognitiveLevel, setCognitiveLevel] = useState('mild');
   const [lastAssessment, setLastAssessment] = useState(null);
@@ -266,6 +268,21 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       console.error('Memory recall failed:', error);
     }
 
+    // Suggest visual responses (images/videos)
+    let visualSuggestions = null;
+    try {
+      const visualResult = await base44.functions.invoke('suggestVisualResponses', {
+        conversation_context: userMessageEnglish,
+        detected_emotion: sentimentAnalysis?.emotional_tone?.[0] || 'neutral',
+        detected_era: selectedEra === 'auto' ? detectedEra : selectedEra,
+        anxiety_level: anxietyLevel,
+        conversation_topics: conversationTopics
+      });
+      visualSuggestions = visualResult.data;
+    } catch (error) {
+      console.error('Visual suggestions failed:', error);
+    }
+
     // Find relevant photos and conversation snippets using AI
     try {
       const relevantMedia = await base44.functions.invoke('findRelevantMedia', {
@@ -396,6 +413,14 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+
+      // Show visual response if available
+      if (visualSuggestions?.should_show_visuals && visualSuggestions?.suggestions?.length > 0) {
+        setVisualResponse({
+          show: true,
+          suggestions: visualSuggestions.suggestions
+        });
+      }
       
       // Determine emotional state for voice adaptation
       const emotionalState = detectedAnxiety >= 7 ? 'anxious' :
@@ -602,6 +627,13 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
           memories={smartRecall.memories}
           onClose={() => setSmartRecall({ show: false, photos: [], memories: [] })}
           onSelect={handleMemorySelect}
+        />
+      )}
+
+      {visualResponse.show && (
+        <VisualResponse
+          suggestions={visualResponse.suggestions}
+          onClose={() => setVisualResponse({ show: false, suggestions: [] })}
         />
       )}
       
