@@ -103,10 +103,14 @@ export default function AgentSupport() {
     }
   };
 
+  if (isLoading) return null;
+
+  if (!isAdmin) return null;
+
   if (showChat && conversation) {
-    const agent = agents.find(a => a.name === activeAgent);
-    return (
-      <div className="fixed bottom-4 right-4 w-96 max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-2rem)] flex flex-col bg-white dark:bg-slate-900 rounded-2xl shadow-2xl border-2 border-slate-200 dark:border-slate-700 z-50">
+   const agent = agents.find(a => a.name === activeAgent);
+   return (
+      <div className="fixed bottom-24 right-4 w-96 max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-2rem)] flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50 z-40">
         <div className={`flex items-center justify-between p-4 bg-gradient-to-r ${agent.color} text-white rounded-t-2xl`}>
           <div className="flex items-center gap-3">
             <span className="text-2xl">{agent.icon}</span>
