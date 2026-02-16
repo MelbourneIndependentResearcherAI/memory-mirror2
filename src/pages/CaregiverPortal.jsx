@@ -8,6 +8,7 @@ import MediaLibrary from '../components/caregiver/MediaLibrary';
 import PlaylistManager from '../components/music/PlaylistManager';
 import MemorySessionLauncher from '../components/memory/MemorySessionLauncher';
 import InsightsDashboard from '../components/caregiver/InsightsDashboard';
+import NightWatchLog from '../components/caregiver/NightWatchLog';
 
 const featureCards = [
   {
@@ -68,11 +69,11 @@ const featureCards = [
   },
   {
     id: 8,
-    title: 'Family Portal',
-    icon: '👥',
-    description: 'Invite family members and share access',
-    background: '#EEF2FF',
-    darkBackground: '#252D4A'
+    title: 'Night Watch Log',
+    icon: '🌙',
+    description: 'Review nighttime incidents and patterns',
+    background: '#1E1B4B',
+    darkBackground: '#1E1B4B'
   }
 ];
 
@@ -87,7 +88,8 @@ export default function CaregiverPortal() {
       3: 'insights',       // Insights & Analytics
       4: 'media',          // Photo Library -> Media Library
       6: 'playlists',      // Music Player -> Playlist Manager
-      7: 'journal'         // Care Journal
+      7: 'journal',        // Care Journal
+      8: 'nightwatch'      // Night Watch Log
     };
     
     if (viewMap[cardId]) {
@@ -182,6 +184,12 @@ export default function CaregiverPortal() {
         {activeView === 'insights' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <InsightsDashboard onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'nightwatch' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <NightWatchLog onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>

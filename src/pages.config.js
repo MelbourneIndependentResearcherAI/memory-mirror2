@@ -57,6 +57,7 @@ import SecurityMode from './pages/SecurityMode';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import NightWatch from './pages/NightWatch';
 import __Layout from './Layout.jsx';
 
 
@@ -71,6 +72,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
+    "NightWatch": NightWatch,
 }
 
 export const pagesConfig = {
