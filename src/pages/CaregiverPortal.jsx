@@ -7,6 +7,7 @@ import UserProfileSetup from '../components/caregiver/UserProfileSetup';
 import MediaLibrary from '../components/caregiver/MediaLibrary';
 import PlaylistManager from '../components/music/PlaylistManager';
 import MemorySessionLauncher from '../components/memory/MemorySessionLauncher';
+import InsightsDashboard from '../components/caregiver/InsightsDashboard';
 
 const featureCards = [
   {
@@ -27,9 +28,9 @@ const featureCards = [
   },
   {
     id: 3,
-    title: 'Daily Routine',
-    icon: '📅',
-    description: 'Manage schedules and medication reminders',
+    title: 'Insights & Analytics',
+    icon: '📊',
+    description: 'Emotional trends and cognitive patterns',
     background: '#EFF6FF',
     darkBackground: '#1E293B'
   },
@@ -83,6 +84,7 @@ export default function CaregiverPortal() {
     const viewMap = {
       1: 'profile',        // Health Monitor -> Profile Setup
       2: 'memory-session', // Memory Sessions
+      3: 'insights',       // Insights & Analytics
       4: 'media',          // Photo Library -> Media Library
       6: 'playlists',      // Music Player -> Playlist Manager
       7: 'journal'         // Care Journal
@@ -174,6 +176,12 @@ export default function CaregiverPortal() {
         {activeView === 'memory-session' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <MemorySessionLauncher onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'insights' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <InsightsDashboard onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>
