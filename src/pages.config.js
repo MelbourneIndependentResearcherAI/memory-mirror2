@@ -61,6 +61,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
 import OfflineAudio from './pages/OfflineAudio';
+import SyncBackup from './pages/SyncBackup';
 import __Layout from './Layout.jsx';
 
 
@@ -79,6 +80,7 @@ export const PAGES = {
     "phone": phone,
     "security": security,
     "OfflineAudio": OfflineAudio,
+    "SyncBackup": SyncBackup,
 }
 
 export const pagesConfig = {

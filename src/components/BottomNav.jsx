@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Moon, Music } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon, Music, Cloud } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
 export default function BottomNav() {
@@ -38,6 +38,12 @@ export default function BottomNav() {
       icon: Music,
       label: 'Offline',
       color: 'text-orange-500'
+    },
+    {
+      path: createPageUrl('SyncBackup'),
+      icon: Cloud,
+      label: 'Sync',
+      color: 'text-cyan-500'
     }
   ];
 
