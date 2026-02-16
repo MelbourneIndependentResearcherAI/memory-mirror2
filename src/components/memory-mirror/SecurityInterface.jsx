@@ -9,7 +9,7 @@ import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety } from './voiceUtils';
-import { isOnline, getOfflineResponse, cacheOfflineResponse } from '@/components/utils/offlineManager';
+import { isOnline, getOfflineResponse, cacheOfflineResponse } from '../utils/offlineManager';
 
   const getSecurityPrompt = () => {
     const safeZoneContext = safeZones.length > 0 

@@ -14,7 +14,7 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
-import { isOnline, getOfflineResponse, cacheOfflineResponse } from '@/components/utils/offlineManager';
+import { isOnline, getOfflineResponse, cacheOfflineResponse } from '../utils/offlineManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
