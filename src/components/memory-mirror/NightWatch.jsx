@@ -72,6 +72,11 @@ class NightWatchSystem {
   }
 
   async processUserStatement(statement) {
+    // Ignore empty statements
+    if (!statement || statement.trim().length === 0) {
+      return null;
+    }
+
     if (!this.currentIncident) {
       this.currentIncident = {
         timestamp: new Date().toISOString(),
@@ -268,7 +273,11 @@ export default function NightWatch({ onClose }) {
     };
 
     recognition.onresult = async (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript;
+      const transcript = event.results[event.results.length - 1][0].transcript.trim();
+      
+      // Ignore empty transcripts
+      if (!transcript) return;
+      
       addMessage('user', transcript);
       
       const response = await systemRef.current?.processUserStatement(transcript);
