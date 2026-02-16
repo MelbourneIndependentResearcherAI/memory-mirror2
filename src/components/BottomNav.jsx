@@ -37,10 +37,10 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 bg-slate-900 border-t border-slate-700 z-50"
+      className="fixed bottom-0 left-0 right-0 bg-slate-900 border-t-2 border-slate-700 z-50"
       style={{
-        paddingBottom: 'env(safe-area-inset-bottom)',
-        boxShadow: '0 -2px 10px rgba(0,0,0,0.3)'
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+        boxShadow: '0 -4px 12px rgba(0,0,0,0.4)'
       }}
     >
       <div className="flex justify-around items-center px-2 py-2">
