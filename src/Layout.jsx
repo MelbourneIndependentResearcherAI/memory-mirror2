@@ -3,6 +3,7 @@ import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import Footer from '@/components/Footer';
+import AgentSupport from '@/components/caregiver/AgentSupport';
 
 // Optimized query configuration for fast, reliable data fetching
 const queryClient = new QueryClient({
@@ -41,6 +42,7 @@ export default function Layout({ children, currentPageName }) {
             </div>
             {showFooter && <Footer />}
           </div>
+          <AgentSupport />
         </ErrorBoundary>
       </ThemeProvider>
     </QueryClientProvider>
