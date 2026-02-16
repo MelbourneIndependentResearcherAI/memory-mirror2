@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
 import AnxietyAlert from './AnxietyAlert';
+import LanguageSelector from './LanguageSelector';
 import GameInterface from '../games/GameInterface';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import EraSelector from './EraSelector';
@@ -26,6 +27,13 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showGames, setShowGames] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(() => {
+    try {
+      return localStorage.getItem('memoryMirrorLanguage') || 'en';
+    } catch {
+      return 'en';
+    }
+  });
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
 
@@ -95,6 +103,29 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     });
   };
 
+  const handleLanguageChange = (languageCode) => {
+    setSelectedLanguage(languageCode);
+    try {
+      localStorage.setItem('memoryMirrorLanguage', languageCode);
+    } catch {}
+  };
+
+  const translateText = async (text, targetLang, sourceLang = null) => {
+    if (targetLang === 'en' && !sourceLang) return text;
+    
+    try {
+      const result = await base44.functions.invoke('translateText', {
+        text,
+        targetLanguage: targetLang,
+        sourceLanguage: sourceLang
+      });
+      return result.data.translatedText || text;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return text;
+    }
+  };
+
   const sendMessage = async (transcribedText) => {
     const userMessage = transcribedText || '';
     if (!userMessage.trim() || isLoading) return;
@@ -102,19 +133,25 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     // Log chat activity
     base44.entities.ActivityLog.create({
       activity_type: 'chat',
-      details: { message_length: userMessage.length, era: selectedEra }
+      details: { message_length: userMessage.length, era: selectedEra, language: selectedLanguage }
     }).catch(() => {});
     
-    setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
+    // Display user message in their language
+    setMessages(prev => [...prev, { role: 'user', content: userMessage, language: selectedLanguage }]);
     
-    const newHistory = [...conversationHistory, { role: 'user', content: userMessage }];
+    // Translate user message to English for processing if needed
+    const userMessageEnglish = selectedLanguage !== 'en' 
+      ? await translateText(userMessage, 'en', selectedLanguage)
+      : userMessage;
+    
+    const newHistory = [...conversationHistory, { role: 'user', content: userMessageEnglish }];
     setConversationHistory(newHistory);
     setIsLoading(true);
 
-    // Perform sentiment analysis
+    // Perform sentiment analysis on English text
     let sentimentAnalysis = null;
     try {
-      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessage });
+      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessageEnglish });
       sentimentAnalysis = sentimentResult.data;
       
       // Create caregiver alert for immediate attention needs
@@ -129,7 +166,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     } catch (error) {
       console.error('Sentiment analysis failed:', error);
       // Fallback to basic anxiety detection
-      sentimentAnalysis = { anxiety_level: detectAnxiety(userMessage).level };
+      sentimentAnalysis = { anxiety_level: detectAnxiety(userMessageEnglish).level };
     }
     
     const anxietyLevel = sentimentAnalysis?.anxiety_level || 0;
@@ -138,7 +175,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     let memoryRecall = null;
     try {
       const recallResult = await base44.functions.invoke('recallMemories', {
-        context: userMessage,
+        context: userMessageEnglish,
         sentiment_analysis: sentimentAnalysis,
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra
       });
@@ -149,8 +186,14 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
 
     // Handle high anxiety proactively
     if (anxietyLevel >= 7) {
-      const calmingMessage = getCalmingRedirect(sentimentAnalysis?.trigger_words?.[0] || 'distress');
-      setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true }]);
+      let calmingMessage = getCalmingRedirect(sentimentAnalysis?.trigger_words?.[0] || 'distress');
+      
+      // Translate calming message to user's language
+      if (selectedLanguage !== 'en') {
+        calmingMessage = await translateText(calmingMessage, selectedLanguage, 'en');
+      }
+      
+      setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: calmingMessage }]);
       speakResponse(calmingMessage);
       
@@ -207,6 +250,11 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         }
       }
 
+      // Translate response to user's language
+      if (selectedLanguage !== 'en') {
+        assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
+      }
+
       // Track anxiety trends
       if (detectedAnxiety >= 4) {
         const today = new Date().toISOString().split('T')[0];
@@ -219,7 +267,7 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         }).catch(() => {});
       }
 
-      setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true }]);
+      setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
       speakResponse(assistantMessage);
 
@@ -241,11 +289,18 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
     } catch (error) {
       console.error('Chat error:', error);
-      const fallback = "I'm here with you. Let's try again in just a moment.";
+      let fallback = "I'm here with you. Let's try again in just a moment.";
+      
+      // Translate fallback message
+      if (selectedLanguage !== 'en') {
+        fallback = await translateText(fallback, selectedLanguage, 'en');
+      }
+      
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: fallback,
-        hasVoice: true 
+        hasVoice: true,
+        language: selectedLanguage
       }]);
       speakResponse(fallback);
     } finally {
@@ -263,7 +318,16 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.continuous = false;
     recognitionRef.current.interimResults = false;
-    recognitionRef.current.lang = 'en-US';
+    
+    // Map language codes to speech recognition locales
+    const langMap = {
+      en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', it: 'it-IT',
+      pt: 'pt-PT', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ar: 'ar-SA',
+      hi: 'hi-IN', ru: 'ru-RU', nl: 'nl-NL', pl: 'pl-PL', tr: 'tr-TR',
+      vi: 'vi-VN', th: 'th-TH', sv: 'sv-SE', no: 'nb-NO', da: 'da-DK'
+    };
+    
+    recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
     
     recognitionRef.current.onstart = () => {
       setIsListening(true);
@@ -316,6 +380,11 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
   return (
     <div className="flex flex-col h-full">
+      <LanguageSelector 
+        selectedLanguage={selectedLanguage}
+        onLanguageChange={handleLanguageChange}
+      />
+      
       <VoiceSetup />
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
