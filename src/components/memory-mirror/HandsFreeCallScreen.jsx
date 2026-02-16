@@ -4,6 +4,7 @@ import { Loader2, Mic, MicOff, Phone, Volume2, AlertTriangle } from 'lucide-reac
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
 import { useQuery } from '@tanstack/react-query';
+import { getOfflineResponse, isOnline, cacheOfflineResponse } from '@/utils/offlineManager';
 
 const emergencyPrompt = `You are an empathetic emergency operator specially trained in dementia care. The person you're speaking with may be confused, scared, or disoriented.
 
@@ -128,24 +129,25 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
     try {
       let operatorMessage = '';
 
-      if (isOnline) {
+      if (isOnline()) {
         // Use API response
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `${emergencyPrompt}\n\nConversation:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond warmly.`,
-        });
-        operatorMessage = typeof response === 'string' ? response : "I'm here with you. Everything is going to be okay.";
-
-        // Cache response for offline use
         try {
-          const cached = JSON.parse(localStorage.getItem('offlineResponses') || '{}');
-          cached[transcript] = operatorMessage;
-          localStorage.setItem('offlineResponses', JSON.stringify(cached));
-        } catch (e) {
-          console.error('Failed to cache response');
+          const response = await base44.integrations.Core.InvokeLLM({
+            prompt: `${emergencyPrompt}\n\nConversation:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond warmly.`,
+          });
+          operatorMessage = typeof response === 'string' ? response : "I'm here with you. Everything is going to be okay.";
+
+          // Cache for offline use
+          await cacheOfflineResponse(transcript, operatorMessage);
+        } catch (error) {
+          console.error('API error, falling back to offline:', error);
+          const offlineResponse = await getOfflineResponse(transcript);
+          operatorMessage = offlineResponse.text;
         }
       } else {
         // Use offline responses
-        operatorMessage = offlineResponses[transcript] || "I'm here with you. You're safe. Take a deep breath.";
+        const offlineResponse = await getOfflineResponse(transcript);
+        operatorMessage = offlineResponse.text;
       }
 
       setMessages(prev => [...prev, { role: 'assistant', content: operatorMessage }]);
