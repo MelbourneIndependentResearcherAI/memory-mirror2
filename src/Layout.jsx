@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
-import { initOfflineDB } from '@/lib/offlineManager';
+import { initOfflineDB } from '@/components/utils/offlineManager';
 
 // Initialize offline database on app load
 if (typeof window !== 'undefined') {
