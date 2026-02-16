@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
-import SyncBackupManager from '@/components/memory-mirror/SyncBackupManager';
+import SyncBackupManager from '@/components/memory-mirror/SyncBackupManager.jsx';
 import { setupAutoSync } from '@/components/utils/syncManager';
 
 export default function SyncBackup() {

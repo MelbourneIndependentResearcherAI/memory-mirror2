@@ -6,9 +6,9 @@ import {
   getSyncMetadata,
   syncToCloud,
   setAutoSyncEnabled,
-  getOfflineStorageUsage,
   prepareOfflineDataForSync
 } from '../utils/syncManager';
+import { getOfflineStorageUsage } from '../utils/offlineManager';
 import { isOnline } from '../utils/offlineManager';
 
 export default function SyncBackupManager() {
