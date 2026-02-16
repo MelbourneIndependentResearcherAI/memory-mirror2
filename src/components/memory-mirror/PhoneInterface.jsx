@@ -6,7 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import DialPad from './DialPad';
 import QuickDial from './QuickDial';
-import CallScreen from './CallScreen';
+import HandsFreeCallScreen from './HandsFreeCallScreen';
 
 export default function PhoneInterface() {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -83,7 +83,7 @@ export default function PhoneInterface() {
 
   if (isInCall) {
     return (
-      <CallScreen
+      <HandsFreeCallScreen
         phoneNumber={formatPhoneNumber(phoneNumber)}
         contactName={contactName || 'Unknown'}
         onEndCall={handleEndCall}
