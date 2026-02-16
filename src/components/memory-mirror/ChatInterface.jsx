@@ -10,6 +10,7 @@ import PullToRefresh from '@/components/ui/pull-to-refresh';
 import EraSelector from './EraSelector';
 import MusicPlayer from './MusicPlayer';
 import StoryTeller from './StoryTeller';
+import SmartMemoryRecall from './SmartMemoryRecall';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
@@ -27,6 +28,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showGames, setShowGames] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
+  const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
+  const [conversationTopics, setConversationTopics] = useState([]);
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     try {
       return localStorage.getItem('memoryMirrorLanguage') || 'en';
@@ -173,6 +176,13 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     
     const anxietyLevel = sentimentAnalysis?.anxiety_level || 0;
 
+    // Track conversation topics for smart recall
+    const topics = sentimentAnalysis?.themes || [];
+    setConversationTopics(prev => {
+      const updated = [...new Set([...prev, ...topics])].slice(-10);
+      return updated;
+    });
+
     // Recall relevant memories proactively
     let memoryRecall = null;
     try {
@@ -184,6 +194,27 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       memoryRecall = recallResult.data;
     } catch (error) {
       console.error('Memory recall failed:', error);
+    }
+
+    // Find relevant photos and conversation snippets using AI
+    try {
+      const relevantMedia = await base44.functions.invoke('findRelevantMedia', {
+        context: userMessageEnglish,
+        current_era: selectedEra === 'auto' ? detectedEra : selectedEra,
+        conversation_topics: conversationTopics
+      });
+      
+      if (relevantMedia.data?.should_show && 
+          (relevantMedia.data?.photos?.length > 0 || relevantMedia.data?.memories?.length > 0)) {
+        setSmartRecall({
+          show: true,
+          photos: relevantMedia.data.photos || [],
+          memories: relevantMedia.data.memories || [],
+          reasoning: relevantMedia.data.reasoning
+        });
+      }
+    } catch (error) {
+      console.error('Smart recall failed:', error);
     }
 
     // Handle high anxiety proactively
@@ -384,6 +415,21 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
     // Clear conversation when changing era for fresh context
     setMessages([]);
     setConversationHistory([]);
+    setConversationTopics([]);
+  };
+
+  const handleMemorySelect = async (type, item) => {
+    setSmartRecall({ show: false, photos: [], memories: [] });
+    
+    // Create a message about the selected memory
+    let description = '';
+    if (type === 'photo') {
+      description = `Tell me about this photo: "${item.title}". ${item.caption || ''}`;
+    } else {
+      description = `I'd like to talk about: "${item.title}". ${item.description?.substring(0, 100)}...`;
+    }
+    
+    await sendMessage(description);
   };
 
   return (
@@ -453,6 +499,15 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
             setShowAnxietyAlert(false);
           }}
           onDismiss={() => setShowAnxietyAlert(false)}
+        />
+      )}
+
+      {smartRecall.show && (
+        <SmartMemoryRecall
+          photos={smartRecall.photos}
+          memories={smartRecall.memories}
+          onClose={() => setSmartRecall({ show: false, photos: [], memories: [] })}
+          onSelect={handleMemorySelect}
         />
       )}
       
