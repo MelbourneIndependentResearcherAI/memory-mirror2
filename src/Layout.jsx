@@ -6,6 +6,12 @@ import Footer from '@/components/Footer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
+import { initOfflineDB } from '@/lib/offlineManager';
+
+// Initialize offline database on app load
+if (typeof window !== 'undefined') {
+  initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
+}
 
 // Optimized query configuration for fast, reliable data fetching
 const queryClient = new QueryClient({
