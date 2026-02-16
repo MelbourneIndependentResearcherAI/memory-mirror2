@@ -92,6 +92,118 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* Important Announcement */}
+        <div className="max-w-4xl mx-auto mb-16 md:mb-20 px-4">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-orange-950 dark:to-yellow-950 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-amber-200 dark:border-amber-800">
+            <div className="flex items-center justify-center mb-6">
+              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
+                <Heart className="w-8 h-8 text-white" />
+              </div>
+            </div>
+            
+            <h2 className="text-2xl md:text-3xl font-semibold text-center text-slate-900 dark:text-slate-100 mb-6">
+              An Important Update About Memory Mirror
+            </h2>
+
+            <div className="prose prose-slate dark:prose-invert max-w-none space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
+              <p className="text-base md:text-lg">
+                <strong>To the families and caregivers using Memory Mirror,</strong>
+              </p>
+
+              <p>
+                When I created Memory Mirror, my goal was to bring comfort and dignity to those living with dementia and peace of mind to their loved ones. Watching your feedback about how it's helped during difficult moments has been deeply meaningful.
+              </p>
+
+              <p>
+                However, I need to be transparent with you: the AI technology that powers Memory Mirror - the voice synthesis, era detection, sentiment analysis, and real-time responses - comes with significant operational costs. I've been covering these expenses personally since launch, but the reality is that I can no longer sustain this on my own.
+              </p>
+
+              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 my-6 border-2 border-amber-300 dark:border-amber-700">
+                <p className="font-semibold text-lg md:text-xl text-slate-900 dark:text-slate-100 mb-4">
+                  Starting in one month, Memory Mirror will offer two options:
+                </p>
+
+                <div className="grid md:grid-cols-2 gap-6 mb-6">
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl p-6 border-2 border-blue-300 dark:border-blue-700">
+                    <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Premium - $14.99/month</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Unlimited daily access to all features</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Wake word activation ("Hey Mirror")</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Era detection & adaptation</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Anxiety detection & intervention</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Realistic human voice responses</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Memory recall with photos</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
+                        <span>Priority support</span>
+                      </li>
+                    </ul>
+                  </div>
+
+                  <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6 border-2 border-slate-300 dark:border-slate-600">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Free Tier - $0</h3>
+                    <ul className="space-y-2 text-sm">
+                      <li className="flex items-start gap-2">
+                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
+                        <span>Daily limited access to core features</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
+                        <span>Perfect for occasional use or trying the app</span>
+                      </li>
+                      <li className="flex items-start gap-2">
+                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
+                        <span>No credit card required</span>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+
+                <div className="bg-green-100 dark:bg-green-900/30 rounded-xl p-4 border-2 border-green-400 dark:border-green-700">
+                  <p className="text-green-900 dark:text-green-100 font-semibold text-center">
+                    🎁 Current users get one month free before any subscription begins
+                  </p>
+                </div>
+              </div>
+
+              <p>
+                Most dementia care apps charge $20-30+ per month. I've deliberately set Memory Mirror at $14.99 because keeping this accessible is my way of giving back to the community. This price simply covers the AI processing costs and server infrastructure needed to keep the app running reliably for you and your loved ones.
+              </p>
+
+              <p>
+                This isn't about profit - it's about ensuring Memory Mirror can continue providing the reliable, dignified support your family deserves while remaining affordable for those who need it most.
+              </p>
+
+              <p className="text-base md:text-lg italic pt-4">
+                Thank you for trusting Memory Mirror during such an important time in your lives.
+              </p>
+
+              <p className="font-semibold">
+                With gratitude,<br />
+                Memory Mirror
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Key Features with Direct Access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20 px-4">
           <Link to="/chat" className="block group">
