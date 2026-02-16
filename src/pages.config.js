@@ -55,10 +55,11 @@ import Landing from './pages/Landing';
 import NightWatch from './pages/NightWatch';
 import PhoneMode from './pages/PhoneMode';
 import SecurityMode from './pages/SecurityMode';
+import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import VoiceSetup from './pages/VoiceSetup';
+import PrivacyPolicy from './pages/PrivacyPolicy';
 import __Layout from './Layout.jsx';
 
 
@@ -71,10 +72,11 @@ export const PAGES = {
     "NightWatch": NightWatch,
     "PhoneMode": PhoneMode,
     "SecurityMode": SecurityMode,
+    "VoiceSetup": VoiceSetup,
     "chat": chat,
     "phone": phone,
     "security": security,
-    "VoiceSetup": VoiceSetup,
+    "PrivacyPolicy": PrivacyPolicy,
 }
 
 export const pagesConfig = {

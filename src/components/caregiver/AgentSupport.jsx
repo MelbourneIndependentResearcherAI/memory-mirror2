@@ -12,6 +12,8 @@ export default function AgentSupport() {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [isSending, setIsSending] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   const agents = [
     {
@@ -29,6 +31,22 @@ export default function AgentSupport() {
       color: 'from-purple-500 to-pink-500'
     }
   ];
+
+  useEffect(() => {
+    // Check if user is admin/caregiver
+    const checkUser = async () => {
+      try {
+        const user = await base44.auth.me();
+        setIsAdmin(user?.role === 'admin');
+      } catch (error) {
+        console.log('Not authenticated or not admin');
+        setIsAdmin(false);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkUser();
+  }, []);
 
   useEffect(() => {
     if (conversation) {
@@ -168,7 +186,7 @@ export default function AgentSupport() {
             <Button
               key={agent.name}
               onClick={() => startConversation(agent.name)}
-              className={`bg-gradient-to-r ${agent.color} text-white hover:opacity-90 shadow-lg min-h-[56px] px-6 rounded-2xl`}
+              className={`bg-gradient-to-r ${agent.color} text-white hover:opacity-90 shadow-lg min-h-[56px] px-6 rounded-2xl backdrop-blur-md bg-opacity-90`}
             >
               <span className="text-xl mr-2">{agent.icon}</span>
               <div className="text-left">
