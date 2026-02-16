@@ -24,25 +24,11 @@ export default function CareJournal({ onBack }) {
 
   const { data: journals = [], isLoading } = useQuery({
     queryKey: ['careJournals'],
-    queryFn: async () => {
-      // For now, we'll store journals as a custom entity
-      // You may want to create a CareJournal entity
-      const response = await fetch('/api/care-journals');
-      if (!response.ok) return [];
-      return response.json();
-    },
+    queryFn: () => base44.entities.CareJournal.list('-created_date', 50),
   });
 
   const createJournalMutation = useMutation({
-    mutationFn: async (journalData) => {
-      // Store journal entry - you can create a CareJournal entity for this
-      const response = await fetch('/api/care-journals', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(journalData),
-      });
-      return response.json();
-    },
+    mutationFn: (journalData) => base44.entities.CareJournal.create(journalData),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['careJournals'] });
       setTitle('');
@@ -139,7 +125,7 @@ export default function CareJournal({ onBack }) {
         title,
         notes,
         audio_url: audioUrl,
-        created_date: new Date().toISOString(),
+        entry_date: new Date().toISOString(),
       });
 
       alert('Journal entry saved successfully!');
@@ -339,7 +325,7 @@ export default function CareJournal({ onBack }) {
                       {journal.title}
                     </h3>
                     <span className="text-xs text-slate-500">
-                      {new Date(journal.created_date).toLocaleDateString()}
+                      {new Date(journal.entry_date || journal.created_date).toLocaleDateString()}
                     </span>
                   </div>
                   {journal.notes && (
