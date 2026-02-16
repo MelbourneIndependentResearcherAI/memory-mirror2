@@ -1,5 +1,5 @@
 import React from 'react';
-import { MessageCircle, Phone, Shield, Heart, Brain, Volume2 } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link } from 'react-router-dom';
@@ -50,7 +50,7 @@ export default function Landing() {
             </Link>
 
             {/* Secondary Mode Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
               <Link to="/phone" className="w-full animate-fade-in-up animation-delay-100">
                 <div className="bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
@@ -78,6 +78,22 @@ export default function Landing() {
                     </h3>
                     <p className="text-sm md:text-base text-white/90 leading-relaxed">
                       Visual security check to reduce anxiety about locks, lights, and safety
+                    </p>
+                  </div>
+                </div>
+              </Link>
+
+              <Link to={createPageUrl('NightWatch')} className="w-full animate-fade-in-up animation-delay-200">
+                <div className="bg-gradient-to-br from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
+                      <Moon className="w-9 h-9 md:w-10 md:h-10 text-yellow-300" />
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                      Night Watch
+                    </h3>
+                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                      Gentle nighttime companion that prevents wandering and provides comfort
                     </p>
                   </div>
                 </div>

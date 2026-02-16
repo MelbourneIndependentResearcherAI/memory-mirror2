@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Gamepad2 } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
 export default function BottomNav() {
@@ -28,10 +28,10 @@ export default function BottomNav() {
       color: 'text-purple-500'
     },
     {
-      path: createPageUrl('FamilyConnect'),
-      icon: Gamepad2,
-      label: 'Activities',
-      color: 'text-orange-500'
+      path: createPageUrl('NightWatch'),
+      icon: Moon,
+      label: 'Night Watch',
+      color: 'text-indigo-500'
     }
   ];
 
