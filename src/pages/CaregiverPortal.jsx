@@ -1,17 +1,74 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings as SettingsIcon, Users, BookHeart, TrendingUp, Shield, Brain, Book } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import SafeZonesManager from '../components/caregiver/SafeZonesManager';
-import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
-import MemoryManager from '../components/caregiver/MemoryManager';
-import AnxietyDashboard from '../components/caregiver/AnxietyDashboard';
-import InsightsPanel from '../components/caregiver/InsightsPanel';
-import Settings from '../components/caregiver/Settings';
-import ProactiveSuggestions from '../components/caregiver/ProactiveSuggestions';
-import EducationHub from '../components/caregiver/EducationHub';
-import CognitiveProgression from '../components/caregiver/CognitiveProgression';
+
+const featureCards = [
+  {
+    id: 1,
+    title: 'Health Monitor',
+    icon: '❤️',
+    description: 'View current emotional state and anxiety levels',
+    background: '#FFF5F5',
+    darkBackground: '#4A1D1D'
+  },
+  {
+    id: 2,
+    title: 'Smart Alerts',
+    icon: '🔔',
+    description: 'Get notified of distress or unusual patterns',
+    background: '#FFFBEB',
+    darkBackground: '#4A3C1D'
+  },
+  {
+    id: 3,
+    title: 'Daily Routine',
+    icon: '📅',
+    description: 'Manage schedules and medication reminders',
+    background: '#EFF6FF',
+    darkBackground: '#1E293B'
+  },
+  {
+    id: 4,
+    title: 'Photo Library',
+    icon: '📸',
+    description: 'Upload and organize memory photos',
+    background: '#FAF5FF',
+    darkBackground: '#3B1F4A'
+  },
+  {
+    id: 5,
+    title: 'Chat History',
+    icon: '💬',
+    description: 'Review conversations and key moments',
+    background: '#F0FDF4',
+    darkBackground: '#1E4A2D'
+  },
+  {
+    id: 6,
+    title: 'Music Player',
+    icon: '🎵',
+    description: 'Era-specific songs and playlists',
+    background: '#FFF7ED',
+    darkBackground: '#4A2D1D'
+  },
+  {
+    id: 7,
+    title: 'Care Journal',
+    icon: '📖',
+    description: 'Document observations and changes',
+    background: '#F0FDFA',
+    darkBackground: '#1D4A4A'
+  },
+  {
+    id: 8,
+    title: 'Family Portal',
+    icon: '👥',
+    description: 'Invite family members and share access',
+    background: '#EEF2FF',
+    darkBackground: '#252D4A'
+  }
+];
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
@@ -30,91 +87,38 @@ export default function CaregiverPortal() {
               <ArrowLeft className="w-6 h-6" />
             </Button>
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3">
-                <SettingsIcon className="w-8 h-8 md:w-10 md:h-10 text-indigo-600 dark:text-indigo-400" />
+              <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100">
                 Caregiver Portal
               </h1>
               <p className="text-slate-600 dark:text-slate-400 mt-2">
-                Manage safe memory zones, contacts, memories, and view insights
+                Manage care, monitor wellbeing, and access insights
               </p>
             </div>
           </div>
         </div>
 
-        <Tabs defaultValue="ai-insights" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 h-auto bg-white dark:bg-slate-900">
-            <TabsTrigger value="ai-insights" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Brain className="w-4 h-4" />
-              <span className="hidden sm:inline">AI Insights</span>
-              <span className="sm:hidden">AI</span>
-            </TabsTrigger>
-            <TabsTrigger value="education" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Book className="w-4 h-4" />
-              <span className="hidden sm:inline">Education</span>
-              <span className="sm:hidden">📚</span>
-            </TabsTrigger>
-            <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Alerts</span>
-              <span className="sm:hidden">🔔</span>
-            </TabsTrigger>
-            <TabsTrigger value="memories" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <BookHeart className="w-4 h-4" />
-              <span className="hidden sm:inline">Memories</span>
-            </TabsTrigger>
-            <TabsTrigger value="safe-zones" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Shield className="w-4 h-4" />
-              <span className="hidden sm:inline">Safe Zones</span>
-            </TabsTrigger>
-            <TabsTrigger value="contacts" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <Users className="w-4 h-4" />
-              <span className="hidden sm:inline">Contacts</span>
-            </TabsTrigger>
-            <TabsTrigger value="trends" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <TrendingUp className="w-4 h-4" />
-              <span className="hidden sm:inline">Trends</span>
-            </TabsTrigger>
-            <TabsTrigger value="settings" className="flex items-center gap-2 py-3 min-h-[44px]">
-              <SettingsIcon className="w-4 h-4" />
-              <span className="hidden sm:inline">Settings</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="ai-insights">
-            <ProactiveSuggestions />
-          </TabsContent>
-
-          <TabsContent value="education">
-            <EducationHub />
-          </TabsContent>
-
-          <TabsContent value="insights">
-            <InsightsPanel />
-          </TabsContent>
-
-          <TabsContent value="memories">
-            <MemoryManager />
-          </TabsContent>
-
-          <TabsContent value="safe-zones">
-            <SafeZonesManager />
-          </TabsContent>
-
-          <TabsContent value="contacts">
-            <EmergencyContactsManager />
-          </TabsContent>
-
-          <TabsContent value="trends">
-            <div className="space-y-6">
-              <CognitiveProgression />
-              <AnxietyDashboard />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="settings">
-            <Settings />
-          </TabsContent>
-        </Tabs>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {featureCards.map((card) => (
+            <button
+              key={card.id}
+              className="text-left p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer min-h-[160px] flex flex-col items-start"
+              style={{
+                backgroundColor: card.background,
+                boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
+              }}
+            >
+              <div className="text-4xl mb-4">
+                {card.icon}
+              </div>
+              <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+                {card.title}
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {card.description}
+              </p>
+            </button>
+          ))}
+        </div>
       </div>
     </div>
   );
