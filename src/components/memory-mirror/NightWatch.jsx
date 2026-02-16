@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, AlertTriangle, Phone, X, Volume2, Pause } from 'lucide-react';
+import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
@@ -183,6 +183,9 @@ export default function NightWatch({ onClose }) {
   const [isListening, setIsListening] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
+  const [isCheckingDistress, setIsCheckingDistress] = useState(false);
+  const [comfortAudio, setComfortAudio] = useState(null);
+  const [isPlayingAudio, setIsPlayingAudio] = useState(false);
   const systemRef = useRef(null);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -330,6 +333,70 @@ export default function NightWatch({ onClose }) {
     toast.success('Emergency contact notified');
   };
 
+  const checkForDistress = async () => {
+    setIsCheckingDistress(true);
+    try {
+      const hour = new Date().getHours();
+      const timeOfNight = hour >= 22 || hour <= 5 ? 'late_night' : 'evening';
+
+      const response = await base44.functions.invoke('nightWatchAI', {
+        context: 'ambient_monitoring',
+        time_of_night: timeOfNight,
+        detected_anxiety_indicators: [],
+        previous_incidents: messages
+      });
+
+      const result = response.data;
+      
+      if (result.assessment.recommended_action !== 'continue_monitoring') {
+        addMessage('assistant', result.comfort_message);
+        speakText(result.comfort_message);
+
+        await base44.entities.NightIncident.create({
+          timestamp: new Date().toISOString(),
+          incident_type: 'distress',
+          severity: result.assessment.distress_level >= 6 ? 'high' : 'medium',
+          ai_response: result.comfort_message,
+          outcome: 'redirected_to_comfort'
+        }).catch(() => {});
+
+        setComfortAudio({
+          type: result.comfort_audio_type,
+          message: result.comfort_message
+        });
+      }
+
+      if (result.should_notify_caregiver) {
+        setCurrentAlert({
+          type: 'caregiver_alert',
+          message: 'Caregiver has been notified',
+          timestamp: new Date()
+        });
+      }
+    } catch (error) {
+      console.error('Distress check failed:', error);
+    } finally {
+      setIsCheckingDistress(false);
+    }
+  };
+
+  const playComfortAudio = () => {
+    if (!comfortAudio) return;
+    
+    setIsPlayingAudio(true);
+    const utterance = new SpeechSynthesisUtterance(comfortAudio.message);
+    utterance.rate = 0.9;
+    utterance.pitch = 1.0;
+    utterance.volume = 0.8;
+    
+    window.speechSynthesis.cancel();
+    window.speechSynthesis.speak(utterance);
+
+    utterance.onend = () => {
+      setIsPlayingAudio(false);
+    };
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
       <div className="container mx-auto px-4 py-8 max-w-4xl">
@@ -343,6 +410,34 @@ export default function NightWatch({ onClose }) {
             <X className="w-6 h-6" />
           </Button>
         </div>
+
+        {/* Comfort Audio */}
+        {comfortAudio && (
+          <Card className="mb-6 bg-cyan-900/50 border-cyan-700">
+            <CardContent className="pt-6">
+              <div className="space-y-3">
+                <p className="text-white font-semibold">{comfortAudio.message}</p>
+                <Button
+                  onClick={playComfortAudio}
+                  disabled={isPlayingAudio}
+                  className="bg-cyan-600 hover:bg-cyan-700 gap-2 w-full"
+                >
+                  {isPlayingAudio ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Playing...
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-4 h-4" />
+                      Play Comfort Audio
+                    </>
+                  )}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Status Card */}
         <Card className="mb-6 bg-slate-800 border-slate-700">
@@ -366,17 +461,36 @@ export default function NightWatch({ onClose }) {
             </div>
             
             {isActive && (
-              <div className="mt-4 p-3 bg-slate-700 rounded-lg">
-                <div className="flex items-center gap-2 text-sm">
-                  <Volume2 className={`w-4 h-4 ${isListening ? 'text-green-400' : 'text-gray-400'}`} />
-                  <span>{isListening ? 'Listening for voice...' : 'Voice detection paused'}</span>
-                </div>
-                {isSpeaking && (
-                  <div className="flex items-center gap-2 text-sm mt-2 text-blue-400">
-                    <Volume2 className="w-4 h-4 animate-pulse" />
-                    <span>AI speaking...</span>
+              <div className="mt-4 space-y-3">
+                <div className="p-3 bg-slate-700 rounded-lg">
+                  <div className="flex items-center gap-2 text-sm">
+                    <Volume2 className={`w-4 h-4 ${isListening ? 'text-green-400' : 'text-gray-400'}`} />
+                    <span>{isListening ? 'Listening for voice...' : 'Voice detection paused'}</span>
                   </div>
-                )}
+                  {isSpeaking && (
+                    <div className="flex items-center gap-2 text-sm mt-2 text-blue-400">
+                      <Volume2 className="w-4 h-4 animate-pulse" />
+                      <span>AI speaking...</span>
+                    </div>
+                  )}
+                </div>
+                <Button
+                  onClick={checkForDistress}
+                  disabled={isCheckingDistress}
+                  className="w-full bg-cyan-600 hover:bg-cyan-700 gap-2"
+                >
+                  {isCheckingDistress ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="w-4 h-4" />
+                      Check for Distress
+                    </>
+                  )}
+                </Button>
               </div>
             )}
           </CardContent>
