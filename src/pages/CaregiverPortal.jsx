@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings as SettingsIcon, Users, BookHeart, TrendingUp, Shield, Brain } from 'lucide-react';
+import { ArrowLeft, Settings as SettingsIcon, Users, BookHeart, TrendingUp, Shield, Brain, Book } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SafeZonesManager from '../components/caregiver/SafeZonesManager';
@@ -10,6 +10,7 @@ import AnxietyDashboard from '../components/caregiver/AnxietyDashboard';
 import InsightsPanel from '../components/caregiver/InsightsPanel';
 import Settings from '../components/caregiver/Settings';
 import ProactiveSuggestions from '../components/caregiver/ProactiveSuggestions';
+import EducationHub from '../components/caregiver/EducationHub';
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
@@ -40,11 +41,16 @@ export default function CaregiverPortal() {
         </div>
 
         <Tabs defaultValue="ai-insights" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 h-auto bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-8 h-auto bg-white dark:bg-slate-900">
             <TabsTrigger value="ai-insights" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Brain className="w-4 h-4" />
               <span className="hidden sm:inline">AI Insights</span>
               <span className="sm:hidden">AI</span>
+            </TabsTrigger>
+            <TabsTrigger value="education" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Book className="w-4 h-4" />
+              <span className="hidden sm:inline">Education</span>
+              <span className="sm:hidden">📚</span>
             </TabsTrigger>
             <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px]">
               <TrendingUp className="w-4 h-4" />
@@ -75,6 +81,10 @@ export default function CaregiverPortal() {
 
           <TabsContent value="ai-insights">
             <ProactiveSuggestions />
+          </TabsContent>
+
+          <TabsContent value="education">
+            <EducationHub />
           </TabsContent>
 
           <TabsContent value="insights">
