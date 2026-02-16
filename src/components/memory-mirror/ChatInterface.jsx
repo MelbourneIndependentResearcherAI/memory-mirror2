@@ -58,6 +58,14 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryFn: () => base44.entities.Memory.list('-created_date', 50),
   });
 
+  const { data: userProfile } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const profiles = await base44.entities.UserProfile.list();
+      return profiles[0] || null;
+    },
+  });
+
   const { data: cognitiveAssessments = [] } = useQuery({
     queryKey: ['cognitiveAssessments'],
     queryFn: () => base44.entities.CognitiveAssessment.list('-assessment_date', 1),
@@ -71,6 +79,20 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   }, [cognitiveAssessments]);
 
   const getSystemPrompt = () => {
+    const profileContext = userProfile 
+      ? `\n\nPERSONALIZATION PROFILE:
+- Their name: ${userProfile.loved_one_name}${userProfile.preferred_name ? ` (prefers: ${userProfile.preferred_name})` : ''}
+- Born: ${userProfile.birth_year || 'unknown'}
+- Favorite era: ${userProfile.favorite_era || 'unknown'}
+- Communication style: ${userProfile.communication_style || 'warm'}
+${userProfile.interests?.length > 0 ? `- Interests: ${userProfile.interests.join(', ')}` : ''}
+${userProfile.favorite_music?.length > 0 ? `- Favorite music: ${userProfile.favorite_music.join(', ')}` : ''}
+${userProfile.important_people?.length > 0 ? `- Important people: ${userProfile.important_people.map(p => `${p.name} (${p.relationship})`).join(', ')}` : ''}
+${userProfile.life_experiences?.length > 0 ? `- Key experiences: ${userProfile.life_experiences.map(e => e.title).join(', ')}` : ''}
+
+USE THIS INFORMATION to personalize your responses. Call them by their preferred name. Reference their interests, favorite music, and life experiences naturally in conversation.`
+      : '';
+
     const safeZoneContext = safeZones.length > 0 
       ? `\n\nSAFE MEMORY ZONES (redirect here when anxiety detected):\n${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}`
       : '';
@@ -127,7 +149,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
 6. Validate all emotions without judgment.
 7. Use warm, simple, clear language with era-appropriate expressions.
 8. Reassure them that everything is taken care of.
-9. Be patient and repeat information if needed.${safeZoneContext}${memoryContext}
+9. Be patient and repeat information if needed.${profileContext}${safeZoneContext}${memoryContext}
 
 **COGNITIVE ADAPTATION (Current level: ${cognitiveLevel}):**
 - Communication complexity: ${adaptation.complexity}

@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import CareJournal from '../components/caregiver/CareJournal';
+import UserProfileSetup from '../components/caregiver/UserProfileSetup';
+import MediaLibrary from '../components/caregiver/MediaLibrary';
 
 const featureCards = [
   {
@@ -76,8 +78,15 @@ export default function CaregiverPortal() {
   const [activeView, setActiveView] = useState('home');
 
   const handleCardClick = (cardId) => {
-    if (cardId === 7) {
-      setActiveView('journal');
+    const viewMap = {
+      1: 'profile', // Health Monitor -> Profile Setup
+      4: 'media',   // Photo Library -> Media Library
+      6: 'media',   // Music Player -> Media Library
+      7: 'journal'  // Care Journal
+    };
+    
+    if (viewMap[cardId]) {
+      setActiveView(viewMap[cardId]);
     } else {
       alert(`${featureCards.find(c => c.id === cardId)?.title} - Coming soon!`);
     }
@@ -138,6 +147,18 @@ export default function CaregiverPortal() {
         {activeView === 'journal' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <CareJournal onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'profile' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <UserProfileSetup onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'media' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <MediaLibrary onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>
