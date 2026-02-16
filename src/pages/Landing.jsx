@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 pb-8">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl" style={{ marginTop: '0px' }}>
         <div className="text-center max-w-4xl mx-auto">
@@ -320,7 +320,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '40px' }}></div>
+        <div style={{ height: '60px' }}></div>
       </div>
     </div>
   );

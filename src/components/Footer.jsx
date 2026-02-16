@@ -4,11 +4,11 @@ import { Mail, Heart } from 'lucide-react';
 export default function Footer() {
   return (
     <footer 
-      className="relative border-t-4 border-orange-300 dark:border-orange-700 z-5"
+      className="relative border-t-4 border-orange-300 dark:border-orange-700 z-10"
       style={{
         backgroundColor: '#1a1a1a',
-        marginTop: '40px',
-        padding: '30px 20px'
+        marginTop: '0',
+        padding: '30px 20px 40px'
       }}
     >
       <div className="max-w-4xl mx-auto text-center space-y-3">
