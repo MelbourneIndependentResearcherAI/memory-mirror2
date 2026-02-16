@@ -6,7 +6,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Moon, AlertTriangle, CheckCircle, Clock, ChevronDown, ChevronUp } from 'lucide-react';
 
-export default function NightWatchLog() {
+export default function NightWatchLog({ onBack }) {
   const [expandedIncident, setExpandedIncident] = useState(null);
 
   const { data: incidents = [], isLoading } = useQuery({
@@ -51,11 +51,18 @@ export default function NightWatchLog() {
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold flex items-center gap-2">
-          <Moon className="w-6 h-6 text-indigo-600" />
-          Night Watch Log
-        </h2>
+      <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center gap-3">
+          {onBack && (
+            <Button variant="ghost" size="icon" onClick={onBack}>
+              <ChevronUp className="w-5 h-5" />
+            </Button>
+          )}
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Moon className="w-6 h-6 text-indigo-600" />
+            Night Watch Log
+          </h2>
+        </div>
         <Badge variant="outline" className="text-sm">
           {incidents.length} Total Incidents
         </Badge>
