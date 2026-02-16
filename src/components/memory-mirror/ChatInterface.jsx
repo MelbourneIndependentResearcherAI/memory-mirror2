@@ -95,11 +95,13 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     }
   }, [messages]);
 
-  const speakResponse = (text) => {
+  const speakResponse = (text, emotionalContext = {}) => {
     speakWithRealisticVoice(text, {
       rate: 0.92,
       pitch: 1.05,
-      volume: 1.0
+      volume: 1.0,
+      emotionalState: emotionalContext.state || 'neutral',
+      anxietyLevel: emotionalContext.anxietyLevel || 0
     });
   };
 
@@ -195,7 +197,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: calmingMessage }]);
-      speakResponse(calmingMessage);
+      speakResponse(calmingMessage, { state: 'calm', anxietyLevel });
       
       // Suggest phone mode for high anxiety
       setAnxietyState({ level: anxietyLevel, suggestedMode: 'phone' });
@@ -269,7 +271,13 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-      speakResponse(assistantMessage);
+      
+      // Determine emotional state for voice adaptation
+      const emotionalState = detectedAnxiety >= 7 ? 'anxious' :
+                           detectedAnxiety >= 4 ? 'calm' :
+                           detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
+      
+      speakResponse(assistantMessage, { state: emotionalState, anxietyLevel: detectedAnxiety });
 
       // Show anxiety alert if needed
       if (detectedAnxiety >= 6) {

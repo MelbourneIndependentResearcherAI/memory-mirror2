@@ -13,7 +13,14 @@ export default function VoiceSetup() {
       return 'auto';
     }
   });
-  const [voices, setVoices] = useState({ maleVoices: [], femaleVoices: [] });
+  const [voices, setVoices] = useState({ 
+    warmComforting: [], 
+    calm: [], 
+    upbeat: [], 
+    british: [], 
+    american: [], 
+    australian: [] 
+  });
 
   useEffect(() => {
     // Load voices
@@ -34,7 +41,15 @@ export default function VoiceSetup() {
   };
 
   const testVoice = (voiceId) => {
-    const tempVoice = [...voices.maleVoices, ...voices.femaleVoices].find(v => v.id === voiceId)?.voice;
+    const allVoices = [
+      ...voices.warmComforting, 
+      ...voices.calm, 
+      ...voices.upbeat, 
+      ...voices.british, 
+      ...voices.american, 
+      ...voices.australian
+    ];
+    const tempVoice = allVoices.find(v => v.id === voiceId)?.voice;
     if (tempVoice) {
       const utterance = new SpeechSynthesisUtterance("Hello, I'm here to help you feel comfortable and safe.");
       utterance.voice = tempVoice;
@@ -84,8 +99,8 @@ export default function VoiceSetup() {
                 >
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-medium text-slate-800 dark:text-slate-100">Auto (Best Available)</p>
-                      <p className="text-xs text-slate-600 dark:text-slate-400">Let me choose the best voice for you</p>
+                      <p className="font-medium text-slate-800 dark:text-slate-100">🤖 Auto (Adaptive)</p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">Adapts voice to your emotional state</p>
                     </div>
                     {selectedVoice === 'auto' && (
                       <div className="w-3 h-3 rounded-full bg-blue-500" />
@@ -94,11 +109,11 @@ export default function VoiceSetup() {
                 </button>
               </div>
 
-              {/* Female Voices */}
-              {voices.femaleVoices.length > 0 && (
+              {/* Warm & Comforting */}
+              {voices.warmComforting.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">Female Voices</p>
-                  {voices.femaleVoices.slice(0, 4).map((v) => (
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">🌸 Warm & Comforting</p>
+                  {voices.warmComforting.map((v) => (
                     <button
                       key={v.id}
                       onClick={() => handleVoiceChange(v.id)}
@@ -134,11 +149,11 @@ export default function VoiceSetup() {
                 </div>
               )}
 
-              {/* Male Voices */}
-              {voices.maleVoices.length > 0 && (
+              {/* Calm & Reassuring */}
+              {voices.calm.length > 0 && (
                 <div className="space-y-2">
-                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">Male Voices</p>
-                  {voices.maleVoices.slice(0, 4).map((v) => (
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">🌊 Calm & Reassuring</p>
+                  {voices.calm.map((v) => (
                     <button
                       key={v.id}
                       onClick={() => handleVoiceChange(v.id)}
@@ -166,6 +181,166 @@ export default function VoiceSetup() {
                           </Button>
                           {selectedVoice === v.id && (
                             <div className="w-3 h-3 rounded-full bg-blue-500" />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Upbeat & Cheerful */}
+              {voices.upbeat.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">☀️ Upbeat & Cheerful</p>
+                  {voices.upbeat.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => handleVoiceChange(v.id)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all min-h-[56px] text-left ${
+                        selectedVoice === v.id
+                          ? 'border-yellow-500 bg-yellow-100 dark:bg-yellow-900/30'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-yellow-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{v.label}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              testVoice(v.id);
+                            }}
+                            className="min-h-[36px] min-w-[36px]"
+                          >
+                            <Play className="w-4 h-4" />
+                          </Button>
+                          {selectedVoice === v.id && (
+                            <div className="w-3 h-3 rounded-full bg-yellow-500" />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* British Accents */}
+              {voices.british.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">🇬🇧 British Accents</p>
+                  {voices.british.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => handleVoiceChange(v.id)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all min-h-[56px] text-left ${
+                        selectedVoice === v.id
+                          ? 'border-purple-500 bg-purple-100 dark:bg-purple-900/30'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-purple-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{v.label}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              testVoice(v.id);
+                            }}
+                            className="min-h-[36px] min-w-[36px]"
+                          >
+                            <Play className="w-4 h-4" />
+                          </Button>
+                          {selectedVoice === v.id && (
+                            <div className="w-3 h-3 rounded-full bg-purple-500" />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* American Accents */}
+              {voices.american.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">🇺🇸 American Accents</p>
+                  {voices.american.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => handleVoiceChange(v.id)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all min-h-[56px] text-left ${
+                        selectedVoice === v.id
+                          ? 'border-indigo-500 bg-indigo-100 dark:bg-indigo-900/30'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-indigo-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{v.label}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              testVoice(v.id);
+                            }}
+                            className="min-h-[36px] min-w-[36px]"
+                          >
+                            <Play className="w-4 h-4" />
+                          </Button>
+                          {selectedVoice === v.id && (
+                            <div className="w-3 h-3 rounded-full bg-indigo-500" />
+                          )}
+                        </div>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              )}
+
+              {/* Australian Accents */}
+              {voices.australian.length > 0 && (
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-slate-700 dark:text-slate-300 px-1">🇦🇺 Australian Accents</p>
+                  {voices.australian.map((v) => (
+                    <button
+                      key={v.id}
+                      onClick={() => handleVoiceChange(v.id)}
+                      className={`w-full p-3 rounded-lg border-2 transition-all min-h-[56px] text-left ${
+                        selectedVoice === v.id
+                          ? 'border-green-500 bg-green-100 dark:bg-green-900/30'
+                          : 'border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-green-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex-1">
+                          <p className="font-medium text-slate-800 dark:text-slate-100">{v.label}</p>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              testVoice(v.id);
+                            }}
+                            className="min-h-[36px] min-w-[36px]"
+                          >
+                            <Play className="w-4 h-4" />
+                          </Button>
+                          {selectedVoice === v.id && (
+                            <div className="w-3 h-3 rounded-full bg-green-500" />
                           )}
                         </div>
                       </div>

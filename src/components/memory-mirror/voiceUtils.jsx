@@ -14,62 +14,88 @@ export const setUserVoicePreference = (voiceId) => {
   } catch {}
 };
 
-// Get available quality voices categorized
+// Get available quality voices categorized with accents and tones
 export const getAvailableVoices = () => {
   const voices = speechSynthesis.getVoices();
   
-  const maleVoices = [];
-  const femaleVoices = [];
-  
-  // Premium voice patterns
-  const premiumPatterns = {
-    male: [
-      { name: 'Microsoft Guy Online (Natural)', label: 'Guy (Natural)' },
-      { name: 'Google UK English Male', label: 'British Male' },
-      { name: 'Google US English Male', label: 'American Male' },
-      { name: 'Daniel', label: 'Daniel' },
-      { name: 'James', label: 'James' },
-    ],
-    female: [
-      { name: 'Microsoft Aria Online (Natural)', label: 'Aria (Natural)' },
-      { name: 'Microsoft Jenny Online (Natural)', label: 'Jenny (Natural)' },
-      { name: 'Google UK English Female', label: 'British Female' },
-      { name: 'Google US English Female', label: 'American Female' },
-      { name: 'Samantha', label: 'Samantha' },
-      { name: 'Karen', label: 'Karen' },
-      { name: 'Moira', label: 'Moira' },
-      { name: 'Tessa', label: 'Tessa' },
-    ]
+  const voicesByCategory = {
+    warmComforting: [],
+    calm: [],
+    upbeat: [],
+    british: [],
+    american: [],
+    australian: []
   };
   
-  // Find premium voices
-  premiumPatterns.male.forEach(({ name, label }) => {
-    const voice = voices.find(v => v.name.includes(name));
-    if (voice) maleVoices.push({ voice, label, id: voice.name });
+  // Comprehensive voice patterns with accents and emotional tones
+  const voicePatterns = [
+    // Warm & Comforting (female-leaning)
+    { name: 'Microsoft Aria Online (Natural)', label: '🌸 Aria - Warm & Natural', category: 'warmComforting', icon: '🌸', tone: 'warm' },
+    { name: 'Microsoft Jenny Online (Natural)', label: '💖 Jenny - Friendly & Caring', category: 'warmComforting', icon: '💖', tone: 'warm' },
+    { name: 'Samantha', label: '🌺 Samantha - Comforting', category: 'warmComforting', icon: '🌺', tone: 'warm' },
+    { name: 'Karen', label: '🌻 Karen - Gentle', category: 'warmComforting', icon: '🌻', tone: 'warm' },
+    { name: 'Moira', label: '🌷 Moira - Soothing', category: 'warmComforting', icon: '🌷', tone: 'warm' },
+    
+    // Calm & Reassuring
+    { name: 'Microsoft Guy Online (Natural)', label: '🌊 Guy - Calm & Steady', category: 'calm', icon: '🌊', tone: 'calm' },
+    { name: 'Daniel', label: '🧘 Daniel - Peaceful', category: 'calm', icon: '🧘', tone: 'calm' },
+    { name: 'Tom', label: '☮️ Tom - Serene', category: 'calm', icon: '☮️', tone: 'calm' },
+    
+    // Upbeat & Energetic
+    { name: 'Tessa', label: '☀️ Tessa - Cheerful', category: 'upbeat', icon: '☀️', tone: 'upbeat' },
+    { name: 'James', label: '⭐ James - Bright', category: 'upbeat', icon: '⭐', tone: 'upbeat' },
+    
+    // British Accents
+    { name: 'Google UK English Female', label: '🇬🇧 British Female', category: 'british', icon: '🇬🇧', tone: 'neutral', accent: 'British' },
+    { name: 'Google UK English Male', label: '🇬🇧 British Male', category: 'british', icon: '🇬🇧', tone: 'neutral', accent: 'British' },
+    { name: 'Kate', label: '🇬🇧 Kate - British', category: 'british', icon: '🇬🇧', tone: 'warm', accent: 'British' },
+    { name: 'Oliver', label: '🇬🇧 Oliver - British', category: 'british', icon: '🇬🇧', tone: 'calm', accent: 'British' },
+    
+    // American Accents
+    { name: 'Google US English Female', label: '🇺🇸 American Female', category: 'american', icon: '🇺🇸', tone: 'neutral', accent: 'American' },
+    { name: 'Google US English Male', label: '🇺🇸 American Male', category: 'american', icon: '🇺🇸', tone: 'neutral', accent: 'American' },
+    { name: 'Alex', label: '🇺🇸 Alex - American', category: 'american', icon: '🇺🇸', tone: 'neutral', accent: 'American' },
+    
+    // Australian Accents
+    { name: 'Google Australian Female', label: '🇦🇺 Australian Female', category: 'australian', icon: '🇦🇺', tone: 'upbeat', accent: 'Australian' },
+    { name: 'Google Australian Male', label: '🇦🇺 Australian Male', category: 'australian', icon: '🇦🇺', tone: 'upbeat', accent: 'Australian' },
+    { name: 'Catherine', label: '🇦🇺 Catherine - Australian', category: 'australian', icon: '🇦🇺', tone: 'warm', accent: 'Australian' },
+  ];
+  
+  // Find and categorize voices
+  voicePatterns.forEach(({ name, label, category, icon, tone, accent }) => {
+    const voice = voices.find(v => v.name.includes(name) || v.name === name);
+    if (voice) {
+      voicesByCategory[category].push({ 
+        voice, 
+        label, 
+        id: voice.name, 
+        icon, 
+        tone,
+        accent: accent || null
+      });
+    }
   });
   
-  premiumPatterns.female.forEach(({ name, label }) => {
-    const voice = voices.find(v => v.name.includes(name));
-    if (voice) femaleVoices.push({ voice, label, id: voice.name });
-  });
-  
-  // Fallback: any English voices
-  if (maleVoices.length === 0) {
-    voices.filter(v => v.lang.startsWith('en') && 
-      (v.name.toLowerCase().includes('male') && !v.name.toLowerCase().includes('female')))
-      .forEach(voice => maleVoices.push({ voice, label: voice.name.split('-')[0].trim(), id: voice.name }));
+  // Fallback: categorize any English voices
+  if (Object.values(voicesByCategory).every(arr => arr.length === 0)) {
+    voices.filter(v => v.lang.startsWith('en')).forEach(voice => {
+      const name = voice.name.toLowerCase();
+      const category = name.includes('female') ? 'warmComforting' : 'calm';
+      voicesByCategory[category].push({ 
+        voice, 
+        label: voice.name.split('-')[0].trim(), 
+        id: voice.name,
+        icon: '🎙️',
+        tone: 'neutral'
+      });
+    });
   }
   
-  if (femaleVoices.length === 0) {
-    voices.filter(v => v.lang.startsWith('en') && 
-      v.name.toLowerCase().includes('female'))
-      .forEach(voice => femaleVoices.push({ voice, label: voice.name.split('-')[0].trim(), id: voice.name }));
-  }
-  
-  return { maleVoices, femaleVoices };
+  return voicesByCategory;
 };
 
-// Enhanced voice synthesis with user preference
+// Enhanced voice synthesis with emotional adaptation
 export const speakWithRealisticVoice = (text, options = {}) => {
   if (!('speechSynthesis' in window)) return;
 
@@ -81,6 +107,8 @@ export const speakWithRealisticVoice = (text, options = {}) => {
   // Get voices
   const voices = speechSynthesis.getVoices();
   const userPreference = getUserVoicePreference();
+  const emotionalState = options.emotionalState || 'neutral'; // calm, anxious, confused, happy
+  const anxietyLevel = options.anxietyLevel || 0;
   
   let selectedVoice = null;
   
@@ -89,14 +117,38 @@ export const speakWithRealisticVoice = (text, options = {}) => {
     selectedVoice = voices.find(v => v.name === userPreference);
   }
   
-  // Auto-select best voice if no preference or voice not found
+  // Auto-select best voice based on emotional context
   if (!selectedVoice) {
-    const { maleVoices, femaleVoices } = getAvailableVoices();
-    const allPremium = [...femaleVoices, ...maleVoices];
+    const voicesByCategory = getAvailableVoices();
     
-    if (allPremium.length > 0) {
-      selectedVoice = allPremium[0].voice;
-    } else {
+    // Select voice category based on user's emotional state
+    let preferredCategory = 'warmComforting';
+    if (anxietyLevel >= 7 || emotionalState === 'anxious') {
+      preferredCategory = 'calm'; // Use calm, reassuring voices for high anxiety
+    } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
+      preferredCategory = 'upbeat'; // Match positive energy
+    }
+    
+    // Try preferred category first, then fallback
+    const categoriesInOrder = [
+      preferredCategory,
+      'warmComforting',
+      'calm',
+      'upbeat',
+      'british',
+      'american',
+      'australian'
+    ];
+    
+    for (const category of categoriesInOrder) {
+      if (voicesByCategory[category]?.length > 0) {
+        selectedVoice = voicesByCategory[category][0].voice;
+        break;
+      }
+    }
+    
+    // Final fallback
+    if (!selectedVoice) {
       selectedVoice = voices.find(v => v.lang.startsWith('en-US'));
     }
   }
@@ -105,18 +157,47 @@ export const speakWithRealisticVoice = (text, options = {}) => {
     utterance.voice = selectedVoice;
   }
 
-  // Natural, warm settings
-  utterance.rate = options.rate || 0.90;
-  utterance.pitch = options.pitch || 1.0;
-  utterance.volume = options.volume || 1.0;
+  // Dynamically adjust voice parameters based on emotional context
+  let rate = 0.90;
+  let pitch = 1.0;
+  let volume = 1.0;
 
-  // Add natural pauses
+  // Adjust for emotional state
+  if (anxietyLevel >= 7 || emotionalState === 'anxious') {
+    // Slower, lower, calmer for high anxiety
+    rate = 0.75;
+    pitch = 0.95;
+    volume = 0.9;
+  } else if (emotionalState === 'confused') {
+    // Slightly slower, clear for confusion
+    rate = 0.85;
+    pitch = 1.0;
+    volume = 1.0;
+  } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
+    // Slightly faster, higher for positive emotions
+    rate = 0.95;
+    pitch = 1.05;
+    volume = 1.0;
+  } else if (emotionalState === 'calm') {
+    // Gentle, steady for calm moments
+    rate = 0.88;
+    pitch = 1.0;
+    volume = 0.95;
+  }
+
+  // Allow manual overrides
+  utterance.rate = options.rate || rate;
+  utterance.pitch = options.pitch || pitch;
+  utterance.volume = options.volume || volume;
+
+  // Add natural pauses with emotional pacing
   let processedText = text;
   if (text.length > 80) {
+    const pauseDuration = anxietyLevel >= 7 ? ' .... ' : ' ... '; // Longer pauses for anxiety
     processedText = text
-      .replace(/\. /g, '. ... ')
-      .replace(/\? /g, '? ... ')
-      .replace(/! /g, '! ... ')
+      .replace(/\. /g, `.${pauseDuration}`)
+      .replace(/\? /g, `?${pauseDuration}`)
+      .replace(/! /g, `!${pauseDuration}`)
       .replace(/,  /g, ', .. ');
   }
 
