@@ -13,6 +13,7 @@ import NightWatchLog from '../components/caregiver/NightWatchLog';
 import AlwaysOnVoice from '../components/memory-mirror/AlwaysOnVoice';
 import SmartDeviceManager from '../components/smartHome/SmartDeviceManager';
 import SmartHomeRoutineBuilder from '../components/smartHome/SmartHomeRoutineBuilder';
+import MoodAutomationConfig from '../components/smartHome/MoodAutomationConfig';
 
 const featureCards = [
   {
@@ -94,6 +95,14 @@ const featureCards = [
     description: 'Manage smart devices and automations',
     background: '#F0F9FF',
     darkBackground: '#1A3D5C'
+  },
+  {
+    id: 11,
+    title: 'Mood Automations',
+    icon: '🧠',
+    description: 'Configure mood-based smart home adjustments',
+    background: '#F5EFFF',
+    darkBackground: '#3A2A4A'
   }
 ];
 
@@ -127,7 +136,8 @@ export default function CaregiverPortal() {
       7: 'journal',        // Care Journal
       8: 'nightwatch',     // Night Watch Log
       9: 'voice-setup',    // Voice Setup
-      10: 'smart-home'     // Smart Home
+      10: 'smart-home',    // Smart Home
+      11: 'mood-automations' // Mood-Based Automations
     };
     
     if (viewMap[cardId]) {
@@ -255,6 +265,19 @@ export default function CaregiverPortal() {
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <SmartHomeRoutineBuilder />
             </div>
+          </div>
+        )}
+
+        {activeView === 'mood-automations' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <button
+              onClick={() => setActiveView('home')}
+              className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Portal
+            </button>
+            <MoodAutomationConfig />
           </div>
         )}
       </div>

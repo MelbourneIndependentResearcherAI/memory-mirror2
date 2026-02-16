@@ -14,6 +14,7 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { isOnline, getOfflineResponse, cacheOfflineResponse } from '../utils/offlineManager';
@@ -414,6 +415,23 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+
+      // Trigger mood-based device control
+      if (detectedAnxiety >= 4 && systemRef.current?.currentIncident === undefined) {
+        try {
+          const moodControl = await base44.functions.invoke('moodBasedDeviceControl', {
+            anxiety_level: detectedAnxiety,
+            detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
+            conversation_context: userMessageEnglish
+          });
+
+          if (moodControl.data?.applied) {
+            toast.success(`Environment adjusted: ${moodControl.data.automations_triggered.join(', ')}`);
+          }
+        } catch (error) {
+          console.error('Mood-based control failed:', error);
+        }
+      }
 
       // Show visual response if available
       if (visualSuggestions?.should_show_visuals && visualSuggestions?.suggestions?.length > 0) {
