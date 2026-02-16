@@ -204,6 +204,59 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* SEO Content Section */}
+        <div className="max-w-4xl mx-auto mb-16 md:mb-20 px-4">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-blue-200 dark:border-blue-800">
+            <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+              Memory Mirror - AI Companion for Dementia Care
+            </h1>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Memory Mirror is a compassionate AI assistant designed specifically for individuals living with dementia and their caregivers. Using advanced artificial intelligence, Memory Mirror provides comfort, dignity, and emotional support through natural conversation and voice interaction.
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              Supporting Your Loved One's Journey
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Dementia care requires patience, understanding, and constant adaptation. Memory Mirror serves as a 24/7 companion that never gets frustrated, always maintains dignity, and meets your loved one exactly where they are mentally and emotionally. Whether they're experiencing memories from the 1940s, the 1960s, the 1980s, or living in the present moment, Memory Mirror adapts its language, cultural references, and responses to create genuine connection and comfort.
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              How Memory Mirror Works
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Simply say "Hey Mirror" to activate hands-free conversation. Our AI listens with a realistic human voice that provides warmth and emotional connection. The system automatically detects anxiety, confusion, or distress in conversation patterns and responds with calming reassurance, familiar patterns, and emotional safety. Memory Mirror proactively recalls relevant photos and memories, helping your loved one reconnect with cherished moments.
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              Built on Compassion, Not Correction
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Memory Mirror never tells someone they're wrong or confused. Instead, it validates their experience and meets them with dignity and respect. Every interaction prioritizes their emotional wellbeing, treating each person with the warmth and understanding they deserve.
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              For Caregivers: Peace of Mind
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              As a caregiver, you carry an enormous responsibility. Memory Mirror provides reliable companionship when you need a moment to yourself, supplementing your care with consistent, compassionate support. The AI is specifically trained in dementia care principles, giving you confidence that your loved one is in good hands.
+            </p>
+
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              Pricing That Reflects Our Values
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-0">
+              We offer a free tier with daily limited access so everyone can try Memory Mirror. Premium subscription is $14.99 per month - intentionally priced well below other dementia care apps because we believe quality support shouldn't be out of reach for families already managing substantial caregiving costs.
+            </p>
+          </div>
+        </div>
+
         {/* Key Features with Direct Access */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20 px-4">
           <Link to="/chat" className="block group">
