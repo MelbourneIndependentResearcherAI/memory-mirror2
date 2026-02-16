@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap } from 'lucide-react';
+import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap, Lightbulb, Thermometer } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
+import SmartHomeControls from '../smartHome/SmartHomeControls';
 
 // Night Watch AI System - Prevents wandering, provides comfort, monitors safety
 class NightWatchSystem {
@@ -528,6 +529,21 @@ export default function NightWatch({ onClose }) {
                   Call Caregiver
                 </Button>
               </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Smart Home Controls */}
+        {isActive && (
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Lightbulb className="w-5 h-5" />
+                Comfort Controls
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <SmartHomeControls mode="compact" />
             </CardContent>
           </Card>
         )}

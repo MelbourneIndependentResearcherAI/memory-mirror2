@@ -53,15 +53,15 @@ import FamilyConnect from './pages/FamilyConnect';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
 import NightWatch from './pages/NightWatch';
+import OfflineAudio from './pages/OfflineAudio';
 import PhoneMode from './pages/PhoneMode';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SecurityMode from './pages/SecurityMode';
+import SyncBackup from './pages/SyncBackup';
 import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import OfflineAudio from './pages/OfflineAudio';
-import SyncBackup from './pages/SyncBackup';
 import __Layout from './Layout.jsx';
 
 
@@ -72,15 +72,15 @@ export const PAGES = {
     "Home": Home,
     "Landing": Landing,
     "NightWatch": NightWatch,
+    "OfflineAudio": OfflineAudio,
     "PhoneMode": PhoneMode,
     "PrivacyPolicy": PrivacyPolicy,
     "SecurityMode": SecurityMode,
+    "SyncBackup": SyncBackup,
     "VoiceSetup": VoiceSetup,
     "chat": chat,
     "phone": phone,
     "security": security,
-    "OfflineAudio": OfflineAudio,
-    "SyncBackup": SyncBackup,
 }
 
 export const pagesConfig = {

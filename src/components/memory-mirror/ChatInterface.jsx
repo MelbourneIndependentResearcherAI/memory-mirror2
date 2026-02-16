@@ -12,6 +12,7 @@ import MusicPlayer from './MusicPlayer';
 import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
+import SmartHomeControls from '../smartHome/SmartHomeControls';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
@@ -562,6 +563,13 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
+      {/* Smart Home Controls Panel */}
+      {visualResponse.show && (
+        <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
+          <SmartHomeControls mode="compact" />
+        </div>
+      )}
+
       <div className="p-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 grid grid-cols-4 gap-2">
         <Button
           variant="outline"
