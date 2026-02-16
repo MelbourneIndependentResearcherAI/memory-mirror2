@@ -31,9 +31,9 @@ export default function Landing() {
 
           <div className="flex flex-col gap-4 md:gap-5 justify-center items-stretch px-4 max-w-4xl mx-auto">
             <Link to="/chat" className="w-full animate-fade-in-up">
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-10 md:px-12 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold">
+              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-10 md:px-12 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center">
                 <MessageCircle className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                Start AI Chat
+                <span>Start AI Chat</span>
               </Button>
             </Link>
 
@@ -41,20 +41,20 @@ export default function Landing() {
               <Link to="/phone" className="w-full animate-fade-in-up animation-delay-100">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold"
+                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center"
                 >
                   <Phone className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                  Phone Dial Pad
+                  <span>Phone Dial Pad</span>
                 </Button>
               </Link>
 
               <Link to="/security" className="w-full animate-fade-in-up animation-delay-200">
                 <Button 
                   size="lg" 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold"
+                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center"
                 >
                   <Shield className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                  Security Scanner
+                  <span>Security Scanner</span>
                 </Button>
               </Link>
             </div>
@@ -64,18 +64,18 @@ export default function Landing() {
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-blue-400 text-blue-600 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium"
+                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-blue-400 text-blue-600 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium flex items-center justify-center"
                 >
-                  👨‍👩‍👧‍👦 Family Portal
+                  <span>👨‍👩‍👧‍👦 Family Portal</span>
                 </Button>
               </Link>
               <Link to={createPageUrl('CaregiverPortal')} className="w-full animate-fade-in-up animation-delay-200">
                 <Button 
                   size="lg" 
                   variant="outline" 
-                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-purple-400 text-purple-600 hover:bg-purple-50 dark:border-purple-500 dark:text-purple-400 dark:hover:bg-purple-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium"
+                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-purple-400 text-purple-600 hover:bg-purple-50 dark:border-purple-500 dark:text-purple-400 dark:hover:bg-purple-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium flex items-center justify-center"
                 >
-                  🧠 Caregiver Dashboard
+                  <span>🧠 Caregiver Dashboard</span>
                 </Button>
               </Link>
             </div>
