@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Moon } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon, Music } from 'lucide-react';
 import { createPageUrl } from '../utils';
 
 export default function BottomNav() {
@@ -32,6 +32,12 @@ export default function BottomNav() {
       icon: Moon,
       label: 'Night Watch',
       color: 'text-indigo-500'
+    },
+    {
+      path: createPageUrl('OfflineAudio'),
+      icon: Music,
+      label: 'Offline',
+      color: 'text-orange-500'
     }
   ];
 
