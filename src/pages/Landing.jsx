@@ -6,43 +6,43 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl" style={{ marginTop: '0px' }}>
-        <div className="text-center max-w-4xl mx-auto">
-          <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg mb-4 md:mb-6 border-2 border-blue-200 dark:border-blue-700">
-            <Heart className="w-5 h-5 md:w-6 md:h-6 text-blue-500 animate-pulse" />
-            <span className="text-base md:text-lg font-medium text-slate-800 dark:text-slate-100">Compassionate AI Companion</span>
+      <div className="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
+        <div className="text-center max-w-5xl mx-auto">
+          <div className="inline-flex items-center gap-2.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-5 md:px-7 py-2.5 md:py-3 rounded-full shadow-sm mb-6 md:mb-8 border border-blue-200/50 dark:border-blue-700/50">
+            <Heart className="w-4.5 h-4.5 text-blue-500 animate-pulse" />
+            <span className="text-sm md:text-base font-medium text-slate-700 dark:text-slate-300">Compassionate Care at Home</span>
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-cyan-600 to-sky-600 dark:from-blue-400 dark:via-cyan-400 dark:to-sky-400 mb-2 md:mb-3 leading-tight px-4">
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-slate-950 dark:text-white mb-4 md:mb-6 leading-tight px-4">
             Memory Mirror
           </h1>
-          <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-4 md:mb-6 px-4 italic">
-            dementia care kit for carers and their loved ones
+          <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-3 md:mb-4 px-4 tracking-wide uppercase font-medium">
+            AI Companion for Dementia Care
           </p>
           
-          <p className="text-lg md:text-2xl lg:text-3xl text-slate-700 dark:text-slate-300 mb-2 md:mb-4 leading-relaxed font-light px-4">
-            Meeting your loved one where they are,
+          <p className="text-xl md:text-2xl lg:text-3xl text-slate-800 dark:text-slate-200 mb-3 md:mb-4 leading-relaxed font-medium px-4">
+            Meeting your loved one where they are—
           </p>
-          <p className="text-base md:text-xl lg:text-2xl text-blue-600 dark:text-blue-400 mb-6 md:mb-8 italic px-4">
-            with dignity, warmth, and understanding
+          <p className="text-lg md:text-xl lg:text-2xl text-blue-600 dark:text-blue-400 mb-8 md:mb-12 font-light px-4">
+            with dignity, warmth, and genuine understanding
           </p>
 
-          <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-6">
+          <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
-          <Link to="/chat" className="w-full animate-fade-in-up">
-              <div className="bg-gradient-to-br from-blue-500 via-cyan-500 to-sky-500 hover:from-blue-600 hover:via-cyan-600 hover:to-sky-600 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
+          <Link to="/chat" className="w-full group">
+              <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
                 <div className="flex items-start gap-5">
-                  <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
-                    <MessageCircle className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                  <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
+                    <MessageCircle className="w-9 h-9 md:w-11 md:h-11 text-white" />
                   </div>
                   <div className="flex-1 text-left">
-                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                    <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2">
                       AI Chat Companion
                     </h3>
-                    <p className="text-base md:text-lg text-white/90 leading-relaxed">
-                      Voice-activated conversation that adapts to any era, detects anxiety, and recalls memories
+                    <p className="text-base md:text-lg text-white/85 leading-relaxed">
+                      Voice-activated conversation that adapts to any era, detects anxiety, and recalls cherished memories
                     </p>
                   </div>
                 </div>
@@ -51,48 +51,48 @@ export default function Landing() {
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <Link to="/phone" className="w-full animate-fade-in-up animation-delay-100">
-                <div className="bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+              <Link to="/phone" className="w-full group">
+                <div className="bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
-                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
-                      <Phone className="w-9 h-9 md:w-10 md:h-10 text-white" />
+                    <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
+                      <Phone className="w-8 h-8 md:w-9 md:h-9 text-white" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
                       Phone Mode
                     </h3>
-                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                    <p className="text-sm md:text-base text-white/85 leading-relaxed">
                       Familiar dial pad interface for calling loved ones with visual reassurance
                     </p>
                   </div>
                 </div>
               </Link>
 
-              <Link to="/security" className="w-full animate-fade-in-up animation-delay-200">
-                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+              <Link to="/security" className="w-full group">
+                <div className="bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
-                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
-                      <Shield className="w-9 h-9 md:w-10 md:h-10 text-white" />
+                    <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
+                      <Shield className="w-8 h-8 md:w-9 md:h-9 text-white" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
                       Security Scanner
                     </h3>
-                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                    <p className="text-sm md:text-base text-white/85 leading-relaxed">
                       Visual security check to reduce anxiety about locks, lights, and safety
                     </p>
                   </div>
                 </div>
               </Link>
 
-              <Link to={createPageUrl('NightWatch')} className="w-full animate-fade-in-up animation-delay-200">
-                <div className="bg-gradient-to-br from-slate-700 to-slate-900 hover:from-slate-800 hover:to-black rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+              <Link to={createPageUrl('NightWatch')} className="w-full group">
+                <div className="bg-gradient-to-br from-slate-800 to-slate-950 hover:from-slate-900 hover:to-black rounded-2xl shadow-lg border border-white/10 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
-                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
-                      <Moon className="w-9 h-9 md:w-10 md:h-10 text-yellow-300" />
+                    <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
+                      <Moon className="w-8 h-8 md:w-9 md:h-9 text-yellow-300" />
                     </div>
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
                       Night Watch
                     </h3>
-                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                    <p className="text-sm md:text-base text-white/85 leading-relaxed">
                       Gentle nighttime companion that prevents wandering and provides comfort
                     </p>
                   </div>
@@ -101,16 +101,18 @@ export default function Landing() {
             </div>
 
             {/* Voice Setup Card */}
-            <Link to={createPageUrl('VoiceSetup')} className="w-full animate-fade-in-up animation-delay-100 mt-2">
-              <div className="bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+            <Link to={createPageUrl('VoiceSetup')} className="w-full group">
+              <div className="bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
-                  <Volume2 className="w-10 h-10 text-white" />
+                  <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
+                    <Volume2 className="w-8 h-8 text-white" />
+                  </div>
                   <div className="flex-1">
-                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
                       Always-On Voice
                     </h3>
-                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
-                      Hands-free voice control - Just say "Hey Mirror" anytime
+                    <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                      Hands-free voice control — just say "Hey Mirror" anytime, anywhere
                     </p>
                   </div>
                 </div>
@@ -118,13 +120,13 @@ export default function Landing() {
             </Link>
 
             {/* Portal Access Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full mt-2">
-              <Link to={createPageUrl('FamilyConnect')} className="w-full animate-fade-in-up animation-delay-100">
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-4 border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+              <Link to={createPageUrl('FamilyConnect')} className="w-full group">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-blue-200/60 dark:border-blue-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">👨‍👩‍👧‍👦</div>
                     <div className="flex-1">
-                      <h3 className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                      <h3 className="text-xl md:text-2xl font-semibold text-blue-700 dark:text-blue-400 mb-2">
                         Family Portal
                       </h3>
                       <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -135,12 +137,12 @@ export default function Landing() {
                 </div>
               </Link>
 
-              <Link to={createPageUrl('CaregiverPortal')} className="w-full animate-fade-in-up animation-delay-200">
-                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-4 border-purple-300 dark:border-purple-600 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+              <Link to={createPageUrl('CaregiverPortal')} className="w-full group">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-purple-200/60 dark:border-purple-700/40 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">🧠</div>
                     <div className="flex-1">
-                      <h3 className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                      <h3 className="text-xl md:text-2xl font-semibold text-purple-700 dark:text-purple-400 mb-2">
                         Caregiver Dashboard
                       </h3>
                       <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
@@ -155,20 +157,20 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="px-8 md:px-10 py-5 md:py-6 text-base md:text-lg rounded-2xl border-3 border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:hover:bg-cyan-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full animate-fade-in-up animation-delay-200 min-h-[64px] mt-2"
+              className="px-8 md:px-10 py-4 md:py-5 text-base md:text-lg rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:shadow-md transition-all duration-300 w-full min-h-[52px] font-medium"
               onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
             >
-              ℹ️ Learn More About Memory Mirror
+              Learn More About Memory Mirror →
             </Button>
           </div>
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '60px' }}></div>
+        <div style={{ height: '80px' }}></div>
 
         {/* Main Content Section - SEO */}
-        <div className="max-w-4xl mx-auto px-4" style={{ marginBottom: '0' }}>
-          <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-blue-200 dark:border-blue-800">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 shadow-lg border border-slate-200/60 dark:border-slate-700/50">
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
               Memory Mirror - AI Companion for Dementia Care
             </h1>
@@ -220,57 +222,57 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '60px' }}></div>
+        <div style={{ height: '80px' }}></div>
 
         {/* How It Works */}
-        <div id="how-it-works" className="mx-4" style={{ backgroundColor: '#3b82f6', borderRadius: '24px', paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-8 md:mb-12 text-center px-6">How It Works</h2>
+        <div id="how-it-works" className="mx-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl py-16 md:py-20 px-6">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-12 md:mb-16 text-center">How It Works</h2>
           
-          <div className="space-y-6 md:space-y-8 max-w-3xl mx-auto px-6">
-            <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+          <div className="space-y-8 max-w-3xl mx-auto">
+            <div className="flex gap-5 md:gap-6 items-start">
+              <div className="w-11 h-11 md:w-12 md:h-12 bg-white/25 backdrop-blur-sm text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-bold border border-white/30">
                 1
               </div>
               <div>
                 <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Wake Word Activation</h3>
-                <p className="text-sm md:text-base text-white/90 leading-relaxed">
-                  Say <strong>"Hey Mirror"</strong> to activate hands-free. The app opens ready to listen and respond with a human-like voice.
+                <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                  Say <strong>"Hey Mirror"</strong> to activate hands-free. The app opens ready to listen and respond with a warm, human-like voice.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+            <div className="flex gap-5 md:gap-6 items-start">
+              <div className="w-11 h-11 md:w-12 md:h-12 bg-white/25 backdrop-blur-sm text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-bold border border-white/30">
                 2
               </div>
               <div>
                 <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Era Detection & Adaptation</h3>
-                <p className="text-sm md:text-base text-white/90 leading-relaxed">
-                  AI detects which time period your loved one is mentally experiencing (1940s, 60s, 80s, or present) and adapts language, references, and responses accordingly.
+                <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                  AI detects which era your loved one is mentally experiencing and adapts language, cultural references, and responses accordingly.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+            <div className="flex gap-5 md:gap-6 items-start">
+              <div className="w-11 h-11 md:w-12 md:h-12 bg-white/25 backdrop-blur-sm text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-bold border border-white/30">
                 3
               </div>
               <div>
-                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Anxiety Detection & Intervention</h3>
-                <p className="text-sm md:text-base text-white/90 leading-relaxed">
-                  Monitors for keywords and sentiments indicating fear, confusion, or distress. Automatically offers calming responses, redirects to positive memories, or suggests mode switches for reassurance.
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Anxiety Detection & Support</h3>
+                <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                  Monitors for signs of distress and automatically offers calming responses, redirects to positive memories, or suggests mode switches.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+            <div className="flex gap-5 md:gap-6 items-start">
+              <div className="w-11 h-11 md:w-12 md:h-12 bg-white/25 backdrop-blur-sm text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-bold border border-white/30">
                 4
               </div>
               <div>
                 <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Realistic Human Voice</h3>
-                <p className="text-sm md:text-base text-white/90 leading-relaxed">
-                  Responses use enhanced AI voice synthesis with natural pacing, warmth, and emotion to create genuine connection and comfort.
+                <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                  Enhanced AI voice synthesis with natural pacing and warmth creates genuine connection and emotional comfort.
                 </p>
               </div>
             </div>
@@ -281,13 +283,13 @@ export default function Landing() {
         <div style={{ height: '80px' }}></div>
 
         {/* Testimonials */}
-        <div className="max-w-4xl mx-auto px-8 bg-white dark:bg-slate-900 rounded-3xl" style={{ paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
-          <h2 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-slate-100 mb-12 text-center">
+        <div className="max-w-4xl mx-auto px-4 bg-white dark:bg-slate-900 rounded-2xl py-16 md:py-20">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-12 md:mb-16 text-center">
             What Families Are Saying
           </h2>
           
           <div className="space-y-6">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl p-8 shadow-lg border-2 border-blue-200 dark:border-blue-800">
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl p-8 shadow-md border border-blue-200/50 dark:border-blue-800/30">
               <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
                 <span className="text-4xl text-blue-400 leading-none">"</span>
                 Memory Mirror has been a lifesaver. My mother with Alzheimer's talks to it every morning, and it adapts to whatever decade she thinks she's in. The anxiety detection feature alerts me when she needs extra support. Worth every penny.
@@ -297,7 +299,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 rounded-xl p-8 shadow-lg border-2 border-purple-200 dark:border-purple-800">
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 rounded-xl p-8 shadow-md border border-purple-200/50 dark:border-purple-800/30">
               <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
                 <span className="text-4xl text-purple-400 leading-none">"</span>
                 As a dementia care nurse, I recommend Memory Mirror to families. It never corrects or contradicts, which is exactly what we train caregivers to do. The voice is so natural and comforting.
@@ -307,7 +309,7 @@ export default function Landing() {
               </p>
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 rounded-xl p-8 shadow-lg border-2 border-emerald-200 dark:border-emerald-800">
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 rounded-xl p-8 shadow-md border border-emerald-200/50 dark:border-emerald-800/30">
               <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
                 <span className="text-4xl text-emerald-400 leading-none">"</span>
                 My dad was resistant to technology, but the wake word activation means he just talks naturally. Mirror brings up photos from his Navy days in the 60s, and I've seen him smile more in the past month than the past year.
@@ -324,22 +326,16 @@ export default function Landing() {
 
         {/* Bottom Text Section */}
         <div 
-          className="text-center relative px-4 z-10 mx-4 rounded-3xl"
-          style={{
-            backgroundColor: '#0a4a5c',
-            paddingTop: '60px',
-            paddingBottom: '60px',
-            marginBottom: '0'
-          }}
+          className="text-center relative px-4 z-10 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-16 md:py-20"
         >
-          <p className="text-slate-200 text-sm md:text-base font-medium">Memory Mirror — Compassionate AI for dementia care</p>
-          <p className="mt-2 text-slate-300 text-xs md:text-sm">Designed with input from caregivers and dementia specialists</p>
-          <div className="mt-6 flex justify-center gap-4">
-            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-300 hover:text-white text-xs underline">
+          <p className="text-slate-200 text-sm md:text-base font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
+          <p className="mt-2 text-slate-400 text-xs md:text-sm">Designed with input from caregivers and dementia care specialists</p>
+          <div className="mt-6 flex justify-center gap-4 text-xs md:text-sm">
+            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">
               Privacy Policy
             </Link>
-            <span className="text-slate-400">•</span>
-            <a href="mailto:support@memorymirror.app" className="text-slate-300 hover:text-white text-xs underline">
+            <span className="text-slate-600">•</span>
+            <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">
               Support
             </a>
           </div>
