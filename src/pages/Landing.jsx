@@ -29,54 +29,93 @@ export default function Landing() {
             with dignity, warmth, and understanding
           </p>
 
-          <div className="flex flex-col gap-4 md:gap-5 justify-center items-stretch px-4 max-w-4xl mx-auto">
+          <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto">
+            {/* Main AI Chat Card */}
             <Link to="/chat" className="w-full animate-fade-in-up">
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-10 md:px-12 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center">
-                <MessageCircle className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                <span>Start AI Chat</span>
-              </Button>
+              <div className="bg-gradient-to-br from-blue-500 via-cyan-500 to-sky-500 hover:from-blue-600 hover:via-cyan-600 hover:to-sky-600 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
+                <div className="flex items-start gap-5">
+                  <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
+                    <MessageCircle className="w-10 h-10 md:w-12 md:h-12 text-white" />
+                  </div>
+                  <div className="flex-1 text-left">
+                    <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">
+                      AI Chat Companion
+                    </h3>
+                    <p className="text-base md:text-lg text-white/90 leading-relaxed">
+                      Voice-activated conversation that adapts to any era, detects anxiety, and recalls memories
+                    </p>
+                  </div>
+                </div>
+              </div>
             </Link>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
+            {/* Secondary Mode Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
               <Link to="/phone" className="w-full animate-fade-in-up animation-delay-100">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center"
-                >
-                  <Phone className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                  <span>Phone Dial Pad</span>
-                </Button>
+                <div className="bg-gradient-to-br from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
+                      <Phone className="w-9 h-9 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                      Phone Mode
+                    </h3>
+                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                      Familiar dial pad interface for calling loved ones with visual reassurance
+                    </p>
+                  </div>
+                </div>
               </Link>
 
               <Link to="/security" className="w-full animate-fade-in-up animation-delay-200">
-                <Button 
-                  size="lg" 
-                  className="bg-gradient-to-r from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 text-white px-8 md:px-10 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl border-4 border-white/50 hover:scale-105 hover:shadow-3xl transition-all duration-300 w-full min-h-[88px] font-semibold flex items-center justify-center"
-                >
-                  <Shield className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-                  <span>Security Scanner</span>
-                </Button>
+                <div className="bg-gradient-to-br from-indigo-500 to-purple-600 hover:from-indigo-600 hover:to-purple-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
+                  <div className="flex flex-col h-full">
+                    <div className="bg-white/20 backdrop-blur-sm p-3 rounded-xl w-fit mb-4">
+                      <Shield className="w-9 h-9 md:w-10 md:h-10 text-white" />
+                    </div>
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                      Security Scanner
+                    </h3>
+                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                      Visual security check to reduce anxiety about locks, lights, and safety
+                    </p>
+                  </div>
+                </div>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 w-full mt-2">
+            {/* Portal Access Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full mt-2">
               <Link to={createPageUrl('FamilyConnect')} className="w-full animate-fade-in-up animation-delay-100">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-blue-400 text-blue-600 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium flex items-center justify-center"
-                >
-                  <span>👨‍👩‍👧‍👦 Family Portal</span>
-                </Button>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-4 border-blue-300 dark:border-blue-600 hover:border-blue-400 dark:hover:border-blue-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+                  <div className="flex items-start gap-4">
+                    <div className="text-4xl md:text-5xl">👨‍👩‍👧‍👦</div>
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                        Family Portal
+                      </h3>
+                      <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Share photos, messages, events and music with your loved one
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </Link>
+
               <Link to={createPageUrl('CaregiverPortal')} className="w-full animate-fade-in-up animation-delay-200">
-                <Button 
-                  size="lg" 
-                  variant="outline" 
-                  className="px-8 md:px-10 py-6 md:py-7 text-lg md:text-xl rounded-2xl border-4 border-purple-400 text-purple-600 hover:bg-purple-50 dark:border-purple-500 dark:text-purple-400 dark:hover:bg-purple-950 shadow-xl hover:scale-105 hover:shadow-2xl transition-all duration-300 w-full min-h-[72px] font-medium flex items-center justify-center"
-                >
-                  <span>🧠 Caregiver Dashboard</span>
-                </Button>
+                <div className="bg-white dark:bg-slate-800 rounded-3xl shadow-xl border-4 border-purple-300 dark:border-purple-600 hover:border-purple-400 dark:hover:border-purple-500 hover:scale-105 hover:shadow-2xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+                  <div className="flex items-start gap-4">
+                    <div className="text-4xl md:text-5xl">🧠</div>
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-bold text-purple-600 dark:text-purple-400 mb-2">
+                        Caregiver Dashboard
+                      </h3>
+                      <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Monitor wellbeing, insights, journal entries and cognitive trends
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </Link>
             </div>
 
