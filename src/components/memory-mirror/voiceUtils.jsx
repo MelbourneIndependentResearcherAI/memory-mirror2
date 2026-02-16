@@ -203,6 +203,12 @@ export const speakWithRealisticVoice = (text, options = {}) => {
 
   utterance.text = processedText;
 
+  // Handle end callback for hands-free mode
+  if (options.onEnd) {
+    utterance.onend = options.onEnd;
+    utterance.onerror = options.onEnd;
+  }
+
   // Speak
   speechSynthesis.speak(utterance);
 
