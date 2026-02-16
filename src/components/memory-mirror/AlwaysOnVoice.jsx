@@ -159,7 +159,8 @@ class AlwaysOnVoiceSystem {
       const response = await base44.functions.invoke('chatWithAI', {
         userMessage,
         conversationHistory: this.conversationHistory.slice(-10),
-        mode: 'voice',
+        mode: 'always_on_voice',
+        context: 'always_available_companion',
         userProfile: this.userProfile
       });
 

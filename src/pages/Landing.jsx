@@ -29,9 +29,9 @@ export default function Landing() {
             with dignity, warmth, and understanding
           </p>
 
-          <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto">
-            {/* Main AI Chat Card */}
-            <Link to="/chat" className="w-full animate-fade-in-up">
+          <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-6">
+          {/* Main AI Chat Card */}
+          <Link to="/chat" className="w-full animate-fade-in-up">
               <div className="bg-gradient-to-br from-blue-500 via-cyan-500 to-sky-500 hover:from-blue-600 hover:via-cyan-600 hover:to-sky-600 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
                 <div className="flex items-start gap-5">
                   <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl">
