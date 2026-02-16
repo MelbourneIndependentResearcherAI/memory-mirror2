@@ -99,7 +99,8 @@ export default function Home() {
           </div>
           
           <div className="text-center">
-            <h1 className="text-3xl font-light tracking-wide mb-2">Memory Mirror</h1>
+            <h1 className="text-3xl font-light tracking-wide mb-1">Memory Mirror</h1>
+            <p className="text-white/70 text-xs mb-2">dementia care kit for carers and their loved ones</p>
             <p className="text-white/80 italic text-sm">Your companion, meeting you where you are</p>
             
             {currentMode === 'chat' && (
