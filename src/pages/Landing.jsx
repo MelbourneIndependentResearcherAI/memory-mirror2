@@ -1,7 +1,6 @@
 import React from 'react';
-import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Mic } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Heart, Brain, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { createPageUrl } from '../utils';
 import { Link } from 'react-router-dom';
 
@@ -96,121 +95,6 @@ export default function Landing() {
         <div style={{ height: '60px' }}></div>
 
         {/* Main Content Section - SEO */}
-        <div className="max-w-4xl mx-auto px-4" style={{ paddingTop: '60px', paddingBottom: '60px', backgroundColor: 'white', borderRadius: '24px' }}>
-          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-orange-950 dark:to-yellow-950 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-amber-200 dark:border-amber-800">
-            <div className="flex items-center justify-center mb-6">
-              <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Heart className="w-8 h-8 text-white" />
-              </div>
-            </div>
-            
-            <h2 className="text-2xl md:text-3xl font-semibold text-center text-slate-900 dark:text-slate-100 mb-6">
-              An Important Update About Memory Mirror
-            </h2>
-
-            <div className="prose prose-slate dark:prose-invert max-w-none space-y-4 text-slate-700 dark:text-slate-300 leading-relaxed">
-              <p className="text-base md:text-lg">
-                <strong>To the families and caregivers using Memory Mirror,</strong>
-              </p>
-
-              <p>
-                When I created Memory Mirror, my goal was to bring comfort and dignity to those living with dementia and peace of mind to their loved ones. Watching your feedback about how it's helped during difficult moments has been deeply meaningful.
-              </p>
-
-              <p>
-                However, I need to be transparent with you: the AI technology that powers Memory Mirror - the voice synthesis, era detection, sentiment analysis, and real-time responses - comes with significant operational costs. I've been covering these expenses personally since launch, but the reality is that I can no longer sustain this on my own.
-              </p>
-
-              <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 md:p-8 my-6 border-2 border-amber-300 dark:border-amber-700">
-                <p className="font-semibold text-lg md:text-xl text-slate-900 dark:text-slate-100 mb-4">
-                  Starting in one month, Memory Mirror will offer two options:
-                </p>
-
-                <div className="grid md:grid-cols-2 gap-6 mb-6">
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl p-6 border-2 border-blue-300 dark:border-blue-700">
-                    <h3 className="text-xl font-bold text-blue-900 dark:text-blue-100 mb-3">Premium - $14.99/month</h3>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Unlimited daily access to all features</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Wake word activation ("Hey Mirror")</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Era detection & adaptation</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Anxiety detection & intervention</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Realistic human voice responses</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Memory recall with photos</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-blue-600 dark:text-blue-400 mt-1">✓</span>
-                        <span>Priority support</span>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 rounded-xl p-6 border-2 border-slate-300 dark:border-slate-600">
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-3">Free Tier - $0</h3>
-                    <ul className="space-y-2 text-sm">
-                      <li className="flex items-start gap-2">
-                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
-                        <span>Daily limited access to core features</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
-                        <span>Perfect for occasional use or trying the app</span>
-                      </li>
-                      <li className="flex items-start gap-2">
-                        <span className="text-slate-600 dark:text-slate-400 mt-1">✓</span>
-                        <span>No credit card required</span>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="bg-green-100 dark:bg-green-900/30 rounded-xl p-4 border-2 border-green-400 dark:border-green-700">
-                  <p className="text-green-900 dark:text-green-100 font-semibold text-center">
-                    🎁 Current users get one month free before any subscription begins
-                  </p>
-                </div>
-              </div>
-
-              <p>
-                Most dementia care apps charge $20-30+ per month. I've deliberately set Memory Mirror at $14.99 because keeping this accessible is my way of giving back to the community. This price simply covers the AI processing costs and server infrastructure needed to keep the app running reliably for you and your loved ones.
-              </p>
-
-              <p>
-                This isn't about profit - it's about ensuring Memory Mirror can continue providing the reliable, dignified support your family deserves while remaining affordable for those who need it most.
-              </p>
-
-              <p className="text-base md:text-lg italic pt-4">
-                Thank you for trusting Memory Mirror during such an important time in your lives.
-              </p>
-
-              <p className="font-semibold">
-                With gratitude,<br />
-                Memory Mirror
-              </p>
-            </div>
-          </div>
-        </div>
-
-        {/* Spacing */}
-        <div style={{ height: '60px' }}></div>
-
-        {/* Main Content Section - SEO */}
         <div className="max-w-4xl mx-auto px-4" style={{ marginBottom: '0' }}>
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-blue-200 dark:border-blue-800">
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
@@ -268,58 +152,6 @@ export default function Landing() {
 
         {/* How It Works */}
         <div id="how-it-works" className="mx-4" style={{ backgroundColor: '#3b82f6', borderRadius: '24px', paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
-          <Link to="/chat" className="block group">
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 backdrop-blur-sm shadow-2xl border-4 border-blue-200 dark:border-blue-800 hover:shadow-[0_20px_60px_rgba(59,130,246,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer">
-              <CardContent className="p-8 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-blue-400 to-cyan-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <MessageCircle className="w-12 h-12 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Voice Companion</h3>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg mb-4">
-                  Hands-free voice conversations. Never corrects or contradicts. Adapts to their mental time period with warmth.
-                </p>
-                <Button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-3 text-base font-semibold rounded-xl min-h-[56px]">
-                  Open AI Chat →
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/phone" className="block group">
-            <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 backdrop-blur-sm shadow-2xl border-4 border-emerald-200 dark:border-emerald-800 hover:shadow-[0_20px_60px_rgba(16,185,129,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer">
-              <CardContent className="p-8 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <Phone className="w-12 h-12 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Safe Phone</h3>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg mb-4">
-                  Emergency calls redirect to AI support that validates concerns while providing reassurance.
-                </p>
-                <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white py-3 text-base font-semibold rounded-xl min-h-[56px]">
-                  Open Phone Pad →
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-
-          <Link to="/security" className="block group">
-            <Card className="bg-gradient-to-br from-indigo-50 to-sky-50 dark:from-indigo-950 dark:to-sky-950 backdrop-blur-sm shadow-2xl border-4 border-indigo-200 dark:border-indigo-800 hover:shadow-[0_20px_60px_rgba(99,102,241,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer">
-              <CardContent className="p-8 text-center">
-                <div className="w-24 h-24 bg-gradient-to-br from-indigo-400 to-sky-500 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:scale-110 transition-transform">
-                  <Shield className="w-12 h-12 text-white" />
-                </div>
-                <h3 className="text-2xl font-semibold text-slate-800 dark:text-slate-100 mb-3">Security Monitor</h3>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed text-lg mb-4">
-                  Professional interface that reassures about home safety and responds to concerns with care.
-                </p>
-                <Button className="w-full bg-indigo-500 hover:bg-indigo-600 text-white py-3 text-base font-semibold rounded-xl min-h-[56px]">
-                  Open Security →
-                </Button>
-              </CardContent>
-            </Card>
-          </Link>
-        </div>
-
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-8 md:mb-12 text-center px-6">How It Works</h2>
           
           <div className="space-y-6 md:space-y-8 max-w-3xl mx-auto px-6">
@@ -377,44 +209,7 @@ export default function Landing() {
         <div style={{ height: '80px' }}></div>
 
         {/* Testimonials */}
-        <div className="max-w-4xl mx-auto px-4 bg-white dark:bg-slate-900 rounded-3xl" style={{ paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-slate-800 dark:text-slate-100 mb-8 md:mb-12 text-center">Core Principles</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
-            <div className="bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-950 dark:to-blue-900 p-5 md:p-6 rounded-2xl">
-              <Brain className="w-8 h-8 md:w-10 md:h-10 text-blue-600 dark:text-blue-400 mb-3" />
-              <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Never Correct, Always Validate</h3>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300">
-                Memory Mirror never tells someone they're wrong or confused. It meets them where they are mentally and emotionally.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-950 dark:to-purple-900 p-5 md:p-6 rounded-2xl">
-              <Heart className="w-8 h-8 md:w-10 md:h-10 text-purple-600 dark:text-purple-400 mb-3" />
-              <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Dignity & Respect</h3>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300">
-                Every interaction prioritizes dignity, treating the person with the respect and warmth they deserve.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-rose-50 to-rose-100 dark:from-rose-950 dark:to-rose-900 p-5 md:p-6 rounded-2xl">
-              <Volume2 className="w-8 h-8 md:w-10 md:h-10 text-rose-600 dark:text-rose-400 mb-3" />
-              <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Calming Presence</h3>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300">
-                Designed to reduce anxiety and agitation through reassurance, familiar patterns, and emotional safety.
-              </p>
-            </div>
-
-            <div className="bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950 dark:to-green-900 p-5 md:p-6 rounded-2xl">
-              <Shield className="w-8 h-8 md:w-10 md:h-10 text-green-600 dark:text-green-400 mb-3" />
-              <h3 className="text-base md:text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">Safe Redirects</h3>
-              <p className="text-sm md:text-base text-slate-700 dark:text-slate-300">
-                When confusion or fear arise, gently guides to positive memories and reassures that everything is handled.
-              </p>
-            </div>
-          </div>
-        </div>
-
+        <div className="max-w-4xl mx-auto px-8 bg-white dark:bg-slate-900 rounded-3xl" style={{ paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
           <h2 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-slate-100 mb-12 text-center">
             What Families Are Saying
           </h2>
