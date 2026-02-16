@@ -37,9 +37,11 @@ export default function AgentSupport() {
     const checkUser = async () => {
       try {
         const user = await base44.auth.me();
-        setIsAdmin(user?.role === 'admin');
+        // Only show AI assistants to admin/caregiver users
+        const userIsAdmin = user && user.role === 'admin';
+        setIsAdmin(userIsAdmin);
       } catch (error) {
-        console.log('Not authenticated or not admin');
+        // Not authenticated = not an admin
         setIsAdmin(false);
       } finally {
         setIsLoading(false);
@@ -103,9 +105,8 @@ export default function AgentSupport() {
     }
   };
 
-  if (isLoading) return null;
-
-  if (!isAdmin) return null;
+  // Don't render anything while checking auth or if not admin
+  if (isLoading || !isAdmin) return null;
 
   if (showChat && conversation) {
    const agent = agents.find(a => a.name === activeAgent);
