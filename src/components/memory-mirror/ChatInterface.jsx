@@ -14,6 +14,7 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { isOnline, getOfflineResponse, cacheOfflineResponse } from '@/components/utils/offlineManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -324,16 +325,27 @@ ${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention
 Tone: ${memoryRecall.tone_recommendation}`
         : '';
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${getSystemPrompt()}${emotionalContext}${memoryContext}
+      let assistantMessage;
+      
+      if (isOnline()) {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `${getSystemPrompt()}${emotionalContext}${memoryContext}
 
 Conversation so far:
 ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
 Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`,
-      });
+        });
 
-      let assistantMessage = response;
+        assistantMessage = response;
+        
+        // Cache response for offline use
+        await cacheOfflineResponse(userMessageEnglish, assistantMessage).catch(() => {});
+      } else {
+        // Use offline response
+        const offlineResponse = await getOfflineResponse(userMessageEnglish);
+        assistantMessage = offlineResponse.text;
+      }
       let era = 'present';
       let detectedAnxiety = anxietyLevel;
       

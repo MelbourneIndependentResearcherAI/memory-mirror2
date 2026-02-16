@@ -9,6 +9,7 @@ import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety } from './voiceUtils';
+import { isOnline, getOfflineResponse, cacheOfflineResponse } from '@/components/utils/offlineManager';
 
   const getSecurityPrompt = () => {
     const safeZoneContext = safeZones.length > 0 
@@ -110,13 +111,24 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
     setSecurityHistory(prev => [...prev, { role: 'user', content: concern }]);
 
     try {
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${getSecurityPrompt()}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Concern about: "${anxietyDetection.trigger}".` : ''} Be extra reassuring.\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard with maximum reassurance.`,
-      });
+      let message;
+      
+      if (isOnline()) {
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `${getSecurityPrompt()}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Concern about: "${anxietyDetection.trigger}".` : ''} Be extra reassuring.\n\nConversation:\n${securityHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\nuser: ${concern}\n\nRespond as the security guard with maximum reassurance.`,
+        });
 
-      let message = typeof response === 'string' && response.includes('META:')
-        ? response.split('META:')[0].trim()
-        : response;
+        message = typeof response === 'string' && response.includes('META:')
+          ? response.split('META:')[0].trim()
+          : response;
+          
+        // Cache response for offline use
+        await cacheOfflineResponse(concern, message).catch(() => {});
+      } else {
+        // Use offline response
+        const offlineResponse = await getOfflineResponse(concern);
+        message = offlineResponse.text;
+      }
 
       // Parse anxiety from META
       if (typeof response === 'string' && response.includes('META:')) {
