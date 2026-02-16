@@ -1,4 +1,75 @@
-// Enhanced voice synthesis with more human-like qualities
+// Get user's preferred voice from localStorage
+const getUserVoicePreference = () => {
+  try {
+    return localStorage.getItem('memoryMirrorVoice') || 'auto';
+  } catch {
+    return 'auto';
+  }
+};
+
+// Save user's voice preference
+export const setUserVoicePreference = (voiceId) => {
+  try {
+    localStorage.setItem('memoryMirrorVoice', voiceId);
+  } catch {}
+};
+
+// Get available quality voices categorized
+export const getAvailableVoices = () => {
+  const voices = speechSynthesis.getVoices();
+  
+  const maleVoices = [];
+  const femaleVoices = [];
+  
+  // Premium voice patterns
+  const premiumPatterns = {
+    male: [
+      { name: 'Microsoft Guy Online (Natural)', label: 'Guy (Natural)' },
+      { name: 'Google UK English Male', label: 'British Male' },
+      { name: 'Google US English Male', label: 'American Male' },
+      { name: 'Daniel', label: 'Daniel' },
+      { name: 'James', label: 'James' },
+    ],
+    female: [
+      { name: 'Microsoft Aria Online (Natural)', label: 'Aria (Natural)' },
+      { name: 'Microsoft Jenny Online (Natural)', label: 'Jenny (Natural)' },
+      { name: 'Google UK English Female', label: 'British Female' },
+      { name: 'Google US English Female', label: 'American Female' },
+      { name: 'Samantha', label: 'Samantha' },
+      { name: 'Karen', label: 'Karen' },
+      { name: 'Moira', label: 'Moira' },
+      { name: 'Tessa', label: 'Tessa' },
+    ]
+  };
+  
+  // Find premium voices
+  premiumPatterns.male.forEach(({ name, label }) => {
+    const voice = voices.find(v => v.name.includes(name));
+    if (voice) maleVoices.push({ voice, label, id: voice.name });
+  });
+  
+  premiumPatterns.female.forEach(({ name, label }) => {
+    const voice = voices.find(v => v.name.includes(name));
+    if (voice) femaleVoices.push({ voice, label, id: voice.name });
+  });
+  
+  // Fallback: any English voices
+  if (maleVoices.length === 0) {
+    voices.filter(v => v.lang.startsWith('en') && 
+      (v.name.toLowerCase().includes('male') && !v.name.toLowerCase().includes('female')))
+      .forEach(voice => maleVoices.push({ voice, label: voice.name.split('-')[0].trim(), id: voice.name }));
+  }
+  
+  if (femaleVoices.length === 0) {
+    voices.filter(v => v.lang.startsWith('en') && 
+      v.name.toLowerCase().includes('female'))
+      .forEach(voice => femaleVoices.push({ voice, label: voice.name.split('-')[0].trim(), id: voice.name }));
+  }
+  
+  return { maleVoices, femaleVoices };
+};
+
+// Enhanced voice synthesis with user preference
 export const speakWithRealisticVoice = (text, options = {}) => {
   if (!('speechSynthesis' in window)) return;
 
@@ -7,41 +78,46 @@ export const speakWithRealisticVoice = (text, options = {}) => {
 
   const utterance = new SpeechSynthesisUtterance(text);
   
-  // Get available voices
+  // Get voices
   const voices = speechSynthesis.getVoices();
+  const userPreference = getUserVoicePreference();
   
-  // Prefer premium/natural voices - prioritize the most human-sounding options
-  const preferredVoice = voices.find(voice => 
-    // Google's Neural voices (best quality)
-    (voice.name.includes('Google') && voice.name.includes('Neural')) ||
-    voice.name.includes('Natural') ||
-    voice.name.includes('Premium') ||
-    voice.name.includes('Enhanced') ||
-    // Apple's high quality voices
-    voice.name.includes('Samantha') ||
-    voice.name.includes('Karen') ||
-    voice.name.includes('Victoria') ||
-    // Microsoft's natural voices
-    (voice.name.includes('Microsoft') && voice.name.includes('Natural'))
-  ) || voices.find(v => v.lang.startsWith('en-US'));
-
-  if (preferredVoice) {
-    utterance.voice = preferredVoice;
+  let selectedVoice = null;
+  
+  // Use user's preferred voice if set
+  if (userPreference !== 'auto') {
+    selectedVoice = voices.find(v => v.name === userPreference);
+  }
+  
+  // Auto-select best voice if no preference or voice not found
+  if (!selectedVoice) {
+    const { maleVoices, femaleVoices } = getAvailableVoices();
+    const allPremium = [...femaleVoices, ...maleVoices];
+    
+    if (allPremium.length > 0) {
+      selectedVoice = allPremium[0].voice;
+    } else {
+      selectedVoice = voices.find(v => v.lang.startsWith('en-US'));
+    }
   }
 
-  // Apply custom settings with slight randomization for naturalness
-  utterance.rate = (options.rate || 0.88) + (Math.random() - 0.5) * 0.05;
-  utterance.pitch = (options.pitch || 1.0) + (Math.random() - 0.5) * 0.05;
+  if (selectedVoice) {
+    utterance.voice = selectedVoice;
+  }
+
+  // Natural, warm settings
+  utterance.rate = options.rate || 0.90;
+  utterance.pitch = options.pitch || 1.0;
   utterance.volume = options.volume || 1.0;
 
-  // Insert natural pauses for longer texts
+  // Add natural pauses
   let processedText = text;
   if (text.length > 80) {
     processedText = text
-      .replace(/\. /g, '. ... ') // Pause after sentences
-      .replace(/\? /g, '? ... ') // Pause after questions
-      .replace(/! /g, '! ... ') // Pause after exclamations
-      .replace(/,  /g, ', .. '); // Short pause after commas
+      .replace(/\. /g, '. ... ')
+      .replace(/\? /g, '? ... ')
+      .replace(/! /g, '! ... ')
+      .replace(/,  /g, ', .. ');
   }
 
   utterance.text = processedText;
