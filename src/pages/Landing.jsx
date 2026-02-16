@@ -334,6 +334,15 @@ export default function Landing() {
         >
           <p className="text-slate-200 text-sm md:text-base font-medium">Memory Mirror — Compassionate AI for dementia care</p>
           <p className="mt-2 text-slate-300 text-xs md:text-sm">Designed with input from caregivers and dementia specialists</p>
+          <div className="mt-6 flex justify-center gap-4">
+            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-300 hover:text-white text-xs underline">
+              Privacy Policy
+            </Link>
+            <span className="text-slate-400">•</span>
+            <a href="mailto:support@memorymirror.app" className="text-slate-300 hover:text-white text-xs underline">
+              Support
+            </a>
+          </div>
         </div>
 
         {/* Spacing */}
