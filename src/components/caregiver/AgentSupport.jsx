@@ -109,9 +109,10 @@ export default function AgentSupport() {
   if (isLoading || !isAdmin) return null;
 
   if (showChat && conversation) {
-   const agent = agents.find(a => a.name === activeAgent);
-   return (
-      <div className="fixed bottom-24 right-4 w-96 max-w-[calc(100vw-2rem)] h-[600px] max-h-[calc(100vh-2rem)] flex flex-col bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-2xl shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50 z-40">
+    const agent = agents.find(a => a.name === activeAgent);
+    return (
+      <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm md:inset-auto md:bottom-0 md:right-0 md:w-96 md:h-[600px] md:rounded-t-2xl md:bg-transparent md:backdrop-blur-none">
+        <div className="flex flex-col h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-t-2xl md:rounded-2xl shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50 md:border-slate-200/50">
         <div className={`flex items-center justify-between p-4 bg-gradient-to-r ${agent.color} text-white rounded-t-2xl`}>
           <div className="flex items-center gap-3">
             <span className="text-2xl">{agent.icon}</span>
@@ -184,24 +185,19 @@ export default function AgentSupport() {
   }
 
   return (
-    <div className="fixed bottom-24 right-4 z-40">
-      {!showChat && (
-        <div className="flex flex-col gap-2">
-          {agents.map((agent) => (
-            <Button
-              key={agent.name}
-              onClick={() => startConversation(agent.name)}
-              className={`bg-gradient-to-r ${agent.color} text-white hover:opacity-90 shadow-lg min-h-[56px] px-6 rounded-2xl backdrop-blur-md bg-opacity-90`}
-            >
-              <span className="text-xl mr-2">{agent.icon}</span>
-              <div className="text-left">
-                <p className="font-semibold text-sm">{agent.title}</p>
-                <p className="text-xs opacity-90">{agent.description}</p>
-              </div>
-            </Button>
-          ))}
-        </div>
-      )}
+    <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
+      <Button
+        onClick={() => {
+          setShowChat(true);
+          if (!conversation && agents.length > 0) {
+            startConversation(agents[0].name);
+          }
+        }}
+        className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:opacity-90 shadow-lg rounded-full w-14 h-14 flex items-center justify-center min-h-[56px] min-w-[56px] p-0"
+        title="Chat with AI assistants"
+      >
+        <MessageCircle className="w-6 h-6" />
+      </Button>
     </div>
   );
 }
