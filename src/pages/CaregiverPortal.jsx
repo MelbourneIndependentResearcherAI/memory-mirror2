@@ -6,6 +6,7 @@ import CareJournal from '../components/caregiver/CareJournal';
 import UserProfileSetup from '../components/caregiver/UserProfileSetup';
 import MediaLibrary from '../components/caregiver/MediaLibrary';
 import PlaylistManager from '../components/music/PlaylistManager';
+import MemorySessionLauncher from '../components/memory/MemorySessionLauncher';
 
 const featureCards = [
   {
@@ -18,9 +19,9 @@ const featureCards = [
   },
   {
     id: 2,
-    title: 'Smart Alerts',
-    icon: '🔔',
-    description: 'Get notified of distress or unusual patterns',
+    title: 'Memory Sessions',
+    icon: '✨',
+    description: 'AI-guided interactive memory experiences',
     background: '#FFFBEB',
     darkBackground: '#4A3C1D'
   },
@@ -80,10 +81,11 @@ export default function CaregiverPortal() {
 
   const handleCardClick = (cardId) => {
     const viewMap = {
-      1: 'profile',   // Health Monitor -> Profile Setup
-      4: 'media',     // Photo Library -> Media Library
-      6: 'playlists', // Music Player -> Playlist Manager
-      7: 'journal'    // Care Journal
+      1: 'profile',        // Health Monitor -> Profile Setup
+      2: 'memory-session', // Memory Sessions
+      4: 'media',          // Photo Library -> Media Library
+      6: 'playlists',      // Music Player -> Playlist Manager
+      7: 'journal'         // Care Journal
     };
     
     if (viewMap[cardId]) {
@@ -166,6 +168,12 @@ export default function CaregiverPortal() {
         {activeView === 'playlists' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <PlaylistManager onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'memory-session' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <MemorySessionLauncher onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>
