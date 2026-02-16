@@ -111,8 +111,8 @@ export default function AgentSupport() {
   if (showChat && conversation) {
     const agent = agents.find(a => a.name === activeAgent);
     return (
-      <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm md:inset-auto md:bottom-0 md:right-0 md:w-96 md:h-[600px] md:rounded-t-2xl md:bg-transparent md:backdrop-blur-none">
-        <div className="flex flex-col h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-t-2xl md:rounded-2xl shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50 md:border-slate-200/50">
+      <div className="fixed inset-0 z-50 bg-black/30 backdrop-blur-sm md:inset-auto md:bottom-0 md:right-0 md:w-96 md:h-[600px] md:rounded-t-2xl md:bg-transparent md:backdrop-blur-none flex items-end md:items-stretch">
+        <div className="flex flex-col w-full h-auto md:h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm rounded-t-2xl md:rounded-2xl shadow-2xl border-2 border-slate-200/50 dark:border-slate-700/50">
         <div className={`flex items-center justify-between p-4 bg-gradient-to-r ${agent.color} text-white rounded-t-2xl`}>
           <div className="flex items-center gap-3">
             <span className="text-2xl">{agent.icon}</span>
@@ -179,10 +179,11 @@ export default function AgentSupport() {
               <Send className="w-5 h-5" />
             </Button>
           </div>
-        </div>
-      </div>
-    );
-  }
+          </div>
+          </div>
+          </div>
+          );
+          }
 
   return (
     <div className="fixed top-4 right-4 z-40 flex items-center gap-2">
