@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import CareJournal from '../components/caregiver/CareJournal';
 import UserProfileSetup from '../components/caregiver/UserProfileSetup';
 import MediaLibrary from '../components/caregiver/MediaLibrary';
+import PlaylistManager from '../components/music/PlaylistManager';
 
 const featureCards = [
   {
@@ -79,10 +80,10 @@ export default function CaregiverPortal() {
 
   const handleCardClick = (cardId) => {
     const viewMap = {
-      1: 'profile', // Health Monitor -> Profile Setup
-      4: 'media',   // Photo Library -> Media Library
-      6: 'media',   // Music Player -> Media Library
-      7: 'journal'  // Care Journal
+      1: 'profile',   // Health Monitor -> Profile Setup
+      4: 'media',     // Photo Library -> Media Library
+      6: 'playlists', // Music Player -> Playlist Manager
+      7: 'journal'    // Care Journal
     };
     
     if (viewMap[cardId]) {
@@ -159,6 +160,12 @@ export default function CaregiverPortal() {
         {activeView === 'media' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <MediaLibrary onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'playlists' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <PlaylistManager onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>
