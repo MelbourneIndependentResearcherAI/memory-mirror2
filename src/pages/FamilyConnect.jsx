@@ -31,8 +31,11 @@ export default function FamilyConnect() {
             <div className="flex-1">
               <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-3">
                 <Users className="w-8 h-8 md:w-10 md:h-10 text-pink-600 dark:text-pink-400" />
-                Family Connect
+                Memory Mirror
               </h1>
+              <p className="text-xs text-slate-500 dark:text-slate-500 italic">
+                dementia care kit for carers and their loved ones
+              </p>
               <p className="text-slate-600 dark:text-slate-400 mt-2">
                 Stay connected with your loved one's well-being
               </p>
