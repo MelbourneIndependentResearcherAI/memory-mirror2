@@ -105,37 +105,92 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       details: { message_length: userMessage.length, era: selectedEra }
     }).catch(() => {});
     
-    // Detect anxiety in user message
-    const anxietyDetection = detectAnxiety(userMessage);
-    
     setMessages(prev => [...prev, { role: 'user', content: userMessage }]);
     
     const newHistory = [...conversationHistory, { role: 'user', content: userMessage }];
     setConversationHistory(newHistory);
     setIsLoading(true);
 
+    // Perform sentiment analysis
+    let sentimentAnalysis = null;
+    try {
+      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessage });
+      sentimentAnalysis = sentimentResult.data;
+      
+      // Create caregiver alert for immediate attention needs
+      if (sentimentAnalysis.needs_immediate_attention) {
+        base44.entities.CaregiverAlert.create({
+          alert_type: 'high_anxiety',
+          severity: 'urgent',
+          message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
+          pattern_data: sentimentAnalysis
+        }).catch(() => {});
+      }
+    } catch (error) {
+      console.error('Sentiment analysis failed:', error);
+      // Fallback to basic anxiety detection
+      sentimentAnalysis = { anxiety_level: detectAnxiety(userMessage).level };
+    }
+    
+    const anxietyLevel = sentimentAnalysis?.anxiety_level || 0;
+
+    // Recall relevant memories proactively
+    let memoryRecall = null;
+    try {
+      const recallResult = await base44.functions.invoke('recallMemories', {
+        context: userMessage,
+        sentiment_analysis: sentimentAnalysis,
+        detected_era: selectedEra === 'auto' ? detectedEra : selectedEra
+      });
+      memoryRecall = recallResult.data;
+    } catch (error) {
+      console.error('Memory recall failed:', error);
+    }
+
     // Handle high anxiety proactively
-    if (anxietyDetection.level >= 7) {
-      const calmingMessage = getCalmingRedirect(anxietyDetection.trigger);
+    if (anxietyLevel >= 7) {
+      const calmingMessage = getCalmingRedirect(sentimentAnalysis?.trigger_words?.[0] || 'distress');
       setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: calmingMessage }]);
       speakResponse(calmingMessage);
       
       // Suggest phone mode for high anxiety
-      setAnxietyState({ level: anxietyDetection.level, suggestedMode: 'phone' });
+      setAnxietyState({ level: anxietyLevel, suggestedMode: 'phone' });
       setShowAnxietyAlert(true);
       setIsLoading(false);
       return;
     }
 
     try {
+      // Prepare enriched context for AI
+      const emotionalContext = sentimentAnalysis 
+        ? `\n\nEMOTIONAL ANALYSIS:
+- Sentiment: ${sentimentAnalysis.sentiment}
+- Emotional tone: ${sentimentAnalysis.emotional_tone?.join(', ')}
+- Anxiety level: ${sentimentAnalysis.anxiety_level}/10
+- Themes detected: ${sentimentAnalysis.themes?.join(', ')}
+- Response approach: ${sentimentAnalysis.response_approach}
+${sentimentAnalysis.trigger_words?.length > 0 ? `- Trigger words: ${sentimentAnalysis.trigger_words.join(', ')}` : ''}`
+        : '';
+
+      const memoryContext = memoryRecall?.should_proactively_mention && memoryRecall?.selected_memories?.length > 0
+        ? `\n\nRELEVANT MEMORIES TO MENTION:
+${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention}\n  Reasoning: ${m.reasoning}`).join('\n')}
+Tone: ${memoryRecall.tone_recommendation}`
+        : '';
+
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `${getSystemPrompt()}\n\nIMPORTANT: User anxiety detected at level ${anxietyDetection.level}. ${anxietyDetection.trigger ? `Trigger: "${anxietyDetection.trigger}".` : ''} Respond with extra warmth and reassurance.\n\nConversation so far:\n${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nRespond to the user's latest message with compassion.`,
+        prompt: `${getSystemPrompt()}${emotionalContext}${memoryContext}
+
+Conversation so far:
+${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
+
+Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`,
       });
 
       let assistantMessage = response;
       let era = 'present';
-      let detectedAnxiety = anxietyDetection.level;
+      let detectedAnxiety = anxietyLevel;
       
       // Parse META data if present
       if (typeof response === 'string' && response.includes('META:')) {
