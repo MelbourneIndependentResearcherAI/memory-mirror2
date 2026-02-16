@@ -421,7 +421,7 @@ export default function Landing() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-16 md:mt-24 mb-8 text-slate-500 dark:text-slate-400 text-xs md:text-sm px-4">
+        <div className="text-center mt-16 md:mt-24 mb-0 text-slate-500 dark:text-slate-400 text-xs md:text-sm px-4">
           <p>Memory Mirror — Compassionate AI for dementia care</p>
           <p className="mt-2">Designed with input from caregivers and dementia specialists</p>
         </div>
