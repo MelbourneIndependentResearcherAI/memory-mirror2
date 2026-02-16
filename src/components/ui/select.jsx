@@ -3,10 +3,66 @@
 import * as React from "react"
 import * as SelectPrimitive from "@radix-ui/react-select"
 import { Check, ChevronDown, ChevronUp } from "lucide-react"
+import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer"
 
 import { cn } from "@/lib/utils"
 
-const Select = SelectPrimitive.Root
+// Hook to detect mobile
+const useIsMobile = () => {
+  const [isMobile, setIsMobile] = React.useState(false);
+  
+  React.useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+  
+  return isMobile;
+};
+
+const Select = ({ children, value, onValueChange, ...props }) => {
+  const isMobile = useIsMobile();
+  const [open, setOpen] = React.useState(false);
+  
+  if (!isMobile) {
+    return (
+      <SelectPrimitive.Root value={value} onValueChange={onValueChange} {...props}>
+        {children}
+      </SelectPrimitive.Root>
+    );
+  }
+
+  // Mobile: Use Drawer
+  const trigger = React.Children.toArray(children).find(
+    child => child?.type?.displayName === 'SelectTrigger'
+  );
+  const content = React.Children.toArray(children).find(
+    child => child?.type?.displayName === 'SelectContent'
+  );
+
+  return (
+    <Drawer open={open} onOpenChange={setOpen}>
+      <DrawerTrigger asChild>
+        {trigger}
+      </DrawerTrigger>
+      <DrawerContent>
+        <div className="p-4 max-h-[60vh] overflow-y-auto">
+          <SelectPrimitive.Root value={value} onValueChange={(val) => {
+            onValueChange?.(val);
+            setOpen(false);
+          }}>
+            <SelectPrimitive.Viewport>
+              {content?.props?.children}
+            </SelectPrimitive.Viewport>
+          </SelectPrimitive.Root>
+        </div>
+      </DrawerContent>
+    </Drawer>
+  );
+};
 
 const SelectGroup = SelectPrimitive.Group
 

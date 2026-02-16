@@ -11,12 +11,17 @@ import { loadVoices } from '../components/utils/voiceUtils';
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
   const [wakeWordActive, setWakeWordActive] = useState(false);
+  const [currentMode, setCurrentMode] = useState('chat');
   const navigate = useNavigate();
   const location = useLocation();
 
-  const currentMode = location.pathname === '/phone' ? 'phone' 
-    : location.pathname === '/security' ? 'security' 
-    : 'chat';
+  // Detect mode from URL
+  React.useEffect(() => {
+    const mode = location.pathname === '/phone' ? 'phone' 
+      : location.pathname === '/security' ? 'security' 
+      : 'chat';
+    setCurrentMode(mode);
+  }, [location.pathname]);
 
   useEffect(() => {
     loadVoices();
@@ -111,15 +116,16 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Main Content */}
+        {/* Main Content - Hidden/Visible Pattern for State Preservation */}
         <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-blue-200 dark:border-blue-800">
-          <div className="transition-all duration-300">
-            <Routes>
-              <Route path="/chat" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
-              <Route path="/phone" element={<PhoneMode />} />
-              <Route path="/security" element={<SecurityMode onModeSwitch={handleModeSwitch} />} />
-              <Route path="/" element={<ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />} />
-            </Routes>
+          <div style={{ display: currentMode === 'chat' ? 'block' : 'none' }}>
+            <ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />
+          </div>
+          <div style={{ display: currentMode === 'phone' ? 'block' : 'none' }}>
+            <PhoneMode />
+          </div>
+          <div style={{ display: currentMode === 'security' ? 'block' : 'none' }}>
+            <SecurityMode onModeSwitch={handleModeSwitch} />
           </div>
         </div>
 

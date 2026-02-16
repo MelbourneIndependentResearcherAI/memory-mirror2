@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Brain, Trophy, Play } from 'lucide-react';
+import { Sparkles, Brain, Trophy, Play, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
@@ -91,11 +91,20 @@ export default function GameInterface({ onClose }) {
   return (
     <div className="min-h-[500px] bg-gradient-to-br from-amber-50 via-orange-50 to-pink-50 dark:from-amber-950 dark:via-orange-950 dark:to-pink-950 p-6 rounded-2xl">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold text-orange-800 dark:text-orange-200 flex items-center gap-3">
-          <Brain className="w-8 h-8" />
-          Brain Games
-        </h2>
-        <Button variant="ghost" onClick={onClose} className="min-h-[44px]">Close</Button>
+        <div className="flex items-center gap-3">
+          <Button 
+            variant="ghost" 
+            size="icon"
+            onClick={onClose} 
+            className="min-h-[44px] min-w-[44px] hover:bg-orange-200 dark:hover:bg-orange-800"
+          >
+            <X className="w-6 h-6" />
+          </Button>
+          <h2 className="text-2xl md:text-3xl font-bold text-orange-800 dark:text-orange-200 flex items-center gap-2">
+            <Brain className="w-6 h-6 md:w-8 md:h-8" />
+            Brain Games
+          </h2>
+        </div>
       </div>
 
       {!selectedGame ? (
