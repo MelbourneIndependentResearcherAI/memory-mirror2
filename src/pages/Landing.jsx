@@ -30,17 +30,17 @@ export default function Landing() {
             with dignity, warmth, and understanding
           </p>
 
-          <div className="flex flex-col sm:flex-row flex-wrap gap-3 md:gap-4 justify-center px-4">
-            <Link to={createPageUrl('Home')}>
-              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-8 md:px-10 py-5 md:py-7 text-lg md:text-xl rounded-full shadow-2xl border-4 border-white/50 hover:scale-105 transition-transform w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row gap-3 md:gap-4 justify-center items-center px-4 max-w-3xl mx-auto">
+            <Link to={createPageUrl('Home')} className="w-full sm:w-auto animate-fade-in-up">
+              <Button size="lg" className="bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700 text-white px-8 md:px-10 py-5 md:py-7 text-lg md:text-xl rounded-full shadow-2xl border-4 border-white/50 hover:scale-110 hover:shadow-3xl transition-all duration-300 w-full">
                 💙 Start Companion
               </Button>
             </Link>
-            <Link to={createPageUrl('FamilyConnect')}>
+            <Link to={createPageUrl('FamilyConnect')} className="w-full sm:w-auto animate-fade-in-up animation-delay-100">
               <Button 
                 size="lg" 
                 variant="outline" 
-                className="px-6 md:px-8 py-5 md:py-7 text-base md:text-lg rounded-full border-3 border-blue-400 text-blue-600 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950 shadow-xl hover:scale-105 transition-transform w-full sm:w-auto"
+                className="px-6 md:px-8 py-5 md:py-7 text-base md:text-lg rounded-full border-3 border-blue-400 text-blue-600 hover:bg-blue-50 dark:border-blue-500 dark:text-blue-400 dark:hover:bg-blue-950 shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 w-full"
               >
                 👨‍👩‍👧‍👦 Family Portal
               </Button>
@@ -48,7 +48,7 @@ export default function Landing() {
             <Button 
               size="lg" 
               variant="outline" 
-              className="px-6 md:px-8 py-5 md:py-7 text-base md:text-lg rounded-full border-3 border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:hover:bg-cyan-950 shadow-xl hover:scale-105 transition-transform w-full sm:w-auto"
+              className="px-6 md:px-8 py-5 md:py-7 text-base md:text-lg rounded-full border-3 border-cyan-300 hover:bg-cyan-50 dark:border-cyan-700 dark:hover:bg-cyan-950 shadow-xl hover:scale-110 hover:shadow-2xl transition-all duration-300 w-full sm:w-auto animate-fade-in-up animation-delay-200"
               onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
             >
               ℹ️ Learn More
