@@ -54,6 +54,9 @@ import Home from './pages/Home';
 import Landing from './pages/Landing';
 import PhoneMode from './pages/PhoneMode';
 import SecurityMode from './pages/SecurityMode';
+import chat from './pages/chat';
+import phone from './pages/phone';
+import security from './pages/security';
 import __Layout from './Layout.jsx';
 
 
@@ -65,6 +68,9 @@ export const PAGES = {
     "Landing": Landing,
     "PhoneMode": PhoneMode,
     "SecurityMode": SecurityMode,
+    "chat": chat,
+    "phone": phone,
+    "security": security,
 }
 
 export const pagesConfig = {
