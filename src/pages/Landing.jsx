@@ -7,10 +7,10 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 pb-8 md:pb-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950">
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl">
-        <div className="text-center max-w-4xl mx-auto mb-12 md:mb-16">
+      <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl" style={{ marginTop: '0px' }}>
+        <div className="text-center max-w-4xl mx-auto">
           <div className="inline-flex items-center gap-3 bg-gradient-to-r from-blue-100 to-cyan-100 dark:from-blue-900 dark:to-cyan-900 backdrop-blur-sm px-4 md:px-6 py-2 md:py-3 rounded-full shadow-lg mb-4 md:mb-6 border-2 border-blue-200 dark:border-blue-700">
             <Heart className="w-5 h-5 md:w-6 md:h-6 text-blue-500 animate-pulse" />
             <span className="text-base md:text-lg font-medium text-slate-800 dark:text-slate-100">Compassionate AI Companion</span>
@@ -92,8 +92,11 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Important Announcement */}
-        <div className="max-w-4xl mx-auto mb-16 md:mb-20 px-4">
+        {/* Spacing */}
+        <div style={{ height: '60px' }}></div>
+
+        {/* Main Content Section - SEO */}
+        <div className="max-w-4xl mx-auto px-4" style={{ paddingTop: '60px', paddingBottom: '60px', backgroundColor: 'white', borderRadius: '24px' }}>
           <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50 dark:from-amber-950 dark:via-orange-950 dark:to-yellow-950 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-amber-200 dark:border-amber-800">
             <div className="flex items-center justify-center mb-6">
               <div className="w-16 h-16 bg-gradient-to-br from-amber-400 to-orange-500 rounded-full flex items-center justify-center">
@@ -204,8 +207,11 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* SEO Content Section */}
-        <div className="max-w-4xl mx-auto mb-16 md:mb-20 px-4">
+        {/* Spacing */}
+        <div style={{ height: '60px' }}></div>
+
+        {/* Main Content Section - SEO */}
+        <div className="max-w-4xl mx-auto px-4" style={{ marginBottom: '0' }}>
           <div className="bg-white dark:bg-slate-900 rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-blue-200 dark:border-blue-800">
             <h1 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
               Memory Mirror - AI Companion for Dementia Care
@@ -257,8 +263,11 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Key Features with Direct Access */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-12 md:mb-20 px-4">
+        {/* Spacing */}
+        <div style={{ height: '60px' }}></div>
+
+        {/* How It Works */}
+        <div id="how-it-works" className="mx-4" style={{ backgroundColor: '#3b82f6', borderRadius: '24px', paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
           <Link to="/chat" className="block group">
             <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 backdrop-blur-sm shadow-2xl border-4 border-blue-200 dark:border-blue-800 hover:shadow-[0_20px_60px_rgba(59,130,246,0.5)] hover:scale-105 transition-all duration-300 cursor-pointer">
               <CardContent className="p-8 text-center">
@@ -311,54 +320,52 @@ export default function Landing() {
           </Link>
         </div>
 
-        {/* How It Works */}
-        <div id="how-it-works" className="bg-gradient-to-br from-white to-blue-50 dark:from-slate-900 dark:to-blue-950 backdrop-blur-sm rounded-3xl p-6 md:p-8 lg:p-12 shadow-2xl mb-12 md:mb-20 border-4 border-blue-200 dark:border-blue-800 mx-4">
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-600 dark:from-blue-400 dark:to-cyan-400 mb-8 md:mb-12 text-center">How It Works</h2>
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light text-white mb-8 md:mb-12 text-center px-6">How It Works</h2>
           
-          <div className="space-y-6 md:space-y-8 max-w-3xl mx-auto">
+          <div className="space-y-6 md:space-y-8 max-w-3xl mx-auto px-6">
             <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-blue-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
                 1
               </div>
               <div>
-                <h3 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Wake Word Activation</h3>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Wake Word Activation</h3>
+                <p className="text-sm md:text-base text-white/90 leading-relaxed">
                   Say <strong>"Hey Mirror"</strong> to activate hands-free. The app opens ready to listen and respond with a human-like voice.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-purple-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
                 2
               </div>
               <div>
-                <h3 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Era Detection & Adaptation</h3>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Era Detection & Adaptation</h3>
+                <p className="text-sm md:text-base text-white/90 leading-relaxed">
                   AI detects which time period your loved one is mentally experiencing (1940s, 60s, 80s, or present) and adapts language, references, and responses accordingly.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-rose-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
                 3
               </div>
               <div>
-                <h3 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Anxiety Detection & Intervention</h3>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Anxiety Detection & Intervention</h3>
+                <p className="text-sm md:text-base text-white/90 leading-relaxed">
                   Monitors for keywords and sentiments indicating fear, confusion, or distress. Automatically offers calming responses, redirects to positive memories, or suggests mode switches for reassurance.
                 </p>
               </div>
             </div>
 
             <div className="flex gap-4 md:gap-6 items-start">
-              <div className="w-10 h-10 md:w-12 md:h-12 bg-green-500 text-white rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
+              <div className="w-10 h-10 md:w-12 md:h-12 bg-white text-blue-600 rounded-full flex items-center justify-center flex-shrink-0 text-lg md:text-xl font-semibold">
                 4
               </div>
               <div>
-                <h3 className="text-lg md:text-xl font-semibold text-slate-800 dark:text-slate-100 mb-2">Realistic Human Voice</h3>
-                <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                <h3 className="text-lg md:text-xl font-semibold text-white mb-2">Realistic Human Voice</h3>
+                <p className="text-sm md:text-base text-white/90 leading-relaxed">
                   Responses use enhanced AI voice synthesis with natural pacing, warmth, and emotion to create genuine connection and comfort.
                 </p>
               </div>
@@ -366,8 +373,11 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Core Principles */}
-        <div className="max-w-4xl mx-auto mb-12 md:mb-20 px-4">
+        {/* Spacing */}
+        <div style={{ height: '80px' }}></div>
+
+        {/* Testimonials */}
+        <div className="max-w-4xl mx-auto px-4 bg-white dark:bg-slate-900 rounded-3xl" style={{ paddingTop: '60px', paddingBottom: '60px', marginBottom: '0' }}>
           <h2 className="text-2xl md:text-3xl lg:text-4xl font-light text-slate-800 dark:text-slate-100 mb-8 md:mb-12 text-center">Core Principles</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
@@ -405,23 +415,6 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* CTA */}
-        <div className="text-center bg-gradient-to-r from-blue-500 via-cyan-500 to-sky-600 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-700 text-white rounded-3xl p-8 md:p-12 shadow-2xl border-4 border-white/30 mx-4">
-          <Heart className="w-12 h-12 md:w-16 md:h-16 mx-auto mb-4 md:mb-6 animate-pulse" />
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-light mb-4 md:mb-6">Ready to Begin?</h2>
-          <p className="text-lg md:text-xl lg:text-2xl mb-6 md:mb-8 text-white/90 leading-relaxed px-4">
-            Start using Memory Mirror today and provide your loved one with a compassionate, understanding companion.
-          </p>
-          <Link to="/chat">
-            <Button size="lg" className="bg-white text-blue-600 hover:bg-blue-50 px-10 md:px-14 py-7 md:py-9 text-xl md:text-2xl rounded-2xl shadow-2xl hover:scale-105 transition-transform border-4 border-blue-200 min-h-[88px] font-bold">
-              <MessageCircle className="w-8 h-8 md:w-10 md:h-10 mr-3" />
-              Launch AI Chat Now
-            </Button>
-          </Link>
-        </div>
-
-        {/* Testimonials */}
-        <div className="max-w-4xl mx-auto mt-20 mb-12 px-4" style={{ paddingTop: '80px' }}>
           <h2 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-slate-100 mb-12 text-center">
             What Families Are Saying
           </h2>
@@ -459,17 +452,25 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Spacing */}
+        <div style={{ height: '80px' }}></div>
+
+        {/* Bottom Text Section */}
         <div 
-          className="text-center relative px-4 py-16 mb-10 z-10"
+          className="text-center relative px-4 z-10 mx-4 rounded-3xl"
           style={{
             backgroundColor: '#0a4a5c',
-            marginTop: '40px'
+            paddingTop: '60px',
+            paddingBottom: '60px',
+            marginBottom: '0'
           }}
         >
           <p className="text-slate-200 text-sm md:text-base font-medium">Memory Mirror — Compassionate AI for dementia care</p>
           <p className="mt-2 text-slate-300 text-xs md:text-sm">Designed with input from caregivers and dementia specialists</p>
         </div>
+
+        {/* Spacing */}
+        <div style={{ height: '40px' }}></div>
       </div>
     </div>
   );
