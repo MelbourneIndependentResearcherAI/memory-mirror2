@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Settings as SettingsIcon, Users, BookHeart, TrendingUp, Shield } from 'lucide-react';
+import { ArrowLeft, Settings as SettingsIcon, Users, BookHeart, TrendingUp, Shield, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import SafeZonesManager from '../components/caregiver/SafeZonesManager';
@@ -9,6 +9,7 @@ import MemoryManager from '../components/caregiver/MemoryManager';
 import AnxietyDashboard from '../components/caregiver/AnxietyDashboard';
 import InsightsPanel from '../components/caregiver/InsightsPanel';
 import Settings from '../components/caregiver/Settings';
+import ProactiveSuggestions from '../components/caregiver/ProactiveSuggestions';
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
@@ -38,12 +39,17 @@ export default function CaregiverPortal() {
           </div>
         </div>
 
-        <Tabs defaultValue="insights" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3 md:grid-cols-6 h-auto bg-white dark:bg-slate-900">
-            <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px] col-span-3 md:col-span-1">
+        <Tabs defaultValue="ai-insights" className="space-y-6">
+          <TabsList className="grid w-full grid-cols-2 md:grid-cols-7 h-auto bg-white dark:bg-slate-900">
+            <TabsTrigger value="ai-insights" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Brain className="w-4 h-4" />
+              <span className="hidden sm:inline">AI Insights</span>
+              <span className="sm:hidden">AI</span>
+            </TabsTrigger>
+            <TabsTrigger value="insights" className="flex items-center gap-2 py-3 min-h-[44px]">
               <TrendingUp className="w-4 h-4" />
-              <span className="md:hidden">🔔 Alerts</span>
-              <span className="hidden md:inline">Insights</span>
+              <span className="hidden sm:inline">Alerts</span>
+              <span className="sm:hidden">🔔</span>
             </TabsTrigger>
             <TabsTrigger value="memories" className="flex items-center gap-2 py-3 min-h-[44px]">
               <BookHeart className="w-4 h-4" />
@@ -66,6 +72,10 @@ export default function CaregiverPortal() {
               <span className="hidden sm:inline">Settings</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="ai-insights">
+            <ProactiveSuggestions />
+          </TabsContent>
 
           <TabsContent value="insights">
             <InsightsPanel />
