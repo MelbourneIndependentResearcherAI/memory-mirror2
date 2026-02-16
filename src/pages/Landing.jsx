@@ -100,6 +100,23 @@ export default function Landing() {
               </Link>
             </div>
 
+            {/* Voice Setup Card */}
+            <Link to={createPageUrl('VoiceSetup')} className="w-full animate-fade-in-up animation-delay-100 mt-2">
+              <div className="bg-gradient-to-br from-cyan-500 to-blue-600 hover:from-cyan-600 hover:to-blue-700 rounded-3xl shadow-2xl border-4 border-white/30 hover:scale-105 hover:shadow-3xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+                <div className="flex items-start gap-4">
+                  <Volume2 className="w-10 h-10 text-white" />
+                  <div className="flex-1">
+                    <h3 className="text-xl md:text-2xl font-bold text-white mb-2">
+                      Always-On Voice
+                    </h3>
+                    <p className="text-sm md:text-base text-white/90 leading-relaxed">
+                      Hands-free voice control - Just say "Hey Mirror" anytime
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Link>
+
             {/* Portal Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full mt-2">
               <Link to={createPageUrl('FamilyConnect')} className="w-full animate-fade-in-up animation-delay-100">

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { base44 } from '@/api/base44Client';
 import CareJournal from '../components/caregiver/CareJournal';
 import UserProfileSetup from '../components/caregiver/UserProfileSetup';
 import MediaLibrary from '../components/caregiver/MediaLibrary';
@@ -9,6 +10,7 @@ import PlaylistManager from '../components/music/PlaylistManager';
 import MemorySessionLauncher from '../components/memory/MemorySessionLauncher';
 import InsightsDashboard from '../components/caregiver/InsightsDashboard';
 import NightWatchLog from '../components/caregiver/NightWatchLog';
+import AlwaysOnVoice from '../components/memory-mirror/AlwaysOnVoice';
 
 const featureCards = [
   {
@@ -74,12 +76,36 @@ const featureCards = [
     description: 'Review nighttime incidents and patterns',
     background: '#1E1B4B',
     darkBackground: '#1E1B4B'
+  },
+  {
+    id: 9,
+    title: 'Voice Setup',
+    icon: '🎤',
+    description: 'Configure always-on wake word detection',
+    background: '#EFF6FF',
+    darkBackground: '#1E3A8A'
   }
 ];
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('home');
+
+  const [userProfile, setUserProfile] = React.useState(null);
+
+  React.useEffect(() => {
+    const loadProfile = async () => {
+      try {
+        const profiles = await base44.entities.UserProfile.list();
+        if (profiles.length > 0) {
+          setUserProfile(profiles[0]);
+        }
+      } catch (error) {
+        console.error('Failed to load profile:', error);
+      }
+    };
+    loadProfile();
+  }, []);
 
   const handleCardClick = (cardId) => {
     const viewMap = {
@@ -89,7 +115,8 @@ export default function CaregiverPortal() {
       4: 'media',          // Photo Library -> Media Library
       6: 'playlists',      // Music Player -> Playlist Manager
       7: 'journal',        // Care Journal
-      8: 'nightwatch'      // Night Watch Log
+      8: 'nightwatch',     // Night Watch Log
+      9: 'voice-setup'     // Voice Setup
     };
     
     if (viewMap[cardId]) {
@@ -190,6 +217,15 @@ export default function CaregiverPortal() {
         {activeView === 'nightwatch' && (
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
             <NightWatchLog onBack={() => setActiveView('home')} />
+          </div>
+        )}
+
+        {activeView === 'voice-setup' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <AlwaysOnVoice 
+              userProfile={userProfile}
+              onClose={() => setActiveView('home')}
+            />
           </div>
         )}
       </div>

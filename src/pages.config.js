@@ -52,12 +52,13 @@ import ChatMode from './pages/ChatMode';
 import FamilyConnect from './pages/FamilyConnect';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
+import NightWatch from './pages/NightWatch';
 import PhoneMode from './pages/PhoneMode';
 import SecurityMode from './pages/SecurityMode';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import NightWatch from './pages/NightWatch';
+import VoiceSetup from './pages/VoiceSetup';
 import __Layout from './Layout.jsx';
 
 
@@ -67,12 +68,13 @@ export const PAGES = {
     "FamilyConnect": FamilyConnect,
     "Home": Home,
     "Landing": Landing,
+    "NightWatch": NightWatch,
     "PhoneMode": PhoneMode,
     "SecurityMode": SecurityMode,
     "chat": chat,
     "phone": phone,
     "security": security,
-    "NightWatch": NightWatch,
+    "VoiceSetup": VoiceSetup,
 }
 
 export const pagesConfig = {
