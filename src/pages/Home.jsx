@@ -85,7 +85,7 @@ export default function Home() {
   };
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-20`}>
+    <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-24`}>
       <div className="max-w-lg mx-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg">
@@ -123,7 +123,7 @@ export default function Home() {
           </div>
         </div>
 
-        <p className="text-center text-slate-500 dark:text-slate-400 text-sm mt-6 px-4 mb-20">
+        <p className="text-center text-slate-500 dark:text-slate-400 text-sm mt-6 px-4 mb-24">
           Memory Mirror — Compassionate AI companion for dementia care
         </p>
       </div>

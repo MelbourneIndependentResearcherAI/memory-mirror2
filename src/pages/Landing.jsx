@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-blue-950 dark:via-cyan-950 dark:to-sky-950 pb-32 md:pb-40">
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12 md:py-16 max-w-7xl">
         <div className="text-center max-w-4xl mx-auto mb-12 md:mb-16">
@@ -204,7 +204,7 @@ export default function Landing() {
         </div>
 
         {/* Footer */}
-        <div className="text-center mt-12 md:mt-16 text-slate-500 dark:text-slate-400 text-xs md:text-sm px-4">
+        <div className="text-center mt-16 md:mt-24 mb-8 text-slate-500 dark:text-slate-400 text-xs md:text-sm px-4">
           <p>Memory Mirror — Compassionate AI for dementia care</p>
           <p className="mt-2">Designed with input from caregivers and dementia specialists</p>
         </div>

@@ -3,7 +3,7 @@ import { Mail, Heart } from 'lucide-react';
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-r from-orange-100 via-pink-100 to-rose-100 dark:from-orange-950 dark:via-pink-950 dark:to-rose-950 border-t-4 border-orange-300 dark:border-orange-700 py-6 px-4">
+    <footer className="bg-gradient-to-r from-orange-100 via-pink-100 to-rose-100 dark:from-orange-950 dark:via-pink-950 dark:to-rose-950 border-t-4 border-orange-300 dark:border-orange-700 py-8 px-4 mt-12">
       <div className="max-w-4xl mx-auto text-center space-y-3">
         <div className="flex items-center justify-center gap-2 text-orange-800 dark:text-orange-200">
           <Heart className="w-5 h-5 fill-current" />
