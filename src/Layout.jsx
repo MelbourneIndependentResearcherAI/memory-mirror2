@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import Footer from '@/components/Footer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
+import BottomNav from '@/components/BottomNav';
 
 // Optimized query configuration for fast, reliable data fetching
 const queryClient = new QueryClient({
@@ -24,6 +25,7 @@ const queryClient = new QueryClient({
 
 export default function Layout({ children, currentPageName }) {
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
+  const showBottomNav = !showFooter; // Show bottom nav on all pages except landing and caregiver portal
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -33,7 +35,7 @@ export default function Layout({ children, currentPageName }) {
             className="min-h-screen bg-background text-foreground flex flex-col"
             style={{
               paddingTop: 'env(safe-area-inset-top)',
-              paddingBottom: 'env(safe-area-inset-bottom)',
+              paddingBottom: showBottomNav ? 'calc(76px + env(safe-area-inset-bottom))' : 'env(safe-area-inset-bottom)',
               overscrollBehaviorY: 'none'
             }}
           >
@@ -41,6 +43,7 @@ export default function Layout({ children, currentPageName }) {
               {children}
             </div>
             {showFooter && <Footer />}
+            {showBottomNav && <BottomNav />}
           </div>
           <AgentSupport />
         </ErrorBoundary>
