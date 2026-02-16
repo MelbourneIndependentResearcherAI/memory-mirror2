@@ -30,6 +30,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showStory, setShowStory] = useState(false);
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
+  const [cognitiveLevel, setCognitiveLevel] = useState('mild');
+  const [lastAssessment, setLastAssessment] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     try {
       return localStorage.getItem('memoryMirrorLanguage') || 'en';
@@ -56,6 +58,18 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryFn: () => base44.entities.Memory.list('-created_date', 50),
   });
 
+  const { data: cognitiveAssessments = [] } = useQuery({
+    queryKey: ['cognitiveAssessments'],
+    queryFn: () => base44.entities.CognitiveAssessment.list('-assessment_date', 1),
+  });
+
+  useEffect(() => {
+    if (cognitiveAssessments.length > 0) {
+      setCognitiveLevel(cognitiveAssessments[0].cognitive_level);
+      setLastAssessment(cognitiveAssessments[0]);
+    }
+  }, [cognitiveAssessments]);
+
   const getSystemPrompt = () => {
     const safeZoneContext = safeZones.length > 0 
       ? `\n\nSAFE MEMORY ZONES (redirect here when anxiety detected):\n${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}`
@@ -77,6 +91,32 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       'auto': ''
     };
 
+    // Adaptive communication based on cognitive level
+    const cognitiveAdaptations = {
+      mild: {
+        complexity: 'Use natural, conversational language with moderate complexity. Allow for nuanced discussions.',
+        speed: 'Respond at a normal conversational pace.',
+        memory: 'Reference memories with detail. Encourage reminiscence and storytelling.'
+      },
+      moderate: {
+        complexity: 'Use simpler sentence structures. Break complex ideas into smaller parts. Repeat key information.',
+        speed: 'Slow down responses slightly. Pause between concepts.',
+        memory: 'Reference familiar memories with gentle prompting. Use concrete, sensory details.'
+      },
+      advanced: {
+        complexity: 'Use very simple, short sentences (5-8 words). Focus on one idea at a time. Use concrete language only.',
+        speed: 'Respond slowly with clear pauses. Give time to process.',
+        memory: 'Focus on deeply familiar memories (childhood, early adulthood). Use emotions more than facts.'
+      },
+      severe: {
+        complexity: 'Use extremely simple phrases (3-5 words). Focus on immediate comfort and reassurance.',
+        speed: 'Very slow, gentle responses with long pauses.',
+        memory: 'Focus on emotional connection rather than specific memories. Use sensory comfort words.'
+      }
+    };
+
+    const adaptation = cognitiveAdaptations[cognitiveLevel] || cognitiveAdaptations.mild;
+
     return `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
 
 1. NEVER correct or reality-orient. Meet people where they are mentally.
@@ -88,6 +128,13 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
 7. Use warm, simple, clear language with era-appropriate expressions.
 8. Reassure them that everything is taken care of.
 9. Be patient and repeat information if needed.${safeZoneContext}${memoryContext}
+
+**COGNITIVE ADAPTATION (Current level: ${cognitiveLevel}):**
+- Communication complexity: ${adaptation.complexity}
+- Response pacing: ${adaptation.speed}
+- Memory recall approach: ${adaptation.memory}
+
+${lastAssessment?.recommended_adaptations?.length > 0 ? `\nRECOMMENDED ADAPTATIONS:\n${lastAssessment.recommended_adaptations.map(a => `- ${a}`).join('\n')}` : ''}
 
 After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
   };
@@ -297,6 +344,19 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
           trigger_category: anxietyDetection.trigger ? 'distress' : 'none',
           mode_used: 'chat',
           interaction_count: 1
+        }).catch(() => {});
+      }
+
+      // Periodic cognitive assessment (every 10 messages)
+      if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
+        base44.functions.invoke('assessCognitiveLevel', {
+          conversation_history: conversationHistory,
+          recent_interactions: { message_count: conversationHistory.length }
+        }).then(result => {
+          if (result.data?.cognitive_level) {
+            setCognitiveLevel(result.data.cognitive_level);
+            queryClient.invalidateQueries({ queryKey: ['cognitiveAssessments'] });
+          }
         }).catch(() => {});
       }
 

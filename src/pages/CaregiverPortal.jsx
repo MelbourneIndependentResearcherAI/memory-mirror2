@@ -11,6 +11,7 @@ import InsightsPanel from '../components/caregiver/InsightsPanel';
 import Settings from '../components/caregiver/Settings';
 import ProactiveSuggestions from '../components/caregiver/ProactiveSuggestions';
 import EducationHub from '../components/caregiver/EducationHub';
+import CognitiveProgression from '../components/caregiver/CognitiveProgression';
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
@@ -104,7 +105,10 @@ export default function CaregiverPortal() {
           </TabsContent>
 
           <TabsContent value="trends">
-            <AnxietyDashboard />
+            <div className="space-y-6">
+              <CognitiveProgression />
+              <AnxietyDashboard />
+            </div>
           </TabsContent>
 
           <TabsContent value="settings">
