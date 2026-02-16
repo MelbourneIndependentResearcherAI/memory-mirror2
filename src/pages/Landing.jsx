@@ -420,10 +420,55 @@ export default function Landing() {
           </Link>
         </div>
 
+        {/* Testimonials */}
+        <div className="max-w-4xl mx-auto mt-20 mb-12 px-4" style={{ paddingTop: '80px' }}>
+          <h2 className="text-3xl md:text-4xl font-light text-slate-800 dark:text-slate-100 mb-12 text-center">
+            What Families Are Saying
+          </h2>
+          
+          <div className="space-y-6">
+            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 rounded-xl p-8 shadow-lg border-2 border-blue-200 dark:border-blue-800">
+              <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                <span className="text-4xl text-blue-400 leading-none">"</span>
+                Memory Mirror has been a lifesaver. My mother with Alzheimer's talks to it every morning, and it adapts to whatever decade she thinks she's in. The anxiety detection feature alerts me when she needs extra support. Worth every penny.
+              </p>
+              <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
+                — Sarah M., Daughter & Caregiver
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-950 dark:to-pink-950 rounded-xl p-8 shadow-lg border-2 border-purple-200 dark:border-purple-800">
+              <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                <span className="text-4xl text-purple-400 leading-none">"</span>
+                As a dementia care nurse, I recommend Memory Mirror to families. It never corrects or contradicts, which is exactly what we train caregivers to do. The voice is so natural and comforting.
+              </p>
+              <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
+                — James R., RN, Dementia Care Specialist
+              </p>
+            </div>
+
+            <div className="bg-gradient-to-br from-emerald-50 to-teal-50 dark:from-emerald-950 dark:to-teal-950 rounded-xl p-8 shadow-lg border-2 border-emerald-200 dark:border-emerald-800">
+              <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+                <span className="text-4xl text-emerald-400 leading-none">"</span>
+                My dad was resistant to technology, but the wake word activation means he just talks naturally. Mirror brings up photos from his Navy days in the 60s, and I've seen him smile more in the past month than the past year.
+              </p>
+              <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
+                — Maria L., Family Caregiver
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Footer */}
-        <div className="text-center mt-16 md:mt-24 mb-0 text-slate-500 dark:text-slate-400 text-xs md:text-sm px-4">
-          <p>Memory Mirror — Compassionate AI for dementia care</p>
-          <p className="mt-2">Designed with input from caregivers and dementia specialists</p>
+        <div 
+          className="text-center relative px-4 py-16 mb-10 z-10"
+          style={{
+            backgroundColor: '#0a4a5c',
+            marginTop: '40px'
+          }}
+        >
+          <p className="text-slate-200 text-sm md:text-base font-medium">Memory Mirror — Compassionate AI for dementia care</p>
+          <p className="mt-2 text-slate-300 text-xs md:text-sm">Designed with input from caregivers and dementia specialists</p>
         </div>
       </div>
     </div>
