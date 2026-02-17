@@ -7,10 +7,15 @@ import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import { initOfflineDB } from '@/components/utils/offlineManager';
+import { initOfflineStorage } from '@/components/utils/offlineStorage';
+import { registerServiceWorker, requestPersistentStorage } from '@/components/utils/serviceWorkerRegister';
 
-// Initialize offline database on app load
+// Initialize offline capabilities on app load
 if (typeof window !== 'undefined') {
   initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
+  initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
+  registerServiceWorker();
+  requestPersistentStorage();
 }
 
 // Optimized query configuration for fast, reliable data fetching
