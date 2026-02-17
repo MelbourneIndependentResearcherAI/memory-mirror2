@@ -14,6 +14,7 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
 import { base44 } from '@/api/base44Client';
+import { offlineAIChat } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';

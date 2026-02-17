@@ -13,10 +13,19 @@ import { registerServiceWorker, requestPersistentStorage } from '@/components/ut
 
 // Initialize offline capabilities on app load
 if (typeof window !== 'undefined') {
+  // Initialize offline storage immediately
   initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
   initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
-  registerServiceWorker();
+  
+  // Request persistent storage for offline data
   requestPersistentStorage();
+  
+  // Preload essential data for 100% offline mode
+  import('@/components/utils/offlinePreloader').then(module => {
+    module.preloadEssentialData().catch(e => 
+      console.log('Preload warning:', e.message)
+    );
+  });
 }
 
 // Optimized query configuration for fast, reliable data fetching

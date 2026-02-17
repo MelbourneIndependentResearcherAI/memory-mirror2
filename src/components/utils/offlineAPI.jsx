@@ -155,9 +155,18 @@ export async function offlineFunction(functionName, params = {}) {
   };
 }
 
-// Offline-aware AI chat
+// Offline-aware AI chat with intelligent fallbacks
 export async function offlineAIChat(prompt, options = {}) {
-  // Check cache first
+  const lowerPrompt = prompt.toLowerCase();
+  
+  // First, check for pre-cached essential responses (works 100% offline)
+  const essentialResponse = await getEssentialResponse(lowerPrompt);
+  if (essentialResponse) {
+    console.log('✅ Using pre-cached essential response');
+    return essentialResponse;
+  }
+  
+  // Check general cache
   const cacheKey = `${prompt}_${JSON.stringify(options)}`;
   const cached = await getCachedAIResponse(cacheKey);
   if (cached) {
@@ -171,8 +180,9 @@ export async function offlineAIChat(prompt, options = {}) {
         ...options
       });
       
-      // Cache the response
+      // Cache the response for future offline use
       await saveToStore(STORES.aiResponses, {
+        id: `cached_${Date.now()}`,
         cacheKey,
         prompt,
         response,
@@ -181,12 +191,28 @@ export async function offlineAIChat(prompt, options = {}) {
       
       return response;
     } catch (error) {
-      console.log('AI call failed, using fallback:', error.message);
+      console.log('AI call failed, using offline fallback:', error.message);
     }
   }
   
-  // Return offline fallback response
+  // Return intelligent offline fallback
   return getOfflineFallbackResponse(prompt);
+}
+
+async function getEssentialResponse(lowerPrompt) {
+  const allResponses = await getAllFromStore(STORES.aiResponses);
+  
+  // Find best matching pre-cached response
+  for (const cached of allResponses) {
+    if (cached.offline && cached.prompt) {
+      const keywords = cached.prompt.toLowerCase().split(',').map(k => k.trim());
+      if (keywords.some(keyword => lowerPrompt.includes(keyword))) {
+        return cached.response;
+      }
+    }
+  }
+  
+  return null;
 }
 
 async function getCachedAIResponse(cacheKey) {
