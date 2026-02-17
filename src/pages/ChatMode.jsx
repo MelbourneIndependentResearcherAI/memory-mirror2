@@ -3,7 +3,7 @@ import ChatInterface from '@/components/memory-mirror/ChatInterface';
 import VoiceCommandListener from '@/components/voice/VoiceCommandListener';
 import MemoryGallery from '@/components/memory-mirror/MemoryGallery';
 
-export default function ChatMode({ onEraChange, onModeSwitch }) {
+export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated }) {
   const [showMemoryGallery, setShowMemoryGallery] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
 

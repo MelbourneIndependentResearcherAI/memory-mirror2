@@ -1,19 +1,28 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Phone, Shield, Settings } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Settings, HeartCrack } from 'lucide-react';
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import ChatMode from './ChatMode';
 import PhoneMode from './PhoneMode';
 import SecurityMode from './SecurityMode';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
+import BadDayMode from '@/components/memory-mirror/BadDayMode';
 import { loadVoices } from '../components/utils/voiceUtils';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [currentMode, setCurrentMode] = useState('chat');
+  const [showBadDayMode, setShowBadDayMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { data: userProfiles = [] } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: () => base44.entities.UserProfile.list()
+  });
 
   // Detect mode from URL
   React.useEffect(() => {
@@ -116,10 +125,25 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Bad Day Button - Prominent and Gentle */}
+        <div className="p-4">
+          <button
+            onClick={() => setShowBadDayMode(true)}
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold"
+          >
+            <HeartCrack className="w-8 h-8" />
+            Having a Bad Day?
+          </button>
+        </div>
+
         {/* Main Content - Hidden/Visible Pattern for State Preservation */}
         <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-blue-200 dark:border-blue-800">
           <div style={{ display: currentMode === 'chat' ? 'block' : 'none' }}>
-            <ChatMode onEraChange={setDetectedEra} onModeSwitch={handleModeSwitch} />
+            <ChatMode 
+              onEraChange={setDetectedEra} 
+              onModeSwitch={handleModeSwitch}
+              onBadDayActivated={() => setShowBadDayMode(true)}
+            />
           </div>
           <div style={{ display: currentMode === 'phone' ? 'block' : 'none' }}>
             <PhoneMode />
@@ -165,6 +189,13 @@ export default function Home() {
         onWakeWordDetected={handleWakeWord}
         isActive={wakeWordActive}
       />
+
+      {showBadDayMode && (
+        <BadDayMode 
+          onClose={() => setShowBadDayMode(false)}
+          userProfile={userProfiles[0]}
+        />
+      )}
     </div>
   );
 }
