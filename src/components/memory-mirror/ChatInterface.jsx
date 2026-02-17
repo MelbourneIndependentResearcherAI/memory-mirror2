@@ -55,25 +55,25 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
 
   const { data: safeZones = [] } = useQuery({
     queryKey: ['safeZones'],
-    queryFn: () => base44.entities.SafeMemoryZone.list(),
+    queryFn: () => offlineEntities.list('SafeMemoryZone'),
   });
 
   const { data: memories = [] } = useQuery({
     queryKey: ['memories'],
-    queryFn: () => base44.entities.Memory.list('-created_date', 50),
+    queryFn: () => offlineEntities.list('Memory', '-created_date', 50),
   });
 
   const { data: userProfile } = useQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
-      const profiles = await base44.entities.UserProfile.list();
+      const profiles = await offlineEntities.list('UserProfile');
       return profiles[0] || null;
     },
   });
 
   const { data: cognitiveAssessments = [] } = useQuery({
     queryKey: ['cognitiveAssessments'],
-    queryFn: () => base44.entities.CognitiveAssessment.list('-assessment_date', 1),
+    queryFn: () => offlineEntities.list('CognitiveAssessment', '-assessment_date', 1),
   });
 
   useEffect(() => {
@@ -193,7 +193,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     if (targetLang === 'en' && !sourceLang) return text;
     
     try {
-      const result = await base44.functions.invoke('translateText', {
+      const result = await offlineFunction('translateText', {
         text,
         targetLanguage: targetLang,
         sourceLanguage: sourceLang
@@ -209,8 +209,8 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     const userMessage = transcribedText || '';
     if (!userMessage.trim() || isLoading) return;
     
-    // Log chat activity
-    base44.entities.ActivityLog.create({
+    // Log chat activity (offline-aware)
+    offlineEntities.create('ActivityLog', {
       activity_type: 'chat',
       details: { message_length: userMessage.length, era: selectedEra, language: selectedLanguage }
     }).catch(() => {});
@@ -227,15 +227,15 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     setConversationHistory(newHistory);
     setIsLoading(true);
 
-    // Perform sentiment analysis on English text
+    // Perform sentiment analysis on English text (offline-aware)
     let sentimentAnalysis = null;
     try {
-      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessageEnglish });
+      const sentimentResult = await offlineFunction('analyzeSentiment', { text: userMessageEnglish });
       sentimentAnalysis = sentimentResult.data;
       
       // Create caregiver alert for immediate attention needs
       if (sentimentAnalysis.needs_immediate_attention) {
-        base44.entities.CaregiverAlert.create({
+        offlineEntities.create('CaregiverAlert', {
           alert_type: 'high_anxiety',
           severity: 'urgent',
           message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
@@ -257,10 +257,10 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       return updated;
     });
 
-    // Recall relevant memories proactively
+    // Recall relevant memories proactively (offline-aware)
     let memoryRecall = null;
     try {
-      const recallResult = await base44.functions.invoke('recallMemories', {
+      const recallResult = await offlineFunction('recallMemories', {
         context: userMessageEnglish,
         sentiment_analysis: sentimentAnalysis,
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra
@@ -270,10 +270,10 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       console.error('Memory recall failed:', error);
     }
 
-    // Suggest visual responses (images/videos)
+    // Suggest visual responses (images/videos) - offline-aware
     let visualSuggestions = null;
     try {
-      const visualResult = await base44.functions.invoke('suggestVisualResponses', {
+      const visualResult = await offlineFunction('suggestVisualResponses', {
         conversation_context: userMessageEnglish,
         detected_emotion: sentimentAnalysis?.emotional_tone?.[0] || 'neutral',
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra,
@@ -285,9 +285,9 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       console.error('Visual suggestions failed:', error);
     }
 
-    // Find relevant photos and conversation snippets using AI
+    // Find relevant photos and conversation snippets using AI (offline-aware)
     try {
-      const relevantMedia = await base44.functions.invoke('findRelevantMedia', {
+      const relevantMedia = await offlineFunction('findRelevantMedia', {
         context: userMessageEnglish,
         current_era: selectedEra === 'auto' ? detectedEra : selectedEra,
         conversation_topics: conversationTopics
@@ -344,33 +344,25 @@ ${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention
 Tone: ${memoryRecall.tone_recommendation}`
         : '';
 
-      let assistantMessage;
-      
-      if (isOnline()) {
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `${getSystemPrompt()}${emotionalContext}${memoryContext}
+      // Get AI response (offline-aware)
+      const fullPrompt = `${getSystemPrompt()}${emotionalContext}${memoryContext}
 
 Conversation so far:
 ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
-Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`,
-        });
+Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`;
 
-        assistantMessage = response;
-        
-        // Cache response for offline use
-        await cacheOfflineResponse(userMessageEnglish, assistantMessage).catch(() => {});
-      } else {
-        // Use offline response
-        const offlineResponse = await getOfflineResponse(userMessageEnglish);
-        assistantMessage = offlineResponse.text;
-      }
+      let response = await offlineAIChat(fullPrompt, {
+        add_context_from_internet: false
+      });
+
+      let assistantMessage = typeof response === 'string' ? response : response?.text || response;
       let era = 'present';
       let detectedAnxiety = anxietyLevel;
       
       // Parse META data if present
-      if (typeof response === 'string' && response.includes('META:')) {
-        const parts = response.split('META:');
+      if (typeof assistantMessage === 'string' && assistantMessage.includes('META:')) {
+        const parts = assistantMessage.split('META:');
         assistantMessage = parts[0].trim();
         try {
           const meta = JSON.parse(parts[1].trim());
@@ -388,21 +380,21 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
       }
 
-      // Track anxiety trends
+      // Track anxiety trends (offline-aware)
       if (detectedAnxiety >= 4) {
         const today = new Date().toISOString().split('T')[0];
-        base44.entities.AnxietyTrend.create({
+        offlineEntities.create('AnxietyTrend', {
           date: today,
           anxiety_level: detectedAnxiety,
-          trigger_category: anxietyDetection.trigger ? 'distress' : 'none',
+          trigger_category: sentimentAnalysis?.trigger_words?.[0] ? 'distress' : 'none',
           mode_used: 'chat',
           interaction_count: 1
         }).catch(() => {});
       }
 
-      // Periodic cognitive assessment (every 10 messages)
+      // Periodic cognitive assessment (every 10 messages) - offline-aware
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
-        base44.functions.invoke('assessCognitiveLevel', {
+        offlineFunction('assessCognitiveLevel', {
           conversation_history: conversationHistory,
           recent_interactions: { message_count: conversationHistory.length }
         }).then(result => {
@@ -416,10 +408,10 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
 
-      // Trigger mood-based device control
-      if (detectedAnxiety >= 4 && systemRef.current?.currentIncident === undefined) {
+      // Trigger mood-based device control (offline-aware)
+      if (detectedAnxiety >= 4) {
         try {
-          const moodControl = await base44.functions.invoke('moodBasedDeviceControl', {
+          const moodControl = await offlineFunction('moodBasedDeviceControl', {
             anxiety_level: detectedAnxiety,
             detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
             conversation_context: userMessageEnglish
@@ -456,8 +448,8 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         });
         setShowAnxietyAlert(true);
         
-        // Log high anxiety
-        base44.entities.ActivityLog.create({
+        // Log high anxiety (offline-aware)
+        offlineEntities.create('ActivityLog', {
           activity_type: 'anxiety_detected',
           anxiety_level: detectedAnxiety,
           details: { trigger: userMessage.substring(0, 100) }

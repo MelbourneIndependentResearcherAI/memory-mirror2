@@ -6,6 +6,7 @@ import Footer from '@/components/Footer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
+import OfflineBanner from '@/components/memory-mirror/OfflineBanner';
 import { initOfflineDB } from '@/components/utils/offlineManager';
 import { initOfflineStorage } from '@/components/utils/offlineStorage';
 import { registerServiceWorker, requestPersistentStorage } from '@/components/utils/serviceWorkerRegister';
@@ -43,6 +44,7 @@ export default function Layout({ children, currentPageName }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <ErrorBoundary>
+          <OfflineBanner />
           <OfflineIndicator />
           <div 
             className="min-h-screen bg-background text-foreground flex flex-col"
