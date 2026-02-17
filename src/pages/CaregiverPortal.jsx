@@ -103,12 +103,21 @@ const featureCards = [
     description: 'Configure mood-based smart home adjustments',
     background: '#F5EFFF',
     darkBackground: '#3A2A4A'
+  },
+  {
+    id: 12,
+    title: 'Activate Bad Day Mode',
+    icon: '💜',
+    description: 'Remotely activate calming mode for your loved one',
+    background: '#FDF2F8',
+    darkBackground: '#4A1D3B'
   }
 ];
 
 export default function CaregiverPortal() {
   const navigate = useNavigate();
   const [activeView, setActiveView] = useState('home');
+  const [badDayActivated, setBadDayActivated] = React.useState(false);
 
   const [userProfile, setUserProfile] = React.useState(null);
 
@@ -126,7 +135,28 @@ export default function CaregiverPortal() {
     loadProfile();
   }, []);
 
-  const handleCardClick = (cardId) => {
+  const handleCardClick = async (cardId) => {
+    if (cardId === 12) {
+      // Activate Bad Day Mode remotely
+      setBadDayActivated(true);
+      
+      // Create alert log
+      try {
+        await base44.entities.ActivityLog.create({
+          activity_type: 'anxiety_detected',
+          details: { trigger: 'caregiver_activated_bad_day_mode', severity: 'medium' },
+          anxiety_level: 6
+        });
+        
+        alert('Bad Day Mode activated remotely. Your loved one will receive gentle comfort and support.');
+      } catch (error) {
+        console.error('Failed to activate:', error);
+      }
+      
+      setTimeout(() => setBadDayActivated(false), 3000);
+      return;
+    }
+    
     const viewMap = {
       1: 'profile',        // Health Monitor -> Profile Setup
       2: 'memory-session', // Memory Sessions
