@@ -100,7 +100,9 @@ class AlwaysOnVoiceSystem {
     if (wakeWordDetected && !this.isProcessing) {
       console.log('Wake word detected:', transcript);
       this.onWakeWordDetected(transcript);
-    } else if (this.conversationActive && transcript.length > 0) {
+    } else if (this.conversationActive && !this.isProcessing && transcript.length > 5) {
+      // Only process if conversation is active and we have meaningful input
+      console.log('User spoke in active conversation:', transcript);
       this.onUserSpoke(transcript);
     }
   }
@@ -115,10 +117,12 @@ class AlwaysOnVoiceSystem {
 
     const query = this.extractQuery(transcript);
 
-    if (query && query.length > 3) {
+    if (query && query.length > 5) {
+      // User said something after wake word - respond immediately
       await this.respondToUser(query);
     } else {
-      await this.speak("Yes? I'm listening. How can I help you?");
+      // Just wake word - acknowledge and wait for input
+      await this.speak("Yes, I'm listening. How can I help you?");
     }
 
     this.isProcessing = false;
@@ -186,17 +190,37 @@ class AlwaysOnVoiceSystem {
         window.speechSynthesis.cancel();
         
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.rate = 0.85;
-        utterance.pitch = 1.0;
-        utterance.volume = 0.9;
         
+        // Wait for voices to load
         const voices = speechSynthesis.getVoices();
+        
+        // Select the BEST voice available - prioritize natural sounding voices
         const preferredVoice = voices.find(voice => 
-          voice.lang.startsWith(this.userProfile?.language || 'en')
-        );
+          (voice.name.includes('Google') && voice.lang.startsWith('en')) ||
+          voice.name.includes('Samantha') || // High quality on Apple devices
+          voice.name.includes('Natural') ||
+          voice.name.includes('Premium') ||
+          voice.name.includes('Enhanced') ||
+          voice.name.includes('Microsoft Zira') || // Windows quality voice
+          voice.name.includes('Microsoft David')
+        ) || voices.find(v => v.lang.startsWith('en-US') && !v.name.includes('eSpeak'));
         
         if (preferredVoice) {
           utterance.voice = preferredVoice;
+          console.log('Using voice:', preferredVoice.name);
+        }
+
+        // Human-like speech parameters
+        utterance.rate = 0.9;  // Natural conversational pace
+        utterance.pitch = 1.05;  // Slightly warmer tone
+        utterance.volume = 1.0;  // Full volume
+        
+        // Add natural pauses for longer responses
+        if (text.length > 100) {
+          utterance.text = text
+            .replace(/\. /g, '. ... ')
+            .replace(/\? /g, '? ... ')
+            .replace(/! /g, '! ... ');
         }
 
         utterance.onend = () => {
@@ -206,6 +230,11 @@ class AlwaysOnVoiceSystem {
         
         utterance.onstart = () => {
           this.onStateChange({ status: 'speaking', message: 'Speaking...' });
+        };
+        
+        utterance.onerror = (e) => {
+          console.error('Speech error:', e);
+          resolve();
         };
         
         speechSynthesis.speak(utterance);
