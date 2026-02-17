@@ -43,12 +43,12 @@ const eras = [
 
 export default function EraSelector({ selectedEra, onEraChange }) {
   return (
-    <div className="p-4 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-b border-blue-200 dark:border-blue-800">
-      <h3 className="text-sm font-semibold text-slate-700 dark:text-slate-300 mb-3 flex items-center gap-2">
-        <Clock className="w-4 h-4" />
+    <div className="p-4 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+      <h3 className="text-sm font-bold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+        <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
         Communication Era
       </h3>
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-2">
+      <div className="grid grid-cols-5 gap-2">
         {eras.map((era) => {
           const Icon = era.icon;
           const isSelected = selectedEra === era.id;
@@ -58,31 +58,20 @@ export default function EraSelector({ selectedEra, onEraChange }) {
               onClick={() => onEraChange(era.id)}
               whileTap={{ scale: 0.95 }}
               className={`
-                relative overflow-hidden rounded-xl p-3 min-h-[80px]
-                transition-all duration-300 border-2
+                relative overflow-hidden rounded-xl p-3 h-20
+                transition-all duration-300 border-2 flex flex-col items-center justify-center gap-1
                 ${isSelected 
-                  ? `bg-gradient-to-br ${era.color} text-white border-white shadow-lg` 
-                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                  ? `bg-gradient-to-br ${era.color} text-white border-transparent shadow-lg` 
+                  : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-300 dark:border-slate-700 hover:border-blue-400 dark:hover:border-blue-600'
                 }
               `}
             >
-              <div className="flex flex-col items-center justify-center gap-1">
-                <Icon className={`w-5 h-5 ${isSelected ? 'animate-pulse' : ''}`} />
-                <span className="text-xs font-semibold">{era.label}</span>
-                {isSelected && (
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    animate={{ scale: 1 }}
-                    className="text-[10px] opacity-90"
-                  >
-                    {era.description}
-                  </motion.div>
-                )}
-              </div>
+              <Icon className={`w-7 h-7 ${isSelected ? 'animate-pulse' : ''}`} strokeWidth={2.5} />
+              <span className="text-[10px] font-bold uppercase tracking-wide">{era.label}</span>
               {isSelected && (
                 <motion.div
                   layoutId="selected-era"
-                  className="absolute inset-0 border-2 border-white rounded-xl"
+                  className="absolute inset-0 border-3 border-white/50 rounded-xl"
                   initial={false}
                   transition={{ type: "spring", stiffness: 500, damping: 30 }}
                 />
