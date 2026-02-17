@@ -49,13 +49,12 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 bg-slate-900 border-t-2 border-slate-700 z-50"
+      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 z-50 shadow-lg"
       style={{
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
-        boxShadow: '0 -4px 12px rgba(0,0,0,0.4)'
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)'
       }}
     >
-      <div className="flex justify-around items-center px-2 py-2">
+      <div className="flex justify-around items-center px-2 py-3">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -65,22 +64,22 @@ export default function BottomNav() {
               key={item.path}
               to={item.path}
               className={`
-                flex flex-col items-center justify-center gap-1 
-                px-4 py-2 rounded-xl transition-all duration-200
-                min-w-[72px] min-h-[60px]
+                flex flex-col items-center justify-center gap-1.5 
+                px-3 py-2 rounded-xl transition-all duration-200
+                min-w-[68px] min-h-[64px]
                 ${active 
-                  ? 'bg-slate-800 scale-105' 
-                  : 'hover:bg-slate-800/50'
+                  ? 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-2 border-blue-300 dark:border-blue-700' 
+                  : 'hover:bg-slate-100 dark:hover:bg-slate-800'
                 }
               `}
             >
               <Icon 
-                className={`w-6 h-6 ${active ? item.color : 'text-slate-400'}`} 
+                className={`w-7 h-7 ${active ? item.color : 'text-slate-500 dark:text-slate-400'}`} 
                 strokeWidth={active ? 2.5 : 2}
               />
               <span 
-                className={`text-xs font-medium ${
-                  active ? 'text-white' : 'text-slate-400'
+                className={`text-[10px] font-bold uppercase tracking-wide ${
+                  active ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'
                 }`}
               >
                 {item.label}

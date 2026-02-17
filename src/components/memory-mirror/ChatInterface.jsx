@@ -580,42 +580,42 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         </div>
       )}
 
-      <div className="p-3 border-b border-blue-200 dark:border-blue-800 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 grid grid-cols-4 gap-2">
+      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 grid grid-cols-4 gap-3">
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
+          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all"
         >
-          <BookHeart className="w-4 h-4" />
-          <span className="hidden sm:inline">Memories</span>
+          <BookHeart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <span className="text-xs font-semibold">Memories</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => setShowMusic(!showMusic)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
+          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all"
         >
-          <Music className="w-4 h-4" />
-          <span className="hidden sm:inline">Music</span>
+          <Music className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+          <span className="text-xs font-semibold">Music</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => setShowStory(!showStory)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
+          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950 transition-all"
         >
-          <BookOpen className="w-4 h-4" />
-          <span className="hidden sm:inline">Stories</span>
+          <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+          <span className="text-xs font-semibold">Stories</span>
         </Button>
         <Button
           variant="outline"
-          size="sm"
+          size="lg"
           onClick={() => setShowGames(true)}
-          className="flex items-center justify-center gap-2 min-h-[44px] border-blue-300 dark:border-blue-700 hover:bg-blue-100 dark:hover:bg-blue-900"
+          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950 transition-all"
         >
-          <Gamepad2 className="w-4 h-4" />
-          <span className="hidden sm:inline">Games</span>
+          <Gamepad2 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+          <span className="text-xs font-semibold">Games</span>
         </Button>
       </div>
       
@@ -705,33 +705,38 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         </div>
       </PullToRefresh>
 
-      <div className="p-6 border-t-4 border-blue-300 dark:border-blue-700 bg-gradient-to-r from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950">
-        <div className="flex justify-center">
+      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+        <div className="flex flex-col items-center gap-4">
           <Button
             size="lg"
             onClick={isListening ? stopVoiceInput : startVoiceInput}
             disabled={isLoading}
             className={`
-              w-24 h-24 rounded-full shadow-2xl transition-all duration-300
+              w-28 h-28 rounded-full shadow-2xl transition-all duration-300 border-4 border-white dark:border-slate-800
               ${isListening 
-                ? 'bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 animate-pulse' 
-                : 'bg-gradient-to-r from-blue-500 to-cyan-600 hover:from-blue-600 hover:to-cyan-700'
+                ? 'bg-gradient-to-br from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 animate-pulse' 
+                : 'bg-gradient-to-br from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700'
               }
-              ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}
+              ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:scale-105'}
             `}
           >
             {isLoading ? (
-              <Loader2 className="w-12 h-12 text-white animate-spin" />
+              <Loader2 className="w-14 h-14 text-white animate-spin" />
             ) : isListening ? (
-              <MicOff className="w-12 h-12 text-white" />
+              <MicOff className="w-14 h-14 text-white" />
             ) : (
-              <Mic className="w-12 h-12 text-white" />
+              <Mic className="w-14 h-14 text-white" />
             )}
           </Button>
+          <div className="text-center">
+            <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">
+              {isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk'}
+            </p>
+            <p className="text-sm text-slate-600 dark:text-slate-400">
+              {isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Press the button to start'}
+            </p>
+          </div>
         </div>
-        <p className="text-center mt-4 text-sm text-slate-600 dark:text-slate-400">
-          {isListening ? '🎤 Listening... Speak now' : isLoading ? '💭 Thinking...' : 'Tap to speak'}
-        </p>
       </div>
     </div>
   );
