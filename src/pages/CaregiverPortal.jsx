@@ -14,6 +14,7 @@ import AlwaysOnVoice from '../components/memory-mirror/AlwaysOnVoice';
 import SmartDeviceManager from '../components/smartHome/SmartDeviceManager';
 import SmartHomeRoutineBuilder from '../components/smartHome/SmartHomeRoutineBuilder';
 import MoodAutomationConfig from '../components/smartHome/MoodAutomationConfig';
+import ReminderManager from '../components/caregiver/ReminderManager';
 
 const featureCards = [
   {
@@ -111,6 +112,14 @@ const featureCards = [
     description: 'Remotely activate calming mode for your loved one',
     background: '#FDF2F8',
     darkBackground: '#4A1D3B'
+  },
+  {
+    id: 13,
+    title: 'Activity Reminders',
+    icon: '⏰',
+    description: 'Set up gentle reminders for daily activities',
+    background: '#FFFBEB',
+    darkBackground: '#4A3C1D'
   }
 ];
 
@@ -167,7 +176,8 @@ export default function CaregiverPortal() {
       8: 'nightwatch',     // Night Watch Log
       9: 'voice-setup',    // Voice Setup
       10: 'smart-home',    // Smart Home
-      11: 'mood-automations' // Mood-Based Automations
+      11: 'mood-automations', // Mood-Based Automations
+      13: 'reminders'      // Activity Reminders
     };
     
     if (viewMap[cardId]) {
@@ -308,6 +318,12 @@ export default function CaregiverPortal() {
               Back to Portal
             </button>
             <MoodAutomationConfig />
+          </div>
+        )}
+
+        {activeView === 'reminders' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <ReminderManager onBack={() => setActiveView('home')} />
           </div>
         )}
       </div>
