@@ -120,7 +120,7 @@ export default function Landing() {
             </Link>
 
             {/* Portal Access Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
               <Link to={createPageUrl('FamilyConnect')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-blue-200/60 dark:border-blue-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
@@ -147,6 +147,22 @@ export default function Landing() {
                       </h3>
                       <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
                         Monitor wellbeing, insights, journal entries and cognitive trends
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+
+              <Link to={createPageUrl('TVPairing')} className="w-full group">
+                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-indigo-200/60 dark:border-indigo-700/40 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
+                  <div className="flex items-start gap-4">
+                    <div className="text-4xl md:text-5xl">📺</div>
+                    <div className="flex-1">
+                      <h3 className="text-xl md:text-2xl font-semibold text-indigo-700 dark:text-indigo-400 mb-2">
+                        Smart TV Mode
+                      </h3>
+                      <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
+                        Connect and use Memory Mirror on your large screen TV
                       </p>
                     </div>
                   </div>
