@@ -215,9 +215,18 @@ export default function Landing() {
               Pricing That Reflects Our Values
             </h2>
 
-            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-0">
-              We offer a free tier with daily limited access so everyone can try Memory Mirror. Premium subscription is $14.99 per month - intentionally priced well below other dementia care apps because we believe quality support shouldn't be out of reach for families already managing substantial caregiving costs.
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
+              We offer a free tier with daily limited access so everyone can try Memory Mirror. Premium subscription is $9.99 per month - intentionally priced well below other dementia care apps because we believe quality support shouldn't be out of reach for families already managing substantial caregiving costs.
             </p>
+
+            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+              <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
+                <strong className="text-blue-700 dark:text-blue-400">Important Note:</strong> The subscription fee will not begin until Memory Mirror is running smoothly and all final tweaks and adjustments are finalized. We want to ensure you receive the quality experience you deserve.
+              </p>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed italic">
+                Thank you for your patience, understanding, and support as we continue to refine and improve Memory Mirror for you and your loved ones. 💙
+              </p>
+            </div>
           </div>
         </div>
 

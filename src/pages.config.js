@@ -49,6 +49,7 @@
  */
 import CaregiverPortal from './pages/CaregiverPortal';
 import ChatMode from './pages/ChatMode';
+import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
@@ -62,13 +63,13 @@ import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import FAQ from './pages/FAQ';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
     "ChatMode": ChatMode,
+    "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
     "Home": Home,
     "Landing": Landing,
@@ -82,7 +83,6 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "FAQ": FAQ,
 }
 
 export const pagesConfig = {
