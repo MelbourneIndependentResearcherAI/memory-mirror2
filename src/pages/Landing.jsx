@@ -235,9 +235,17 @@ export default function Landing() {
               We offer a free tier with daily limited access so everyone can try Memory Mirror. Premium subscription is $9.99 per month - intentionally priced well below other dementia care apps because we believe quality support shouldn't be out of reach for families already managing substantial caregiving costs.
             </p>
 
-            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+            <h2 className="text-2xl md:text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4 mt-8">
+              100% Offline Mode Available
+            </h2>
+
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Memory Mirror includes comprehensive offline functionality. With 250+ pre-loaded AI responses, 20 comforting stories, 15 classic songs, and 10 interactive memory exercises, your loved one can access core features even without an internet connection. Essential data is automatically cached on your device for reliable, uninterrupted companionship.
+            </p>
+
+            <div className="bg-orange-50 dark:bg-orange-950/30 border border-orange-200 dark:border-orange-800 rounded-xl p-6">
               <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
-                <strong className="text-blue-700 dark:text-blue-400">Important Note:</strong> The subscription fee will not begin until Memory Mirror is running smoothly and all final tweaks and adjustments are finalized. We want to ensure you receive the quality experience you deserve.
+                <strong className="text-orange-700 dark:text-orange-400">Important Note:</strong> The subscription fee will not begin until Memory Mirror is running smoothly and all final tweaks and adjustments are finalized. We want to ensure you receive the quality experience you deserve.
               </p>
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed italic">
                 Thank you for your patience, understanding, and support as we continue to refine and improve Memory Mirror for you and your loved ones. 💙
