@@ -95,17 +95,124 @@ export const getAvailableVoices = () => {
   return voicesByCategory;
 };
 
-// Enhanced voice synthesis with emotional adaptation and multilingual support
-export const speakWithRealisticVoice = (text, options = {}) => {
+// Enhanced voice synthesis with cognitive, emotional, and profile-based adaptation
+export function speakWithRealisticVoice(text, options = {}) {
   if (!text || typeof text !== 'string') return;
+  
+  const {
+    rate = 0.95,
+    pitch = 1.0,
+    volume = 1.0,
+    emotionalState = 'neutral',
+    anxietyLevel = 0,
+    cognitiveLevel = 'mild',
+    language = 'en',
+    userProfile = null,
+    onEnd = null
+  } = options;
+
   if (!('speechSynthesis' in window)) return;
 
   try {
-    // Cancel any ongoing speech
     speechSynthesis.cancel();
 
-    const utterance = new SpeechSynthesisUtterance(text);
+    // Cognitive level adaptations - adjust speaking style based on dementia progression
+    const cognitiveAdaptations = {
+      'mild': { 
+        rateBase: 0.95, 
+        pitchBase: 1.05, 
+        pauseMultiplier: 1.0,
+        emphasis: 'normal'
+      },
+      'moderate': { 
+        rateBase: 0.88, 
+        pitchBase: 1.08, 
+        pauseMultiplier: 1.3,
+        emphasis: 'gentle'
+      },
+      'advanced': { 
+        rateBase: 0.80, 
+        pitchBase: 1.10, 
+        pauseMultiplier: 1.6,
+        emphasis: 'very gentle'
+      },
+      'severe': { 
+        rateBase: 0.75, 
+        pitchBase: 1.12, 
+        pauseMultiplier: 2.0,
+        emphasis: 'extremely gentle'
+      }
+    };
     
+    const cognitiveAdapt = cognitiveAdaptations[cognitiveLevel] || cognitiveAdaptations.mild;
+    
+    // Emotional state adjustments - layered on top of cognitive base
+    const emotionalAdjustments = {
+      'calm': { rateMultiplier: 0.95, pitchMultiplier: 1.02, volumeMultiplier: 0.95 },
+      'warm': { rateMultiplier: 1.0, pitchMultiplier: 1.05, volumeMultiplier: 1.0 },
+      'upbeat': { rateMultiplier: 1.08, pitchMultiplier: 1.08, volumeMultiplier: 1.0 },
+      'neutral': { rateMultiplier: 1.0, pitchMultiplier: 1.0, volumeMultiplier: 1.0 },
+      'anxious': { rateMultiplier: 0.90, pitchMultiplier: 0.98, volumeMultiplier: 0.9 },
+      'soothing': { rateMultiplier: 0.88, pitchMultiplier: 1.02, volumeMultiplier: 0.92 },
+      'reassuring': { rateMultiplier: 0.85, pitchMultiplier: 1.08, volumeMultiplier: 0.95 }
+    };
+    
+    const emotionalAdapt = emotionalAdjustments[emotionalState] || emotionalAdjustments.neutral;
+    
+    // Anxiety-based adjustments - slower and more soothing for high anxiety
+    const anxietyAdjustment = anxietyLevel >= 7 ? 0.85 : 
+                              anxietyLevel >= 5 ? 0.92 : 
+                              anxietyLevel >= 3 ? 0.97 : 1.0;
+    
+    // User profile personalization - mimic preferred communication style
+    let profileAdjustment = { rate: 1.0, pitch: 1.0 };
+    if (userProfile?.communication_style) {
+      const styleAdjustments = {
+        'formal': { rate: 0.92, pitch: 0.98 },
+        'casual': { rate: 1.05, pitch: 1.05 },
+        'warm': { rate: 0.98, pitch: 1.08 },
+        'gentle': { rate: 0.88, pitch: 1.10 }
+      };
+      profileAdjustment = styleAdjustments[userProfile.communication_style] || { rate: 1.0, pitch: 1.0 };
+    }
+
+    // Add natural pauses for better comprehension at higher cognitive decline levels
+    let processedText = text;
+    if (cognitiveAdapt.pauseMultiplier > 1.2) {
+      // Add pauses after sentences and key phrases
+      processedText = text
+        .replace(/\. /g, '... ')
+        .replace(/\? /g, '?.. ')
+        .replace(/! /g, '!.. ')
+        .replace(/,([A-Z])/g, ',.. $1'); // Pause after comma before capital letter
+    }
+    
+    const utterance = new SpeechSynthesisUtterance(processedText);
+    
+    // Combine all adjustments for final speech parameters
+    const finalRate = Math.max(0.5, Math.min(2.0, 
+      rate * 
+      cognitiveAdapt.rateBase * 
+      emotionalAdapt.rateMultiplier * 
+      anxietyAdjustment *
+      profileAdjustment.rate
+    ));
+    
+    const finalPitch = Math.max(0.5, Math.min(2.0, 
+      pitch * 
+      cognitiveAdapt.pitchBase * 
+      emotionalAdapt.pitchMultiplier *
+      profileAdjustment.pitch
+    ));
+    
+    const finalVolume = Math.max(0.1, Math.min(1.0, 
+      volume * emotionalAdapt.volumeMultiplier
+    ));
+    
+    utterance.rate = finalRate;
+    utterance.pitch = finalPitch;
+    utterance.volume = finalVolume;
+
     // Get voices
     const voices = speechSynthesis.getVoices();
     if (!voices.length) {
@@ -114,10 +221,6 @@ export const speakWithRealisticVoice = (text, options = {}) => {
     }
     
     const userPreference = getUserVoicePreference();
-    const emotionalState = options.emotionalState || 'neutral';
-    const anxietyLevel = options.anxietyLevel || 0;
-    const language = options.language || 'en'; // Language code from user selection
-    
     let selectedVoice = null;
     
     // Map language codes to voice language codes
@@ -156,22 +259,19 @@ export const speakWithRealisticVoice = (text, options = {}) => {
     
     // Auto-select best voice for the target language
     if (!selectedVoice) {
-      // Try to find voices matching emotional context AND language
       const languageVoices = voices.filter(v => 
         targetLangs.some(lang => v.lang.startsWith(lang))
       );
       
       if (languageVoices.length > 0) {
-        // Select voice category based on user's emotional state
+        // Select voice based on emotional state and cognitive level
         let preferredGender = null;
-        if (anxietyLevel >= 7 || emotionalState === 'anxious') {
-          // Prefer calm, soothing voices (often female for comfort)
+        if (anxietyLevel >= 7 || cognitiveLevel === 'advanced' || cognitiveLevel === 'severe') {
+          preferredGender = 'female'; // Calm, soothing voices for comfort
+        } else if (emotionalState === 'upbeat') {
           preferredGender = 'female';
-        } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
-          preferredGender = 'female'; // Upbeat female voices often sound more cheerful
         }
         
-        // Try to match preferred gender
         if (preferredGender) {
           const genderVoices = languageVoices.filter(v => {
             const name = v.name.toLowerCase();
@@ -182,7 +282,6 @@ export const speakWithRealisticVoice = (text, options = {}) => {
           });
           
           if (genderVoices.length > 0) {
-            // Prefer high-quality voices (neural, online, premium)
             selectedVoice = genderVoices.find(v => 
               v.name.includes('Natural') || v.name.includes('Neural') || 
               v.name.includes('Premium') || v.name.includes('Online')
@@ -190,7 +289,6 @@ export const speakWithRealisticVoice = (text, options = {}) => {
           }
         }
         
-        // Fallback to any voice in the target language
         if (!selectedVoice) {
           selectedVoice = languageVoices.find(v => 
             v.name.includes('Natural') || v.name.includes('Neural') || 
@@ -198,13 +296,12 @@ export const speakWithRealisticVoice = (text, options = {}) => {
           ) || languageVoices[0];
         }
       } else if (language === 'en') {
-        // English fallback with emotional adaptation
         const voicesByCategory = getAvailableVoices();
         
         let preferredCategory = 'warmComforting';
         if (anxietyLevel >= 7 || emotionalState === 'anxious') {
           preferredCategory = 'calm';
-        } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
+        } else if (emotionalState === 'upbeat') {
           preferredCategory = 'upbeat';
         }
         
@@ -226,7 +323,6 @@ export const speakWithRealisticVoice = (text, options = {}) => {
         }
       }
       
-      // Final fallback: use any available voice
       if (!selectedVoice) {
         selectedVoice = voices[0];
       }
@@ -236,70 +332,22 @@ export const speakWithRealisticVoice = (text, options = {}) => {
       utterance.voice = selectedVoice;
       utterance.lang = selectedVoice.lang;
     } else {
-      // Set language even if no specific voice found
       utterance.lang = targetLangs[0];
     }
+
+    // Handle end callback
+    if (onEnd) {
+      utterance.onend = onEnd;
+      utterance.onerror = onEnd;
+    }
+
+    speechSynthesis.speak(utterance);
+    return utterance;
+    
   } catch (error) {
-    console.error('Voice selection error:', error);
+    console.error('Voice synthesis error:', error);
   }
-
-  // Dynamically adjust voice parameters based on emotional context
-  let rate = 0.90;
-  let pitch = 1.0;
-  let volume = 1.0;
-
-  // Adjust for emotional state
-  if (anxietyLevel >= 7 || emotionalState === 'anxious') {
-    // Slower, lower, calmer for high anxiety
-    rate = 0.75;
-    pitch = 0.95;
-    volume = 0.9;
-  } else if (emotionalState === 'confused') {
-    // Slightly slower, clear for confusion
-    rate = 0.85;
-    pitch = 1.0;
-    volume = 1.0;
-  } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
-    // Slightly faster, higher for positive emotions
-    rate = 0.95;
-    pitch = 1.05;
-    volume = 1.0;
-  } else if (emotionalState === 'calm') {
-    // Gentle, steady for calm moments
-    rate = 0.88;
-    pitch = 1.0;
-    volume = 0.95;
-  }
-
-  // Allow manual overrides
-  utterance.rate = options.rate || rate;
-  utterance.pitch = options.pitch || pitch;
-  utterance.volume = options.volume || volume;
-
-  // Add natural pauses with emotional pacing
-  let processedText = text;
-  if (text.length > 80) {
-    const pauseDuration = anxietyLevel >= 7 ? ' .... ' : ' ... '; // Longer pauses for anxiety
-    processedText = text
-      .replace(/\. /g, `.${pauseDuration}`)
-      .replace(/\? /g, `?${pauseDuration}`)
-      .replace(/! /g, `!${pauseDuration}`)
-      .replace(/,  /g, ', .. ');
-  }
-
-  utterance.text = processedText;
-
-  // Handle end callback for hands-free mode
-  if (options.onEnd) {
-    utterance.onend = options.onEnd;
-    utterance.onerror = options.onEnd;
-  }
-
-  // Speak
-  speechSynthesis.speak(utterance);
-
-  return utterance;
-};
+}
 
 // Detect anxiety/distress in user text
 export const detectAnxiety = (text) => {
@@ -316,7 +364,6 @@ export const detectAnxiety = (text) => {
   let detectedTrigger = null;
   let maxLevel = 0;
 
-  // Check each category
   Object.entries(triggers).forEach(([category, keywords]) => {
     keywords.forEach(keyword => {
       if (lowerText.includes(keyword)) {
@@ -333,9 +380,8 @@ export const detectAnxiety = (text) => {
     });
   });
 
-  // Add context-based detection
   if (lowerText.includes('?') && lowerText.split(' ').length < 6) {
-    maxLevel = Math.max(maxLevel, 4); // Short confused questions
+    maxLevel = Math.max(maxLevel, 4);
   }
 
   return {
@@ -361,6 +407,5 @@ if ('speechSynthesis' in window) {
   if (speechSynthesis.onvoiceschanged !== undefined) {
     speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
   }
-  // Initial load
   speechSynthesis.getVoices();
 }
