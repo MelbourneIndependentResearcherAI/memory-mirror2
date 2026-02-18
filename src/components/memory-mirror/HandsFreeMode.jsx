@@ -332,12 +332,28 @@ export default function HandsFreeMode({
   }, [selectedLanguage]);
 
   return (
-    <Card className={`p-6 border-2 transition-all ${
-      isActive 
-        ? 'border-green-500 bg-green-50 dark:bg-green-950/20' 
-        : 'border-slate-300 dark:border-slate-600'
-    }`}>
-      <div className="flex flex-col gap-4">
+    <>
+      {/* Always Listening Indicator - Fixed at bottom */}
+      {isActive && isListening && !isProcessing && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 border-2 border-white">
+            <div className="relative">
+              <div className="w-5 h-5 bg-white rounded-full animate-pulse" />
+              <div className="absolute inset-0 w-5 h-5 bg-white rounded-full animate-ping opacity-75" />
+            </div>
+            <p className="text-lg font-bold tracking-wide">
+              I'm listening... just start talking
+            </p>
+          </div>
+        </div>
+      )}
+
+      <Card className={`p-6 border-2 transition-all ${
+        isActive 
+          ? 'border-green-500 bg-green-50 dark:bg-green-950/20' 
+          : 'border-slate-300 dark:border-slate-600'
+      }`}>
+        <div className="flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -425,5 +441,6 @@ export default function HandsFreeMode({
         )}
       </div>
     </Card>
+    </>
   );
 }
