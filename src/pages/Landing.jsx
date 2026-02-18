@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link } from 'react-router-dom';
 import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndicator';
+import OfflineBanner from '@/components/memory-mirror/OfflineBanner';
 
 export default function Landing() {
   return (
@@ -253,6 +254,7 @@ export default function Landing() {
               Memory Mirror includes comprehensive offline functionality. With 250+ pre-loaded AI responses, 20 comforting stories, 15 classic songs, and 10 interactive memory exercises, your loved one can access core features even without an internet connection. Essential data is automatically cached on your device for reliable, uninterrupted companionship.
             </p>
 
+            <OfflineBanner />
             <OfflineReadyIndicator />
           </div>
         </div>
