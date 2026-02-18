@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { CheckCircle, Download, Loader2, Wifi, WifiOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getOfflineData, setOfflineData } from '../utils/offlineManager';
+import { getFromStore, saveToStore } from '../utils/offlineStorage';
 import { preloadEssentialData } from '../utils/offlinePreloader';
 import { isOnline } from '../utils/offlineManager';
 import { toast } from 'sonner';
@@ -32,7 +32,7 @@ export default function OfflineReadyIndicator() {
 
   const checkOfflineStatus = async () => {
     try {
-      const status = await getOfflineData('offline_ready');
+      const status = await getFromStore('metadata', 'offline_ready');
       setOfflineReady(status);
       setOnline(isOnline());
     } catch (error) {
