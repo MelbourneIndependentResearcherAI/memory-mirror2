@@ -36,6 +36,9 @@ export default function Footer() {
             © {new Date().getFullYear()} Memory Mirror. Created by <span className="font-semibold">MM AI Technologies</span>.
           </p>
           <p className="text-xs text-slate-500 mt-1">
+            ABN 22366098626
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
             All rights reserved. Designed with care for families living with dementia.
           </p>
         </div>
