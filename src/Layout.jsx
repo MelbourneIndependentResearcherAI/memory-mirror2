@@ -60,6 +60,7 @@ export default function Layout({ children, currentPageName }) {
             <GlobalLanguageSelector />
           <OfflineBanner />
           <OfflineIndicator />
+          <OfflineReadyIndicator />
           <ReminderNotification />
           <div 
             className="min-h-screen bg-background text-foreground flex flex-col"
