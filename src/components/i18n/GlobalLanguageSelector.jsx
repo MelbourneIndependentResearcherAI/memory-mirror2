@@ -25,23 +25,29 @@ const languages = [
 export default function GlobalLanguageSelector({ compact = false }) {
   const { language, setLanguage } = useLanguage();
 
+  const selectContent = (
+    <>
+      <SelectTrigger className={compact ? "w-[140px] h-10" : "w-[160px] bg-white dark:bg-slate-800 shadow-lg border-2"}>
+        <Globe className="w-4 h-4 mr-2" />
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {languages.map((lang) => (
+          <SelectItem key={lang.code} value={lang.code}>
+            <span className="flex items-center gap-2">
+              <span className={compact ? "" : "text-xl"}>{lang.flag}</span>
+              <span>{lang.name}</span>
+            </span>
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </>
+  );
+
   if (compact) {
     return (
       <Select value={language} onValueChange={setLanguage}>
-        <SelectTrigger className="w-[140px] h-10">
-          <Globe className="w-4 h-4 mr-2" />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {languages.map((lang) => (
-            <SelectItem key={lang.code} value={lang.code}>
-              <span className="flex items-center gap-2">
-                <span>{lang.flag}</span>
-                <span>{lang.name}</span>
-              </span>
-            </SelectItem>
-          ))}
-        </SelectContent>
+        {selectContent}
       </Select>
     );
   }
@@ -49,20 +55,7 @@ export default function GlobalLanguageSelector({ compact = false }) {
   return (
     <div className="fixed top-4 right-4 z-50">
       <Select value={language} onValueChange={setLanguage}>
-        <SelectTrigger className="w-[160px] bg-white dark:bg-slate-800 shadow-lg border-2">
-          <Globe className="w-4 h-4 mr-2" />
-          <SelectValue />
-        </SelectTrigger>
-        <SelectContent>
-          {languages.map((lang) => (
-            <SelectItem key={lang.code} value={lang.code}>
-              <span className="flex items-center gap-2">
-                <span className="text-xl">{lang.flag}</span>
-                <span>{lang.name}</span>
-              </span>
-            </SelectItem>
-          ))}
-        </SelectContent>
+        {selectContent}
       </Select>
     </div>
   );
