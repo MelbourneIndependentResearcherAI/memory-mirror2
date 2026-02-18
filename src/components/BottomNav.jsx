@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Moon, Music, Cloud } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 
@@ -46,6 +46,12 @@ export default function BottomNav() {
       icon: Cloud,
       label: t('sync'),
       color: 'text-cyan-500'
+    },
+    {
+      path: createPageUrl('Feedback'),
+      icon: Star,
+      label: 'Feedback',
+      color: 'text-yellow-500'
     }
   ];
 
