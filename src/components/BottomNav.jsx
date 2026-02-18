@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle, Phone, Shield, Moon, Music, Cloud } from 'lucide-react';
 import { createPageUrl } from '../utils';
+import { useLanguage } from '@/components/utils/LanguageContext';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function BottomNav() {

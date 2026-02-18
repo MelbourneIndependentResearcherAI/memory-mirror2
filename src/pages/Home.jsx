@@ -106,12 +106,14 @@ export default function Home() {
         {/* Header */}
         <div className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg">
           <div className="flex justify-between items-center mb-4">
-            <div className="flex-1"></div>
-            <Link to={createPageUrl('CaregiverPortal')}>
-              <button className="text-white hover:bg-white/20 rounded-full p-2 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">
-                <Settings className="w-6 h-6" />
-              </button>
-            </Link>
+            <LanguageSwitcher />
+            <div className="flex gap-2">
+              <Link to={createPageUrl('CaregiverPortal')}>
+                <button className="text-white hover:bg-white/20 rounded-full p-2 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">
+                  <Settings className="w-6 h-6" />
+                </button>
+              </Link>
+            </div>
           </div>
           
           <div className="text-center">
