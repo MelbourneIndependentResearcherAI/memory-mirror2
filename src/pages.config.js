@@ -64,6 +64,8 @@ import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import TVPairing from './pages/TVPairing';
+import TVMode from './pages/TVMode';
 import __Layout from './Layout.jsx';
 
 
@@ -85,6 +87,8 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
+    "TVPairing": TVPairing,
+    "TVMode": TVMode,
 }
 
 export const pagesConfig = {
