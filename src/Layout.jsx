@@ -7,19 +7,28 @@ import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
+import OfflineSyncIndicator from '@/components/memory-mirror/OfflineSyncIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
 import { initOfflineDB } from '@/components/utils/offlineManager';
 import { initOfflineStorage } from '@/components/utils/offlineStorage';
 import { registerServiceWorker, requestPersistentStorage } from '@/components/utils/serviceWorkerRegister';
+import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
+import { offlineDataCache } from '@/components/utils/offlineDataCache';
 
 // Initialize offline capabilities on app load
 if (typeof window !== 'undefined') {
   // Initialize offline storage immediately
   initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
   initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
+  offlineDataCache.init().catch(e => console.log('Offline data cache init:', e.message));
   
   // Request persistent storage for offline data
   requestPersistentStorage();
+  
+  // Cache remote data when online
+  if (navigator.onLine) {
+    offlineSyncManager.cacheRemoteData().catch(e => console.log('Cache preload:', e.message));
+  }
   
   // Preload essential data for 100% offline mode
   import('@/components/utils/offlinePreloader').then(module => {
@@ -57,6 +66,7 @@ export default function Layout({ children, currentPageName }) {
           <ErrorBoundary>
             <GlobalLanguageSelector />
           <OfflineIndicator />
+          <OfflineSyncIndicator />
           <ReminderNotification />
           <div 
             className="min-h-screen bg-background text-foreground flex flex-col"
