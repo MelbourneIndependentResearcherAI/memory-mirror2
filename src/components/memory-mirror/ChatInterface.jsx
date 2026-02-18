@@ -304,12 +304,28 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
   const sendMessage = useCallback(async (transcribedText) => {
     // Validation
     if (!transcribedText || typeof transcribedText !== 'string') {
-      console.error('Invalid message input');
+      console.error('Invalid message input:', transcribedText);
+      toast.error('Could not process your message');
       return;
     }
 
     const userMessage = transcribedText.trim();
-    if (!userMessage || isLoading || !isMountedRef.current) return;
+    if (!userMessage) {
+      toast.error('Please say something');
+      return;
+    }
+    
+    if (isLoading) {
+      toast.info('Still processing. Please wait...');
+      return;
+    }
+    
+    if (!isMountedRef.current) {
+      console.log('Component unmounted, skipping message');
+      return;
+    }
+    
+    console.log('Processing message:', userMessage);
 
     // Rate limiting: prevent spam (max 1 message per 2 seconds)
     const now = Date.now();
@@ -639,29 +655,56 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
     }
   }, [isLoading, selectedLanguage, conversationHistory, selectedEra, detectedEra, conversationTopics, cognitiveLevel, lastAssessment, userProfile, safeZones, memories, speakResponse, translateText, onEraChange, queryClient]);
 
-  const startVoiceInput = useCallback(() => {
-    if (!isMountedRef.current || isLoading) return;
+  const requestMicrophonePermission = useCallback(async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      // Close the stream immediately - we just wanted permission
+      stream.getTracks().forEach(track => track.stop());
+      return true;
+    } catch (error) {
+      console.error('Microphone permission denied:', error);
+      toast.error('Please allow microphone access in your browser settings to use voice input.');
+      return false;
+    }
+  }, []);
+
+  const startVoiceInput = useCallback(async () => {
+    if (!isMountedRef.current || isLoading) {
+      console.log('Cannot start voice: mounted=', isMountedRef.current, 'loading=', isLoading);
+      return;
+    }
     
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      toast.error('Voice input is not supported in this browser. Please use Chrome, Edge, or Safari.');
+    // Check browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Voice input requires Chrome, Edge, Safari, or Firefox. Please use one of these browsers.');
       return;
     }
 
     try {
-      // Stop any existing recognition
+      // Stop any existing recognition gracefully
       if (recognitionRef.current) {
         try {
-          recognitionRef.current.stop();
-        } catch {}
+          recognitionRef.current.abort();
+        } catch (e) {
+          console.log('Cleanup error (safe):', e.message);
+        }
       }
 
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      // Request microphone permission
+      const hasPermission = await requestMicrophonePermission();
+      if (!hasPermission) return;
+
+      // Create new recognition instance
       recognitionRef.current = new SpeechRecognition();
-      recognitionRef.current.continuous = false;
-      recognitionRef.current.interimResults = false;
-      recognitionRef.current.maxAlternatives = 1;
       
-      // Map language codes to speech recognition locales
+      // Configure for optimal speech recognition
+      recognitionRef.current.continuous = true;           // Keep listening until stopped
+      recognitionRef.current.interimResults = true;       // Show interim results as user speaks
+      recognitionRef.current.maxAlternatives = 1;
+      recognitionRef.current.sound = true;
+      
+      // Language mapping
       const langMap = {
         en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', it: 'it-IT',
         pt: 'pt-PT', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ar: 'ar-SA',
@@ -671,9 +714,14 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
+      let interimTranscript = '';
+      let finalTranscriptSubmitted = false;
+
       recognitionRef.current.onstart = () => {
+        console.log('Speech recognition started');
         if (isMountedRef.current) {
           setIsListening(true);
+          toast.success('🎤 Listening... Speak now!');
         }
       };
       
@@ -681,13 +729,36 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         if (!isMountedRef.current) return;
         
         try {
-          const transcript = event.results?.[0]?.[0]?.transcript;
-          if (transcript && transcript.trim()) {
-            setIsListening(false);
-            sendMessage(transcript);
-          } else {
-            setIsListening(false);
-            toast.error("I didn't catch that. Please try again.");
+          interimTranscript = '';
+          
+          // Process all results
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
+            
+            if (event.results[i].isFinal) {
+              // Final result - submit the message
+              if (transcript.trim() && !finalTranscriptSubmitted) {
+                console.log('Final transcript:', transcript);
+                finalTranscriptSubmitted = true;
+                
+                // Stop listening after final result
+                if (recognitionRef.current) {
+                  recognitionRef.current.stop();
+                }
+                
+                setIsListening(false);
+                // Send the message to chat
+                sendMessage(transcript.trim());
+              }
+            } else {
+              // Interim result - show what user is saying
+              interimTranscript += transcript + ' ';
+            }
+          }
+          
+          // Show interim text as the user speaks
+          if (interimTranscript && isMountedRef.current) {
+            console.log('Interim:', interimTranscript);
           }
         } catch (error) {
           console.error('Recognition result error:', error);
@@ -702,36 +773,39 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         setIsListening(false);
         
         const errorMessages = {
-          'no-speech': "I didn't hear anything. Try again when you're ready.",
-          'audio-capture': 'Microphone not available. Please check your settings.',
-          'not-allowed': 'Microphone permission denied. Please allow microphone access.',
-          'network': 'Network error. Please check your connection.',
-          'aborted': 'Voice input was cancelled.',
+          'no-speech': "😶 No speech detected. Please speak clearly and try again.",
+          'audio-capture': '🎤 Microphone not working. Check device settings.',
+          'not-allowed': '🔒 Microphone permission required. Check browser settings.',
+          'network': '🌐 Network error. Check your connection.',
+          'aborted': 'Voice input cancelled.',
+          'service-not-allowed': '🔒 Voice service disabled. Check privacy settings.',
+          'bad-grammar': '❌ Speech not recognized. Try a shorter phrase.',
+          'unknown': '⚠️ Unexpected error. Please try again.'
         };
         
-        const message = errorMessages[event.error] || "Voice input error. Please try again.";
+        const message = errorMessages[event.error] || errorMessages.unknown;
+        console.error('Showing error:', message);
         toast.error(message);
-        
-        if (event.error !== 'aborted') {
-          speakWithRealisticVoice(message);
-        }
       };
       
       recognitionRef.current.onend = () => {
+        console.log('Speech recognition ended');
         if (isMountedRef.current) {
           setIsListening(false);
         }
       };
       
+      // Start listening
       recognitionRef.current.start();
+      console.log('Voice input started for language:', langMap[selectedLanguage]);
     } catch (error) {
-      console.error('Error starting recognition:', error);
+      console.error('Error starting voice input:', error);
       if (isMountedRef.current) {
         setIsListening(false);
-        toast.error('Failed to start voice input. Please try again.');
+        toast.error(`Voice error: ${error.message || 'Please try again'}`);
       }
     }
-  }, [isLoading, selectedLanguage, sendMessage]);
+  }, [isLoading, selectedLanguage, sendMessage, requestMicrophonePermission]);
   
   const stopVoiceInput = useCallback(() => {
     if (recognitionRef.current && isMountedRef.current) {
