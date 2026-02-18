@@ -51,6 +51,7 @@ import CaregiverPortal from './pages/CaregiverPortal';
 import ChatMode from './pages/ChatMode';
 import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
+import Feedback from './pages/Feedback';
 import Home from './pages/Home';
 import Landing from './pages/Landing';
 import NightWatch from './pages/NightWatch';
@@ -59,14 +60,13 @@ import PhoneMode from './pages/PhoneMode';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import SecurityMode from './pages/SecurityMode';
 import SyncBackup from './pages/SyncBackup';
+import TVMode from './pages/TVMode';
+import TVPairing from './pages/TVPairing';
 import TermsOfService from './pages/TermsOfService';
 import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import TVPairing from './pages/TVPairing';
-import TVMode from './pages/TVMode';
-import Feedback from './pages/Feedback';
 import __Layout from './Layout.jsx';
 
 
@@ -75,6 +75,7 @@ export const PAGES = {
     "ChatMode": ChatMode,
     "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
+    "Feedback": Feedback,
     "Home": Home,
     "Landing": Landing,
     "NightWatch": NightWatch,
@@ -83,14 +84,13 @@ export const PAGES = {
     "PrivacyPolicy": PrivacyPolicy,
     "SecurityMode": SecurityMode,
     "SyncBackup": SyncBackup,
+    "TVMode": TVMode,
+    "TVPairing": TVPairing,
     "TermsOfService": TermsOfService,
     "VoiceSetup": VoiceSetup,
     "chat": chat,
     "phone": phone,
     "security": security,
-    "TVPairing": TVPairing,
-    "TVMode": TVMode,
-    "Feedback": Feedback,
 }
 
 export const pagesConfig = {

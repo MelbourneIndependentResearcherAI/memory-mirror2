@@ -61,7 +61,7 @@ export default function Landing() {
                       Phone Mode
                     </h3>
                     <p className="text-sm md:text-base text-white/85 leading-relaxed">
-                      Familiar dial pad interface for calling loved ones with visual reassurance
+                      Realistic dial pad that connects to AI companion instead of emergency services — prevents costly nighttime 911 calls and gives caregivers peace of mind to sleep
                     </p>
                   </div>
                 </div>
