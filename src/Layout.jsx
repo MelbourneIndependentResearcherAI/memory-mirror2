@@ -5,7 +5,6 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
-import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
@@ -73,7 +72,6 @@ export default function Layout({ children, currentPageName }) {
             {showFooter && <Footer />}
             {showBottomNav && <BottomNav />}
           </div>
-          <AgentSupport />
           </ErrorBoundary>
         </LanguageProvider>
       </ThemeProvider>

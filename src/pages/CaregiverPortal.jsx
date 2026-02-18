@@ -18,6 +18,7 @@ import ReminderManager from '../components/caregiver/ReminderManager';
 import VoiceCloningManager from '../components/caregiver/VoiceCloningManager';
 import AICareInsights from '../components/caregiver/AICareInsights';
 import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndicator';
+import AgentSupport from '@/components/caregiver/AgentSupport';
 
 const featureCards = [
   {
@@ -376,6 +377,8 @@ export default function CaregiverPortal() {
           </div>
         )}
       </div>
+      
+      <AgentSupport />
     </div>
   );
 }
