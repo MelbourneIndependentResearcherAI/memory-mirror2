@@ -18,7 +18,7 @@ import { base44 } from '@/api/base44Client';
 import { offlineAIChat, offlineEntities, offlineFunction } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { isOnline } from '../utils/offlineManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
@@ -254,19 +254,20 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     }
   }, [messages]);
 
-  const speakResponse = useCallback((text, emotionalContext = {}) => {
+  const speakResponse = useCallback(async (text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
     
     try {
-      speakWithRealisticVoice(text, {
+      // Use cloned voice if available, otherwise fallback to system voice
+      await speakWithClonedVoice(text, {
         rate: 0.92,
         pitch: 1.05,
         volume: 1.0,
         emotionalState: emotionalContext.state || 'neutral',
         anxietyLevel: emotionalContext.anxietyLevel || 0,
-        cognitiveLevel: cognitiveLevel, // Adapt to cognitive decline level
+        cognitiveLevel: cognitiveLevel,
         language: selectedLanguage,
-        userProfile: userProfile, // Use profile for personalization
+        userProfile: userProfile,
         onEnd: emotionalContext.onEnd
       });
     } catch (error) {
