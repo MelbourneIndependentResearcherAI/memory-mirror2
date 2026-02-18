@@ -242,12 +242,13 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         pitch: 1.05,
         volume: 1.0,
         emotionalState: emotionalContext.state || 'neutral',
-        anxietyLevel: emotionalContext.anxietyLevel || 0
+        anxietyLevel: emotionalContext.anxietyLevel || 0,
+        language: selectedLanguage // Pass selected language for voice matching
       });
     } catch (error) {
       console.error('Speech synthesis error:', error);
     }
-  }, []);
+  }, [selectedLanguage]);
 
   const handleLanguageChange = (languageCode) => {
     setSelectedLanguage(languageCode);

@@ -95,66 +95,152 @@ export const getAvailableVoices = () => {
   return voicesByCategory;
 };
 
-// Enhanced voice synthesis with emotional adaptation
+// Enhanced voice synthesis with emotional adaptation and multilingual support
 export const speakWithRealisticVoice = (text, options = {}) => {
+  if (!text || typeof text !== 'string') return;
   if (!('speechSynthesis' in window)) return;
 
-  // Cancel any ongoing speech
-  speechSynthesis.cancel();
+  try {
+    // Cancel any ongoing speech
+    speechSynthesis.cancel();
 
-  const utterance = new SpeechSynthesisUtterance(text);
-  
-  // Get voices
-  const voices = speechSynthesis.getVoices();
-  const userPreference = getUserVoicePreference();
-  const emotionalState = options.emotionalState || 'neutral'; // calm, anxious, confused, happy
-  const anxietyLevel = options.anxietyLevel || 0;
-  
-  let selectedVoice = null;
-  
-  // Use user's preferred voice if set
-  if (userPreference !== 'auto') {
-    selectedVoice = voices.find(v => v.name === userPreference);
-  }
-  
-  // Auto-select best voice based on emotional context
-  if (!selectedVoice) {
-    const voicesByCategory = getAvailableVoices();
+    const utterance = new SpeechSynthesisUtterance(text);
     
-    // Select voice category based on user's emotional state
-    let preferredCategory = 'warmComforting';
-    if (anxietyLevel >= 7 || emotionalState === 'anxious') {
-      preferredCategory = 'calm'; // Use calm, reassuring voices for high anxiety
-    } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
-      preferredCategory = 'upbeat'; // Match positive energy
+    // Get voices
+    const voices = speechSynthesis.getVoices();
+    if (!voices.length) {
+      console.warn('No voices available');
+      return;
     }
     
-    // Try preferred category first, then fallback
-    const categoriesInOrder = [
-      preferredCategory,
-      'warmComforting',
-      'calm',
-      'upbeat',
-      'british',
-      'american',
-      'australian'
-    ];
+    const userPreference = getUserVoicePreference();
+    const emotionalState = options.emotionalState || 'neutral';
+    const anxietyLevel = options.anxietyLevel || 0;
+    const language = options.language || 'en'; // Language code from user selection
     
-    for (const category of categoriesInOrder) {
-      if (voicesByCategory[category]?.length > 0) {
-        selectedVoice = voicesByCategory[category][0].voice;
-        break;
+    let selectedVoice = null;
+    
+    // Map language codes to voice language codes
+    const langMap = {
+      en: ['en-US', 'en-GB', 'en-AU', 'en'],
+      es: ['es-ES', 'es-MX', 'es-US', 'es'],
+      fr: ['fr-FR', 'fr-CA', 'fr'],
+      de: ['de-DE', 'de-AT', 'de'],
+      it: ['it-IT', 'it'],
+      pt: ['pt-PT', 'pt-BR', 'pt'],
+      zh: ['zh-CN', 'zh-TW', 'zh-HK', 'zh'],
+      ja: ['ja-JP', 'ja'],
+      ko: ['ko-KR', 'ko'],
+      ar: ['ar-SA', 'ar-EG', 'ar'],
+      hi: ['hi-IN', 'hi'],
+      ru: ['ru-RU', 'ru'],
+      nl: ['nl-NL', 'nl-BE', 'nl'],
+      pl: ['pl-PL', 'pl'],
+      tr: ['tr-TR', 'tr'],
+      vi: ['vi-VN', 'vi'],
+      th: ['th-TH', 'th'],
+      sv: ['sv-SE', 'sv'],
+      no: ['nb-NO', 'no'],
+      da: ['da-DK', 'da']
+    };
+    
+    const targetLangs = langMap[language] || ['en-US', 'en'];
+    
+    // Use user's preferred voice if set and matches language
+    if (userPreference !== 'auto') {
+      const preferredVoice = voices.find(v => v.name === userPreference);
+      if (preferredVoice && targetLangs.some(lang => preferredVoice.lang.startsWith(lang))) {
+        selectedVoice = preferredVoice;
       }
     }
     
-    // Final fallback
+    // Auto-select best voice for the target language
     if (!selectedVoice) {
-      selectedVoice = voices.find(v => v.lang.startsWith('en-US'));
+      // Try to find voices matching emotional context AND language
+      const languageVoices = voices.filter(v => 
+        targetLangs.some(lang => v.lang.startsWith(lang))
+      );
+      
+      if (languageVoices.length > 0) {
+        // Select voice category based on user's emotional state
+        let preferredGender = null;
+        if (anxietyLevel >= 7 || emotionalState === 'anxious') {
+          // Prefer calm, soothing voices (often female for comfort)
+          preferredGender = 'female';
+        } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
+          preferredGender = 'female'; // Upbeat female voices often sound more cheerful
+        }
+        
+        // Try to match preferred gender
+        if (preferredGender) {
+          const genderVoices = languageVoices.filter(v => {
+            const name = v.name.toLowerCase();
+            return preferredGender === 'female' 
+              ? (name.includes('female') || name.includes('woman') || 
+                 !name.includes('male') && !name.includes('man'))
+              : (name.includes('male') || name.includes('man'));
+          });
+          
+          if (genderVoices.length > 0) {
+            // Prefer high-quality voices (neural, online, premium)
+            selectedVoice = genderVoices.find(v => 
+              v.name.includes('Natural') || v.name.includes('Neural') || 
+              v.name.includes('Premium') || v.name.includes('Online')
+            ) || genderVoices[0];
+          }
+        }
+        
+        // Fallback to any voice in the target language
+        if (!selectedVoice) {
+          selectedVoice = languageVoices.find(v => 
+            v.name.includes('Natural') || v.name.includes('Neural') || 
+            v.name.includes('Premium') || v.name.includes('Online')
+          ) || languageVoices[0];
+        }
+      } else if (language === 'en') {
+        // English fallback with emotional adaptation
+        const voicesByCategory = getAvailableVoices();
+        
+        let preferredCategory = 'warmComforting';
+        if (anxietyLevel >= 7 || emotionalState === 'anxious') {
+          preferredCategory = 'calm';
+        } else if (emotionalState === 'happy' || emotionalState === 'upbeat') {
+          preferredCategory = 'upbeat';
+        }
+        
+        const categoriesInOrder = [
+          preferredCategory,
+          'warmComforting',
+          'calm',
+          'upbeat',
+          'british',
+          'american',
+          'australian'
+        ];
+        
+        for (const category of categoriesInOrder) {
+          if (voicesByCategory[category]?.length > 0) {
+            selectedVoice = voicesByCategory[category][0].voice;
+            break;
+          }
+        }
+      }
+      
+      // Final fallback: use any available voice
+      if (!selectedVoice) {
+        selectedVoice = voices[0];
+      }
     }
-  }
 
-  if (selectedVoice) {
-    utterance.voice = selectedVoice;
+    if (selectedVoice) {
+      utterance.voice = selectedVoice;
+      utterance.lang = selectedVoice.lang;
+    } else {
+      // Set language even if no specific voice found
+      utterance.lang = targetLangs[0];
+    }
+  } catch (error) {
+    console.error('Voice selection error:', error);
   }
 
   // Dynamically adjust voice parameters based on emotional context
