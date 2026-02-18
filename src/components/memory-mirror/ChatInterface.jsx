@@ -465,6 +465,8 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     }
 
     try {
+      console.log('Generating AI response for:', userMessageEnglish.substring(0, 50));
+      
       // Prepare enriched context for AI
       const emotionalContext = sentimentAnalysis 
         ? `\n\nEMOTIONAL ANALYSIS:
@@ -490,11 +492,19 @@ ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
 Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`;
 
+      console.log('Calling AI chat...');
       let response = await offlineAIChat(fullPrompt, {
         add_context_from_internet: false
       });
 
+      console.log('AI response received:', response);
+
       let assistantMessage = typeof response === 'string' ? response : response?.text || response;
+      
+      if (!assistantMessage) {
+        throw new Error('Empty response from AI');
+      }
+      
       let era = 'present';
       let detectedAnxiety = anxietyLevel;
       
@@ -509,8 +519,13 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
           setDetectedEra(era);
           onEraChange(era);
         } catch (e) {
-          // Ignore parse errors
+          console.log('META parse skip (non-critical)');
         }
+      }
+      
+      // Ensure we have a valid message
+      if (!assistantMessage || assistantMessage.length === 0) {
+        throw new Error('AI returned empty message');
       }
 
       // Translate response to user's language
@@ -543,8 +558,12 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         }).catch(() => {});
       }
 
-      setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
-      setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+      // Ensure component is still mounted and message is valid
+      if (isMountedRef.current && assistantMessage) {
+        setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
+        setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+        console.log('Message added to chat');
+      }
 
       // Trigger mood-based device control (offline-aware)
       if (detectedAnxiety >= 4) {
@@ -578,10 +597,15 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
                            detectedAnxiety >= 3 ? 'warm' :
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
-      speakResponse(assistantMessage, { 
-        state: emotionalState, 
-        anxietyLevel: detectedAnxiety
-      });
+      // Speak the response
+      if (assistantMessage && isMountedRef.current) {
+        console.log('Speaking response...');
+        speakResponse(assistantMessage, { 
+          state: emotionalState, 
+          anxietyLevel: detectedAnxiety,
+          onEnd: () => console.log('Speech complete')
+        });
+      }
 
       // Show anxiety alert if needed
       if (detectedAnxiety >= 6) {
@@ -600,15 +624,23 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       }
 
     } catch (error) {
-      if (!isMountedRef.current) return;
+      if (!isMountedRef.current) {
+        console.log('Component unmounted, skipping error handling');
+        return;
+      }
       
-      console.error('Chat error:', error);
+      console.error('Chat error details:', {
+        error: error.message,
+        name: error.name,
+        stack: error.stack,
+        isOnline: isOnline()
+      });
       
-      // Exponential backoff retry logic
-      if (retryCountRef.current < 3 && error.name !== 'AbortError') {
+      // Exponential backoff retry logic (but not for user input errors)
+      if (retryCountRef.current < 3 && error.name !== 'AbortError' && error.message.indexOf('Empty') === -1) {
         retryCountRef.current++;
         const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 5000);
-        toast.error(`Connection issue. Retrying in ${delay/1000}s...`);
+        toast.error(`Retrying in ${delay/1000}s...`);
         
         setTimeout(() => {
           if (isMountedRef.current) {
@@ -621,13 +653,18 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       retryCountRef.current = 0;
       
       // User-friendly error messages
-      let fallback = "I'm here with you. ";
+      let fallback = "I'm right here with you. ";
       if (error.name === 'AbortError') {
-        fallback += "The request was cancelled. Please try again.";
+        fallback += "The request was cancelled. Let's try again.";
       } else if (!isOnline()) {
-        fallback += "I'm working in offline mode right now. My responses may be limited, but I'm still here to listen.";
+        fallback += "I'm in offline mode, so my responses may be limited, but I'm still listening.";
       } else {
-        fallback += "I had a brief moment of confusion. Let's try again in just a moment.";
+        fallback += "I need a moment. Let's try that again.";
+      }
+      
+      // Ensure fallback is not empty
+      if (!fallback || fallback.trim().length === 0) {
+        fallback = "I'm here to listen. What's on your mind?";
       }
       
       // Translate fallback message
@@ -635,9 +672,11 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         if (selectedLanguage !== 'en') {
           fallback = await translateText(fallback, selectedLanguage, 'en');
         }
-      } catch {}
+      } catch (translateError) {
+        console.log('Translation failed, using fallback', translateError.message);
+      }
       
-      if (isMountedRef.current) {
+      if (isMountedRef.current && fallback) {
         setMessages(prev => [...prev, { 
           role: 'assistant', 
           content: fallback,
