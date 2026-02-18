@@ -371,6 +371,10 @@ export default function Landing() {
             <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">
               Support
             </a>
+            <span className="text-slate-600">•</span>
+            <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">
+              Feedback
+            </Link>
           </div>
         </div>
 

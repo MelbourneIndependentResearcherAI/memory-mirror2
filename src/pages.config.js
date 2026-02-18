@@ -66,6 +66,7 @@ import phone from './pages/phone';
 import security from './pages/security';
 import TVPairing from './pages/TVPairing';
 import TVMode from './pages/TVMode';
+import Feedback from './pages/Feedback';
 import __Layout from './Layout.jsx';
 
 
@@ -89,6 +90,7 @@ export const PAGES = {
     "security": security,
     "TVPairing": TVPairing,
     "TVMode": TVMode,
+    "Feedback": Feedback,
 }
 
 export const pagesConfig = {
