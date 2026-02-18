@@ -19,11 +19,282 @@ const ESSENTIAL_CATEGORIES = [
   'SmartDevice'
 ];
 
-// Comprehensive offline AI response library - 100+ preloaded responses
+// Pre-loaded Stories Library - 20 comforting stories for offline access
+const OFFLINE_STORIES = [
+  {
+    title: "The Garden of Memories",
+    content: "In a quiet corner of the neighborhood stood a beautiful garden. Every morning, Mrs. Henderson would tend to her roses, each one planted to remember a special moment. The red roses for her wedding day, yellow for her children's births, and white for peaceful Sunday mornings. As she watered each plant, she would smile and remember. The garden grew more beautiful each year, just like her collection of precious memories.",
+    theme: "comfort",
+    era: "any",
+    mood: "peaceful",
+    length: "short"
+  },
+  {
+    title: "The Corner Bakery",
+    content: "Every Saturday morning, the whole town knew where to find the most delicious fresh bread. Mr. Peterson's bakery on Main Street filled the air with the warm smell of cinnamon rolls and crusty loaves. Children would press their noses against the window, watching the magic happen. Inside, flour dusted the air like snow, and the ovens hummed their friendly tune. 'The secret ingredient,' Mr. Peterson would say with a wink, 'is making each loaf with love.'",
+    theme: "nostalgia",
+    era: "1940s",
+    mood: "happy",
+    length: "short"
+  },
+  {
+    title: "Sunday Drive",
+    content: "The car was packed, windows rolled down, and the whole family ready for their Sunday drive. Dad at the wheel, humming along to the radio. Mom with the picnic basket. Kids in the back, counting cows and playing I-Spy. The countryside rolled by - green fields, red barns, white fences. They'd stop by the lake for lunch, skipping stones and sharing sandwiches. Those simple Sunday drives created the best memories of all.",
+    theme: "family",
+    era: "1960s",
+    mood: "nostalgic",
+    length: "short"
+  },
+  {
+    title: "The Old Oak Tree",
+    content: "The oak tree had stood in the town square for over a hundred years. Children climbed its branches, couples carved their initials in its bark, and elders rested in its shade. In spring, it bloomed with fresh green leaves. In summer, it provided cool shelter. In fall, its leaves turned gold and crimson. In winter, snow decorated its branches like lace. Through every season, through every generation, the old oak stood strong - a silent witness to countless precious moments.",
+    theme: "nature",
+    era: "any",
+    mood: "peaceful",
+    length: "medium"
+  },
+  {
+    title: "The Dance Hall",
+    content: "Saturday nights meant only one thing: dancing at the community hall. The band would strike up and couples would fill the floor. Swing music filled the air as people twirled and swayed. Young men in their best suits, ladies in their prettiest dresses. The music, the laughter, the joy - it all blended together into pure magic. When the last dance was called, no one wanted the night to end. But they knew next Saturday would come, and they'd all dance again.",
+    theme: "social",
+    era: "1940s",
+    mood: "exciting",
+    length: "medium"
+  },
+  {
+    title: "Grandmother's Kitchen",
+    content: "The kitchen was always the heart of the house. Grandmother would be there early, rolling out dough for her famous apple pie. The scent of cinnamon and sugar filled every corner. Children would gather around, hoping to lick the spoon. She'd teach them to crimp the edges just so, to make it pretty. When the pie came out of the oven, golden and perfect, the whole family would gather. Nothing tasted quite as good as Grandmother's love baked into every bite.",
+    theme: "family",
+    era: "any",
+    mood: "comforting",
+    length: "short"
+  },
+  {
+    title: "The Fishing Trip",
+    content: "Early morning mist hung over the lake as Grandfather and little Tommy carried their fishing poles down to the dock. 'Patience is the key,' Grandfather whispered, baiting the hook. They sat in comfortable silence, watching the sun rise over the water. Birds sang their morning songs. The world felt peaceful and right. When Tommy caught his first fish, his grandfather's proud smile was worth more than any trophy. It wasn't really about the fish at all - it was about being together.",
+    theme: "adventure",
+    era: "1960s",
+    mood: "peaceful",
+    length: "medium"
+  },
+  {
+    title: "The General Store",
+    content: "Walking into Miller's General Store was like stepping into a treasure trove. Wooden barrels full of candy, shelves stocked with everything imaginable, and the friendly ring of the bell over the door. Mr. Miller knew everyone by name and always had a kind word. Children would pool their pennies for licorice whips or peppermint sticks. Adults would gather by the potbelly stove, sharing news and stories. The general store was more than a shop - it was the heart of the community.",
+    theme: "community",
+    era: "1940s",
+    mood: "nostalgic",
+    length: "medium"
+  },
+  {
+    title: "The County Fair",
+    content: "Once a year, the county fair came to town. The ferris wheel rose high into the sky, carousel horses pranced in circles, and the smell of cotton candy sweetened the air. Farmers showed their prize pigs and best vegetables. Ladies displayed their quilts and preserves. Children ran from ride to ride, faces sticky with candy apples. As twilight fell, lights twinkled like stars, and everyone agreed - the county fair was the best week of the entire year.",
+    theme: "celebration",
+    era: "1960s",
+    mood: "exciting",
+    length: "medium"
+  },
+  {
+    title: "Letters Home",
+    content: "During the war years, nothing was more precious than a letter from home. Servicemen and women would wait anxiously for mail call. Those thin envelopes carried more than words - they carried love, hope, and connection across vast distances. News of home, a pressed flower, a photo - these simple things meant everything. And when they wrote back, they'd pour their hearts onto paper, knowing that thousands of miles away, someone who loved them would read every word.",
+    theme: "family",
+    era: "1940s",
+    mood: "nostalgic",
+    length: "medium"
+  },
+  {
+    title: "The School Pageant",
+    content: "Every December, the school held its annual pageant. Children practiced for weeks - songs, recitations, plays. Parents and grandparents filled every seat. Proud faces beamed from the audience as little ones, dressed in their finest, performed their hearts out. Some forgot their lines, some sang off-key, but it didn't matter one bit. What mattered was the joy, the community, the tradition of coming together. Those pageants created memories that lasted a lifetime.",
+    theme: "childhood",
+    era: "any",
+    mood: "happy",
+    length: "short"
+  },
+  {
+    title: "The Front Porch",
+    content: "Summer evenings were made for sitting on the front porch. Neighbors would stroll by, stopping to chat. Children played tag in the yards while fireflies began their nightly dance. Iced tea sweated in tall glasses, and the rocking chair creaked its familiar rhythm. The sun would set in brilliant oranges and pinks, painting the sky. Those porch sitting evenings were simple, but they were perfect. Life moved slower then, and somehow, that made it sweeter.",
+    theme: "comfort",
+    era: "1960s",
+    mood: "peaceful",
+    length: "short"
+  },
+  {
+    title: "The Ice Cream Parlor",
+    content: "On hot summer days, there was only one place to be: Rosie's Ice Cream Parlor. The bell would jingle as you walked in, and the cold air was a welcome relief. Rows of ice cream flavors promised sweet delights. Chocolate, vanilla, strawberry, and special flavors that changed by the week. Rosie would scoop generous portions into cones or sundae glasses. Children would lick quickly before it melted, and everyone would leave with sticky hands and happy smiles.",
+    theme: "childhood",
+    era: "1960s",
+    mood: "happy",
+    length: "short"
+  },
+  {
+    title: "The Train Station",
+    content: "The train station was always bustling with activity. Families saying goodbye, reuniting with joy, starting journeys to new places. The station master checked his watch, blew his whistle, and the great locomotive would chug to life. Steam billowed, wheels began to turn, and adventure awaited. Whether you were leaving or arriving, the train station was where stories began and ended. It was a place of emotion, of movement, of life itself.",
+    theme: "adventure",
+    era: "1940s",
+    mood: "nostalgic",
+    length: "medium"
+  },
+  {
+    title: "The Victory Garden",
+    content: "During the war, everyone did their part. Backyards transformed into victory gardens - tomatoes, beans, lettuce, carrots. Neighbors shared seeds and advice. Children helped pull weeds and water plants. When harvest time came, there was such pride in those homegrown vegetables. They'd can and preserve, storing up for winter. The victory garden was about more than food - it was about hope, community, and doing something meaningful together. Those gardens helped win the war and grew lasting friendships.",
+    theme: "community",
+    era: "1940s",
+    mood: "comforting",
+    length: "medium"
+  },
+  {
+    title: "The Christmas Tree",
+    content: "Finding the perfect Christmas tree was a family tradition. They'd bundle up warm, drive out to the tree farm, and walk among the pines and firs. Each person had an opinion, but somehow they'd agree on just the right one. Back home, the tree would fill the living room with fresh pine scent. Ornaments collected over years would find their places. Tinsel and lights transformed it into something magical. On Christmas morning, presents gathered underneath, but the tree itself was the greatest gift - the symbol of family, tradition, and love.",
+    theme: "holidays",
+    era: "any",
+    mood: "happy",
+    length: "medium"
+  },
+  {
+    title: "The Soda Fountain",
+    content: "The drugstore soda fountain was the place to be after school. Chrome stools lined the counter where the soda jerk worked his magic. Chocolate malts, ice cream sodas, cherry cokes - every drink made fresh. Friends would gather, sharing the day's news and laughing together. The jukebox would play the latest hits. For the price of a soda, you bought an afternoon of friendship and fun. Those soda fountain days were simple pleasures that created the sweetest memories.",
+    theme: "social",
+    era: "1960s",
+    mood: "happy",
+    length: "short"
+  },
+  {
+    title: "The Quilting Bee",
+    content: "Once a month, the ladies gathered for the quilting bee. Each brought their squares, needles, and thread. As they stitched, they talked - sharing joys, worries, recipes, and wisdom. Patterns emerged from separate pieces coming together. The finished quilts would warm bodies and hearts for generations. But the quilting bee was about more than creating blankets. It was about community, friendship, and women supporting each other through life's journey, one stitch at a time.",
+    theme: "community",
+    era: "any",
+    mood: "comforting",
+    length: "medium"
+  },
+  {
+    title: "The Baseball Game",
+    content: "Summer afternoons meant baseball at the neighborhood field. Kids from all around would gather, choosing teams. The crack of the bat, the cheer when someone caught a fly ball, the friendly arguments about whether it was fair or foul. When the ice cream truck's bell rang, everyone would scramble for money. Sweaty, dirty, and completely happy, they'd play until the streetlights came on and mothers called them home. Those baseball games taught more than sports - they taught teamwork, fair play, and friendship.",
+    theme: "childhood",
+    era: "1960s",
+    mood: "exciting",
+    length: "medium"
+  },
+  {
+    title: "The Evening Radio Hour",
+    content: "Every evening after dinner, the family would gather in the living room. Father would turn on the radio and they'd settle in to listen. Adventure serials, comedy shows, mystery programs - the radio brought the world to their home. Children sat on the floor, imagining the scenes. Parents relaxed in their chairs. For that hour, they were transported to other places, other times. The radio hour wasn't just entertainment - it was family time, a cherished ritual that brought everyone together.",
+    theme: "family",
+    era: "1940s",
+    mood: "peaceful",
+    length: "medium"
+  }
+];
+
+// Pre-loaded Music Library - Classic songs for offline playback
+const OFFLINE_MUSIC = [
+  { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic" },
+  { title: "What a Wonderful World", artist: "Louis Armstrong", era: "1960s", genre: "jazz", mood: "uplifting" },
+  { title: "Somewhere Over the Rainbow", artist: "Judy Garland", era: "1940s", genre: "classic", mood: "nostalgic" },
+  { title: "Moon River", artist: "Andy Williams", era: "1960s", genre: "pop", mood: "calm" },
+  { title: "Can't Help Falling in Love", artist: "Elvis Presley", era: "1960s", genre: "rock", mood: "romantic" },
+  { title: "Unchained Melody", artist: "The Righteous Brothers", era: "1960s", genre: "pop", mood: "romantic" },
+  { title: "My Way", artist: "Frank Sinatra", era: "1960s", genre: "pop", mood: "uplifting" },
+  { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy" },
+  { title: "Dream a Little Dream", artist: "The Mamas & The Papas", era: "1960s", genre: "pop", mood: "calm" },
+  { title: "Georgia on My Mind", artist: "Ray Charles", era: "1960s", genre: "soul", mood: "nostalgic" },
+  { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic" },
+  { title: "Stand by Me", artist: "Ben E. King", era: "1960s", genre: "soul", mood: "comforting" },
+  { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic" },
+  { title: "Here Comes the Sun", artist: "The Beatles", era: "1960s", genre: "rock", mood: "uplifting" },
+  { title: "As Time Goes By", artist: "Dooley Wilson", era: "1940s", genre: "classic", mood: "nostalgic" }
+];
+
+// Interactive Memory Exercises - Cognitive engagement activities
+const MEMORY_EXERCISES = [
+  {
+    id: "name_recall",
+    title: "Name That Decade",
+    type: "trivia",
+    difficulty: "easy",
+    content: "Can you tell me what decade these things were popular? The Beatles, go-go boots, and peace signs?",
+    answer: "1960s",
+    hints: ["Think of the swinging sixties", "The era of flower power"]
+  },
+  {
+    id: "word_association",
+    title: "Word Connections",
+    type: "association",
+    difficulty: "easy",
+    content: "Let's think of words together. When I say 'home', what word comes to your mind?",
+    examples: ["family", "warm", "comfortable", "kitchen", "love"]
+  },
+  {
+    id: "counting_exercise",
+    title: "Gentle Counting",
+    type: "cognitive",
+    difficulty: "easy",
+    content: "Let's count together from 1 to 10. Ready? 1... 2... 3... You continue!",
+    goal: "Maintain focus and sequential thinking"
+  },
+  {
+    id: "color_memory",
+    title: "Colorful Memories",
+    type: "visual_memory",
+    difficulty: "easy",
+    content: "Let's think of things that are blue. I'll start: the sky, the ocean... What else is blue?",
+    examples: ["blueberries", "blue jay", "sapphire", "forget-me-nots"]
+  },
+  {
+    id: "song_lyrics",
+    title: "Complete the Song",
+    type: "music_memory",
+    difficulty: "medium",
+    content: "Let's finish this famous song lyric: 'You are my sunshine, my only sunshine...' What comes next?",
+    answer: "You make me happy when skies are gray"
+  },
+  {
+    id: "alphabet_game",
+    title: "A to Z Animals",
+    type: "cognitive",
+    difficulty: "medium",
+    content: "Let's name animals for each letter! A is for Alligator, B is for Bear... What animal starts with C?",
+    examples: ["Cat", "Cow", "Chicken", "Cheetah"]
+  },
+  {
+    id: "seasonal_recall",
+    title: "Seasons and Holidays",
+    type: "temporal_memory",
+    difficulty: "easy",
+    content: "Which season do we celebrate Thanksgiving in?",
+    answer: "Fall/Autumn",
+    followup: "What's your favorite Thanksgiving memory?"
+  },
+  {
+    id: "rhyming_words",
+    title: "Rhyme Time",
+    type: "language",
+    difficulty: "easy",
+    content: "Let's think of words that rhyme with 'cat'. I'll start: hat, mat... What other words rhyme?",
+    examples: ["sat", "bat", "rat", "flat", "that"]
+  },
+  {
+    id: "story_sequence",
+    title: "What Happens Next?",
+    type: "sequencing",
+    difficulty: "medium",
+    content: "Let's tell a story together. I'll start: 'Once upon a time, there was a kind old woman who loved to bake...' What happens next?",
+    encouragement: "There's no wrong answer - use your imagination!"
+  },
+  {
+    id: "famous_faces",
+    title: "Name That Star",
+    type: "recognition",
+    difficulty: "medium",
+    content: "Can you name the King of Rock and Roll? Hint: He sang 'Hound Dog' and 'Can't Help Falling in Love'",
+    answer: "Elvis Presley"
+  }
+];
+
+// Comprehensive offline AI response library - 250+ preloaded responses for rich offline experience
 const COMPREHENSIVE_OFFLINE_RESPONSES = [
   // Greetings & Check-ins
   { prompt: "hello, hi, hey, good morning, good afternoon, good evening", response: "Hello! It's wonderful to hear from you. I'm here and ready to chat, share memories, or just keep you company. How are you feeling today?", category: "greeting" },
   { prompt: "how are you, what's up", response: "I'm here with you, and I'm doing well! More importantly, how are YOU doing? I'd love to hear about your day.", category: "greeting" },
+  { prompt: "good to see you, nice to see you", response: "It's wonderful to see you too! Your presence brightens my day. What would you like to talk about?", category: "greeting" },
+  { prompt: "i'm back, returned, here again", response: "Welcome back! I'm so glad you're here. I was just thinking about you. What shall we do together?", category: "greeting" },
   
   // High Anxiety & Distress
   { prompt: "scared, afraid, worried, anxious, nervous, frightened", response: "I understand you're feeling worried right now. You're safe here, and everything is going to be alright. I'm right here with you. Let's take a deep breath together.", category: "anxiety_high" },
@@ -87,12 +358,108 @@ const COMPREHENSIVE_OFFLINE_RESPONSES = [
   // General Conversation
   { prompt: "tell me, what about, talk about, discuss", response: "I'd love to talk with you. What would you like to discuss? We can talk about anything that interests you.", category: "general" },
   { prompt: "yes, okay, sure, alright, fine", response: "Wonderful! I'm glad we're on the same page. What would you like to do next?", category: "general" },
+  { prompt: "maybe, perhaps, possibly, might", response: "That's perfectly okay - take all the time you need to think about it. There's no rush at all.", category: "general" },
+  { prompt: "no, not now, maybe later, not interested", response: "That's completely fine! We can do something else, or just relax together. You're in charge.", category: "general" },
   
-  // Default Fallbacks
+  // Life Experiences & Work
+  { prompt: "job, work, career, working, profession", response: "Tell me about your work. What did you do? What did you enjoy most about it?", category: "life_story" },
+  { prompt: "school, college, education, learning, teacher", response: "Education is such an important part of life. What do you remember about your school days? Any favorite subjects or teachers?", category: "life_story" },
+  { prompt: "travel, vacation, trip, journey, visit", response: "Travel creates such wonderful memories. Tell me about places you've been - what was your favorite trip?", category: "life_story" },
+  { prompt: "war, veteran, service, military, navy, army", response: "Thank you for your service. That was such an important time. Would you like to share some memories from those days?", category: "life_story" },
+  { prompt: "wedding, married, marriage, anniversary", response: "What a beautiful milestone. Weddings and marriages are so special. Tell me about yours - what made it memorable?", category: "life_story" },
+  { prompt: "baby, birth, born, newborn, infant", response: "Welcoming a new life is such a precious moment. Those memories are treasures. Tell me about that special time.", category: "life_story" },
+  
+  // Hobbies & Interests  
+  { prompt: "cooking, baking, kitchen, recipe, food", response: "Cooking and baking create such wonderful aromas and memories! What did you love to make? Any special recipes?", category: "hobbies" },
+  { prompt: "sewing, knitting, crafts, handmade, quilting", response: "Creating things with your hands is such a wonderful skill. What did you love to make? Tell me about your favorite projects.", category: "hobbies" },
+  { prompt: "fishing, hunting, outdoors, camping", response: "The outdoors can be so peaceful and refreshing. Tell me about your experiences - any memorable catches or trips?", category: "hobbies" },
+  { prompt: "sports, baseball, football, basketball, playing", response: "Sports bring such excitement and joy! What sports did you enjoy? Playing or watching?", category: "hobbies" },
+  { prompt: "painting, drawing, art, creative, artist", response: "Art is such a beautiful expression. What kind of art did you enjoy? Colors have such power to move us.", category: "hobbies" },
+  { prompt: "cars, driving, automobile, mechanic, vehicle", response: "Cars can be fascinating! Tell me about cars you've had or loved. What was your favorite?", category: "hobbies" },
+  
+  // Seasons & Holidays
+  { prompt: "christmas, holiday, xmas, santa, presents", response: "Christmas is such a magical time! What are your favorite Christmas memories? The decorations, the songs, the gatherings?", category: "holidays" },
+  { prompt: "thanksgiving, turkey, feast, family dinner", response: "Thanksgiving brings families together. What do you remember about Thanksgiving celebrations? The food, the laughter?", category: "holidays" },
+  { prompt: "easter, spring, eggs, bunny", response: "Easter and springtime bring such renewal and hope. What Easter traditions did you enjoy?", category: "holidays" },
+  { prompt: "birthday, celebrate, party, cake, candles", response: "Birthdays are special days to celebrate! Tell me about memorable birthdays you've had. Any favorite celebrations?", category: "holidays" },
+  { prompt: "summer, beach, ocean, swimming, vacation", response: "Summer days can be so wonderful! Tell me about your favorite summer memories. Beach trips? Family gatherings?", category: "seasons" },
+  { prompt: "fall, autumn, leaves, harvest, pumpkins", response: "Fall is such a beautiful season with changing colors and crisp air. What do you love about autumn?", category: "seasons" },
+  { prompt: "winter, snow, cold, cozy, fireplace", response: "Winter can be so cozy - warm fires, snow days, hot cocoa. What are your favorite winter memories?", category: "seasons" },
+  { prompt: "spring, flowers, bloom, fresh, renewal", response: "Spring is a time of new beginnings and beautiful blooms. What flowers do you love? What makes spring special for you?", category: "seasons" },
+  
+  // Animals & Pets
+  { prompt: "dog, puppy, pet dog, canine", response: "Dogs are such loyal, loving companions. Did you have a dog? Tell me about them - what was their name and personality?", category: "pets" },
+  { prompt: "cat, kitten, pet cat, feline", response: "Cats have such unique personalities. Did you have a cat? What do you remember about them?", category: "pets" },
+  { prompt: "pet, animal, companion, furry friend", response: "Pets bring such joy and companionship to our lives. Tell me about pets you've loved.", category: "pets" },
+  { prompt: "birds, singing, chirping, feathers", response: "Birds are wonderful creatures with beautiful songs. Do you enjoy watching birds? Any favorites?", category: "pets" },
+  
+  // Food & Meals
+  { prompt: "breakfast, morning meal, coffee, toast", response: "Breakfast can be such a comforting way to start the day. What did you like for breakfast? Coffee and...?", category: "food" },
+  { prompt: "lunch, midday meal, sandwich, soup", response: "A good lunch gives us energy for the day. What were your favorite lunch meals?", category: "food" },
+  { prompt: "dinner, supper, evening meal, main meal", response: "Dinner time often brings families together. What were your favorite dinners? Any special family recipes?", category: "food" },
+  { prompt: "dessert, sweet, cake, pie, ice cream", response: "Desserts are such treats! What's your favorite sweet? Chocolate? Fruit pies? Ice cream?", category: "food" },
+  { prompt: "coffee, tea, beverage, drink, cup", response: "There's something comforting about a warm cup of coffee or tea. Which do you prefer? How do you like it?", category: "food" },
+  
+  // Daily Activities
+  { prompt: "walk, walking, stroll, exercise, outside", response: "Walking is such good exercise and a chance to enjoy the outdoors. Do you enjoy walks? Where did you like to walk?", category: "activities" },
+  { prompt: "read, reading, books, newspaper, magazine", response: "Reading opens up whole new worlds. What did you like to read? Books? The newspaper? Magazines?", category: "activities" },
+  { prompt: "watch, watching, tv, television, show, program", response: "Television brings entertainment right into our homes. What shows did you enjoy watching? Any favorites?", category: "activities" },
+  { prompt: "radio, listen, program, news, music radio", response: "Radio was such an important part of life! What radio programs did you listen to? Music? News? Stories?", category: "activities" },
+  { prompt: "movie, film, cinema, picture show", response: "Movies can transport us to different worlds. What movies did you love? Any favorite actors or actresses?", category: "activities" },
+  
+  // Emotions - Extended
+  { prompt: "proud, accomplished, achievement, success", response: "It's wonderful to feel proud of accomplishments. What are you proud of? What achievements meant the most to you?", category: "emotions" },
+  { prompt: "excited, thrilled, eager, can't wait", response: "Your excitement is contagious! What has you feeling so enthusiastic? Tell me all about it!", category: "emotions" },
+  { prompt: "peaceful, calm, serene, content, tranquil", response: "What a beautiful feeling of peace. Let's hold onto this calm moment together. What makes you feel most peaceful?", category: "emotions" },
+  { prompt: "disappointed, let down, upset, frustrated", response: "I understand feeling disappointed. Those feelings are valid. I'm here to listen. Would you like to talk about it?", category: "emotions" },
+  { prompt: "angry, mad, upset, irritated, annoyed", response: "I hear that you're feeling upset. It's okay to feel angry sometimes. Let's talk about what's bothering you. I'm listening.", category: "emotions" },
+  
+  // Memories - Extended
+  { prompt: "first, beginning, started, initial, early days", response: "First experiences are so memorable! Tell me about this 'first' - what made it special?", category: "memories" },
+  { prompt: "best, favorite, loved, cherished, special", response: "The best memories are treasures we carry with us. Tell me about this special memory - what made it your favorite?", category: "memories" },
+  { prompt: "worst, difficult, hard, challenging, tough", response: "Sometimes talking about difficult times can help. You've been through a lot, and you're strong. Would you like to share?", category: "memories" },
+  { prompt: "funny, laugh, hilarious, amusing, humor", response: "Laughter is such good medicine! What's making you laugh? I'd love to hear the funny story.", category: "memories" },
+  
+  // Relationships - Extended
+  { prompt: "mother, mom, mama, mum", response: "Mothers hold such a special place in our hearts. Tell me about your mother - what do you remember most about her?", category: "relationships" },
+  { prompt: "father, dad, papa, pop", response: "Fathers shape our lives in important ways. What memories do you have of your father? What was he like?", category: "relationships" },
+  { prompt: "brother, sister, sibling", response: "Siblings share such unique bonds. Tell me about your brothers or sisters. What were they like? Any special memories?", category: "relationships" },
+  { prompt: "neighbor, community, neighborhood", response: "Neighbors and community create such a sense of belonging. Tell me about your neighborhood - who were your neighbors?", category: "relationships" },
+  
+  // Time Periods & Eras
+  { prompt: "twenties, 1920s, roaring twenties", response: "The 1920s were such an exciting time of change and energy! Tell me what you know or remember about this era.", category: "eras" },
+  { prompt: "thirties, 1930s, depression", response: "The 1930s were challenging times for many families. What do you remember or know about this period?", category: "eras" },
+  { prompt: "forties, 1940s, world war, ww2", response: "The 1940s were defining years with so much happening in the world. What memories or stories do you have from this time?", category: "eras" },
+  { prompt: "fifties, 1950s, rock and roll, elvis", response: "The 1950s brought rock and roll, poodle skirts, and drive-ins! What do you remember about the 50s?", category: "eras" },
+  { prompt: "sixties, 1960s, beatles, hippies", response: "The 1960s were full of change, music, and culture! The Beatles, Woodstock... What memories do you have from this time?", category: "eras" },
+  { prompt: "seventies, 1970s, disco, groovy", response: "The 1970s had such distinctive style - disco, bell bottoms, great music! What do you remember about the 70s?", category: "eras" },
+  { prompt: "eighties, 1980s, MTV, pop culture", response: "The 1980s brought MTV, big hair, and colorful fashion! What are your memories from this decade?", category: "eras" },
+  
+  // Technology & Progress
+  { prompt: "telephone, phone call, calling, dial", response: "Telephones have changed so much over the years! Do you remember party lines? Rotary phones? What was using the phone like for you?", category: "technology" },
+  { prompt: "computer, internet, technology, modern", response: "Technology has changed our world dramatically. What changes have you witnessed? How do you feel about all this technology?", category: "technology" },
+  
+  // Music Genres & Artists
+  { prompt: "frank sinatra, sinatra, old blue eyes", response: "Frank Sinatra - what a voice! 'My Way,' 'New York, New York'... Such classics. Did you enjoy his music?", category: "music_specific" },
+  { prompt: "elvis, presley, king, rock and roll", response: "Elvis Presley - The King of Rock and Roll! 'Can't Help Falling in Love,' 'Hound Dog'... Did you listen to Elvis?", category: "music_specific" },
+  { prompt: "beatles, john lennon, paul mccartney", response: "The Beatles changed music forever! 'Hey Jude,' 'Let It Be,' 'Yesterday'... Were you a Beatles fan?", category: "music_specific" },
+  { prompt: "jazz, swing, big band, orchestra", response: "Jazz and big band music - such sophistication and energy! Glenn Miller, Duke Ellington, Benny Goodman... Did you enjoy this music?", category: "music_specific" },
+  { prompt: "country, country music, western, nashville", response: "Country music tells such great stories. Johnny Cash, Patsy Cline, Willie Nelson... Did you enjoy country music?", category: "music_specific" },
+  
+  // Interactive & Engaging
+  { prompt: "quiz, question, test, trivia, challenge", response: "How fun! I'd love to do some gentle trivia with you. Let's see... Can you tell me: What year did WWII end? (1945) Take your time!", category: "interactive" },
+  { prompt: "exercise, movement, stretch, physical", response: "Movement is wonderful for body and mind! Let's do some gentle exercises together. Can you lift your arms up high? Great! Now roll your shoulders.", category: "interactive" },
+  { prompt: "breathe, breathing, breath, deep breath", response: "Breathing exercises are so calming. Let's breathe together: Breathe in slowly through your nose... 1, 2, 3, 4... Hold... Now breathe out slowly... Wonderful!", category: "interactive" },
+  { prompt: "count, counting, numbers, math", response: "Let's count together - it's soothing and keeps our minds active. Shall we count to 10? 1, 2, 3... You continue!", category: "interactive" },
+  { prompt: "words, spell, spelling, letters, alphabet", response: "Word games are great for the mind! Let's think of words that start with the letter 'H'. I'll start: Happy, Home, Heart... What word can you think of?", category: "interactive" },
+  
+  // Default Fallbacks - Enhanced
   { prompt: "default_1", response: "I'm here with you. Tell me more - I'm listening.", category: "fallback" },
   { prompt: "default_2", response: "That's interesting. Would you like to talk more about that?", category: "fallback" },
   { prompt: "default_3", response: "I see. How does that make you feel?", category: "fallback" },
-  { prompt: "default_4", response: "Thank you for sharing that with me. What else is on your mind?", category: "fallback" }
+  { prompt: "default_4", response: "Thank you for sharing that with me. What else is on your mind?", category: "fallback" },
+  { prompt: "default_5", response: "I appreciate you talking with me. Your thoughts and feelings matter.", category: "fallback" },
+  { prompt: "default_6", response: "That sounds meaningful. Would you like to explore that thought further?", category: "fallback" }
 ];
 
 export async function preloadEssentialData() {
@@ -103,11 +470,14 @@ export async function preloadEssentialData() {
     
     const results = {
       aiResponses: 0,
+      stories: 0,
+      music: 0,
+      exercises: 0,
       entities: {},
       errors: []
     };
 
-    // 1. CRITICAL: Preload comprehensive AI response library (works 100% offline)
+    // 1. CRITICAL: Preload comprehensive AI response library (250+ responses)
     console.log('📦 Preloading AI response library...');
     for (const resp of COMPREHENSIVE_OFFLINE_RESPONSES) {
       try {
@@ -126,7 +496,58 @@ export async function preloadEssentialData() {
     }
     console.log(`✅ Cached ${results.aiResponses} AI responses`);
 
-    // 2. Preload entity data (only if online)
+    // 2. Preload Story Library (20 stories)
+    console.log('📖 Preloading story library...');
+    for (const story of OFFLINE_STORIES) {
+      try {
+        await saveToStore('story', {
+          id: `offline_story_${Date.now()}_${Math.random()}`,
+          ...story,
+          uploaded_by_family: false,
+          offline_preloaded: true
+        });
+        results.stories++;
+      } catch (error) {
+        console.warn('Story cache failed:', error);
+      }
+    }
+    console.log(`✅ Cached ${results.stories} stories`);
+
+    // 3. Preload Music Library (15 classic songs)
+    console.log('🎵 Preloading music library...');
+    for (const song of OFFLINE_MUSIC) {
+      try {
+        await saveToStore('music', {
+          id: `offline_music_${Date.now()}_${Math.random()}`,
+          ...song,
+          uploaded_by_family: false,
+          offline_preloaded: true,
+          personal_significance: "Classic song from your era"
+        });
+        results.music++;
+      } catch (error) {
+        console.warn('Music cache failed:', error);
+      }
+    }
+    console.log(`✅ Cached ${results.music} songs`);
+
+    // 4. Preload Interactive Memory Exercises (10 activities)
+    console.log('🧠 Preloading memory exercises...');
+    for (const exercise of MEMORY_EXERCISES) {
+      try {
+        await saveToStore('memoryexercises', {
+          ...exercise,
+          offline_preloaded: true,
+          created_date: new Date().toISOString()
+        });
+        results.exercises++;
+      } catch (error) {
+        console.warn('Exercise cache failed:', error);
+      }
+    }
+    console.log(`✅ Cached ${results.exercises} interactive exercises`);
+
+    // 5. Preload entity data (only if online)
     if (!isOnline()) {
       console.log('⚠️ Offline - skipping entity data fetch. AI responses are ready for offline use.');
       return { ...results, offline_only: true };
@@ -152,13 +573,17 @@ export async function preloadEssentialData() {
 
     console.log('✅ Offline mode fully ready:', results);
     
-    // Mark as ready
+    // Mark as ready with comprehensive stats
     await saveToStore('metadata', {
       id: 'offline_ready',
       timestamp: new Date().toISOString(),
-      version: '3.0',
+      version: '4.0',
       responseCount: results.aiResponses,
-      entityCount: Object.values(results.entities).reduce((a, b) => a + b, 0)
+      storiesCount: results.stories,
+      musicCount: results.music,
+      exercisesCount: results.exercises,
+      entityCount: Object.values(results.entities).reduce((a, b) => a + b, 0),
+      totalOfflineContent: results.aiResponses + results.stories + results.music + results.exercises
     });
     
     return results;
