@@ -431,13 +431,109 @@ export function speakWithRealisticVoice(text, options = {}) {
       utterance.lang = targetLangs[0];
     }
 
-    // Handle end callback
-    if (onEnd) {
-      utterance.onend = onEnd;
-      utterance.onerror = onEnd;
-    }
+    // This function will be called after voices are selected
+    const continueWithVoices = (voices, utterance, onEnd) => {
+      const userPreference = getUserVoicePreference();
+      let selectedVoice = null;
+      
+      // Map language codes to voice language codes
+      const langMap = {
+        en: ['en-US', 'en-GB', 'en-AU', 'en'],
+        es: ['es-ES', 'es-MX', 'es-US', 'es'],
+        fr: ['fr-FR', 'fr-CA', 'fr'],
+        de: ['de-DE', 'de-AT', 'de'],
+        it: ['it-IT', 'it'],
+        pt: ['pt-PT', 'pt-BR', 'pt'],
+        zh: ['zh-CN', 'zh-TW', 'zh-HK', 'zh'],
+        ja: ['ja-JP', 'ja'],
+        ko: ['ko-KR', 'ko'],
+        ar: ['ar-SA', 'ar-EG', 'ar'],
+        hi: ['hi-IN', 'hi'],
+        ru: ['ru-RU', 'ru'],
+        nl: ['nl-NL', 'nl-BE', 'nl'],
+        pl: ['pl-PL', 'pl'],
+        tr: ['tr-TR', 'tr'],
+        vi: ['vi-VN', 'vi'],
+        th: ['th-TH', 'th'],
+        sv: ['sv-SE', 'sv'],
+        no: ['nb-NO', 'no'],
+        da: ['da-DK', 'da']
+      };
+      
+      const targetLangs = langMap[language] || ['en-US', 'en'];
+      
+      // Use user's preferred voice if set and matches language
+      if (userPreference !== 'auto') {
+        const preferredVoice = voices.find(v => v.name === userPreference);
+        if (preferredVoice && targetLangs.some(lang => preferredVoice.lang.startsWith(lang))) {
+          selectedVoice = preferredVoice;
+        }
+      }
+      
+      // Auto-select best voice for the target language
+      if (!selectedVoice) {
+        const languageVoices = voices.filter(v => 
+          targetLangs.some(lang => v.lang.startsWith(lang))
+        );
+        
+        if (languageVoices.length > 0) {
+          // Select voice based on emotional state and cognitive level
+          let preferredGender = null;
+          if (anxietyLevel >= 7 || cognitiveLevel === 'advanced' || cognitiveLevel === 'severe') {
+            preferredGender = 'female'; // Calm, soothing voices for comfort
+          } else if (emotionalState === 'upbeat') {
+            preferredGender = 'female';
+          }
+          
+          if (preferredGender) {
+            const genderVoices = languageVoices.filter(v => {
+              const name = v.name.toLowerCase();
+              return preferredGender === 'female' 
+                ? (name.includes('female') || name.includes('woman') || 
+                   !name.includes('male') && !name.includes('man'))
+                : (name.includes('male') || name.includes('man'));
+            });
+            
+            if (genderVoices.length > 0) {
+              selectedVoice = genderVoices.find(v => 
+                v.name.includes('Natural') || v.name.includes('Neural') || 
+                v.name.includes('Premium') || v.name.includes('Online')
+              ) || genderVoices[0];
+            }
+          }
+          
+          if (!selectedVoice) {
+            selectedVoice = languageVoices.find(v => 
+              v.name.includes('Natural') || v.name.includes('Neural') || 
+              v.name.includes('Premium') || v.name.includes('Online')
+            ) || languageVoices[0];
+          }
+        }
+      }
+      
+      // Ultimate fallback
+      if (!selectedVoice && voices.length > 0) {
+        selectedVoice = voices[0];
+      }
 
-    speechSynthesis.speak(utterance);
+      if (selectedVoice) {
+        utterance.voice = selectedVoice;
+        utterance.lang = selectedVoice.lang;
+      } else {
+        const targetLangs = langMap[language] || ['en-US', 'en'];
+        utterance.lang = targetLangs[0];
+      }
+
+      // Handle end callback
+      if (onEnd) {
+        utterance.onend = onEnd;
+        utterance.onerror = onEnd;
+      }
+
+      console.log('Speaking with voice:', selectedVoice?.name || 'default');
+      speechSynthesis.speak(utterance);
+    };
+    
     return utterance;
     
   } catch (error) {
