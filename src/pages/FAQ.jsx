@@ -191,11 +191,44 @@ const faqCategories = [
     ]
   },
   {
+    category: 'Legal & Disclaimers',
+    questions: [
+      {
+        q: 'Is Memory Mirror a medical device?',
+        a: 'No. Memory Mirror is NOT a medical device and is NOT intended to diagnose, treat, cure, or prevent any disease. It is a companion tool designed to supplement professional dementia care, not replace it. Always consult healthcare professionals for medical advice.'
+      },
+      {
+        q: 'What are the liability limitations?',
+        a: 'Memory Mirror is provided "as is" without warranties. We are not liable for any damages, harm, or losses resulting from app use. This includes AI errors, technical failures, or any physical, emotional, or financial harm. See our Terms of Service for complete details.'
+      },
+      {
+        q: 'Who is responsible for the safety of my loved one?',
+        a: 'Caregivers and family members are fully responsible for the safety and wellbeing of their loved ones. Memory Mirror is a support tool that should be used under supervision, not as a replacement for human care and medical oversight.'
+      },
+      {
+        q: 'Can I use Memory Mirror without caregiver supervision?',
+        a: 'No. Memory Mirror should always be used under the supervision of a qualified caregiver or family member. It is not designed for unsupervised use by individuals with dementia.'
+      },
+      {
+        q: 'What should I do in an emergency?',
+        a: 'Memory Mirror is NOT for emergencies. In case of medical emergency, call emergency services immediately (911, 999, 112, or your local emergency number). Do not rely on the app for urgent medical situations.'
+      },
+      {
+        q: 'Is the AI perfect?',
+        a: 'No. AI may produce incorrect, inappropriate, or unexpected responses. All AI interactions should be monitored by caregivers. We do not guarantee the accuracy or reliability of AI-generated content.'
+      },
+      {
+        q: 'What laws govern my use of Memory Mirror?',
+        a: 'Memory Mirror complies with HIPAA (US), GDPR (EU), CCPA (California), PIPEDA (Canada), and Australian Privacy Act. These Terms are governed by California law. International users must comply with their local laws.'
+      }
+    ]
+  },
+  {
     category: 'Pricing & Support',
     questions: [
       {
         q: 'How much does Memory Mirror cost?',
-        a: 'Memory Mirror is free to use with basic features. Premium features (unlimited storage, advanced analytics, priority support) are available for $19.99/month. We offer a 30-day free trial of premium features.'
+        a: 'Memory Mirror offers a free tier with daily limited access. Premium subscription is $9.99/month - intentionally priced well below other dementia care apps. IMPORTANT: Subscription fees will not begin until the app is running smoothly and all final tweaks are complete. We will notify you before billing starts.'
       },
       {
         q: 'Is there a free trial?',
@@ -297,8 +330,9 @@ export default function FAQ() {
                     catIdx === 3 ? '🎤' :
                     catIdx === 4 ? '🏠' :
                     catIdx === 5 ? '🔒' :
-                    catIdx === 6 ? '📸' :
-                    catIdx === 7 ? '🔧' :
+                    catIdx === 6 ? '⚖️' :
+                    catIdx === 7 ? '📸' :
+                    catIdx === 8 ? '🔧' :
                     '💳'
                   }</span>
                   {category.category}

@@ -63,6 +63,7 @@ import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import TermsOfService from './pages/TermsOfService';
 import __Layout from './Layout.jsx';
 
 
@@ -83,6 +84,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
+    "TermsOfService": TermsOfService,
 }
 
 export const pagesConfig = {

@@ -344,6 +344,10 @@ export default function Landing() {
               FAQ
             </Link>
             <span className="text-slate-600">•</span>
+            <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">
+              Terms of Service
+            </Link>
+            <span className="text-slate-600">•</span>
             <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">
               Privacy Policy
             </Link>
