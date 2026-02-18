@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle } from 'lucide-react';
+import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle, Headphones } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -13,6 +13,7 @@ import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
+import HandsFreeMode from './HandsFreeMode';
 import { base44 } from '@/api/base44Client';
 import { offlineAIChat, offlineEntities, offlineFunction } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
@@ -33,6 +34,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showGames, setShowGames] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
+  const [showHandsFree, setShowHandsFree] = useState(false);
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
   const [visualResponse, setVisualResponse] = useState({ show: false, suggestions: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
@@ -775,43 +777,72 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         </div>
       )}
 
-      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 grid grid-cols-4 gap-3">
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all"
-        >
-          <BookHeart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
-          <span className="text-xs font-semibold">Memories</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => setShowMusic(!showMusic)}
-          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all"
-        >
-          <Music className="w-6 h-6 text-purple-600 dark:text-purple-400" />
-          <span className="text-xs font-semibold">Music</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => setShowStory(!showStory)}
-          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950 transition-all"
-        >
-          <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
-          <span className="text-xs font-semibold">Stories</span>
-        </Button>
-        <Button
-          variant="outline"
-          size="lg"
-          onClick={() => setShowGames(true)}
-          className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950 transition-all"
-        >
-          <Gamepad2 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
-          <span className="text-xs font-semibold">Games</span>
-        </Button>
+      <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
+        <div className="grid grid-cols-5 gap-3 mb-3">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
+            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all"
+          >
+            <BookHeart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <span className="text-xs font-semibold">Memories</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowMusic(!showMusic)}
+            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all"
+          >
+            <Music className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <span className="text-xs font-semibold">Music</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowStory(!showStory)}
+            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950 transition-all"
+          >
+            <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <span className="text-xs font-semibold">Stories</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowGames(true)}
+            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950 transition-all"
+          >
+            <Gamepad2 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <span className="text-xs font-semibold">Games</span>
+          </Button>
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowHandsFree(!showHandsFree)}
+            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-950 transition-all"
+          >
+            <Headphones className="w-6 h-6 text-teal-600 dark:text-teal-400" />
+            <span className="text-xs font-semibold">Hands-Free</span>
+          </Button>
+        </div>
+
+        {showHandsFree && (
+          <HandsFreeMode
+            onMessage={(message) => {
+              setMessages(prev => [...prev, { role: 'user', content: message, language: selectedLanguage }]);
+            }}
+            onAIResponse={(response) => {
+              setMessages(prev => [...prev, { role: 'assistant', content: response, hasVoice: true, language: selectedLanguage }]);
+              setConversationHistory(prev => [...prev, 
+                { role: 'user', content: prev[prev.length - 1]?.content || '' },
+                { role: 'assistant', content: response }
+              ]);
+            }}
+            selectedLanguage={selectedLanguage}
+            systemPrompt={getSystemPrompt()}
+            conversationHistory={conversationHistory}
+          />
+        )}
       </div>
       
       {showGames && (
