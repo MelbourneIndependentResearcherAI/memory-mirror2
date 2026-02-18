@@ -16,6 +16,7 @@ import SmartHomeRoutineBuilder from '../components/smartHome/SmartHomeRoutineBui
 import MoodAutomationConfig from '../components/smartHome/MoodAutomationConfig';
 import ReminderManager from '../components/caregiver/ReminderManager';
 import VoiceCloningManager from '../components/caregiver/VoiceCloningManager';
+import AICareInsights from '../components/caregiver/AICareInsights';
 
 const featureCards = [
   {
@@ -129,6 +130,14 @@ const featureCards = [
     description: 'Clone family voices for personalized comfort',
     background: '#FDF4FF',
     darkBackground: '#4A1D4A'
+  },
+  {
+    id: 15,
+    title: 'AI Care Insights',
+    icon: '✨',
+    description: 'Personalized recommendations from intelligent analysis',
+    background: '#FAF5FF',
+    darkBackground: '#3B1F4A'
   }
 ];
 
@@ -187,7 +196,8 @@ export default function CaregiverPortal() {
       10: 'smart-home',    // Smart Home
       11: 'mood-automations', // Mood-Based Automations
       13: 'reminders',     // Activity Reminders
-      14: 'voice-cloning'  // Voice Cloning
+      14: 'voice-cloning', // Voice Cloning
+      15: 'ai-insights'    // AI Care Insights
     };
     
     if (viewMap[cardId]) {
@@ -347,6 +357,19 @@ export default function CaregiverPortal() {
               Back to Portal
             </button>
             <VoiceCloningManager />
+          </div>
+        )}
+
+        {activeView === 'ai-insights' && (
+          <div>
+            <button
+              onClick={() => setActiveView('home')}
+              className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Portal
+            </button>
+            <AICareInsights />
           </div>
         )}
       </div>
