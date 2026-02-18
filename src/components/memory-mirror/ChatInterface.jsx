@@ -264,12 +264,15 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
         volume: 1.0,
         emotionalState: emotionalContext.state || 'neutral',
         anxietyLevel: emotionalContext.anxietyLevel || 0,
-        language: selectedLanguage // Pass selected language for voice matching
+        cognitiveLevel: cognitiveLevel, // Adapt to cognitive decline level
+        language: selectedLanguage,
+        userProfile: userProfile, // Use profile for personalization
+        onEnd: emotionalContext.onEnd
       });
     } catch (error) {
       console.error('Speech synthesis error:', error);
     }
-  }, [selectedLanguage]);
+  }, [selectedLanguage, cognitiveLevel, userProfile]);
 
   const handleLanguageChange = (languageCode) => {
     setSelectedLanguage(languageCode);
@@ -433,7 +436,7 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
       
       setMessages(prev => [...prev, { role: 'assistant', content: calmingMessage, hasVoice: true, language: selectedLanguage }]);
       setConversationHistory(prev => [...prev, { role: 'assistant', content: calmingMessage }]);
-      speakResponse(calmingMessage, { state: 'calm', anxietyLevel });
+      speakResponse(calmingMessage, { state: 'soothing', anxietyLevel });
       
       // Suggest phone mode for high anxiety
       setAnxietyState({ level: anxietyLevel, suggestedMode: 'phone' });
@@ -549,12 +552,17 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         });
       }
       
-      // Determine emotional state for voice adaptation
-      const emotionalState = detectedAnxiety >= 7 ? 'anxious' :
-                           detectedAnxiety >= 4 ? 'calm' :
+      // Determine emotional state for voice adaptation with nuanced transitions
+      const emotionalState = detectedAnxiety >= 8 ? 'soothing' :
+                           detectedAnxiety >= 7 ? 'reassuring' :
+                           detectedAnxiety >= 5 ? 'calm' :
+                           detectedAnxiety >= 3 ? 'warm' :
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
-      speakResponse(assistantMessage, { state: emotionalState, anxietyLevel: detectedAnxiety });
+      speakResponse(assistantMessage, { 
+        state: emotionalState, 
+        anxietyLevel: detectedAnxiety
+      });
 
       // Show anxiety alert if needed
       if (detectedAnxiety >= 6) {
@@ -958,6 +966,8 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
             selectedLanguage={selectedLanguage}
             systemPrompt={getSystemPrompt()}
             conversationHistory={conversationHistory}
+            cognitiveLevel={cognitiveLevel}
+            userProfile={userProfile}
           />
         )}
       </div>

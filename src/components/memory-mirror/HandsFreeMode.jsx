@@ -11,7 +11,9 @@ export default function HandsFreeMode({
   onAIResponse, 
   selectedLanguage = 'en',
   systemPrompt,
-  conversationHistory = [] 
+  conversationHistory = [],
+  cognitiveLevel = 'mild',
+  userProfile = null
 }) {
   const [isActive, setIsActive] = useState(false);
   const [isListening, setIsListening] = useState(false);
@@ -224,14 +226,17 @@ export default function HandsFreeMode({
         // Notify parent
         if (onAIResponse) onAIResponse(aiMessage);
 
-        // Speak response in selected language
+        // Speak response with full adaptive parameters
         setIsSpeaking(true);
         speakWithRealisticVoice(aiMessage, {
           rate: 0.9,
           pitch: 1.05,
           volume: 1.0,
           emotionalState: 'warm',
+          anxietyLevel: 0,
+          cognitiveLevel: cognitiveLevel,
           language: selectedLanguage,
+          userProfile: userProfile,
           onEnd: () => {
             if (isMountedRef.current) {
               setIsSpeaking(false);
@@ -259,7 +264,10 @@ export default function HandsFreeMode({
         
         setIsSpeaking(true);
         speakWithRealisticVoice(fallback, {
+          emotionalState: 'reassuring',
+          cognitiveLevel: cognitiveLevel,
           language: selectedLanguage,
+          userProfile: userProfile,
           onEnd: () => {
             if (isMountedRef.current) {
               setIsSpeaking(false);
