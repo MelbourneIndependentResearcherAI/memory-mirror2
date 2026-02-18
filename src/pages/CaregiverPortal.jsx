@@ -17,6 +17,7 @@ import MoodAutomationConfig from '../components/smartHome/MoodAutomationConfig';
 import ReminderManager from '../components/caregiver/ReminderManager';
 import VoiceCloningManager from '../components/caregiver/VoiceCloningManager';
 import AICareInsights from '../components/caregiver/AICareInsights';
+import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndicator';
 
 const featureCards = [
   {
@@ -232,6 +233,8 @@ export default function CaregiverPortal() {
                 </div>
               </div>
             </div>
+
+            <OfflineReadyIndicator />
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {featureCards.map((card) => (
