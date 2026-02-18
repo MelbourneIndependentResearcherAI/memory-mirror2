@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { MessageCircle, Phone, Shield, Settings, HeartCrack } from 'lucide-react';
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 import ChatMode from './ChatMode';
 import PhoneMode from './PhoneMode';
 import SecurityMode from './SecurityMode';
@@ -18,6 +19,7 @@ export default function Home() {
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useLanguage();
 
   const { data: userProfiles = [] } = useQuery({
     queryKey: ['userProfile'],
@@ -84,9 +86,9 @@ export default function Home() {
   };
 
   const modes = [
-    { id: 'chat', label: 'Chat', icon: MessageCircle, path: '/chat' },
-    { id: 'phone', label: 'Phone', icon: Phone, path: '/phone' },
-    { id: 'security', label: 'Security', icon: Shield, path: '/security' },
+    { id: 'chat', label: t('chat'), icon: MessageCircle, path: '/chat' },
+    { id: 'phone', label: t('phone'), icon: Phone, path: '/phone' },
+    { id: 'security', label: t('security'), icon: Shield, path: '/security' },
   ];
 
   const handleButtonClick = (mode) => {
@@ -113,9 +115,9 @@ export default function Home() {
           </div>
           
           <div className="text-center">
-            <h1 className="text-3xl font-light tracking-wide mb-1">Memory Mirror</h1>
-            <p className="text-white/70 text-xs mb-2">dementia care kit for carers and their loved ones</p>
-            <p className="text-white/80 italic text-sm">Your companion, meeting you where you are</p>
+            <h1 className="text-3xl font-light tracking-wide mb-1">{t('memoryMirror')}</h1>
+            <p className="text-white/70 text-xs mb-2">{t('tagline')}</p>
+            <p className="text-white/80 italic text-sm">{t('subtitle')}</p>
             
             {currentMode === 'chat' && (
               <div className="mt-3 inline-block bg-white/20 px-4 py-1.5 rounded-full text-sm">
@@ -132,7 +134,7 @@ export default function Home() {
             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold"
           >
             <HeartCrack className="w-8 h-8" />
-            Having a Bad Day?
+            {t('havingBadDay')}
           </button>
         </div>
 
@@ -154,7 +156,7 @@ export default function Home() {
         </div>
 
         <p className="text-center text-slate-500 dark:text-slate-400 text-sm mt-6 px-4 mb-24">
-          Memory Mirror — Compassionate AI companion for dementia care
+          {t('memoryMirror')} — {t('aiCompanion')}
         </p>
       </div>
 

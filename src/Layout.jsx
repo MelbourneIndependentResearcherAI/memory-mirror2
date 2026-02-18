@@ -2,6 +2,8 @@ import React from 'react';
 import { ThemeProvider } from 'next-themes';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
+import { LanguageProvider } from '@/components/i18n/LanguageContext';
+import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
@@ -53,7 +55,9 @@ export default function Layout({ children, currentPageName }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ErrorBoundary>
+        <LanguageProvider>
+          <ErrorBoundary>
+            <GlobalLanguageSelector />
           <OfflineBanner />
           <OfflineIndicator />
           <ReminderNotification />
@@ -72,7 +76,8 @@ export default function Layout({ children, currentPageName }) {
             {showBottomNav && <BottomNav />}
           </div>
           <AgentSupport />
-        </ErrorBoundary>
+          </ErrorBoundary>
+        </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>
   );

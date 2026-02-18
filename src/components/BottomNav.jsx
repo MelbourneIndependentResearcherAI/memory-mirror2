@@ -2,9 +2,11 @@ import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle, Phone, Shield, Moon, Music, Cloud } from 'lucide-react';
 import { createPageUrl } from '../utils';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function BottomNav() {
   const location = useLocation();
+  const { t } = useLanguage();
   
   const isActive = (path) => location.pathname === path;
 
@@ -12,37 +14,37 @@ export default function BottomNav() {
     {
       path: '/chat',
       icon: MessageCircle,
-      label: 'Chat',
+      label: t('chat'),
       color: 'text-blue-500'
     },
     {
       path: '/phone',
       icon: Phone,
-      label: 'Phone',
+      label: t('phone'),
       color: 'text-green-500'
     },
     {
       path: '/security',
       icon: Shield,
-      label: 'Security',
+      label: t('security'),
       color: 'text-purple-500'
     },
     {
       path: createPageUrl('NightWatch'),
       icon: Moon,
-      label: 'Night Watch',
+      label: t('nightWatch'),
       color: 'text-indigo-500'
     },
     {
       path: createPageUrl('OfflineAudio'),
       icon: Music,
-      label: 'Offline',
+      label: t('offline'),
       color: 'text-orange-500'
     },
     {
       path: createPageUrl('SyncBackup'),
       icon: Cloud,
-      label: 'Sync',
+      label: t('sync'),
       color: 'text-cyan-500'
     }
   ];
