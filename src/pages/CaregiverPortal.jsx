@@ -18,6 +18,8 @@ import ReminderManager from '../components/caregiver/ReminderManager';
 import VoiceCloningManager from '../components/caregiver/VoiceCloningManager';
 import AICareInsights from '../components/caregiver/AICareInsights';
 import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndicator';
+import OfflineJournalReader from '@/components/caregiver/OfflineJournalReader';
+import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 
 const featureCards = [
@@ -140,6 +142,14 @@ const featureCards = [
     description: 'Personalized recommendations from intelligent analysis',
     background: '#FAF5FF',
     darkBackground: '#3B1F4A'
+  },
+  {
+    id: 16,
+    title: 'Read Offline',
+    icon: '📖',
+    description: 'Access journals and memories without internet',
+    background: '#F0FDFA',
+    darkBackground: '#1D4A4A'
   }
 ];
 
@@ -149,6 +159,7 @@ export default function CaregiverPortal() {
   const [badDayActivated, setBadDayActivated] = React.useState(false);
 
   const [userProfile, setUserProfile] = React.useState(null);
+  const [showOfflineOptions, setShowOfflineOptions] = React.useState(false);
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -199,7 +210,8 @@ export default function CaregiverPortal() {
       11: 'mood-automations', // Mood-Based Automations
       13: 'reminders',     // Activity Reminders
       14: 'voice-cloning', // Voice Cloning
-      15: 'ai-insights'    // AI Care Insights
+      15: 'ai-insights',   // AI Care Insights
+      16: 'offline-read'   // Read Offline
     };
     
     if (viewMap[cardId]) {
@@ -374,6 +386,49 @@ export default function CaregiverPortal() {
               Back to Portal
             </button>
             <AICareInsights />
+          </div>
+        )}
+
+        {activeView === 'offline-read' && (
+          <div className="space-y-6">
+            <button
+              onClick={() => setActiveView('home')}
+              className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Portal
+            </button>
+            
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8">
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <button
+                  onClick={() => setShowOfflineOptions(false)}
+                  className={`p-6 rounded-xl font-semibold transition-all ${
+                    !showOfflineOptions
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  📖 Journal Entries
+                </button>
+                <button
+                  onClick={() => setShowOfflineOptions(true)}
+                  className={`p-6 rounded-xl font-semibold transition-all ${
+                    showOfflineOptions
+                      ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700'
+                  }`}
+                >
+                  ✨ Memories
+                </button>
+              </div>
+
+              {!showOfflineOptions ? (
+                <OfflineJournalReader onBack={() => setActiveView('home')} />
+              ) : (
+                <OfflineMemoryViewer onBack={() => setActiveView('home')} />
+              )}
+            </div>
           </div>
         )}
       </div>
