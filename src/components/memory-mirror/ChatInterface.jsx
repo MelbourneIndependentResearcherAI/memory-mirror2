@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle, Headphones } from 'lucide-react';
+import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle, Headphones, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -14,6 +14,7 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
 import HandsFreeMode from './HandsFreeMode';
+import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
 import { offlineAIChat, offlineEntities, offlineFunction } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
@@ -35,6 +36,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showMusic, setShowMusic] = useState(false);
   const [showStory, setShowStory] = useState(false);
   const [showHandsFree, setShowHandsFree] = useState(false);
+  const [showPersonalizedCompanion, setShowPersonalizedCompanion] = useState(false);
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
   const [visualResponse, setVisualResponse] = useState({ show: false, suggestions: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
@@ -904,51 +906,60 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       )}
 
       <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-        <div className="grid grid-cols-5 gap-3 mb-3">
+        <div className="grid grid-cols-6 gap-2 mb-3">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={() => setShowPersonalizedCompanion(true)}
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-pink-500 hover:bg-pink-50 dark:hover:bg-pink-950 transition-all"
+          >
+            <Heart className="w-5 h-5 text-pink-600 dark:text-pink-400" />
+            <span className="text-xs font-semibold text-center leading-tight">Personal Care</span>
+          </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all"
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-blue-500 hover:bg-blue-50 dark:hover:bg-blue-950 transition-all"
           >
-            <BookHeart className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <BookHeart className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             <span className="text-xs font-semibold">Memories</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => setShowMusic(!showMusic)}
-            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all"
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-purple-500 hover:bg-purple-50 dark:hover:bg-purple-950 transition-all"
           >
-            <Music className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+            <Music className="w-5 h-5 text-purple-600 dark:text-purple-400" />
             <span className="text-xs font-semibold">Music</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => setShowStory(!showStory)}
-            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950 transition-all"
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-green-500 hover:bg-green-50 dark:hover:bg-green-950 transition-all"
           >
-            <BookOpen className="w-6 h-6 text-green-600 dark:text-green-400" />
+            <BookOpen className="w-5 h-5 text-green-600 dark:text-green-400" />
             <span className="text-xs font-semibold">Stories</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => setShowGames(true)}
-            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950 transition-all"
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-orange-500 hover:bg-orange-50 dark:hover:bg-orange-950 transition-all"
           >
-            <Gamepad2 className="w-6 h-6 text-orange-600 dark:text-orange-400" />
+            <Gamepad2 className="w-5 h-5 text-orange-600 dark:text-orange-400" />
             <span className="text-xs font-semibold">Games</span>
           </Button>
           <Button
             variant="outline"
             size="lg"
             onClick={() => setShowHandsFree(!showHandsFree)}
-            className="flex flex-col items-center justify-center gap-2 h-20 border-2 hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-950 transition-all"
+            className="flex flex-col items-center justify-center gap-1 h-20 border-2 hover:border-teal-500 hover:bg-teal-50 dark:hover:bg-teal-950 transition-all"
           >
-            <Headphones className="w-6 h-6 text-teal-600 dark:text-teal-400" />
-            <span className="text-xs font-semibold">Hands-Free</span>
+            <Headphones className="w-5 h-5 text-teal-600 dark:text-teal-400" />
+            <span className="text-xs font-semibold text-center leading-tight">Hands-Free</span>
           </Button>
         </div>
 
@@ -1007,6 +1018,41 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
           suggestions={visualResponse.suggestions}
           onClose={() => setVisualResponse({ show: false, suggestions: [] })}
         />
+      )}
+
+      {showPersonalizedCompanion && (
+        <div className="absolute inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-4">
+            <Button
+              variant="ghost"
+              onClick={() => setShowPersonalizedCompanion(false)}
+              className="mb-2"
+            >
+              ← Back to Chat
+            </Button>
+            <h2 className="text-xl font-bold">Personalized Companionship</h2>
+          </div>
+          <PersonalizedCompanion
+            currentAnxiety={anxietyState.level}
+            emotionalState={anxietyState.level >= 7 ? 'anxious' : anxietyState.level >= 4 ? 'neutral' : 'calm'}
+            onStartConversation={async (payload) => {
+              setShowPersonalizedCompanion(false);
+              if (payload.type === 'story' || payload.type === 'poem') {
+                setMessages(prev => [...prev, { 
+                  role: 'assistant', 
+                  content: `${payload.content.title}\n\n${payload.content.content}`,
+                  hasVoice: true,
+                  language: selectedLanguage
+                }]);
+                speakResponse(payload.content.content);
+              } else if (payload.text) {
+                await sendMessage(payload.text);
+              } else if (payload.starter) {
+                await sendMessage(payload.starter);
+              }
+            }}
+          />
+        </div>
       )}
       
       <PullToRefresh 
