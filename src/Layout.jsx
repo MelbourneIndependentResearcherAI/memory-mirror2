@@ -9,6 +9,7 @@ import AgentSupport from '@/components/caregiver/AgentSupport';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import OfflineBanner from '@/components/memory-mirror/OfflineBanner';
+import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
 import { initOfflineDB } from '@/components/utils/offlineManager';
 import { initOfflineStorage } from '@/components/utils/offlineStorage';
