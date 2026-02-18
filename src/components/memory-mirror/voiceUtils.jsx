@@ -1,3 +1,52 @@
+import { base44 } from '@/api/base44Client';
+
+// Check if user has active cloned voice
+export const getActiveClonedVoice = async () => {
+  try {
+    const profiles = await base44.entities.VoiceProfile.filter({ is_active: true });
+    return profiles?.[0] || null;
+  } catch {
+    return null;
+  }
+};
+
+// Synthesize with cloned voice if available, fallback to system voice
+export const speakWithClonedVoice = async (text, options = {}) => {
+  try {
+    const activeVoice = await getActiveClonedVoice();
+    
+    if (activeVoice?.voice_id) {
+      // Try ElevenLabs cloned voice
+      const result = await base44.functions.invoke('synthesizeClonedVoice', {
+        text: text,
+        voice_id: activeVoice.voice_id,
+        stability: options.stability || 0.75,
+        similarity_boost: options.similarity_boost || 0.75
+      });
+      
+      if (!result.data.fallback) {
+        // Play cloned voice audio
+        const audioBlob = new Blob([result.data], { type: 'audio/mpeg' });
+        const audio = new Audio(URL.createObjectURL(audioBlob));
+        audio.volume = options.volume || 1.0;
+        
+        return new Promise((resolve) => {
+          audio.onended = () => {
+            if (options.onEnd) options.onEnd();
+            resolve();
+          };
+          audio.play();
+        });
+      }
+    }
+  } catch (error) {
+    console.log('Cloned voice not available, using system voice');
+  }
+  
+  // Fallback to system voice
+  return speakWithRealisticVoice(text, options);
+};
+
 // Get user's preferred voice from localStorage
 const getUserVoicePreference = () => {
   try {
