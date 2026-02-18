@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen } from 'lucide-react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -14,11 +14,11 @@ import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
 import { base44 } from '@/api/base44Client';
-import { offlineAIChat } from '@/components/utils/offlineAPI';
+import { offlineAIChat, offlineEntities, offlineFunction } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
-import { isOnline, getOfflineResponse, cacheOfflineResponse } from '../utils/offlineManager';
+import { isOnline } from '../utils/offlineManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -47,6 +47,10 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   });
   const chatContainerRef = useRef(null);
   const recognitionRef = useRef(null);
+  const abortControllerRef = useRef(null);
+  const lastMessageTimeRef = useRef(0);
+  const retryCountRef = useRef(0);
+  const isMountedRef = useRef(true);
 
   const handleRefresh = async () => {
     await queryClient.refetchQueries({ queryKey: ['safeZones'] });
@@ -54,31 +58,83 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     return new Promise(resolve => setTimeout(resolve, 500));
   };
 
-  const { data: safeZones = [] } = useQuery({
+  const { data: safeZones = [], error: safeZonesError } = useQuery({
     queryKey: ['safeZones'],
-    queryFn: () => offlineEntities.list('SafeMemoryZone'),
+    queryFn: async () => {
+      try {
+        return await offlineEntities.list('SafeMemoryZone');
+      } catch (error) {
+        console.error('Safe zones fetch failed:', error);
+        return [];
+      }
+    },
+    retry: 2,
+    staleTime: 1000 * 60 * 5,
   });
 
-  const { data: memories = [] } = useQuery({
+  const { data: memories = [], error: memoriesError } = useQuery({
     queryKey: ['memories'],
-    queryFn: () => offlineEntities.list('Memory', '-created_date', 50),
+    queryFn: async () => {
+      try {
+        return await offlineEntities.list('Memory', '-created_date', 50);
+      } catch (error) {
+        console.error('Memories fetch failed:', error);
+        return [];
+      }
+    },
+    retry: 2,
+    staleTime: 1000 * 60 * 5,
   });
 
-  const { data: userProfile } = useQuery({
+  const { data: userProfile, error: profileError } = useQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
-      const profiles = await offlineEntities.list('UserProfile');
-      return profiles[0] || null;
+      try {
+        const profiles = await offlineEntities.list('UserProfile');
+        return profiles?.[0] || null;
+      } catch (error) {
+        console.error('Profile fetch failed:', error);
+        return null;
+      }
     },
+    retry: 2,
+    staleTime: 1000 * 60 * 10,
   });
 
-  const { data: cognitiveAssessments = [] } = useQuery({
+  const { data: cognitiveAssessments = [], error: assessmentsError } = useQuery({
     queryKey: ['cognitiveAssessments'],
-    queryFn: () => offlineEntities.list('CognitiveAssessment', '-assessment_date', 1),
+    queryFn: async () => {
+      try {
+        return await offlineEntities.list('CognitiveAssessment', '-assessment_date', 1);
+      } catch (error) {
+        console.error('Assessments fetch failed:', error);
+        return [];
+      }
+    },
+    retry: 2,
+    staleTime: 1000 * 60 * 15,
   });
 
   useEffect(() => {
-    if (cognitiveAssessments.length > 0) {
+    isMountedRef.current = true;
+    
+    return () => {
+      isMountedRef.current = false;
+      // Cancel any pending requests
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+      }
+      // Stop any active speech recognition
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    if (cognitiveAssessments?.length > 0 && cognitiveAssessments[0]?.cognitive_level) {
       setCognitiveLevel(cognitiveAssessments[0].cognitive_level);
       setLastAssessment(cognitiveAssessments[0]);
     }
@@ -168,20 +224,30 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
   };
 
   useEffect(() => {
-    if (chatContainerRef.current) {
-      chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+    if (chatContainerRef.current && isMountedRef.current) {
+      try {
+        chatContainerRef.current.scrollTop = chatContainerRef.current.scrollHeight;
+      } catch (error) {
+        console.error('Scroll error:', error);
+      }
     }
   }, [messages]);
 
-  const speakResponse = (text, emotionalContext = {}) => {
-    speakWithRealisticVoice(text, {
-      rate: 0.92,
-      pitch: 1.05,
-      volume: 1.0,
-      emotionalState: emotionalContext.state || 'neutral',
-      anxietyLevel: emotionalContext.anxietyLevel || 0
-    });
-  };
+  const speakResponse = useCallback((text, emotionalContext = {}) => {
+    if (!text || !isMountedRef.current) return;
+    
+    try {
+      speakWithRealisticVoice(text, {
+        rate: 0.92,
+        pitch: 1.05,
+        volume: 1.0,
+        emotionalState: emotionalContext.state || 'neutral',
+        anxietyLevel: emotionalContext.anxietyLevel || 0
+      });
+    } catch (error) {
+      console.error('Speech synthesis error:', error);
+    }
+  }, []);
 
   const handleLanguageChange = (languageCode) => {
     setSelectedLanguage(languageCode);
@@ -190,25 +256,52 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     } catch {}
   };
 
-  const translateText = async (text, targetLang, sourceLang = null) => {
+  const translateText = useCallback(async (text, targetLang, sourceLang = null) => {
+    if (!text || !targetLang) return text;
     if (targetLang === 'en' && !sourceLang) return text;
     
     try {
       const result = await offlineFunction('translateText', {
-        text,
+        text: String(text).substring(0, 5000), // Limit length
         targetLanguage: targetLang,
         sourceLanguage: sourceLang
       });
-      return result.data.translatedText || text;
+      return result?.data?.translatedText || text;
     } catch (error) {
       console.error('Translation error:', error);
-      return text;
+      return text; // Return original on error
     }
-  };
+  }, []);
 
-  const sendMessage = async (transcribedText) => {
-    const userMessage = transcribedText || '';
-    if (!userMessage.trim() || isLoading) return;
+  const sendMessage = useCallback(async (transcribedText) => {
+    // Validation
+    if (!transcribedText || typeof transcribedText !== 'string') {
+      console.error('Invalid message input');
+      return;
+    }
+
+    const userMessage = transcribedText.trim();
+    if (!userMessage || isLoading || !isMountedRef.current) return;
+
+    // Rate limiting: prevent spam (max 1 message per 2 seconds)
+    const now = Date.now();
+    if (now - lastMessageTimeRef.current < 2000) {
+      toast.error('Please wait a moment before sending another message');
+      return;
+    }
+    lastMessageTimeRef.current = now;
+
+    // Length validation
+    if (userMessage.length > 1000) {
+      toast.error('Message is too long. Please keep it under 1000 characters.');
+      return;
+    }
+
+    // Cancel any pending requests
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    abortControllerRef.current = new AbortController();
     
     // Log chat activity (offline-aware)
     offlineEntities.create('ActivityLog', {
@@ -458,110 +551,210 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       }
 
     } catch (error) {
-      console.error('Chat error:', error);
-      let fallback = "I'm here with you. Let's try again in just a moment.";
+      if (!isMountedRef.current) return;
       
-      // Translate fallback message
-      if (selectedLanguage !== 'en') {
-        fallback = await translateText(fallback, selectedLanguage, 'en');
+      console.error('Chat error:', error);
+      
+      // Exponential backoff retry logic
+      if (retryCountRef.current < 3 && error.name !== 'AbortError') {
+        retryCountRef.current++;
+        const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 5000);
+        toast.error(`Connection issue. Retrying in ${delay/1000}s...`);
+        
+        setTimeout(() => {
+          if (isMountedRef.current) {
+            sendMessage(userMessage);
+          }
+        }, delay);
+        return;
       }
       
-      setMessages(prev => [...prev, { 
-        role: 'assistant', 
-        content: fallback,
-        hasVoice: true,
-        language: selectedLanguage
-      }]);
-      speakResponse(fallback);
+      retryCountRef.current = 0;
+      
+      // User-friendly error messages
+      let fallback = "I'm here with you. ";
+      if (error.name === 'AbortError') {
+        fallback += "The request was cancelled. Please try again.";
+      } else if (!isOnline()) {
+        fallback += "I'm working in offline mode right now. My responses may be limited, but I'm still here to listen.";
+      } else {
+        fallback += "I had a brief moment of confusion. Let's try again in just a moment.";
+      }
+      
+      // Translate fallback message
+      try {
+        if (selectedLanguage !== 'en') {
+          fallback = await translateText(fallback, selectedLanguage, 'en');
+        }
+      } catch {}
+      
+      if (isMountedRef.current) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: fallback,
+          hasVoice: true,
+          language: selectedLanguage,
+          isError: true
+        }]);
+        speakResponse(fallback);
+      }
     } finally {
-      setIsLoading(false);
+      if (isMountedRef.current) {
+        setIsLoading(false);
+      }
+      abortControllerRef.current = null;
     }
-  };
+  }, [isLoading, selectedLanguage, conversationHistory, selectedEra, detectedEra, conversationTopics, cognitiveLevel, lastAssessment, userProfile, safeZones, memories, speakResponse, translateText, onEraChange, queryClient]);
 
-  const startVoiceInput = () => {
+  const startVoiceInput = useCallback(() => {
+    if (!isMountedRef.current || isLoading) return;
+    
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      alert('Voice input is not supported in this browser. Please use Chrome or Edge.');
+      toast.error('Voice input is not supported in this browser. Please use Chrome, Edge, or Safari.');
       return;
     }
 
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.continuous = false;
-    recognitionRef.current.interimResults = false;
-    
-    // Map language codes to speech recognition locales
-    const langMap = {
-      en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', it: 'it-IT',
-      pt: 'pt-PT', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ar: 'ar-SA',
-      hi: 'hi-IN', ru: 'ru-RU', nl: 'nl-NL', pl: 'pl-PL', tr: 'tr-TR',
-      vi: 'vi-VN', th: 'th-TH', sv: 'sv-SE', no: 'nb-NO', da: 'da-DK'
-    };
-    
-    recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
-    
-    recognitionRef.current.onstart = () => {
-      setIsListening(true);
-    };
-    
-    recognitionRef.current.onresult = (event) => {
-      const transcript = event.results[0][0].transcript;
-      setIsListening(false);
-      sendMessage(transcript);
-    };
-    
-    recognitionRef.current.onerror = (event) => {
-      console.error('Speech recognition error:', event.error);
-      setIsListening(false);
-      if (event.error === 'no-speech') {
-        speakWithRealisticVoice("I didn't hear anything. Try again when you're ready.");
+    try {
+      // Stop any existing recognition
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.stop();
+        } catch {}
       }
-    };
-    
-    recognitionRef.current.onend = () => {
+
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      recognitionRef.current = new SpeechRecognition();
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
+      
+      // Map language codes to speech recognition locales
+      const langMap = {
+        en: 'en-US', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', it: 'it-IT',
+        pt: 'pt-PT', zh: 'zh-CN', ja: 'ja-JP', ko: 'ko-KR', ar: 'ar-SA',
+        hi: 'hi-IN', ru: 'ru-RU', nl: 'nl-NL', pl: 'pl-PL', tr: 'tr-TR',
+        vi: 'vi-VN', th: 'th-TH', sv: 'sv-SE', no: 'nb-NO', da: 'da-DK'
+      };
+      
+      recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
+      
+      recognitionRef.current.onstart = () => {
+        if (isMountedRef.current) {
+          setIsListening(true);
+        }
+      };
+      
+      recognitionRef.current.onresult = (event) => {
+        if (!isMountedRef.current) return;
+        
+        try {
+          const transcript = event.results?.[0]?.[0]?.transcript;
+          if (transcript && transcript.trim()) {
+            setIsListening(false);
+            sendMessage(transcript);
+          } else {
+            setIsListening(false);
+            toast.error("I didn't catch that. Please try again.");
+          }
+        } catch (error) {
+          console.error('Recognition result error:', error);
+          setIsListening(false);
+        }
+      };
+      
+      recognitionRef.current.onerror = (event) => {
+        console.error('Speech recognition error:', event.error);
+        if (!isMountedRef.current) return;
+        
+        setIsListening(false);
+        
+        const errorMessages = {
+          'no-speech': "I didn't hear anything. Try again when you're ready.",
+          'audio-capture': 'Microphone not available. Please check your settings.',
+          'not-allowed': 'Microphone permission denied. Please allow microphone access.',
+          'network': 'Network error. Please check your connection.',
+          'aborted': 'Voice input was cancelled.',
+        };
+        
+        const message = errorMessages[event.error] || "Voice input error. Please try again.";
+        toast.error(message);
+        
+        if (event.error !== 'aborted') {
+          speakWithRealisticVoice(message);
+        }
+      };
+      
+      recognitionRef.current.onend = () => {
+        if (isMountedRef.current) {
+          setIsListening(false);
+        }
+      };
+      
+      recognitionRef.current.start();
+    } catch (error) {
+      console.error('Error starting recognition:', error);
+      if (isMountedRef.current) {
+        setIsListening(false);
+        toast.error('Failed to start voice input. Please try again.');
+      }
+    }
+  }, [isLoading, selectedLanguage, sendMessage]);
+  
+  const stopVoiceInput = useCallback(() => {
+    if (recognitionRef.current && isMountedRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch (error) {
+        console.error('Error stopping recognition:', error);
+      }
+    }
+    if (isMountedRef.current) {
       setIsListening(false);
-    };
+    }
+  }, []);
+
+  const handleEraChange = useCallback((era) => {
+    if (!era || !isMountedRef.current) return;
     
     try {
-      recognitionRef.current.start();
-    } catch (e) {
-      console.error('Error starting recognition:', e);
-      setIsListening(false);
+      setSelectedEra(era);
+      if (era === 'auto') {
+        speakWithRealisticVoice("I'll adapt to your mental time period naturally.");
+      } else {
+        speakWithRealisticVoice(`Switching to ${era} communication mode.`);
+      }
+      // Clear conversation when changing era for fresh context
+      setMessages([]);
+      setConversationHistory([]);
+      setConversationTopics([]);
+      retryCountRef.current = 0;
+    } catch (error) {
+      console.error('Era change error:', error);
     }
-  };
-  
-  const stopVoiceInput = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-    }
-    setIsListening(false);
-  };
+  }, []);
 
-  const handleEraChange = (era) => {
-    setSelectedEra(era);
-    if (era === 'auto') {
-      speakWithRealisticVoice("I'll adapt to your mental time period naturally.");
-    } else {
-      speakWithRealisticVoice(`Switching to ${era} communication mode.`);
-    }
-    // Clear conversation when changing era for fresh context
-    setMessages([]);
-    setConversationHistory([]);
-    setConversationTopics([]);
-  };
-
-  const handleMemorySelect = async (type, item) => {
-    setSmartRecall({ show: false, photos: [], memories: [] });
+  const handleMemorySelect = useCallback(async (type, item) => {
+    if (!item || !type || !isMountedRef.current) return;
     
-    // Create a message about the selected memory
-    let description = '';
-    if (type === 'photo') {
-      description = `Tell me about this photo: "${item.title}". ${item.caption || ''}`;
-    } else {
-      description = `I'd like to talk about: "${item.title}". ${item.description?.substring(0, 100)}...`;
+    try {
+      setSmartRecall({ show: false, photos: [], memories: [] });
+      
+      // Create a message about the selected memory
+      let description = '';
+      if (type === 'photo' && item.title) {
+        description = `Tell me about this photo: "${item.title}". ${item.caption || ''}`;
+      } else if (item.title) {
+        description = `I'd like to talk about: "${item.title}". ${item.description?.substring(0, 100) || ''}`;
+      }
+      
+      if (description) {
+        await sendMessage(description);
+      }
+    } catch (error) {
+      console.error('Memory select error:', error);
+      toast.error('Failed to load memory. Please try again.');
     }
-    
-    await sendMessage(description);
-  };
+  }, [sendMessage]);
 
   return (
     <div className="flex flex-col h-full">
@@ -688,8 +881,8 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         ) : (
           messages.map((msg, idx) => (
             <ChatMessage
-              key={idx}
-              message={msg.content}
+              key={`msg-${idx}-${msg.content?.substring(0, 20)}`}
+              message={msg.content || ''}
               isAssistant={msg.role === 'assistant'}
               hasVoice={msg.hasVoice}
               onSpeak={() => speakResponse(msg.content)}
