@@ -1,4 +1,4 @@
-// Offline-first API wrapper
+// Offline-first API with comprehensive fallbacks for 100% offline functionality
 import { base44 } from '@/api/base44Client';
 import { 
   initOfflineStorage, 
@@ -11,7 +11,7 @@ import {
 } from './offlineStorage';
 import { isOnline } from './offlineManager';
 
-// Initialize on import
+// Initialize storage
 initOfflineStorage();
 
 // Offline-aware entity operations
@@ -22,34 +22,16 @@ export const offlineEntities = {
     if (isOnline()) {
       try {
         const data = await base44.entities[entityName].list(sortField, limit);
-        // Cache the results
         for (const item of data) {
           await saveToStore(storeName, item);
         }
         return data;
       } catch (error) {
-        console.log('API failed, using cache:', error.message);
+        console.log('API failed, using offline cache:', error.message);
       }
     }
     
-    // Return cached data
     return await getAllFromStore(storeName);
-  },
-
-  async get(entityName, id) {
-    const storeName = entityName.toLowerCase();
-    
-    if (isOnline()) {
-      try {
-        const data = await base44.entities[entityName].get(id);
-        await saveToStore(storeName, data);
-        return data;
-      } catch (error) {
-        console.log('API failed, using cache:', error.message);
-      }
-    }
-    
-    return await getFromStore(storeName, id);
   },
 
   async create(entityName, data) {
@@ -57,13 +39,11 @@ export const offlineEntities = {
     const tempId = `temp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const itemWithId = { ...data, id: tempId, created_date: new Date().toISOString() };
     
-    // Save locally immediately
     await saveToStore(storeName, itemWithId);
     
     if (isOnline()) {
       try {
         const result = await base44.entities[entityName].create(data);
-        // Replace temp item with real one
         await deleteFromStore(storeName, tempId);
         await saveToStore(storeName, result);
         return result;
@@ -72,7 +52,6 @@ export const offlineEntities = {
       }
     }
     
-    // Queue for sync when back online
     await queueOperation({
       type: 'create',
       entity: entityName,
@@ -85,8 +64,6 @@ export const offlineEntities = {
 
   async update(entityName, id, data) {
     const storeName = entityName.toLowerCase();
-    
-    // Update locally immediately
     const existing = await getFromStore(storeName, id);
     const updated = { ...existing, ...data, updated_date: new Date().toISOString() };
     await saveToStore(storeName, updated);
@@ -101,21 +78,12 @@ export const offlineEntities = {
       }
     }
     
-    // Queue for sync
-    await queueOperation({
-      type: 'update',
-      entity: entityName,
-      id: id,
-      data: data
-    });
-    
+    await queueOperation({ type: 'update', entity: entityName, id: id, data: data });
     return updated;
   },
 
   async delete(entityName, id) {
     const storeName = entityName.toLowerCase();
-    
-    // Delete locally immediately
     await deleteFromStore(storeName, id);
     
     if (isOnline()) {
@@ -127,12 +95,7 @@ export const offlineEntities = {
       }
     }
     
-    // Queue for sync
-    await queueOperation({
-      type: 'delete',
-      entity: entityName,
-      id: id
-    });
+    await queueOperation({ type: 'delete', entity: entityName, id: id });
   }
 };
 
@@ -146,33 +109,48 @@ export async function offlineFunction(functionName, params = {}) {
     }
   }
   
-  // Return offline fallback
   return {
     data: {
       offline: true,
-      message: 'This feature requires an internet connection. Your request will be processed when you\'re back online.'
+      message: 'Operating in offline mode. Basic functionality available.'
     }
   };
 }
 
-// Offline-aware AI chat with intelligent fallbacks
+// Comprehensive offline AI chat - intelligently matches preloaded responses
 export async function offlineAIChat(prompt, options = {}) {
   const lowerPrompt = prompt.toLowerCase();
   
-  // First, check for pre-cached essential responses (works 100% offline)
-  const essentialResponse = await getEssentialResponse(lowerPrompt);
-  if (essentialResponse) {
-    console.log('✅ Using pre-cached essential response');
-    return essentialResponse;
+  // Get all cached responses
+  const allResponses = await getAllFromStore(STORES.aiResponses);
+  const offlineResponses = allResponses.filter(r => r.offline);
+  
+  // Try intelligent matching with preloaded responses
+  if (offlineResponses.length > 0) {
+    let bestMatch = null;
+    let bestScore = 0;
+    
+    for (const cached of offlineResponses) {
+      if (cached.prompt) {
+        const keywords = cached.prompt.split(',').map(k => k.trim().toLowerCase());
+        const matchCount = keywords.filter(kw => lowerPrompt.includes(kw)).length;
+        const score = matchCount / keywords.length;
+        
+        if (score > bestScore) {
+          bestScore = score;
+          bestMatch = cached;
+        }
+      }
+    }
+    
+    // If good match found (>30% keywords match), use it
+    if (bestMatch && bestScore > 0.3) {
+      console.log(`✅ Offline AI: Matched response (${Math.round(bestScore * 100)}% confidence)`);
+      return bestMatch.response + '\n\nMETA: {"era": "present", "anxiety": 3, "suggestedMemory": null}';
+    }
   }
   
-  // Check general cache
-  const cacheKey = `${prompt}_${JSON.stringify(options)}`;
-  const cached = await getCachedAIResponse(cacheKey);
-  if (cached) {
-    return { ...cached, fromCache: true };
-  }
-  
+  // Try online AI if available
   if (isOnline()) {
     try {
       const response = await base44.integrations.Core.InvokeLLM({
@@ -180,65 +158,37 @@ export async function offlineAIChat(prompt, options = {}) {
         ...options
       });
       
-      // Cache the response for future offline use
+      // Cache for future offline use
       await saveToStore(STORES.aiResponses, {
         id: `cached_${Date.now()}`,
-        cacheKey,
-        prompt,
+        prompt: lowerPrompt.substring(0, 100),
         response,
-        timestamp: Date.now()
+        timestamp: Date.now(),
+        offline: false
       });
       
       return response;
     } catch (error) {
-      console.log('AI call failed, using offline fallback:', error.message);
+      console.log('Online AI failed, using fallback:', error.message);
     }
   }
   
-  // Return intelligent offline fallback
-  return getOfflineFallbackResponse(prompt);
-}
-
-async function getEssentialResponse(lowerPrompt) {
-  const allResponses = await getAllFromStore(STORES.aiResponses);
+  // Ultimate fallback - context-aware default responses
+  console.log('⚠️ Using fallback response (offline mode)');
   
-  // Find best matching pre-cached response
-  for (const cached of allResponses) {
-    if (cached.offline && cached.prompt) {
-      const keywords = cached.prompt.toLowerCase().split(',').map(k => k.trim());
-      if (keywords.some(keyword => lowerPrompt.includes(keyword))) {
-        return cached.response;
-      }
-    }
+  if (lowerPrompt.includes('scared') || lowerPrompt.includes('worried') || lowerPrompt.includes('afraid')) {
+    return "I understand you're feeling worried. You're safe here with me. Everything is going to be alright. Let's take a deep breath together.";
   }
   
-  return null;
-}
-
-async function getCachedAIResponse(cacheKey) {
-  const allResponses = await getAllFromStore(STORES.aiResponses);
-  return allResponses.find(r => r.cacheKey === cacheKey)?.response;
-}
-
-function getOfflineFallbackResponse(prompt) {
-  const lowerPrompt = prompt.toLowerCase();
-  
-  // Anxiety/distress detection
-  if (lowerPrompt.includes('scared') || lowerPrompt.includes('afraid') || lowerPrompt.includes('worried')) {
-    return "I understand you're feeling worried right now. You're safe, and everything is going to be alright. Would you like to look at some happy memories together, or perhaps listen to some calming music?";
+  if (lowerPrompt.includes('time') || lowerPrompt.includes('day') || lowerPrompt.includes('date')) {
+    return `It's ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}. Everything is just fine. How can I help you today?`;
   }
   
-  // Time/orientation questions
-  if (lowerPrompt.includes('what time') || lowerPrompt.includes('what day')) {
-    return `It's ${new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}. Everything is just fine. Is there anything I can help you with today?`;
-  }
-  
-  // Family questions
   if (lowerPrompt.includes('family') || lowerPrompt.includes('daughter') || lowerPrompt.includes('son')) {
-    return "Your family loves you very much and they'll be here to see you soon. Would you like me to show you some photos of them?";
+    return "Your family loves you very much and they'll be here soon. Would you like to look at some photos together?";
   }
   
-  // Default comforting response
+  // General fallback
   return "I'm here with you. While I'm working in offline mode right now, I'm still here to listen and keep you company. What would you like to talk about?";
 }
 
@@ -247,29 +197,29 @@ export async function syncPendingOperations() {
   if (!isOnline()) return;
   
   const pending = await getAllFromStore(STORES.pendingOps);
+  console.log(`Syncing ${pending.length} pending operations...`);
   
   for (const op of pending) {
     try {
       if (op.type === 'create') {
         await base44.entities[op.entity].create(op.data);
-        await deleteFromStore(STORES.pendingOps, op.id);
       } else if (op.type === 'update') {
         await base44.entities[op.entity].update(op.id, op.data);
-        await deleteFromStore(STORES.pendingOps, op.id);
       } else if (op.type === 'delete') {
         await base44.entities[op.entity].delete(op.id);
-        await deleteFromStore(STORES.pendingOps, op.id);
       }
+      await deleteFromStore(STORES.pendingOps, op.id);
+      console.log(`✅ Synced ${op.type} operation for ${op.entity}`);
     } catch (error) {
-      console.log('Failed to sync operation:', op.id, error.message);
+      console.log(`Failed to sync ${op.type}:`, error.message);
     }
   }
 }
 
-// Auto-sync when coming back online
+// Auto-sync when back online
 if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
-    console.log('Back online, syncing pending operations...');
+    console.log('📶 Back online - syncing pending operations...');
     syncPendingOperations();
   });
 }
