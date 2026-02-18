@@ -33,7 +33,7 @@ export default function Footer() {
         
         <div className="pt-3 border-t border-slate-700">
           <p className="text-xs text-slate-400">
-            © {new Date().getFullYear()} Memory Mirror. Created by <span className="font-semibold">Michael McNamara</span>, Melbourne, Australia.
+            © {new Date().getFullYear()} Memory Mirror. Created by <span className="font-semibold">MM AI Technologies</span>.
           </p>
           <p className="text-xs text-slate-500 mt-1">
             All rights reserved. Designed with care for families living with dementia.
