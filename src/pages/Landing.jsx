@@ -77,7 +77,7 @@ export default function Landing() {
                       Security Scanner
                     </h3>
                     <p className="text-sm md:text-base text-white/85 leading-relaxed">
-                      Visual security check to reduce anxiety about locks, lights, and safety
+                      Realistic AI-controlled security check that never makes real alerts or calls — purely reassuring visuals to reduce anxiety about locks and safety, helping users feel calm and secure
                     </p>
                   </div>
                 </div>
