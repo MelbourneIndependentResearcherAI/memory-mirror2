@@ -20,9 +20,14 @@ export default function TVMode() {
   const messagesEndRef = useRef(null);
 
   const checkPairing = async (code) => {
+    if (!code || code.length !== 6) {
+      toast.error('Please enter a valid 6-digit code');
+      return;
+    }
+
     try {
       const connections = await base44.entities.TVConnection.filter({ 
-        pairing_code: code,
+        pairing_code: code.toUpperCase(),
         is_active: true 
       });
       
@@ -38,18 +43,26 @@ export default function TVMode() {
           last_connected: new Date().toISOString()
         });
         
-        toast.success('TV Connected Successfully!');
+        toast.success('✅ TV Connected Successfully!', { duration: 5000 });
         
-        // Welcome message
-        const welcomeMsg = "Welcome to Memory Mirror on your Smart TV! I'm here to keep you company. You can talk to me by pressing the microphone button with your remote.";
+        // Welcome message with instructions
+        const welcomeMsg = "Welcome to Memory Mirror on your Smart TV! I'm here to keep you company. Press the microphone button with your remote to talk to me. Use arrow keys to navigate.";
         setMessages([{ role: 'assistant', content: welcomeMsg }]);
-        speakWithClonedVoice(welcomeMsg);
+        
+        // Speak welcome
+        speakWithClonedVoice(welcomeMsg, {
+          rate: 0.9,
+          emotionalState: 'warm'
+        });
       } else {
-        toast.error('Invalid pairing code. Please try again.');
+        toast.error('❌ Invalid pairing code. Please check and try again.', {
+          duration: 4000
+        });
+        setPairingCode('');
       }
     } catch (error) {
       console.error('Pairing check failed:', error);
-      toast.error('Failed to verify pairing code');
+      toast.error('❌ Connection failed. Please try again.');
     }
   };
 
@@ -105,30 +118,62 @@ export default function TVMode() {
   };
 
   const handleUserMessage = async (text) => {
+    if (!text || !text.trim()) return;
+
     const userMessage = { role: 'user', content: text };
     setMessages(prev => [...prev, userMessage]);
     setIsProcessing(true);
 
     try {
-      const prompt = `You are Memory Mirror, a compassionate AI companion for people with dementia. 
-The user is viewing you on a Smart TV with large text.
-Keep responses concise (2-3 sentences) as they appear on a large screen.
-Be warm, reassuring, and supportive.
+      const recentMessages = messages.slice(-4);
+      const conversationContext = recentMessages.map(m => 
+        `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
+      ).join('\n');
 
-User: ${text}
+      const prompt = `You are Memory Mirror, a warm and compassionate AI companion for people with dementia viewing on a Smart TV.
 
-Respond with empathy and understanding:`;
+CRITICAL INSTRUCTIONS:
+- Keep responses SHORT (2-3 sentences maximum) - TV screen space is limited
+- Use SIMPLE language and avoid complex words
+- Be warm, reassuring, and supportive
+- Validate their feelings and experiences
+- Never correct or contradict them
 
-      const response = await offlineAIChat(prompt);
-      const assistantMessage = { role: 'assistant', content: response };
+Recent conversation:
+${conversationContext}
+
+User just said: "${text}"
+
+Respond with empathy and warmth in 2-3 sentences:`;
+
+      const response = await Promise.race([
+        offlineAIChat(prompt, { add_context_from_internet: false }),
+        new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('Timeout')), 12000)
+        )
+      ]);
+
+      const cleanResponse = typeof response === 'string' 
+        ? response.replace(/META:.*$/s, '').trim().substring(0, 400)
+        : 'I understand. Let\'s talk about that.';
       
+      const assistantMessage = { role: 'assistant', content: cleanResponse };
       setMessages(prev => [...prev, assistantMessage]);
-      speakWithClonedVoice(response);
+      
+      // Speak with TV-optimized settings
+      speakWithClonedVoice(cleanResponse, {
+        rate: 0.85,
+        pitch: 1.05,
+        emotionalState: 'warm'
+      });
     } catch (error) {
       console.error('AI response failed:', error);
-      const fallback = "I'm here with you. Let's take a moment together.";
+      const fallback = "I'm here with you. Everything is okay. Let's take a moment together.";
       setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
-      speakWithClonedVoice(fallback);
+      speakWithClonedVoice(fallback, {
+        rate: 0.85,
+        emotionalState: 'reassuring'
+      });
     } finally {
       setIsProcessing(false);
     }
@@ -196,38 +241,60 @@ Respond with empathy and understanding:`;
             <h1 className="text-6xl font-bold text-white mb-6">
               Memory Mirror TV
             </h1>
-            <p className="text-3xl text-white/90 mb-12">
+            <p className="text-3xl text-white/90 mb-4">
               Enter your 6-digit pairing code
+            </p>
+            <p className="text-xl text-white/70 mb-12">
+              Get the code from your phone or tablet
             </p>
             
             <form onSubmit={handlePairingInput} className="space-y-8">
-              <div className="bg-white/20 rounded-2xl p-8">
-                <div className="text-8xl font-bold text-white tracking-[0.5em] text-center">
-                  {pairingCode.padEnd(6, '_').match(/.{1,3}/g).join('  ')}
+              <div className="bg-white/20 backdrop-blur-md rounded-2xl p-8 border-2 border-white/30">
+                <div className="text-8xl font-bold text-white tracking-[0.5em] text-center font-mono">
+                  {pairingCode.padEnd(6, '●').split('').map((char, i) => (
+                    <span key={i} className={char === '●' ? 'opacity-30' : ''}>
+                      {char}
+                    </span>
+                  )).reduce((prev, curr, i) => 
+                    i === 3 ? [...prev, <span key="space" className="inline-block w-12"></span>, curr] : [...prev, curr]
+                  , [])}
                 </div>
               </div>
               
-              <p className="text-2xl text-white/80">
-                Use your remote's number keys to enter the code
-              </p>
+              <div className="space-y-4">
+                <p className="text-2xl text-white/90 font-medium">
+                  📱 Use your TV remote's number keys
+                </p>
+                <div className="flex items-center justify-center gap-4 text-white/70">
+                  <div className="bg-white/10 rounded-lg px-4 py-2 text-xl">1-9</div>
+                  <div className="bg-white/10 rounded-lg px-4 py-2 text-xl">0</div>
+                  <div className="bg-white/10 rounded-lg px-4 py-2 text-xl">Enter/OK</div>
+                </div>
+              </div>
               
               <div className="flex gap-4 justify-center">
                 <Button
                   type="button"
                   onClick={() => setPairingCode('')}
-                  className="text-2xl px-8 py-6 bg-white/20 hover:bg-white/30"
+                  className="text-2xl px-8 py-6 bg-red-500/80 hover:bg-red-600 backdrop-blur-sm"
                 >
                   Clear
                 </Button>
                 <Button
                   type="submit"
                   disabled={pairingCode.length !== 6}
-                  className="text-2xl px-8 py-6 bg-green-600 hover:bg-green-700"
+                  className="text-2xl px-8 py-6 bg-green-600 hover:bg-green-700 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
-                  Connect
+                  Connect →
                 </Button>
               </div>
             </form>
+            
+            <div className="mt-8 text-center">
+              <p className="text-lg text-white/60">
+                Don't have a code? Visit <strong className="text-white">memorymirror.app</strong> on your phone
+              </p>
+            </div>
           </div>
         </div>
       </div>
@@ -341,22 +408,41 @@ Respond with empathy and understanding:`;
         </div>
 
         {showSettings && (
-          <div className="mt-6 bg-black/60 rounded-2xl p-6">
-            <h3 className="text-3xl font-bold text-white mb-4">Text Size</h3>
-            <div className="grid grid-cols-3 gap-4">
-              {['large', 'extra-large', 'huge'].map(size => (
-                <button
-                  key={size}
-                  onClick={() => setTextSize(size)}
-                  className={`p-4 rounded-xl text-2xl font-bold ${
-                    textSize === size
-                      ? 'bg-white text-blue-900'
-                      : 'bg-white/20 text-white hover:bg-white/30'
-                  }`}
-                >
-                  {size.replace('-', ' ').toUpperCase()}
-                </button>
-              ))}
+          <div className="mt-6 bg-black/60 backdrop-blur-md rounded-2xl p-6 border-2 border-white/20">
+            <h3 className="text-3xl font-bold text-white mb-4">⚙️ Display Settings</h3>
+            <div className="space-y-4">
+              <div>
+                <p className="text-xl text-white/80 mb-3">Text Size:</p>
+                <div className="grid grid-cols-3 gap-4">
+                  {['large', 'extra-large', 'huge'].map(size => (
+                    <button
+                      key={size}
+                      onClick={async () => {
+                        setTextSize(size);
+                        // Save to database
+                        if (connectionId) {
+                          try {
+                            await base44.entities.TVConnection.update(connectionId, {
+                              tv_settings: { text_size: size, voice_enabled: true, auto_scroll: true }
+                            });
+                            toast.success(`Text size: ${size}`);
+                          } catch (error) {
+                            console.error('Failed to save setting:', error);
+                          }
+                        }
+                      }}
+                      className={`p-4 rounded-xl font-bold transition-all ${
+                        textSize === size
+                          ? 'bg-white text-blue-900 scale-105 ring-4 ring-white/50'
+                          : 'bg-white/20 text-white hover:bg-white/30'
+                      }`}
+                      style={{ fontSize: size === 'large' ? '1.5rem' : size === 'extra-large' ? '2rem' : '2.5rem' }}
+                    >
+                      {size === 'large' ? 'A' : size === 'extra-large' ? 'A+' : 'A++'}
+                    </button>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         )}
