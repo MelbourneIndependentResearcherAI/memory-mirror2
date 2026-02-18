@@ -12,38 +12,61 @@ export const getActiveClonedVoice = async () => {
 
 // Synthesize with cloned voice if available, fallback to system voice
 export const speakWithClonedVoice = async (text, options = {}) => {
+  if (!text || typeof text !== 'string') {
+    console.warn('Invalid text for voice synthesis');
+    return;
+  }
+
   try {
+    console.log('Attempting cloned voice synthesis...');
     const activeVoice = await getActiveClonedVoice();
     
     if (activeVoice?.voice_id) {
-      // Try ElevenLabs cloned voice
-      const result = await base44.functions.invoke('synthesizeClonedVoice', {
-        text: text,
-        voice_id: activeVoice.voice_id,
-        stability: options.stability || 0.75,
-        similarity_boost: options.similarity_boost || 0.75
-      });
-      
-      if (!result.data.fallback) {
-        // Play cloned voice audio
-        const audioBlob = new Blob([result.data], { type: 'audio/mpeg' });
-        const audio = new Audio(URL.createObjectURL(audioBlob));
-        audio.volume = options.volume || 1.0;
-        
-        return new Promise((resolve) => {
-          audio.onended = () => {
-            if (options.onEnd) options.onEnd();
-            resolve();
-          };
-          audio.play();
+      try {
+        // Try ElevenLabs cloned voice
+        const result = await base44.functions.invoke('synthesizeClonedVoice', {
+          text: text.substring(0, 5000),
+          voice_id: activeVoice.voice_id,
+          stability: options.stability || 0.75,
+          similarity_boost: options.similarity_boost || 0.75
         });
+        
+        if (result.data && !result.data.fallback) {
+          // Play cloned voice audio
+          const audioBlob = new Blob([result.data], { type: 'audio/mpeg' });
+          const audioUrl = URL.createObjectURL(audioBlob);
+          const audio = new Audio(audioUrl);
+          audio.volume = Math.max(0, Math.min(1, options.volume || 1.0));
+          
+          return new Promise((resolve) => {
+            audio.onended = () => {
+              URL.revokeObjectURL(audioUrl);
+              if (options.onEnd) options.onEnd();
+              resolve();
+            };
+            audio.onerror = (err) => {
+              console.log('Audio playback error, falling back to system voice');
+              URL.revokeObjectURL(audioUrl);
+              speakWithRealisticVoice(text, options);
+              resolve();
+            };
+            audio.play().catch(err => {
+              console.log('Audio play failed:', err);
+              speakWithRealisticVoice(text, options);
+              resolve();
+            });
+          });
+        }
+      } catch (clonedError) {
+        console.log('Cloned voice synthesis failed:', clonedError.message);
       }
     }
   } catch (error) {
-    console.log('Cloned voice not available, using system voice');
+    console.log('Cloned voice initialization failed:', error.message);
   }
   
   // Fallback to system voice
+  console.log('Falling back to system voice');
   return speakWithRealisticVoice(text, options);
 };
 
@@ -146,7 +169,10 @@ export const getAvailableVoices = () => {
 
 // Enhanced voice synthesis with cognitive, emotional, and profile-based adaptation
 export function speakWithRealisticVoice(text, options = {}) {
-  if (!text || typeof text !== 'string') return;
+  if (!text || typeof text !== 'string') {
+    console.warn('Invalid text for voice synthesis:', text);
+    return;
+  }
   
   const {
     rate = 0.95,
@@ -160,10 +186,18 @@ export function speakWithRealisticVoice(text, options = {}) {
     onEnd = null
   } = options;
 
-  if (!('speechSynthesis' in window)) return;
+  if (!('speechSynthesis' in window)) {
+    console.warn('Speech synthesis not supported');
+    return;
+  }
 
   try {
-    speechSynthesis.cancel();
+    // Ensure any previous speech is stopped
+    try {
+      speechSynthesis.cancel();
+    } catch (e) {
+      console.log('Cancel previous speech:', e.message);
+    }
 
     // Cognitive level adaptations - adjust speaking style based on dementia progression
     const cognitiveAdaptations = {
@@ -263,11 +297,24 @@ export function speakWithRealisticVoice(text, options = {}) {
     utterance.volume = finalVolume;
 
     // Get voices
-    const voices = speechSynthesis.getVoices();
+    let voices = speechSynthesis.getVoices();
     if (!voices.length) {
-      console.warn('No voices available');
-      return;
+      console.warn('No voices available, waiting for voices to load...');
+      // Wait for voices to load
+      return new Promise((resolve) => {
+        const loadVoices = () => {
+          voices = speechSynthesis.getVoices();
+          if (voices.length) {
+            speechSynthesis.onvoiceschanged = null;
+            continueWithVoices(voices, utterance, onEnd);
+            resolve();
+          }
+        };
+        speechSynthesis.onvoiceschanged = loadVoices;
+      });
     }
+    
+    continueWithVoices(voices, utterance, onEnd);
     
     const userPreference = getUserVoicePreference();
     let selectedVoice = null;
