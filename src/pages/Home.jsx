@@ -8,9 +8,9 @@ import PhoneMode from './PhoneMode';
 import SecurityMode from './SecurityMode';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
-import { loadVoices } from '../components/utils/voiceUtils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import LanguageSwitcher from '@/components/LanguageSwitcher';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
@@ -35,11 +35,17 @@ export default function Home() {
   }, [location.pathname]);
 
   useEffect(() => {
-    loadVoices();
+    // Load voices for speech synthesis
+    if ('speechSynthesis' in window) {
+      speechSynthesis.getVoices();
+      window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+    }
+    
+    // Redirect root to chat
     if (location.pathname === '/') {
       navigate('/chat', { replace: true });
     }
-  }, []);
+  }, [location.pathname, navigate]);
 
   const handleWakeWord = () => {
     navigate('/chat');

@@ -5,6 +5,7 @@ import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
+import { AppStateProvider } from '@/components/AppStateManager';
 import BottomNav from '@/components/BottomNav';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import OfflineSyncIndicator from '@/components/memory-mirror/OfflineSyncIndicator';
@@ -14,9 +15,13 @@ import { initOfflineStorage } from '@/components/utils/offlineStorage';
 import { registerServiceWorker, requestPersistentStorage } from '@/components/utils/serviceWorkerRegister';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
+import { initGlobalErrorHandler } from '@/components/utils/errorLogger';
 
-// Initialize offline capabilities on app load
+// Initialize app capabilities on load
 if (typeof window !== 'undefined') {
+  // Error logging
+  initGlobalErrorHandler();
+  
   // Initialize offline storage immediately
   initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
   initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
@@ -63,12 +68,13 @@ export default function Layout({ children, currentPageName }) {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <LanguageProvider>
-          <ErrorBoundary>
-            <GlobalLanguageSelector />
-          <OfflineIndicator />
-          <OfflineSyncIndicator />
-          <ReminderNotification />
-          <div 
+          <AppStateProvider>
+            <ErrorBoundary>
+              <GlobalLanguageSelector />
+              <OfflineIndicator />
+              <OfflineSyncIndicator />
+              <ReminderNotification />
+              <div 
             className="min-h-screen bg-background text-foreground flex flex-col"
             style={{
               paddingTop: 'env(safe-area-inset-top)',
@@ -82,7 +88,8 @@ export default function Layout({ children, currentPageName }) {
             {showFooter && <Footer />}
             {showBottomNav && <BottomNav />}
           </div>
-          </ErrorBoundary>
+            </ErrorBoundary>
+          </AppStateProvider>
         </LanguageProvider>
       </ThemeProvider>
     </QueryClientProvider>

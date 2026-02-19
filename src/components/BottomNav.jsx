@@ -10,7 +10,7 @@ export default function BottomNav() {
   
   const isActive = (path) => location.pathname === path;
 
-  const navItems = [
+  const navItems = React.useMemo(() => [
     {
       path: '/chat',
       icon: MessageCircle,
@@ -53,7 +53,7 @@ export default function BottomNav() {
       label: 'Feedback',
       color: 'text-yellow-500'
     }
-  ];
+  ], [t]);
 
   return (
     <nav 
