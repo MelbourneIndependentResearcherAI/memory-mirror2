@@ -55,12 +55,24 @@ class AlwaysOnVoiceSystem {
       throw new Error('Speech recognition not supported in this browser');
     }
 
+    // Stop any existing recognition first
+    if (this.recognition) {
+      try {
+        this.recognition.abort();
+        this.recognition = null;
+      } catch (e) {
+        console.log('Cleanup error (safe):', e.message);
+      }
+    }
+
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = this.userProfile?.language || 'en-US';
+    
+    let isStarting = false;
     
     recognition.onresult = (event) => {
       const transcript = Array.from(event.results)
@@ -74,22 +86,47 @@ class AlwaysOnVoiceSystem {
     recognition.onerror = (event) => {
       console.error('Speech recognition error:', event.error);
       
-      if (event.error !== 'no-speech' && event.error !== 'aborted') {
+      if (event.error !== 'no-speech' && event.error !== 'aborted' && !isStarting) {
         setTimeout(() => {
-          if (this.isListening) recognition.start();
+          if (this.isListening && !isStarting) {
+            isStarting = true;
+            try {
+              recognition.start();
+            } catch (e) {
+              console.log('Restart error:', e.message);
+            } finally {
+              isStarting = false;
+            }
+          }
         }, 1000);
       }
     };
 
     recognition.onend = () => {
-      if (this.isListening) {
-        setTimeout(() => recognition.start(), 100);
+      if (this.isListening && !isStarting) {
+        setTimeout(() => {
+          if (this.isListening && !isStarting) {
+            isStarting = true;
+            try {
+              recognition.start();
+            } catch (e) {
+              console.log('Restart on end error:', e.message);
+            } finally {
+              isStarting = false;
+            }
+          }
+        }, 100);
       }
     };
 
-    recognition.start();
-    this.recognition = recognition;
-    this.isListening = true;
+    try {
+      recognition.start();
+      this.recognition = recognition;
+      this.isListening = true;
+    } catch (error) {
+      console.error('Failed to start recognition:', error);
+      throw error;
+    }
   }
 
   processAudioInput(transcript) {
