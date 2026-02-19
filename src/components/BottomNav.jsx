@@ -57,12 +57,13 @@ export default function BottomNav() {
 
   return (
     <nav 
-      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-700 z-50 shadow-lg"
+      className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t-2 border-slate-200 dark:border-slate-700 z-50 shadow-2xl"
       style={{
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)'
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
+        paddingTop: '12px'
       }}
     >
-      <div className="flex justify-around items-center px-2 py-3">
+      <div className="flex justify-around items-center px-1">
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -72,11 +73,11 @@ export default function BottomNav() {
               key={item.path}
               to={item.path}
               className={`
-                flex flex-col items-center justify-center gap-1.5 
-                px-3 py-2 rounded-xl transition-all duration-200
-                min-w-[68px] min-h-[64px]
+                flex flex-col items-center justify-center gap-1 
+                px-2 py-2 rounded-xl transition-all duration-200
+                min-w-[60px] min-h-[72px]
                 ${active 
-                  ? 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-2 border-blue-300 dark:border-blue-700' 
+                  ? 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-2 border-blue-400 dark:border-blue-600 shadow-md' 
                   : 'hover:bg-slate-100 dark:hover:bg-slate-800'
                 }
               `}
@@ -86,7 +87,7 @@ export default function BottomNav() {
                 strokeWidth={active ? 2.5 : 2}
               />
               <span 
-                className={`text-[10px] font-bold uppercase tracking-wide ${
+                className={`text-[9px] font-extrabold uppercase tracking-wide leading-tight text-center ${
                   active ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'
                 }`}
               >

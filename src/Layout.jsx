@@ -78,7 +78,7 @@ export default function Layout({ children, currentPageName }) {
             className="min-h-screen bg-background text-foreground flex flex-col"
             style={{
               paddingTop: 'env(safe-area-inset-top)',
-              paddingBottom: showBottomNav ? 'calc(80px + env(safe-area-inset-bottom))' : 'calc(20px + env(safe-area-inset-bottom))',
+              paddingBottom: showBottomNav ? 'calc(100px + env(safe-area-inset-bottom))' : 'calc(20px + env(safe-area-inset-bottom))',
               overscrollBehaviorY: 'none'
             }}
           >

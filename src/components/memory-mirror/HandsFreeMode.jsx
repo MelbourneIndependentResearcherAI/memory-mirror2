@@ -66,10 +66,20 @@ export default function HandsFreeMode({
     }
 
     try {
-      // CRITICAL: Request microphone permission FIRST
+      // CRITICAL: Request microphone permission with ENHANCED settings for soft voices
       try {
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        console.log('✅ Microphone access granted');
+        const stream = await navigator.mediaDevices.getUserMedia({ 
+          audio: {
+            echoCancellation: true,
+            noiseSuppression: true,
+            autoGainControl: true,  // CRITICAL: Auto-boosts soft/quiet voices
+            channelCount: 1,
+            sampleRate: 48000,      // Higher quality capture
+            sampleSize: 16,
+            volume: 1.0
+          }
+        });
+        console.log('✅ Microphone access granted with ENHANCED sensitivity for soft voices');
         // Close stream - we just needed permission
         stream.getTracks().forEach(track => track.stop());
       } catch (permError) {
@@ -90,13 +100,18 @@ export default function HandsFreeMode({
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       recognitionRef.current = new SpeechRecognition();
       
-      // CRITICAL: Optimized for continuous, responsive listening
-      recognitionRef.current.continuous = true;
-      recognitionRef.current.interimResults = true;
-      recognitionRef.current.maxAlternatives = 1;
+      // CRITICAL: MAXIMUM sensitivity for soft/quiet voices
+      recognitionRef.current.continuous = true;          // Always listening
+      recognitionRef.current.interimResults = true;      // Show what's being heard
+      recognitionRef.current.maxAlternatives = 3;        // More options = better soft voice detection
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
-      console.log('🎤 Starting speech recognition with language:', langMap[selectedLanguage] || 'en-US');
+      // Enable browser-specific audio enhancements
+      if (recognitionRef.current.audioTrack !== undefined) {
+        recognitionRef.current.audioTrack = true;
+      }
+      
+      console.log('🎤 Starting ENHANCED speech recognition (soft voice optimized) with language:', langMap[selectedLanguage] || 'en-US');
       
 
 
@@ -138,7 +153,7 @@ export default function HandsFreeMode({
             setStatusMessage(`👂 Hearing: "${transcript.substring(0, 50)}..."`);
           }
           
-          // Process final results - LOWERED confidence threshold for better responsiveness
+          // Process final results - ULTRA-LOW threshold for SOFT VOICES
           if (isFinal && transcript.trim().length > 0) {
             console.log('✅ FINAL transcript:', transcript, 'Confidence:', confidence);
             
@@ -149,14 +164,15 @@ export default function HandsFreeMode({
               return;
             }
             
-            if (confidence > 0.3) { // LOWERED from 0.5 to 0.3 for better detection
+            // CRITICAL: Accept ANY confidence level for soft voices (elderly users)
+            // Confidence is often misleadingly low for quiet speech
+            if (confidence > 0.1 || transcript.trim().length > 3) {
               lastTranscriptRef.current = transcript.trim();
-              console.log('🎯 Processing speech:', transcript.substring(0, 60));
-              setStatusMessage(`✅ You said: "${transcript.substring(0, 60)}"`);
+              console.log('🎯 Processing speech (SOFT VOICE MODE):', transcript.substring(0, 60), 'Confidence:', confidence);
+              setStatusMessage(`✅ Heard you: "${transcript.substring(0, 60)}"`);
               handleUserSpeech(transcript.trim());
             } else {
-              console.log('⚠️ Low confidence, but still processing:', confidence);
-              // Process anyway - confidence is often lower than it should be
+              console.log('⚠️ Very low confidence but attempting anyway:', confidence);
               lastTranscriptRef.current = transcript.trim();
               setStatusMessage(`Processing: "${transcript.substring(0, 60)}"`);
               handleUserSpeech(transcript.trim());

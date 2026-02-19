@@ -54,7 +54,7 @@ export default function DialPad({ onPress }) {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto px-6">
+    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto px-4 mb-6">
       {digits.map(({ number, letters }) => (
         <motion.button
           key={number}

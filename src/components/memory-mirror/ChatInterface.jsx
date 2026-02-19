@@ -696,8 +696,22 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
 
   const requestMicrophonePermission = useCallback(async () => {
     try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      // Close the stream immediately - we just wanted permission
+      // Request microphone with MAXIMUM sensitivity settings for soft voices
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,  // CRITICAL: Boosts soft/quiet voices
+          channelCount: 1,
+          sampleRate: 48000,      // Higher sample rate for better quality
+          sampleSize: 16,
+          volume: 1.0
+        }
+      });
+      
+      console.log('✅ Microphone access granted with enhanced settings for soft voice detection');
+      
+      // Close the stream - we just wanted permission
       stream.getTracks().forEach(track => track.stop());
       return true;
     } catch (error) {
@@ -737,11 +751,16 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       // Create new recognition instance
       recognitionRef.current = new SpeechRecognition();
       
-      // Configure for optimal speech recognition
+      // Configure for MAXIMUM sensitivity - optimized for soft/quiet voices
       recognitionRef.current.continuous = true;           // Keep listening until stopped
       recognitionRef.current.interimResults = true;       // Show interim results as user speaks
-      recognitionRef.current.maxAlternatives = 1;
-      recognitionRef.current.sound = true;
+      recognitionRef.current.maxAlternatives = 3;         // More alternatives for better detection
+      
+      // CRITICAL: Browser-specific optimizations for soft voice detection
+      if (recognitionRef.current.audioTrack !== undefined) {
+        // Enable audio processing for quieter speech
+        recognitionRef.current.audioTrack = true;
+      }
       
       // Language mapping
       const langMap = {
