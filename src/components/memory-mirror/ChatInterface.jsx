@@ -1077,23 +1077,30 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         </div>
 
         {showHandsFree && (
-          <HandsFreeMode
-            onMessage={(message) => {
-              setMessages(prev => [...prev, { role: 'user', content: message, language: selectedLanguage }]);
-            }}
-            onAIResponse={(response) => {
-              setMessages(prev => [...prev, { role: 'assistant', content: response, hasVoice: true, language: selectedLanguage }]);
-              setConversationHistory(prev => [...prev, 
-                { role: 'user', content: prev[prev.length - 1]?.content || '' },
-                { role: 'assistant', content: response }
-              ]);
-            }}
-            selectedLanguage={selectedLanguage}
-            systemPrompt={getSystemPrompt()}
-            conversationHistory={conversationHistory}
-            cognitiveLevel={cognitiveLevel}
-            userProfile={userProfile}
-          />
+          <div className="mt-4 animate-fade-in-up">
+            <HandsFreeMode
+              onMessage={(message) => {
+                console.log('📨 Hands-free user message:', message);
+                setMessages(prev => [...prev, { role: 'user', content: message, language: selectedLanguage }]);
+              }}
+              onAIResponse={(response) => {
+                console.log('🤖 Hands-free AI response:', response);
+                setMessages(prev => [...prev, { role: 'assistant', content: response, hasVoice: true, language: selectedLanguage }]);
+                setConversationHistory(prev => {
+                  const lastUserMsg = messages.filter(m => m.role === 'user').pop()?.content || message;
+                  return [...prev, 
+                    { role: 'user', content: lastUserMsg },
+                    { role: 'assistant', content: response }
+                  ];
+                });
+              }}
+              selectedLanguage={selectedLanguage}
+              systemPrompt={getSystemPrompt()}
+              conversationHistory={conversationHistory}
+              cognitiveLevel={cognitiveLevel}
+              userProfile={userProfile}
+            />
+          </div>
         )}
       </div>
       

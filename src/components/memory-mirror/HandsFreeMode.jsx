@@ -327,40 +327,49 @@ export default function HandsFreeMode({
       // Build rich conversation context
       const contextMessages = conversationHistory.slice(-8); // Last 4 exchanges
       const prompt = systemPrompt 
-        ? `${systemPrompt}\n\nRecent conversation:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser just said: "${transcript}"\n\nRespond warmly and naturally in 1-3 sentences. Be conversational and supportive.`
-        : `You are a compassionate companion. User said: "${transcript}". Respond warmly in 1-3 sentences.`;
+        ? `${systemPrompt}\n\nRecent conversation:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser just said: "${transcript}"\n\nRespond warmly and naturally in 1-3 short sentences. Be conversational and supportive. Keep it brief.`
+        : `You are a compassionate companion. User said: "${transcript}". Respond warmly in 1-2 short sentences.`;
 
-      setStatusMessage('Getting AI response...');
+      setStatusMessage('🤖 Getting AI response...');
+      console.log('📤 Sending to AI:', transcript.substring(0, 50));
       
       const response = await Promise.race([
         offlineAIChat(prompt, { add_context_from_internet: false }),
         new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('AI timeout')), 15000)
+          setTimeout(() => reject(new Error('AI timeout')), 20000)
         )
       ]);
+
+      console.log('✅ AI response received:', typeof response, response);
 
       let aiMessage = typeof response === 'string' ? response : response?.text || response;
       
       // Clean up AI response
       if (aiMessage) {
         aiMessage = aiMessage.replace(/META:.*$/s, '').trim();
-        aiMessage = aiMessage.substring(0, 500); // Limit length for speech
+        aiMessage = aiMessage.substring(0, 600); // Limit length for speech
+        console.log('✅ Cleaned AI message:', aiMessage.substring(0, 100));
+      } else {
+        console.error('❌ No AI message extracted from response');
       }
       
       if (aiMessage && isMountedRef.current) {
-        setStatusMessage(`Speaking: "${aiMessage.substring(0, 40)}..."`);
+        console.log('🔊 Preparing to speak response');
+        setStatusMessage(`🔊 Speaking: "${aiMessage.substring(0, 40)}..."`);
         
-        // Notify parent of AI response
+        // Notify parent of AI response FIRST
         if (onAIResponse) {
           try {
+            console.log('📤 Notifying parent of AI response');
             onAIResponse(aiMessage);
           } catch (error) {
-            console.error('Parent onAIResponse error:', error);
+            console.error('❌ Parent onAIResponse error:', error);
           }
         }
 
         // Speak response with optimized parameters
         setIsSpeaking(true);
+        console.log('🗣️ Starting speech synthesis...');
         
         await speakWithRealisticVoice(aiMessage, {
           rate: 0.92,
@@ -372,10 +381,11 @@ export default function HandsFreeMode({
           language: selectedLanguage,
           userProfile: userProfile,
           onEnd: () => {
+            console.log('✅ Speech ended, preparing to resume listening');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
-              setStatusMessage('Ready - speak anytime');
+              setStatusMessage('✅ Ready - speak anytime');
               lastTranscriptRef.current = '';
               
               // Quick resume of listening
@@ -388,15 +398,18 @@ export default function HandsFreeMode({
             }
           }
         });
+        console.log('✅ Speech synthesis initiated');
       } else {
+        console.error('❌ No AI message to speak');
         throw new Error('Empty AI response');
       }
     } catch (error) {
-      console.error('AI response error:', error);
+      console.error('❌ AI response error:', error.message);
       
       if (isMountedRef.current) {
         const fallback = "I'm here with you. Everything is okay.";
-        setStatusMessage('Connection issue - using fallback');
+        setStatusMessage('⚠️ Using backup response');
+        console.log('🔄 Using fallback message');
         
         if (onAIResponse) {
           try {
@@ -420,7 +433,7 @@ export default function HandsFreeMode({
               
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking) {
-                  console.log('🔄 Resuming after fallback');
+                  console.log('🔄 Resuming listening after fallback');
                   startRecognition();
                 }
               }, 500);
