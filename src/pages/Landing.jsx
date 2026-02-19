@@ -364,6 +364,13 @@ export default function Landing() {
         <div className="max-w-4xl mx-auto px-4 mb-20">
           <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-amber-950/30 rounded-2xl p-8 md:p-12 shadow-xl border border-amber-200/60 dark:border-amber-800/40">
             <div className="text-center mb-8">
+              <div className="flex justify-center mb-6">
+                <img 
+                  src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&h=400&fit=crop" 
+                  alt="Caregiver with love and compassion" 
+                  className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-xl"
+                />
+              </div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
                 Built by Someone Who Understands
               </h2>
