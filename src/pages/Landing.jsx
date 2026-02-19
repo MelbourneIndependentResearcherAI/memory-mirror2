@@ -366,8 +366,8 @@ export default function Landing() {
             <div className="text-center mb-8">
               <div className="flex justify-center mb-6">
                 <img 
-                  src="https://images.unsplash.com/photo-1581579438747-1dc8d17bbce4?w=400&h=400&fit=crop" 
-                  alt="Caregiver with love and compassion" 
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/6985bb37b667fb0878b38d70/7022a93fe_Screenshot_2026-01-29-17-36-19-09_965bbf4d18d205f782c6b8409c5773a41.jpg" 
+                  alt="Memory Mirror Creator - Melbourne Caregiver" 
                   className="w-32 h-32 md:w-40 md:h-40 rounded-full object-cover border-4 border-white dark:border-slate-700 shadow-xl"
                 />
               </div>
