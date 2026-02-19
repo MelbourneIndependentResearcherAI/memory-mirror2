@@ -98,11 +98,7 @@ export default function HandsFreeMode({
       
       console.log('🎤 Starting speech recognition with language:', langMap[selectedLanguage] || 'en-US');
       
-      // Better speech detection sensitivity
-      if (recognitionRef.current.grammars) {
-        const speechRecognitionList = new window.SpeechGrammarList();
-        recognitionRef.current.grammars = speechRecognitionList;
-      }
+
 
       recognitionRef.current.onstart = () => {
         console.log('✅ Speech recognition STARTED successfully');
@@ -282,7 +278,7 @@ export default function HandsFreeMode({
     }, delay);
   }, [isActive, isProcessing, startRecognition]);
 
-  const handleUserSpeech = async (transcript) => {
+  const handleUserSpeech = useCallback(async (transcript) => {
     if (!transcript || isProcessing || !isMountedRef.current) {
       console.log('⚠️ Skipping handleUserSpeech:', { 
         hasTranscript: !!transcript, 
@@ -424,7 +420,7 @@ export default function HandsFreeMode({
         });
       }
     }
-  };
+  }, [isMountedRef, isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, userProfile, selectedLanguage, isProcessing]);
 
   const toggleHandsFreeMode = () => {
     if (isActive) {
@@ -504,25 +500,34 @@ export default function HandsFreeMode({
                 <div className="w-4 h-4 md:w-5 md:h-5 bg-white rounded-full animate-pulse" />
                 <div className="absolute inset-0 w-4 h-4 md:w-5 md:h-5 bg-white rounded-full animate-ping opacity-75" />
               </div>
-              <p className="text-base md:text-lg font-bold tracking-wide">
-                🎤 Listening... speak anytime
-              </p>
+              <div className="flex flex-col items-center">
+                <p className="text-base md:text-lg font-bold tracking-wide">
+                  🎤 Listening
+                </p>
+                <p className="text-xs opacity-90">Speak anytime</p>
+              </div>
             </div>
           )}
           {isSpeaking && (
             <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-2xl flex items-center gap-3 md:gap-4 border-2 border-white">
               <Volume2 className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
-              <p className="text-base md:text-lg font-bold tracking-wide">
-                🔊 Speaking...
-              </p>
+              <div className="flex flex-col items-center">
+                <p className="text-base md:text-lg font-bold tracking-wide">
+                  🔊 Speaking
+                </p>
+                <p className="text-xs opacity-90">Please wait</p>
+              </div>
             </div>
           )}
           {isProcessing && !isSpeaking && (
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-2xl flex items-center gap-3 md:gap-4 border-2 border-white">
               <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
-              <p className="text-base md:text-lg font-bold tracking-wide">
-                💭 Thinking...
-              </p>
+              <div className="flex flex-col items-center">
+                <p className="text-base md:text-lg font-bold tracking-wide">
+                  💭 Thinking
+                </p>
+                <p className="text-xs opacity-90">Processing your message</p>
+              </div>
             </div>
           )}
         </div>
