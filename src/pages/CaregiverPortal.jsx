@@ -21,6 +21,7 @@ import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndica
 import OfflineJournalReader from '@/components/caregiver/OfflineJournalReader';
 import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
+import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
 
 const featureCards = [
   {
@@ -150,6 +151,14 @@ const featureCards = [
     description: 'Access journals and memories without internet',
     background: '#F0FDFA',
     darkBackground: '#1D4A4A'
+  },
+  {
+    id: 17,
+    title: 'System Monitoring',
+    icon: '🤖',
+    description: '24/7 AI-powered health monitoring & auto-maintenance',
+    background: '#EFF6FF',
+    darkBackground: '#1E3A8A'
   }
 ];
 
@@ -211,7 +220,8 @@ export default function CaregiverPortal() {
       13: 'reminders',     // Activity Reminders
       14: 'voice-cloning', // Voice Cloning
       15: 'ai-insights',   // AI Care Insights
-      16: 'offline-read'   // Read Offline
+      16: 'offline-read',  // Read Offline
+      17: 'monitoring'     // System Monitoring
     };
     
     if (viewMap[cardId]) {
@@ -386,6 +396,19 @@ export default function CaregiverPortal() {
               Back to Portal
             </button>
             <AICareInsights />
+          </div>
+        )}
+
+        {activeView === 'monitoring' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <button
+              onClick={() => setActiveView('home')}
+              className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Portal
+            </button>
+            <MonitoringDashboard />
           </div>
         )}
 
