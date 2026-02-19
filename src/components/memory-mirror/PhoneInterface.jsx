@@ -92,7 +92,7 @@ export default function PhoneInterface() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 dark:from-black dark:via-slate-950 dark:to-black min-h-[500px] p-6">
+    <div className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 dark:from-black dark:via-slate-950 dark:to-black min-h-screen p-6 pb-24">
       <Alert className="mb-6 bg-amber-900/20 border-amber-600/50 text-amber-200 backdrop-blur-sm">
         <AlertTriangle className="w-4 h-4" />
         <AlertDescription className="text-sm">
@@ -121,7 +121,7 @@ export default function PhoneInterface() {
         <DialPad onPress={handleDialPress} />
       </div>
 
-      <div className="flex justify-center gap-6 max-w-sm mx-auto px-6">
+      <div className="flex justify-center gap-6 max-w-sm mx-auto px-6 mb-8">
         <motion.button
           onClick={handleCall}
           disabled={phoneNumber.length < 3}
