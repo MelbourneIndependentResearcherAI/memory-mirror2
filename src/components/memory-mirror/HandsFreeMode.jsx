@@ -557,28 +557,28 @@ export default function HandsFreeMode({
         </div>
       )}
 
-      <Card className={`p-6 border-2 transition-all ${
+      <Card className={`p-6 border-2 transition-all duration-300 ${
         isActive 
-          ? 'border-green-500 bg-green-50 dark:bg-green-950/20' 
-          : 'border-slate-300 dark:border-slate-600'
+          ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 shadow-lg' 
+          : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
       }`}>
         <div className="flex flex-col gap-4">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className={`p-3 rounded-full ${
+            <div className={`p-3 rounded-full transition-all duration-300 ${
               isActive 
-                ? 'bg-green-500 animate-pulse' 
+                ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg animate-pulse' 
                 : 'bg-slate-300 dark:bg-slate-700'
             }`}>
               <Mic className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h3 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
                 Hands-Free Mode
               </h3>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                Always-on voice conversation
+                {isActive ? '✨ Always-on voice conversation' : 'Tap Start to activate'}
               </p>
             </div>
           </div>
@@ -588,9 +588,9 @@ export default function HandsFreeMode({
             onClick={toggleHandsFreeMode}
             className={`${
               isActive
-                ? 'bg-red-500 hover:bg-red-600'
-                : 'bg-green-500 hover:bg-green-600'
-            } min-w-[120px]`}
+                ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 shadow-lg'
+                : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg'
+            } min-w-[120px] font-semibold transition-all duration-300`}
           >
             <Power className="w-5 h-5 mr-2" />
             {isActive ? 'Stop' : 'Start'}
@@ -599,71 +599,90 @@ export default function HandsFreeMode({
 
         {/* Status Indicators */}
         {isActive && (
-          <div className="flex flex-col gap-2 p-4 bg-white dark:bg-slate-900 rounded-lg border border-slate-200 dark:border-slate-700">
-            <div className="flex items-center gap-2">
-              {isListening && (
-                <div className="flex items-center gap-2 text-blue-600 dark:text-blue-400">
-                  <Mic className="w-5 h-5 animate-pulse" />
-                  <span className="font-medium">Listening for your voice...</span>
+          <div className="flex flex-col gap-3 p-5 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+            <div className="flex items-center gap-3">
+              {isListening && !isProcessing && !isSpeaking && (
+                <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 animate-fade-in-up">
+                  <div className="relative">
+                    <Mic className="w-6 h-6 animate-pulse" />
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping" />
+                  </div>
+                  <span className="font-semibold text-base">Listening for your voice...</span>
                 </div>
               )}
-              {isProcessing && (
-                <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400">
-                  <Loader2 className="w-5 h-5 animate-spin" />
-                  <span className="font-medium">Processing...</span>
+              {isProcessing && !isSpeaking && (
+                <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 animate-fade-in-up">
+                  <Loader2 className="w-6 h-6 animate-spin" />
+                  <span className="font-semibold text-base">Processing your message...</span>
                 </div>
               )}
               {isSpeaking && (
-                <div className="flex items-center gap-2 text-green-600 dark:text-green-400">
-                  <Volume2 className="w-5 h-5 animate-pulse" />
-                  <span className="font-medium">Speaking response...</span>
+                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
+                  <Volume2 className="w-6 h-6 animate-pulse" />
+                  <span className="font-semibold text-base">Speaking response...</span>
                 </div>
               )}
               {!isListening && !isProcessing && !isSpeaking && (
-                <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                  <CheckCircle2 className="w-5 h-5" />
-                  <span className="font-medium">Ready</span>
+                <div className="flex items-center gap-3 text-green-600 dark:text-green-400">
+                  <CheckCircle2 className="w-6 h-6" />
+                  <span className="font-semibold text-base">Ready to listen</span>
                 </div>
               )}
             </div>
             
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {statusMessage}
-            </p>
+            <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
+              <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">
+                {statusMessage}
+              </p>
+            </div>
+            
+            {errorCount > 0 && errorCount < 8 && (
+              <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
+                <p className="text-xs text-yellow-800 dark:text-yellow-200">
+                  ⚠️ Minor connection issues detected ({errorCount}/10) - auto-recovering...
+                </p>
+              </div>
+            )}
           </div>
         )}
 
         {/* Instructions */}
         {!isActive && (
-          <div className="flex items-start gap-3 p-4 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/20 dark:to-cyan-950/20 rounded-lg border-2 border-blue-200 dark:border-blue-800">
-            <AlertCircle className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-900 dark:text-blue-200">
-              <p className="font-bold mb-2 text-base">✨ True Hands-Free Experience:</p>
-              <ul className="space-y-2">
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5">✓</span>
-                  <span><strong>Always listening</strong> - No buttons to press</span>
+          <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-950/30 dark:via-cyan-950/30 dark:to-blue-950/30 rounded-xl border-2 border-blue-300 dark:border-blue-700 shadow-md">
+            <AlertCircle className="w-7 h-7 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+            <div className="text-sm text-blue-900 dark:text-blue-100">
+              <p className="font-bold mb-3 text-lg">✨ True Hands-Free Voice Experience</p>
+              <ul className="space-y-2.5">
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Always listening</strong> - No buttons to press, just speak naturally</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5">✓</span>
-                  <span><strong>Just talk naturally</strong> - I'll hear and respond</span>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Instant responses</strong> - AI hears you and responds with warm, human-like voice</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5">✓</span>
-                  <span><strong>Automatic voice responses</strong> - Conversation flows naturally</span>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Natural conversation</strong> - Talk back-and-forth seamlessly</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5">✓</span>
-                  <span><strong>Works in your language</strong> - {selectedLanguage.toUpperCase()}</span>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Multi-language support</strong> - Currently set to {selectedLanguage.toUpperCase()}</span>
                 </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5">✓</span>
-                  <span><strong>Smart error recovery</strong> - Keeps listening even with interruptions</span>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Auto-recovery</strong> - Keeps working even with brief interruptions</span>
+                </li>
+                <li className="flex items-start gap-2.5">
+                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
+                  <span className="leading-relaxed"><strong>Privacy first</strong> - Everything stays on your device</span>
                 </li>
               </ul>
-              <p className="mt-3 text-xs text-blue-700 dark:text-blue-300 italic">
-                💡 Best with Chrome, Edge, or Safari for optimal speech recognition
-              </p>
+              <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
+                <p className="text-xs text-blue-800 dark:text-blue-200 font-medium">
+                  💡 <strong>Pro Tip:</strong> Use Chrome, Edge, or Safari for the best voice recognition experience
+                </p>
+              </div>
             </div>
           </div>
         )}
