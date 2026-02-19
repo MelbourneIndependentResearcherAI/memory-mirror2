@@ -169,11 +169,11 @@ export default function HandsFreeMode({
         // Set silence timeout to restart if no speech detected
         silenceTimeoutRef.current = setTimeout(() => {
           if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-            console.log('⏱️ Silence timeout - still listening...');
-            setStatusMessage('Still listening... 👂');
-            restartRecognition(500);
+            console.log('⏱️ Silence timeout (8s) - ensuring still listening...');
+            setStatusMessage('👂 Ready - speak anytime');
+            // Don't restart here - let onend handle it naturally
           }
-        }, 8000); // 8 seconds of silence
+        }, 8000);
       };
 
       recognitionRef.current.onerror = (event) => {
@@ -241,12 +241,12 @@ export default function HandsFreeMode({
         
         setIsListening(false);
         
-        // CRITICAL: Auto-restart when recognition ends
-        if (isActive && !isProcessing) {
-          console.log('🔄 Auto-restarting recognition in 1 second...');
-          restartRecognition(1000);
+        // CRITICAL: Auto-restart when recognition ends (only if not processing or speaking)
+        if (isActive && !isProcessing && !isSpeaking) {
+          console.log('🔄 Auto-restarting recognition in 800ms...');
+          restartRecognition(800);
         } else {
-          console.log('⏹️ Not restarting - isActive:', isActive, 'isProcessing:', isProcessing);
+          console.log('⏹️ Not restarting - isActive:', isActive, 'isProcessing:', isProcessing, 'isSpeaking:', isSpeaking);
         }
       };
 
@@ -265,18 +265,25 @@ export default function HandsFreeMode({
   }, [isActive, selectedLanguage, errorCount, isProcessing]);
 
   const restartRecognition = useCallback((delay = 1000) => {
-    if (!isMountedRef.current || !isActive) return;
+    if (!isMountedRef.current || !isActive) {
+      console.log('⏹️ Skipping restart - mounted:', isMountedRef.current, 'active:', isActive);
+      return;
+    }
     
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
     }
     
+    console.log(`⏰ Scheduling restart in ${delay}ms...`);
     restartTimeoutRef.current = setTimeout(() => {
-      if (isMountedRef.current && isActive && !isProcessing) {
+      if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
+        console.log('🔄 Executing scheduled restart');
         startRecognition();
+      } else {
+        console.log('⏹️ Restart cancelled - mounted:', isMountedRef.current, 'active:', isActive, 'processing:', isProcessing, 'speaking:', isSpeaking);
       }
     }, delay);
-  }, [isActive, isProcessing, startRecognition]);
+  }, [isActive, isProcessing, isSpeaking, startRecognition]);
 
   const handleUserSpeech = useCallback(async (transcript) => {
     if (!transcript || isProcessing || !isMountedRef.current) {
@@ -373,10 +380,11 @@ export default function HandsFreeMode({
               
               // Quick resume of listening
               setTimeout(() => {
-                if (isMountedRef.current && isActive) {
+                if (isMountedRef.current && isActive && !isSpeaking) {
+                  console.log('🔄 Resuming listening after AI response');
                   startRecognition();
                 }
-              }, 300);
+              }, 500);
             }
           }
         });
@@ -411,10 +419,11 @@ export default function HandsFreeMode({
               lastTranscriptRef.current = '';
               
               setTimeout(() => {
-                if (isMountedRef.current && isActive) {
+                if (isMountedRef.current && isActive && !isSpeaking) {
+                  console.log('🔄 Resuming after fallback');
                   startRecognition();
                 }
-              }, 300);
+              }, 500);
             }
           }
         });
@@ -459,35 +468,50 @@ export default function HandsFreeMode({
   };
 
   const stopHandsFreeMode = () => {
+    console.log('🛑 STOPPING HANDS-FREE MODE');
     setIsActive(false);
     setIsListening(false);
     setIsProcessing(false);
+    setIsSpeaking(false);
     stopSpeech();
     
     if (recognitionRef.current) {
       try {
+        recognitionRef.current.abort();
         recognitionRef.current.stop();
-      } catch {}
+      } catch (e) {
+        console.log('Stop error (safe):', e.message);
+      }
       recognitionRef.current = null;
     }
     
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
     }
     if (silenceTimeoutRef.current) {
       clearTimeout(silenceTimeoutRef.current);
+      silenceTimeoutRef.current = null;
     }
     
     setStatusMessage('Stopped');
+    setErrorCount(0);
     lastTranscriptRef.current = '';
+    toast.success('Hands-free mode stopped', { duration: 2000 });
   };
 
   // Auto-restart recognition if language changes
   useEffect(() => {
-    if (isActive && !isProcessing) {
-      restartRecognition(500);
+    if (isActive && !isProcessing && !isSpeaking) {
+      console.log('🌍 Language changed, restarting with new language:', selectedLanguage);
+      if (recognitionRef.current) {
+        try {
+          recognitionRef.current.abort();
+        } catch {}
+      }
+      restartRecognition(1000);
     }
-  }, [selectedLanguage]);
+  }, [selectedLanguage, isActive, isProcessing, isSpeaking, restartRecognition]);
 
   return (
     <>
