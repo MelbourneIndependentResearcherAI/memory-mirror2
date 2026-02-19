@@ -419,13 +419,31 @@ export default function Landing() {
             <p className="text-base md:text-lg text-white/90 leading-relaxed mb-6">
               Memory Mirror is free for everyone. Your donations help keep the servers running, AI services active, and development ongoing. 100% of funds go toward operational costs—never personal use.
             </p>
-            <Button
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-              onClick={() => window.open('https://donate.stripe.com/test_00g00000000000', '_blank')}
-            >
-              💝 Donate Now
-            </Button>
+            <div className="flex flex-col gap-4">
+              <Button
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+                onClick={() => window.open('https://www.paypal.com/donate', '_blank')}
+              >
+                💝 Donate via PayPal
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                className="bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 px-8 py-4 text-base font-semibold backdrop-blur-sm"
+                onClick={() => {
+                  const bankDetails = `BSB: 633-123\nAccount: 166572719\nName: M. McNamara`;
+                  if (navigator.clipboard) {
+                    navigator.clipboard.writeText(bankDetails);
+                    alert('Bank details copied to clipboard!\n\n' + bankDetails);
+                  } else {
+                    alert('Bank Transfer Details:\n\n' + bankDetails);
+                  }
+                }}
+              >
+                🏦 Direct Bank Transfer (Australia)
+              </Button>
+            </div>
             <p className="text-sm text-white/75 mt-4">
               Every contribution helps us serve more families
             </p>
