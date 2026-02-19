@@ -1128,7 +1128,7 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
                 console.log('🤖 Hands-free AI response:', response);
                 setMessages(prev => [...prev, { role: 'assistant', content: response, hasVoice: true, language: selectedLanguage }]);
                 setConversationHistory(prev => {
-                  const lastUserMsg = messages.filter(m => m.role === 'user').pop()?.content || message;
+                  const lastUserMsg = messages.filter(m => m.role === 'user').pop()?.content || '';
                   return [...prev, 
                     { role: 'user', content: lastUserMsg },
                     { role: 'assistant', content: response }
