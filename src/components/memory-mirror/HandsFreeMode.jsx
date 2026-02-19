@@ -27,14 +27,35 @@ export default function HandsFreeMode({
   const restartTimeoutRef = useRef(null);
   const lastTranscriptRef = useRef('');
   const silenceTimeoutRef = useRef(null);
+  const speechEndTimeoutRef = useRef(null);
+  const audioContextRef = useRef(null);
 
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      
+      // Clean up ALL timeouts and resources
+      if (restartTimeoutRef.current) {
+        clearTimeout(restartTimeoutRef.current);
+        restartTimeoutRef.current = null;
+      }
+      if (silenceTimeoutRef.current) {
+        clearTimeout(silenceTimeoutRef.current);
+        silenceTimeoutRef.current = null;
+      }
+      if (speechEndTimeoutRef.current) {
+        clearTimeout(speechEndTimeoutRef.current);
+        speechEndTimeoutRef.current = null;
+      }
+      if (audioContextRef.current) {
+        try {
+          audioContextRef.current.close();
+        } catch (e) {}
+        audioContextRef.current = null;
+      }
+      
       stopHandsFreeMode();
-      if (restartTimeoutRef.current) clearTimeout(restartTimeoutRef.current);
-      if (silenceTimeoutRef.current) clearTimeout(silenceTimeoutRef.current);
     };
   }, []);
 
@@ -125,20 +146,17 @@ export default function HandsFreeMode({
         }
       };
 
-      let fullTranscript = '';
-      let speechEndTimeoutLocal = null;
-
       recognitionRef.current.onresult = (event) => {
         if (!isMountedRef.current || !isActive) return;
 
-        // Clear silence timeout
+        // Clear ALL timeouts to prevent memory leaks
         if (silenceTimeoutRef.current) {
           clearTimeout(silenceTimeoutRef.current);
+          silenceTimeoutRef.current = null;
         }
-
-        // Clear speech end timeout
-        if (speechEndTimeoutLocal) {
-          clearTimeout(speechEndTimeoutLocal);
+        if (speechEndTimeoutRef.current) {
+          clearTimeout(speechEndTimeoutRef.current);
+          speechEndTimeoutRef.current = null;
         }
 
         try {
@@ -161,12 +179,12 @@ export default function HandsFreeMode({
           console.log('🎤 Capturing:', completeSpeech.substring(0, 80));
           
           // Show what's being heard in real-time
-          if (completeSpeech.length > 0) {
+          if (completeSpeech.length > 0 && isMountedRef.current) {
             setStatusMessage(`👂 Hearing: "${completeSpeech.substring(0, 60)}..."`);
           }
           
-          // Wait for user to FINISH speaking (2 second pause after last word)
-          speechEndTimeoutLocal = setTimeout(() => {
+          // Wait for user to FINISH speaking (1.5 second pause)
+          speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
             
             if (finalSpeech.length > 3 && isMountedRef.current && isActive) {
@@ -174,28 +192,31 @@ export default function HandsFreeMode({
               
               // Avoid duplicate processing
               const normalized = finalSpeech.toLowerCase();
-              if (normalized === lastTranscriptRef.current.toLowerCase()) {
+              if (normalized !== lastTranscriptRef.current.toLowerCase()) {
+                lastTranscriptRef.current = finalSpeech;
+                setStatusMessage(`✅ Heard: "${finalSpeech.substring(0, 60)}"`);
+                handleUserSpeech(finalSpeech);
+              } else {
                 console.log('⚠️ Duplicate, skipping');
-                return;
               }
-              
-              lastTranscriptRef.current = finalSpeech;
-              setStatusMessage(`✅ Heard: "${finalSpeech.substring(0, 60)}"`);
-              handleUserSpeech(finalSpeech);
             }
-          }, 2000);
+            
+            // Clear the timeout reference
+            speechEndTimeoutRef.current = null;
+          }, 1500);
           
         } catch (error) {
           console.error('❌ Recognition result error:', error);
         }
 
-        // Set silence timeout to restart if no speech detected
+        // Set silence timeout
         silenceTimeoutRef.current = setTimeout(() => {
           if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-            console.log('⏱️ Silence timeout - ensuring still listening...');
+            console.log('⏱️ Silence timeout - ready to listen');
             setStatusMessage('👂 Ready - speak anytime');
           }
-        }, 10000);
+          silenceTimeoutRef.current = null;
+        }, 8000);
       };
 
       recognitionRef.current.onerror = (event) => {
@@ -510,6 +531,7 @@ export default function HandsFreeMode({
     setIsSpeaking(false);
     stopSpeech();
     
+    // Clean up recognition
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
@@ -520,6 +542,7 @@ export default function HandsFreeMode({
       recognitionRef.current = null;
     }
     
+    // Clean up ALL timeouts
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
       restartTimeoutRef.current = null;
@@ -527,6 +550,18 @@ export default function HandsFreeMode({
     if (silenceTimeoutRef.current) {
       clearTimeout(silenceTimeoutRef.current);
       silenceTimeoutRef.current = null;
+    }
+    if (speechEndTimeoutRef.current) {
+      clearTimeout(speechEndTimeoutRef.current);
+      speechEndTimeoutRef.current = null;
+    }
+    
+    // Clean up audio context
+    if (audioContextRef.current) {
+      try {
+        audioContextRef.current.close();
+      } catch (e) {}
+      audioContextRef.current = null;
     }
     
     setStatusMessage('Stopped');

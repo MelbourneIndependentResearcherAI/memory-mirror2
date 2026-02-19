@@ -772,12 +772,10 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
-      let fullTranscript = '';
-      let speechEndTimeout = null;
+      const speechEndTimeoutRef = { current: null };
 
       recognitionRef.current.onstart = () => {
         console.log('Speech recognition started - CAPTURING FULL SENTENCES');
-        fullTranscript = '';
         if (isMountedRef.current) {
           setIsListening(true);
           toast.success('🎤 Listening... Speak your full sentence!');
@@ -789,9 +787,9 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         
         try {
           // Clear any existing timeout
-          if (speechEndTimeout) {
-            clearTimeout(speechEndTimeout);
-            speechEndTimeout = null;
+          if (speechEndTimeoutRef.current) {
+            clearTimeout(speechEndTimeoutRef.current);
+            speechEndTimeoutRef.current = null;
           }
 
           // Build the COMPLETE transcript from ALL results
@@ -815,7 +813,7 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
           }
           
           // Wait for user to FINISH speaking (1.5 second pause)
-          speechEndTimeout = setTimeout(() => {
+          speechEndTimeoutRef.current = setTimeout(() => {
             const completeSpeech = (finalTranscript + interimTranscript).trim();
             
             if (completeSpeech.length > 0 && isMountedRef.current) {
@@ -823,7 +821,11 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
               
               // Stop listening
               if (recognitionRef.current) {
-                recognitionRef.current.stop();
+                try {
+                  recognitionRef.current.stop();
+                } catch (e) {
+                  console.log('Stop error (safe):', e.message);
+                }
               }
               
               setIsListening(false);
@@ -831,10 +833,16 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
               // Send the FULL message
               sendMessage(completeSpeech);
             }
+            
+            speechEndTimeoutRef.current = null;
           }, 1500);
         } catch (error) {
           console.error('Recognition result error:', error);
           setIsListening(false);
+          if (speechEndTimeoutRef.current) {
+            clearTimeout(speechEndTimeoutRef.current);
+            speechEndTimeoutRef.current = null;
+          }
         }
       };
       
