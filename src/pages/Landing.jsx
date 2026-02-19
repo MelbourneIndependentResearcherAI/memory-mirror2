@@ -235,12 +235,15 @@ export default function Landing() {
               We offer a free tier with daily limited access so everyone can try Memory Mirror. Premium subscription is $9.99 per month - intentionally priced well below other dementia care apps because we believe quality support shouldn't be out of reach for families already managing substantial caregiving costs.
             </p>
 
-            <div className="bg-blue-50 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-800 rounded-xl p-6">
+            <div className="bg-green-50 dark:bg-green-950/30 border-2 border-green-300 dark:border-green-700 rounded-xl p-6">
               <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-3">
-                <strong className="text-blue-700 dark:text-blue-400">Important Note:</strong> The subscription fee will not begin until Memory Mirror is running smoothly and all final tweaks and adjustments are finalized. We want to ensure you receive the quality experience you deserve.
+                <strong className="text-green-700 dark:text-green-400">🎉 Completely FREE Right Now!</strong> Memory Mirror is 100% free to use as we finalize development and polish the experience. No credit card required, no hidden fees — just pure compassionate care for your loved ones.
+              </p>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                When we do introduce the $9.99/month premium subscription in the future, we'll give you plenty of advance notice. The subscription won't begin until Memory Mirror is running flawlessly and every feature is refined to perfection.
               </p>
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed italic">
-                Thank you for your patience, understanding, and support as we continue to refine and improve Memory Mirror for you and your loved ones. 💙
+                Thank you for your patience, understanding, and support as we continue to improve Memory Mirror for you and your loved ones. 💙
               </p>
             </div>
 
