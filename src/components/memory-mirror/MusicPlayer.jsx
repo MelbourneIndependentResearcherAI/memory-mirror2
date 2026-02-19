@@ -78,42 +78,73 @@ export default function MusicPlayer({ currentEra, onClose }) {
   const playGeneratedMusic = () => {
     try {
       const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const duration = 30; // 30 seconds per song
+      const duration = 45; // 45 seconds per song
       
-      // Create pleasant melody tones based on mood
-      const frequencies = currentSong.mood === 'calm' 
-        ? [261.63, 293.66, 329.63, 349.23, 392.00] // C major scale (calm)
-        : [440, 493.88, 523.25, 587.33, 659.25]; // A major scale (uplifting)
+      // Create rich musical melody based on mood and era
+      const melodyPatterns = {
+        calm: [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25], // C major scale
+        uplifting: [440, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880], // A major scale
+        nostalgic: [293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 554.37, 587.33], // D major scale
+        energetic: [329.63, 369.99, 415.30, 440.00, 493.88, 554.37, 622.25, 659.25], // E major scale
+        romantic: [349.23, 392.00, 440.00, 466.16, 523.25, 587.33, 659.25, 698.46] // F major scale
+      };
+      
+      const frequencies = melodyPatterns[currentSong.mood] || melodyPatterns.calm;
       
       let time = audioContext.currentTime;
+      const beatDuration = 0.6;
       
-      // Play a pleasant melody
-      frequencies.forEach((freq, i) => {
-        const oscillator = audioContext.createOscillator();
-        const gainNode = audioContext.createGain();
-        
-        oscillator.connect(gainNode);
-        gainNode.connect(audioContext.destination);
-        
-        oscillator.frequency.value = freq;
-        oscillator.type = 'sine';
-        
-        gainNode.gain.setValueAtTime(0, time + i * 0.5);
-        gainNode.gain.linearRampToValueAtTime(0.2, time + i * 0.5 + 0.1);
-        gainNode.gain.linearRampToValueAtTime(0, time + i * 0.5 + 0.4);
-        
-        oscillator.start(time + i * 0.5);
-        oscillator.stop(time + i * 0.5 + 0.5);
-      });
+      // Create a more complex musical pattern with harmony
+      for (let loop = 0; loop < 3; loop++) {
+        frequencies.forEach((freq, i) => {
+          // Main melody
+          const oscillator1 = audioContext.createOscillator();
+          const gainNode1 = audioContext.createGain();
+          
+          oscillator1.connect(gainNode1);
+          gainNode1.connect(audioContext.destination);
+          
+          oscillator1.frequency.value = freq;
+          oscillator1.type = 'sine';
+          
+          const startTime = time + (loop * frequencies.length * beatDuration) + (i * beatDuration);
+          gainNode1.gain.setValueAtTime(0, startTime);
+          gainNode1.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
+          gainNode1.gain.linearRampToValueAtTime(0, startTime + beatDuration - 0.1);
+          
+          oscillator1.start(startTime);
+          oscillator1.stop(startTime + beatDuration);
+          
+          // Harmony (fifth above)
+          const oscillator2 = audioContext.createOscillator();
+          const gainNode2 = audioContext.createGain();
+          
+          oscillator2.connect(gainNode2);
+          gainNode2.connect(audioContext.destination);
+          
+          oscillator2.frequency.value = freq * 1.5;
+          oscillator2.type = 'sine';
+          
+          gainNode2.gain.setValueAtTime(0, startTime);
+          gainNode2.gain.linearRampToValueAtTime(0.08, startTime + 0.05);
+          gainNode2.gain.linearRampToValueAtTime(0, startTime + beatDuration - 0.1);
+          
+          oscillator2.start(startTime);
+          oscillator2.stop(startTime + beatDuration);
+        });
+      }
       
       // Auto-stop after duration
       setTimeout(() => {
+        if (audioContext) {
+          audioContext.close();
+        }
         setIsPlaying(false);
-        nextSong();
       }, duration * 1000);
       
     } catch (error) {
       console.error('Audio generation failed:', error);
+      setIsPlaying(false);
     }
   };
 

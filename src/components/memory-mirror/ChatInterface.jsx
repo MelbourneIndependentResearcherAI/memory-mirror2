@@ -772,14 +772,15 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
       
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
-      let interimTranscript = '';
-      let finalTranscriptSubmitted = false;
+      let fullTranscript = '';
+      let speechEndTimeout = null;
 
       recognitionRef.current.onstart = () => {
-        console.log('Speech recognition started');
+        console.log('Speech recognition started - CAPTURING FULL SENTENCES');
+        fullTranscript = '';
         if (isMountedRef.current) {
           setIsListening(true);
-          toast.success('🎤 Listening... Speak now!');
+          toast.success('🎤 Listening... Speak your full sentence!');
         }
       };
       
@@ -787,37 +788,50 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         if (!isMountedRef.current) return;
         
         try {
-          interimTranscript = '';
+          // Clear any existing timeout
+          if (speechEndTimeout) {
+            clearTimeout(speechEndTimeout);
+            speechEndTimeout = null;
+          }
+
+          // Build the COMPLETE transcript from ALL results
+          let interimTranscript = '';
+          let finalTranscript = '';
           
-          // Process all results
-          for (let i = event.resultIndex; i < event.results.length; i++) {
+          for (let i = 0; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             
             if (event.results[i].isFinal) {
-              // Final result - submit the message
-              if (transcript.trim() && !finalTranscriptSubmitted) {
-                console.log('Final transcript:', transcript);
-                finalTranscriptSubmitted = true;
-                
-                // Stop listening after final result
-                if (recognitionRef.current) {
-                  recognitionRef.current.stop();
-                }
-                
-                setIsListening(false);
-                // Send the message to chat
-                sendMessage(transcript.trim());
-              }
+              finalTranscript += transcript + ' ';
             } else {
-              // Interim result - show what user is saying
               interimTranscript += transcript + ' ';
             }
           }
           
-          // Show interim text as the user speaks
-          if (interimTranscript && isMountedRef.current) {
-            console.log('Interim:', interimTranscript);
+          // Show what's being captured
+          const currentSpeech = (finalTranscript + interimTranscript).trim();
+          if (currentSpeech) {
+            console.log('📝 Capturing speech:', currentSpeech);
           }
+          
+          // Wait for user to FINISH speaking (1.5 second pause)
+          speechEndTimeout = setTimeout(() => {
+            const completeSpeech = (finalTranscript + interimTranscript).trim();
+            
+            if (completeSpeech.length > 0 && isMountedRef.current) {
+              console.log('✅ COMPLETE SENTENCE CAPTURED:', completeSpeech);
+              
+              // Stop listening
+              if (recognitionRef.current) {
+                recognitionRef.current.stop();
+              }
+              
+              setIsListening(false);
+              
+              // Send the FULL message
+              sendMessage(completeSpeech);
+            }
+          }, 1500);
         } catch (error) {
           console.error('Recognition result error:', error);
           setIsListening(false);

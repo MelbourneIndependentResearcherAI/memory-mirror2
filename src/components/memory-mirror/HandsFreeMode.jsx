@@ -125,6 +125,9 @@ export default function HandsFreeMode({
         }
       };
 
+      let fullTranscript = '';
+      let speechEndTimeoutLocal = null;
+
       recognitionRef.current.onresult = (event) => {
         if (!isMountedRef.current || !isActive) return;
 
@@ -133,51 +136,55 @@ export default function HandsFreeMode({
           clearTimeout(silenceTimeoutRef.current);
         }
 
+        // Clear speech end timeout
+        if (speechEndTimeoutLocal) {
+          clearTimeout(speechEndTimeoutLocal);
+        }
+
         try {
-          const resultIndex = event.resultIndex;
-          const result = event.results[resultIndex];
-          const transcript = result[0].transcript;
-          const isFinal = result.isFinal;
-          const confidence = result[0].confidence || 0.7; // Default confidence if not provided
+          // Build COMPLETE transcript from ALL results
+          let interimText = '';
+          let finalText = '';
           
-          console.log('🎤 Speech detected:', {
-            transcript: transcript.substring(0, 50),
-            isFinal,
-            confidence,
-            resultIndex
-          });
-          
-          // Show interim results for responsiveness
-          if (!isFinal && transcript.trim().length > 0) {
-            console.log('💬 Interim:', transcript.substring(0, 30));
-            setStatusMessage(`👂 Hearing: "${transcript.substring(0, 50)}..."`);
-          }
-          
-          // Process final results - ULTRA-LOW threshold for SOFT VOICES
-          if (isFinal && transcript.trim().length > 0) {
-            console.log('✅ FINAL transcript:', transcript, 'Confidence:', confidence);
+          for (let i = 0; i < event.results.length; i++) {
+            const transcript = event.results[i][0].transcript;
             
-            // Avoid duplicate processing
-            const normalizedTranscript = transcript.trim().toLowerCase();
-            if (normalizedTranscript === lastTranscriptRef.current.toLowerCase()) {
-              console.log('⚠️ Duplicate detected, skipping');
-              return;
-            }
-            
-            // CRITICAL: Accept ANY confidence level for soft voices (elderly users)
-            // Confidence is often misleadingly low for quiet speech
-            if (confidence > 0.1 || transcript.trim().length > 3) {
-              lastTranscriptRef.current = transcript.trim();
-              console.log('🎯 Processing speech (SOFT VOICE MODE):', transcript.substring(0, 60), 'Confidence:', confidence);
-              setStatusMessage(`✅ Heard you: "${transcript.substring(0, 60)}"`);
-              handleUserSpeech(transcript.trim());
+            if (event.results[i].isFinal) {
+              finalText += transcript + ' ';
             } else {
-              console.log('⚠️ Very low confidence but attempting anyway:', confidence);
-              lastTranscriptRef.current = transcript.trim();
-              setStatusMessage(`Processing: "${transcript.substring(0, 60)}"`);
-              handleUserSpeech(transcript.trim());
+              interimText += transcript + ' ';
             }
           }
+          
+          const completeSpeech = (finalText + interimText).trim();
+          
+          console.log('🎤 Capturing:', completeSpeech.substring(0, 80));
+          
+          // Show what's being heard in real-time
+          if (completeSpeech.length > 0) {
+            setStatusMessage(`👂 Hearing: "${completeSpeech.substring(0, 60)}..."`);
+          }
+          
+          // Wait for user to FINISH speaking (2 second pause after last word)
+          speechEndTimeoutLocal = setTimeout(() => {
+            const finalSpeech = (finalText + interimText).trim();
+            
+            if (finalSpeech.length > 3 && isMountedRef.current && isActive) {
+              console.log('✅ COMPLETE SENTENCE:', finalSpeech);
+              
+              // Avoid duplicate processing
+              const normalized = finalSpeech.toLowerCase();
+              if (normalized === lastTranscriptRef.current.toLowerCase()) {
+                console.log('⚠️ Duplicate, skipping');
+                return;
+              }
+              
+              lastTranscriptRef.current = finalSpeech;
+              setStatusMessage(`✅ Heard: "${finalSpeech.substring(0, 60)}"`);
+              handleUserSpeech(finalSpeech);
+            }
+          }, 2000);
+          
         } catch (error) {
           console.error('❌ Recognition result error:', error);
         }
@@ -185,11 +192,10 @@ export default function HandsFreeMode({
         // Set silence timeout to restart if no speech detected
         silenceTimeoutRef.current = setTimeout(() => {
           if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-            console.log('⏱️ Silence timeout (8s) - ensuring still listening...');
+            console.log('⏱️ Silence timeout - ensuring still listening...');
             setStatusMessage('👂 Ready - speak anytime');
-            // Don't restart here - let onend handle it naturally
           }
-        }, 8000);
+        }, 10000);
       };
 
       recognitionRef.current.onerror = (event) => {
