@@ -410,6 +410,28 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* Donate Section */}
+        <div className="max-w-3xl mx-auto px-4 mb-20">
+          <div className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl text-center">
+            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
+              💙 Support Memory Mirror
+            </h2>
+            <p className="text-base md:text-lg text-white/90 leading-relaxed mb-6">
+              Memory Mirror is free for everyone. Your donations help keep the servers running, AI services active, and development ongoing. 100% of funds go toward operational costs—never personal use.
+            </p>
+            <Button
+              size="lg"
+              className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
+              onClick={() => window.open('https://donate.stripe.com/test_00g00000000000', '_blank')}
+            >
+              💝 Donate Now
+            </Button>
+            <p className="text-sm text-white/75 mt-4">
+              Every contribution helps us serve more families
+            </p>
+          </div>
+        </div>
+
         {/* Bottom Text Section */}
         <div 
           className="text-center relative px-4 z-10 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-16 md:py-20"
