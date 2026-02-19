@@ -56,7 +56,7 @@ export default function HandsFreeMode({
     }
   }, []);
 
-  const startRecognition = useCallback(() => {
+  const startRecognition = useCallback(async () => {
     if (!isMountedRef.current || !isActive) return;
 
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -66,6 +66,20 @@ export default function HandsFreeMode({
     }
 
     try {
+      // CRITICAL: Request microphone permission FIRST
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        console.log('✅ Microphone access granted');
+        // Close stream - we just needed permission
+        stream.getTracks().forEach(track => track.stop());
+      } catch (permError) {
+        console.error('❌ Microphone permission denied:', permError);
+        toast.error('🎤 Please allow microphone access to use hands-free mode');
+        setIsActive(false);
+        setStatusMessage('Microphone access required');
+        return;
+      }
+
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
@@ -79,8 +93,10 @@ export default function HandsFreeMode({
       // CRITICAL: Optimized for continuous, responsive listening
       recognitionRef.current.continuous = true;
       recognitionRef.current.interimResults = true;
-      recognitionRef.current.maxAlternatives = 3;
+      recognitionRef.current.maxAlternatives = 1;
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
+      
+      console.log('🎤 Starting speech recognition with language:', langMap[selectedLanguage] || 'en-US');
       
       // Better speech detection sensitivity
       if (recognitionRef.current.grammars) {
@@ -89,10 +105,12 @@ export default function HandsFreeMode({
       }
 
       recognitionRef.current.onstart = () => {
+        console.log('✅ Speech recognition STARTED successfully');
         if (isMountedRef.current) {
           setIsListening(true);
-          setStatusMessage('Listening...');
+          setStatusMessage('🎤 Listening - speak now!');
           setErrorCount(0);
+          toast.success('👂 I can hear you now - just speak naturally!', { duration: 2000 });
         }
       };
 
@@ -109,57 +127,80 @@ export default function HandsFreeMode({
           const result = event.results[resultIndex];
           const transcript = result[0].transcript;
           const isFinal = result.isFinal;
-          const confidence = result[0].confidence || 0;
+          const confidence = result[0].confidence || 0.7; // Default confidence if not provided
+          
+          console.log('🎤 Speech detected:', {
+            transcript: transcript.substring(0, 50),
+            isFinal,
+            confidence,
+            resultIndex
+          });
           
           // Show interim results for responsiveness
-          if (!isFinal && transcript.trim()) {
-            setStatusMessage(`Hearing: "${transcript.substring(0, 50)}..."`);
+          if (!isFinal && transcript.trim().length > 0) {
+            console.log('💬 Interim:', transcript.substring(0, 30));
+            setStatusMessage(`👂 Hearing: "${transcript.substring(0, 50)}..."`);
           }
           
-          // Process final results with confidence check
-          if (isFinal && transcript.trim() && confidence > 0.5) {
+          // Process final results - LOWERED confidence threshold for better responsiveness
+          if (isFinal && transcript.trim().length > 0) {
+            console.log('✅ FINAL transcript:', transcript, 'Confidence:', confidence);
+            
             // Avoid duplicate processing
             const normalizedTranscript = transcript.trim().toLowerCase();
-            if (normalizedTranscript === lastTranscriptRef.current.toLowerCase()) return;
+            if (normalizedTranscript === lastTranscriptRef.current.toLowerCase()) {
+              console.log('⚠️ Duplicate detected, skipping');
+              return;
+            }
             
-            lastTranscriptRef.current = transcript.trim();
-            setStatusMessage(`You said: "${transcript.substring(0, 60)}"`);
-            handleUserSpeech(transcript.trim());
-          } else if (isFinal && confidence <= 0.5) {
-            setStatusMessage('Didn\'t catch that clearly, keep listening...');
+            if (confidence > 0.3) { // LOWERED from 0.5 to 0.3 for better detection
+              lastTranscriptRef.current = transcript.trim();
+              console.log('🎯 Processing speech:', transcript.substring(0, 60));
+              setStatusMessage(`✅ You said: "${transcript.substring(0, 60)}"`);
+              handleUserSpeech(transcript.trim());
+            } else {
+              console.log('⚠️ Low confidence, but still processing:', confidence);
+              // Process anyway - confidence is often lower than it should be
+              lastTranscriptRef.current = transcript.trim();
+              setStatusMessage(`Processing: "${transcript.substring(0, 60)}"`);
+              handleUserSpeech(transcript.trim());
+            }
           }
         } catch (error) {
-          console.error('Recognition result error:', error);
+          console.error('❌ Recognition result error:', error);
         }
 
         // Set silence timeout to restart if no speech detected
         silenceTimeoutRef.current = setTimeout(() => {
           if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-            setStatusMessage('Still listening...');
+            console.log('⏱️ Silence timeout - still listening...');
+            setStatusMessage('Still listening... 👂');
             restartRecognition(500);
           }
         }, 8000); // 8 seconds of silence
       };
 
       recognitionRef.current.onerror = (event) => {
-        console.error('Speech recognition error:', event.error);
+        console.error('❌ Speech recognition error:', event.error);
         if (!isMountedRef.current) return;
 
         const errorMessages = {
-          'no-speech': 'Listening... (no speech yet)',
-          'audio-capture': '❌ Microphone not available',
-          'not-allowed': '❌ Microphone permission denied - please enable',
+          'no-speech': '👂 Listening... (no speech detected yet)',
+          'audio-capture': '❌ Microphone not available - check device settings',
+          'not-allowed': '❌ Microphone permission denied - please enable in browser settings',
           'network': '⚠️ Network error - working offline',
-          'aborted': 'Restarting listener...',
+          'aborted': '🔄 Restarting listener...',
           'service-not-allowed': '❌ Speech service not allowed',
-          'language-not-supported': '⚠️ Language not supported, switching to English'
+          'language-not-supported': '⚠️ Language not supported, using English'
         };
 
         const errorMessage = errorMessages[event.error] || `Error: ${event.error}`;
+        console.log('Error message:', errorMessage);
 
         // Only show user-facing errors for critical issues
         if (['audio-capture', 'not-allowed', 'service-not-allowed'].includes(event.error)) {
-          toast.error(errorMessage);
+          console.error('🚨 CRITICAL ERROR:', event.error);
+          toast.error(errorMessage, { duration: 5000 });
           setStatusMessage(errorMessage);
           setIsActive(false);
           setErrorCount(prev => prev + 1);
@@ -168,20 +209,22 @@ export default function HandsFreeMode({
 
         // Handle recoverable errors silently
         if (event.error === 'no-speech') {
-          setStatusMessage('Listening for your voice...');
+          console.log('⚠️ No speech detected, continuing to listen...');
+          setStatusMessage('👂 Listening for your voice...');
           restartRecognition(1000);
           return;
         }
 
         if (event.error === 'language-not-supported') {
-          setStatusMessage('Switching to English...');
-          // Will restart with English
+          console.log('⚠️ Language not supported, switching to English');
+          setStatusMessage('Using English...');
           restartRecognition(1500);
           return;
         }
 
         // Auto-restart on other recoverable errors
-        if (isActive && errorCount < 8) {
+        if (isActive && errorCount < 10) {
+          console.log(`🔄 Recoverable error ${errorCount + 1}/10, restarting...`);
           if (['aborted', 'network'].includes(event.error)) {
             setStatusMessage(errorMessage);
             restartRecognition(1500);
@@ -189,24 +232,31 @@ export default function HandsFreeMode({
             setErrorCount(prev => prev + 1);
             restartRecognition(2000);
           }
-        } else if (errorCount >= 8) {
+        } else if (errorCount >= 10) {
+          console.error('🚨 Too many errors, stopping');
           toast.error('Connection unstable. Please restart hands-free mode.');
           setIsActive(false);
         }
       };
 
       recognitionRef.current.onend = () => {
+        console.log('🛑 Speech recognition ended');
         if (!isMountedRef.current) return;
         
         setIsListening(false);
         
         // CRITICAL: Auto-restart when recognition ends
         if (isActive && !isProcessing) {
+          console.log('🔄 Auto-restarting recognition in 1 second...');
           restartRecognition(1000);
+        } else {
+          console.log('⏹️ Not restarting - isActive:', isActive, 'isProcessing:', isProcessing);
         }
       };
 
+      console.log('▶️ Attempting to START speech recognition...');
       recognitionRef.current.start();
+      console.log('✅ Speech recognition start() called successfully');
       
     } catch (error) {
       console.error('Start recognition error:', error);
@@ -233,18 +283,31 @@ export default function HandsFreeMode({
   }, [isActive, isProcessing, startRecognition]);
 
   const handleUserSpeech = async (transcript) => {
-    if (!transcript || isProcessing || !isMountedRef.current) return;
+    if (!transcript || isProcessing || !isMountedRef.current) {
+      console.log('⚠️ Skipping handleUserSpeech:', { 
+        hasTranscript: !!transcript, 
+        isProcessing, 
+        isMounted: isMountedRef.current 
+      });
+      return;
+    }
+
+    console.log('🎯 HANDLING USER SPEECH:', transcript);
 
     // Immediate feedback
     setIsProcessing(true);
-    setStatusMessage(`Processing: "${transcript.substring(0, 50)}..."`);
+    setStatusMessage(`💭 Processing: "${transcript.substring(0, 50)}..."`);
+    toast.success(`Heard: "${transcript.substring(0, 40)}..."`, { duration: 2000 });
 
     // Stop listening while processing (prevent echo)
     if (recognitionRef.current) {
       try {
+        console.log('⏸️ Pausing recognition during processing');
         recognitionRef.current.stop();
         recognitionRef.current.abort();
-      } catch {}
+      } catch (e) {
+        console.log('Stop error (safe):', e.message);
+      }
     }
     setIsListening(false);
 
@@ -371,10 +434,12 @@ export default function HandsFreeMode({
     }
   };
 
-  const startHandsFreeMode = () => {
+  const startHandsFreeMode = async () => {
+    console.log('🚀 STARTING HANDS-FREE MODE');
     setIsActive(true);
     setErrorCount(0);
     setStatusMessage('Starting up...');
+    
     toast.success('🎤 Hands-free mode activated - just start talking naturally!', {
       duration: 4000
     });
@@ -388,6 +453,7 @@ export default function HandsFreeMode({
       onEnd: () => {
         // Start recognition after greeting
         if (isMountedRef.current) {
+          console.log('🎤 Starting recognition after activation message...');
           setTimeout(() => {
             startRecognition();
           }, 500);
