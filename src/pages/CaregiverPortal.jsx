@@ -22,6 +22,7 @@ import OfflineJournalReader from '@/components/caregiver/OfflineJournalReader';
 import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
+import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
 
 const featureCards = [
   {
@@ -159,6 +160,14 @@ const featureCards = [
     description: '24/7 AI-powered health monitoring & auto-maintenance',
     background: '#EFF6FF',
     darkBackground: '#1E3A8A'
+  },
+  {
+    id: 18,
+    title: 'Family Tree',
+    icon: '🌳',
+    description: 'Build a visual family tree with photos and memories',
+    background: '#FEF3C7',
+    darkBackground: '#78350F'
   }
 ];
 
@@ -221,7 +230,8 @@ export default function CaregiverPortal() {
       14: 'voice-cloning', // Voice Cloning
       15: 'ai-insights',   // AI Care Insights
       16: 'offline-read',  // Read Offline
-      17: 'monitoring'     // System Monitoring
+      17: 'monitoring',    // System Monitoring
+      18: 'family-tree'    // Family Tree
     };
     
     if (viewMap[cardId]) {
@@ -409,6 +419,12 @@ export default function CaregiverPortal() {
               Back to Portal
             </button>
             <MonitoringDashboard />
+          </div>
+        )}
+
+        {activeView === 'family-tree' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <FamilyTreeBuilder onBack={() => setActiveView('home')} />
           </div>
         )}
 
