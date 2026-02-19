@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
+import InstallAppButton from '@/components/InstallAppButton';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
@@ -173,14 +174,18 @@ export default function Landing() {
               </Link>
             </div>
 
-            <Button 
-              size="lg" 
-              variant="outline" 
-              className="px-8 md:px-10 py-4 md:py-5 text-base md:text-lg rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:shadow-md transition-all duration-300 w-full min-h-[52px] font-medium"
-              onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
-            >
-              Learn More About Memory Mirror →
-            </Button>
+            <div className="flex flex-col gap-4 items-center">
+              <InstallAppButton />
+              
+              <Button 
+                size="lg" 
+                variant="outline" 
+                className="px-8 md:px-10 py-4 md:py-5 text-base md:text-lg rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:shadow-md transition-all duration-300 w-full min-h-[52px] font-medium"
+                onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
+              >
+                Learn More About Memory Mirror →
+              </Button>
+            </div>
           </div>
         </div>
 
