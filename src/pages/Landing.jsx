@@ -1,10 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link } from 'react-router-dom';
+import DonationModal from '@/components/DonationModal';
 
 export default function Landing() {
+  const [showDonationModal, setShowDonationModal] = useState(false);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
       {/* Hero Section */}
@@ -412,43 +415,34 @@ export default function Landing() {
 
         {/* Donate Section */}
         <div className="max-w-3xl mx-auto px-4 mb-20">
-          <div className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-8 md:p-12 shadow-xl text-center">
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-              💙 Support Memory Mirror
-            </h2>
-            <p className="text-base md:text-lg text-white/90 leading-relaxed mb-6">
-              Memory Mirror is free for everyone. Your donations help keep the servers running, AI services active, and development ongoing. 100% of funds go toward operational costs—never personal use.
-            </p>
-            <div className="flex flex-col gap-4">
-              <Button
-                size="lg"
-                className="bg-white text-blue-600 hover:bg-blue-50 px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transition-all"
-                onClick={() => window.open('https://www.paypal.com/donate', '_blank')}
-              >
-                💝 Donate via PayPal
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                className="bg-white/10 text-white border-2 border-white/30 hover:bg-white/20 px-8 py-4 text-base font-semibold backdrop-blur-sm"
-                onClick={() => {
-                  const bankDetails = `BSB: 633-123\nAccount: 166572719\nName: M. McNamara`;
-                  if (navigator.clipboard) {
-                    navigator.clipboard.writeText(bankDetails);
-                    alert('Bank details copied to clipboard!\n\n' + bankDetails);
-                  } else {
-                    alert('Bank Transfer Details:\n\n' + bankDetails);
-                  }
-                }}
-              >
-                🏦 Direct Bank Transfer (Australia)
-              </Button>
+          <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-600 rounded-2xl p-8 md:p-12 shadow-2xl text-center border-2 border-blue-400/30">
+            <div className="inline-block mb-4">
+              <div className="text-6xl md:text-7xl">💙</div>
             </div>
-            <p className="text-sm text-white/75 mt-4">
-              Every contribution helps us serve more families
+            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+              Support Memory Mirror
+            </h2>
+            <p className="text-base md:text-lg text-white/95 leading-relaxed mb-8 max-w-xl mx-auto">
+              Memory Mirror is free for everyone. Your donations keep the servers running, AI services active, and development ongoing. 100% of funds go toward operational costs—never personal use.
+            </p>
+            
+            <Button
+              size="lg"
+              className="bg-white text-blue-600 hover:bg-blue-50 px-10 py-7 text-xl font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 rounded-xl"
+              onClick={() => setShowDonationModal(true)}
+            >
+              💝 Donate Now
+            </Button>
+            
+            <p className="text-sm text-white/80 mt-6 font-medium">
+              Every contribution helps us serve more families around the world
             </p>
           </div>
         </div>
+        
+        {showDonationModal && (
+          <DonationModal onClose={() => setShowDonationModal(false)} />
+        )}
 
         {/* Bottom Text Section */}
         <div 
