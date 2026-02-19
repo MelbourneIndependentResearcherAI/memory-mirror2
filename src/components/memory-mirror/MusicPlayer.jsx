@@ -8,7 +8,8 @@ import { base44 } from '@/api/base44Client';
 export default function MusicPlayer({ currentEra, onClose }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
-  const audioRef = React.useRef(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const playerRef = React.useRef(null);
 
   const { data: songs = [] } = useQuery({
     queryKey: ['music', currentEra],
@@ -21,30 +22,38 @@ export default function MusicPlayer({ currentEra, onClose }) {
   useEffect(() => {
     if (songs.length > 0 && !currentSong) {
       setCurrentSong(songs[0]);
+      setCurrentIndex(0);
     }
   }, [songs]);
 
   useEffect(() => {
-    // Create audio element
-    if (!audioRef.current) {
-      audioRef.current = new Audio();
-      audioRef.current.addEventListener('ended', () => {
-        setIsPlaying(false);
-        nextSong();
-      });
+    // Load YouTube IFrame API
+    if (!window.YT) {
+      const tag = document.createElement('script');
+      tag.src = 'https://www.youtube.com/iframe_api';
+      const firstScriptTag = document.getElementsByTagName('script')[0];
+      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
     }
 
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      if (playerRef.current && playerRef.current.destroy) {
+        playerRef.current.destroy();
       }
     };
   }, []);
 
+  const extractYouTubeID = (url) => {
+    if (!url) return null;
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
+  };
+
   const playPause = () => {
     if (isPlaying) {
-      audioRef.current?.pause();
+      if (playerRef.current && playerRef.current.pauseVideo) {
+        playerRef.current.pauseVideo();
+      }
       setIsPlaying(false);
     } else {
       if (currentSong) {
@@ -55,13 +64,9 @@ export default function MusicPlayer({ currentEra, onClose }) {
         utterance.rate = 0.95;
         window.speechSynthesis.speak(utterance);
 
-        // Play audio if URL exists, otherwise generate pleasant tones
+        // Play YouTube video
         if (currentSong.youtube_url) {
-          // Note: Direct YouTube playback requires YouTube API
-          alert('YouTube playback requires API integration. For now, enjoying the song announcement!');
-        } else {
-          // Generate pleasant background music using Web Audio API
-          playGeneratedMusic();
+          initializePlayer();
         }
         
         setIsPlaying(true);
@@ -75,85 +80,59 @@ export default function MusicPlayer({ currentEra, onClose }) {
     }
   };
 
-  const playGeneratedMusic = () => {
-    try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-      const duration = 45; // 45 seconds per song
-      
-      // Create rich musical melody based on mood and era
-      const melodyPatterns = {
-        calm: [261.63, 293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 523.25], // C major scale
-        uplifting: [440, 493.88, 523.25, 587.33, 659.25, 698.46, 783.99, 880], // A major scale
-        nostalgic: [293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 554.37, 587.33], // D major scale
-        energetic: [329.63, 369.99, 415.30, 440.00, 493.88, 554.37, 622.25, 659.25], // E major scale
-        romantic: [349.23, 392.00, 440.00, 466.16, 523.25, 587.33, 659.25, 698.46] // F major scale
-      };
-      
-      const frequencies = melodyPatterns[currentSong.mood] || melodyPatterns.calm;
-      
-      let time = audioContext.currentTime;
-      const beatDuration = 0.6;
-      
-      // Create a more complex musical pattern with harmony
-      for (let loop = 0; loop < 3; loop++) {
-        frequencies.forEach((freq, i) => {
-          // Main melody
-          const oscillator1 = audioContext.createOscillator();
-          const gainNode1 = audioContext.createGain();
-          
-          oscillator1.connect(gainNode1);
-          gainNode1.connect(audioContext.destination);
-          
-          oscillator1.frequency.value = freq;
-          oscillator1.type = 'sine';
-          
-          const startTime = time + (loop * frequencies.length * beatDuration) + (i * beatDuration);
-          gainNode1.gain.setValueAtTime(0, startTime);
-          gainNode1.gain.linearRampToValueAtTime(0.15, startTime + 0.05);
-          gainNode1.gain.linearRampToValueAtTime(0, startTime + beatDuration - 0.1);
-          
-          oscillator1.start(startTime);
-          oscillator1.stop(startTime + beatDuration);
-          
-          // Harmony (fifth above)
-          const oscillator2 = audioContext.createOscillator();
-          const gainNode2 = audioContext.createGain();
-          
-          oscillator2.connect(gainNode2);
-          gainNode2.connect(audioContext.destination);
-          
-          oscillator2.frequency.value = freq * 1.5;
-          oscillator2.type = 'sine';
-          
-          gainNode2.gain.setValueAtTime(0, startTime);
-          gainNode2.gain.linearRampToValueAtTime(0.08, startTime + 0.05);
-          gainNode2.gain.linearRampToValueAtTime(0, startTime + beatDuration - 0.1);
-          
-          oscillator2.start(startTime);
-          oscillator2.stop(startTime + beatDuration);
-        });
+  const initializePlayer = () => {
+    const videoId = extractYouTubeID(currentSong.youtube_url);
+    if (!videoId) return;
+
+    const onYouTubeIframeAPIReady = () => {
+      if (playerRef.current && playerRef.current.destroy) {
+        playerRef.current.destroy();
       }
-      
-      // Auto-stop after duration
-      setTimeout(() => {
-        if (audioContext) {
-          audioContext.close();
+
+      playerRef.current = new window.YT.Player('youtube-player', {
+        height: '0',
+        width: '0',
+        videoId: videoId,
+        playerVars: {
+          autoplay: 1,
+          controls: 0,
+        },
+        events: {
+          onReady: (event) => {
+            event.target.playVideo();
+          },
+          onStateChange: (event) => {
+            if (event.data === window.YT.PlayerState.ENDED) {
+              nextSong();
+            }
+            if (event.data === window.YT.PlayerState.PLAYING) {
+              setIsPlaying(true);
+            }
+            if (event.data === window.YT.PlayerState.PAUSED) {
+              setIsPlaying(false);
+            }
+          }
         }
-        setIsPlaying(false);
-      }, duration * 1000);
-      
-    } catch (error) {
-      console.error('Audio generation failed:', error);
-      setIsPlaying(false);
+      });
+    };
+
+    if (window.YT && window.YT.Player) {
+      onYouTubeIframeAPIReady();
+    } else {
+      window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
     }
   };
 
   const nextSong = () => {
     if (songs.length === 0) return;
-    audioRef.current?.pause();
-    const currentIndex = songs.findIndex(s => s.id === currentSong?.id);
-    const nextIndex = (currentIndex + 1) % songs.length;
-    setCurrentSong(songs[nextIndex]);
+    
+    if (playerRef.current && playerRef.current.stopVideo) {
+      playerRef.current.stopVideo();
+    }
+    
+    const nextIdx = (currentIndex + 1) % songs.length;
+    setCurrentIndex(nextIdx);
+    setCurrentSong(songs[nextIdx]);
     setIsPlaying(false);
   };
 
@@ -175,6 +154,9 @@ export default function MusicPlayer({ currentEra, onClose }) {
       exit={{ opacity: 0, y: 20 }}
       className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800 shadow-lg"
     >
+      {/* Hidden YouTube player */}
+      <div id="youtube-player" style={{ display: 'none' }}></div>
+
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Music className="w-5 h-5 text-purple-600 dark:text-purple-400" />
@@ -193,40 +175,45 @@ export default function MusicPlayer({ currentEra, onClose }) {
       </div>
 
       {currentSong && (
-        <div className="mb-4">
-          <h3 className="font-semibold text-lg text-slate-800 dark:text-slate-100">
+        <div className="mb-6">
+          <h3 className="font-bold text-xl text-slate-900 dark:text-slate-100">
             {currentSong.title}
           </h3>
           {currentSong.artist && (
-            <p className="text-sm text-slate-600 dark:text-slate-400">{currentSong.artist}</p>
+            <p className="text-base text-slate-700 dark:text-slate-300 mt-1">{currentSong.artist}</p>
+          )}
+          {currentSong.genre && (
+            <p className="text-sm text-purple-600 dark:text-purple-400 mt-1">
+              {currentSong.genre.replace('_', ' ').toUpperCase()}
+            </p>
           )}
           {currentSong.personal_significance && (
-            <p className="text-xs text-purple-700 dark:text-purple-300 mt-2 italic">
+            <p className="text-sm text-purple-700 dark:text-purple-300 mt-3 italic bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg">
               💝 {currentSong.personal_significance}
             </p>
           )}
         </div>
       )}
 
-      <div className="flex items-center justify-center gap-4">
+      <div className="flex items-center justify-center gap-4 mb-4">
         <Button
           size="lg"
           onClick={playPause}
-          className="w-16 h-16 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700"
+          className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 shadow-xl"
         >
           {isPlaying ? (
-            <Pause className="w-8 h-8 text-white" />
+            <Pause className="w-10 h-10 text-white" />
           ) : (
-            <Play className="w-8 h-8 text-white ml-1" />
+            <Play className="w-10 h-10 text-white ml-1" />
           )}
         </Button>
         <Button
-          size="icon"
+          size="lg"
           variant="outline"
           onClick={nextSong}
-          className="w-12 h-12 rounded-full"
+          className="w-14 h-14 rounded-full border-2"
         >
-          <SkipForward className="w-5 h-5" />
+          <SkipForward className="w-6 h-6" />
         </Button>
       </div>
 
@@ -234,12 +221,16 @@ export default function MusicPlayer({ currentEra, onClose }) {
         <motion.div
           animate={{ scale: [1, 1.05, 1] }}
           transition={{ repeat: Infinity, duration: 2 }}
-          className="mt-4 flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400"
+          className="flex items-center justify-center gap-2 text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg"
         >
-          <Volume2 className="w-4 h-4" />
-          <span className="text-sm">Playing...</span>
+          <Volume2 className="w-5 h-5 animate-pulse" />
+          <span className="text-base font-semibold">Now Playing</span>
         </motion.div>
       )}
+
+      <div className="mt-4 text-center text-xs text-slate-500 dark:text-slate-400">
+        {currentIndex + 1} of {songs.length} songs
+      </div>
     </motion.div>
   );
 }
