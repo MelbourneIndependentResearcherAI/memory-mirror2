@@ -360,6 +360,49 @@ export default function Landing() {
         {/* Spacing */}
         <div style={{ height: '80px' }}></div>
 
+        {/* Built by Someone Who Understands */}
+        <div className="max-w-4xl mx-auto px-4 mb-20">
+          <div className="bg-gradient-to-br from-amber-50 via-orange-50 to-amber-50 dark:from-amber-950/30 dark:via-orange-950/30 dark:to-amber-950/30 rounded-2xl p-8 md:p-12 shadow-xl border border-amber-200/60 dark:border-amber-800/40">
+            <div className="text-center mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-4">
+                Built by Someone Who Understands
+              </h2>
+              <div className="flex justify-center gap-3 flex-wrap mb-6">
+                <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">🎓 Mental Health</span>
+                </div>
+                <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">🎓 Community Psychology</span>
+                </div>
+                <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">💼 25 Years Experience</span>
+                </div>
+                <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">🏥 Aged Care Volunteer</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-5 text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
+              <p>
+                Memory Mirror was created by a Melbourne caregiver who spent 25 years caring for family members with dementia. After countless sleepless nights, endless worry, and watching other families struggle globally, he taught himself to code and built the solution he wished existed.
+              </p>
+              
+              <p>
+                With qualifications in Mental Health and Community Psychology, and years volunteering in dementia care, every feature in Memory Mirror comes from real experience—not corporate research.
+              </p>
+              
+              <p className="font-medium text-amber-900 dark:text-amber-400">
+                Self-funded, built through trial and error, and created with love. Because everyone deserves support at 3am.
+              </p>
+              
+              <p className="text-center text-slate-600 dark:text-slate-400 italic pt-4 border-t border-amber-200 dark:border-amber-700">
+                — Built by caregivers, for caregivers
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Bottom Text Section */}
         <div 
           className="text-center relative px-4 z-10 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-16 md:py-20"
