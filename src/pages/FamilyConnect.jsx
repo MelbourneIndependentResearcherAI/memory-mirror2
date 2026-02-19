@@ -11,6 +11,9 @@ import CalendarManager from '../components/family/CalendarManager';
 import MediaAlbum from '../components/family/MediaAlbum';
 import NotificationCenter from '../components/family/NotificationCenter';
 import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
+import SharedPhotoAlbum from '../components/family/SharedPhotoAlbum';
+import MemoryTimelineBuilder from '../components/family/MemoryTimelineBuilder';
+import RemoteTriggerPanel from '../components/family/RemoteTriggerPanel';
 
 export default function FamilyConnect() {
   const navigate = useNavigate();
@@ -44,7 +47,7 @@ export default function FamilyConnect() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-8 h-auto bg-white dark:bg-slate-900">
+          <TabsList className="grid w-full grid-cols-4 lg:grid-cols-11 h-auto bg-white dark:bg-slate-900">
             <TabsTrigger value="overview" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Heart className="w-4 h-4" />
               <span className="hidden sm:inline">Overview</span>
@@ -52,6 +55,18 @@ export default function FamilyConnect() {
             <TabsTrigger value="notifications" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Bell className="w-4 h-4" />
               <span className="hidden sm:inline">Alerts</span>
+            </TabsTrigger>
+            <TabsTrigger value="photo-album" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Image className="w-4 h-4" />
+              <span className="hidden sm:inline">Photos</span>
+            </TabsTrigger>
+            <TabsTrigger value="timeline" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <Calendar className="w-4 h-4" />
+              <span className="hidden sm:inline">Timeline</span>
+            </TabsTrigger>
+            <TabsTrigger value="remote" className="flex items-center gap-2 py-3 min-h-[44px]">
+              <MessageSquare className="w-4 h-4" />
+              <span className="hidden sm:inline">Send Now</span>
             </TabsTrigger>
             <TabsTrigger value="calendar" className="flex items-center gap-2 py-3 min-h-[44px]">
               <Calendar className="w-4 h-4" />
@@ -94,6 +109,24 @@ export default function FamilyConnect() {
                 Notifications & Alerts
               </h2>
               <NotificationCenter />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="photo-album">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <SharedPhotoAlbum />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="timeline">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <MemoryTimelineBuilder />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="remote">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <RemoteTriggerPanel />
             </div>
           </TabsContent>
 
