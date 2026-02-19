@@ -8,7 +8,7 @@ import { base44 } from '@/api/base44Client';
 export default function MusicPlayer({ currentEra, onClose }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
-  const [audioElement, setAudioElement] = useState(null);
+  const audioRef = React.useRef(null);
 
   const { data: songs = [] } = useQuery({
     queryKey: ['music', currentEra],
@@ -24,18 +24,46 @@ export default function MusicPlayer({ currentEra, onClose }) {
     }
   }, [songs]);
 
+  useEffect(() => {
+    // Create audio element
+    if (!audioRef.current) {
+      audioRef.current = new Audio();
+      audioRef.current.addEventListener('ended', () => {
+        setIsPlaying(false);
+        nextSong();
+      });
+    }
+
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
   const playPause = () => {
     if (isPlaying) {
-      if (audioElement) audioElement.pause();
+      audioRef.current?.pause();
       setIsPlaying(false);
     } else {
       if (currentSong) {
-        // For demo purposes, speak the song title
+        // Announce song
         const utterance = new SpeechSynthesisUtterance(
           `Now playing ${currentSong.title}${currentSong.artist ? ` by ${currentSong.artist}` : ''}`
         );
         utterance.rate = 0.95;
         window.speechSynthesis.speak(utterance);
+
+        // Play audio if URL exists, otherwise generate pleasant tones
+        if (currentSong.youtube_url) {
+          // Note: Direct YouTube playback requires YouTube API
+          alert('YouTube playback requires API integration. For now, enjoying the song announcement!');
+        } else {
+          // Generate pleasant background music using Web Audio API
+          playGeneratedMusic();
+        }
+        
         setIsPlaying(true);
         
         // Log activity
@@ -47,8 +75,51 @@ export default function MusicPlayer({ currentEra, onClose }) {
     }
   };
 
+  const playGeneratedMusic = () => {
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const duration = 30; // 30 seconds per song
+      
+      // Create pleasant melody tones based on mood
+      const frequencies = currentSong.mood === 'calm' 
+        ? [261.63, 293.66, 329.63, 349.23, 392.00] // C major scale (calm)
+        : [440, 493.88, 523.25, 587.33, 659.25]; // A major scale (uplifting)
+      
+      let time = audioContext.currentTime;
+      
+      // Play a pleasant melody
+      frequencies.forEach((freq, i) => {
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        oscillator.frequency.value = freq;
+        oscillator.type = 'sine';
+        
+        gainNode.gain.setValueAtTime(0, time + i * 0.5);
+        gainNode.gain.linearRampToValueAtTime(0.2, time + i * 0.5 + 0.1);
+        gainNode.gain.linearRampToValueAtTime(0, time + i * 0.5 + 0.4);
+        
+        oscillator.start(time + i * 0.5);
+        oscillator.stop(time + i * 0.5 + 0.5);
+      });
+      
+      // Auto-stop after duration
+      setTimeout(() => {
+        setIsPlaying(false);
+        nextSong();
+      }, duration * 1000);
+      
+    } catch (error) {
+      console.error('Audio generation failed:', error);
+    }
+  };
+
   const nextSong = () => {
     if (songs.length === 0) return;
+    audioRef.current?.pause();
     const currentIndex = songs.findIndex(s => s.id === currentSong?.id);
     const nextIndex = (currentIndex + 1) % songs.length;
     setCurrentSong(songs[nextIndex]);
