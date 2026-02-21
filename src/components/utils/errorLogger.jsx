@@ -68,9 +68,17 @@ export const initGlobalErrorHandler = () => {
   });
 
   window.addEventListener('unhandledrejection', (event) => {
-    ErrorLogger.log(new Error(event.reason), {
-      type: 'unhandled_promise_rejection'
+    const errorObj = event.reason instanceof Error 
+      ? event.reason 
+      : new Error(typeof event.reason === 'string' ? event.reason : 'Promise rejected');
+    
+    ErrorLogger.log(errorObj, {
+      type: 'unhandled_promise_rejection',
+      reason: event.reason
     });
+    
+    // Prevent default to avoid double error logging
+    event.preventDefault();
   });
 };
 
