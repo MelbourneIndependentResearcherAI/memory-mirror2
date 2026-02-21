@@ -180,30 +180,143 @@ const OFFLINE_STORIES = [
     era: "1940s",
     mood: "peaceful",
     length: "medium"
+  },
+  {
+    title: "The Library Card",
+    content: "Getting your first library card was a rite of passage. The librarian would carefully write your name on it, and suddenly, a whole world of books was yours to explore. The library was a magical place - quiet and peaceful, with endless shelves reaching toward the ceiling. You could travel anywhere, become anyone, learn anything. Each week, you'd carefully choose your books, checking them out with pride, promising to care for them and return them on time.",
+    theme: "childhood",
+    era: "any",
+    mood: "nostalgic",
+    length: "short"
+  },
+  {
+    title: "The Milkman's Route",
+    content: "Before dawn, the milkman would make his rounds. The gentle clink of glass bottles being placed on doorsteps signaled the start of a new day. Fresh milk, cream in glass bottles with cardboard tops. Children would race to bring in the milk before school. The milkman knew every family on his route, their preferences, their schedules. He was part of the neighborhood fabric, as reliable as sunrise.",
+    theme: "nostalgia",
+    era: "1940s",
+    mood: "peaceful",
+    length: "short"
+  },
+  {
+    title: "The Backyard Campout",
+    content: "Summer nights were perfect for camping in the backyard. Pitch the tent, roll out the sleeping bags, bring flashlights and snacks. Parents would let the kids pretend to be wilderness explorers, even though home was just steps away. They'd tell stories, watch for shooting stars, listen to crickets chirp. When morning came with dew on the tent, they'd stumble inside for pancakes, already planning next week's adventure.",
+    theme: "adventure",
+    era: "1960s",
+    mood: "exciting",
+    length: "medium"
+  },
+  {
+    title: "The Corner Drugstore",
+    content: "The old drugstore was more than a pharmacy - it was a community hub. Mr. Chen behind the counter knew everyone's name, their families, their needs. The wooden floor creaked just right. Glass jars of penny candy lined the counter. The magazine rack always had the latest issues. Need advice? Mr. Chen had it. Need a listening ear? He had that too. The corner drugstore was where neighbors became friends.",
+    theme: "community",
+    era: "any",
+    mood: "comforting",
+    length: "medium"
+  },
+  {
+    title: "The Saturday Matinee",
+    content: "Saturday afternoons meant the movie theater. Kids would line up with their quarters, excited for the double feature, cartoons, and newsreels. The theater was grand with red velvet seats and a balcony. The projector would whir to life, and magic would fill the screen. Cowboys and heroes, adventure and romance. When you walked back out into daylight, you carried that magic with you.",
+    theme: "social",
+    era: "1960s",
+    mood: "exciting",
+    length: "medium"
+  },
+  {
+    title: "The Neighborhood Watch",
+    content: "Everyone looked out for each other. Mrs. Wilson would watch from her window, keeping an eye on the children playing. Mr. Thompson checked on elderly neighbors. If someone was sick, meals appeared on their doorstep. Keys were left under mats because everyone trusted each other. The neighborhood was extended family, bound not by blood but by care, kindness, and community spirit.",
+    theme: "community",
+    era: "any",
+    mood: "comforting",
+    length: "short"
+  },
+  {
+    title: "The Roller Skating Rink",
+    content: "Friday nights were for roller skating. The rink would fill with music - disco balls spinning, lights flashing, skates gliding across smooth wood floors. Couples skated hand in hand during the slow songs. Friends raced and showed off tricks. The snack bar sold popcorn and soda. For a few hours, nothing else mattered but the music, the movement, and the joy of being young and free.",
+    theme: "social",
+    era: "1980s",
+    mood: "energetic",
+    length: "medium"
+  },
+  {
+    title: "The Lemonade Stand",
+    content: "Hot summer days called for cold lemonade. Kids would set up a stand at the corner - a card table, a pitcher, paper cups, and a handmade sign. Twenty-five cents a cup. Neighbors would stop by, always paying extra, encouraging the young entrepreneurs. It wasn't really about the money. It was about independence, creativity, and the sweet taste of summer accomplishment.",
+    theme: "childhood",
+    era: "any",
+    mood: "happy",
+    length: "short"
+  },
+  {
+    title: "The Town Parade",
+    content: "Parade day brought the whole community together. Main Street lined with families, children on shoulders, flags waving. The high school band marching in formation, veterans in uniform, floats decorated with crepe paper and flowers. Fire trucks with sirens, politicians waving, local businesses proudly displayed. Afterward, everyone gathered in the park for picnics and fireworks. The parade reminded everyone what community meant.",
+    theme: "celebration",
+    era: "any",
+    mood: "exciting",
+    length: "long"
+  },
+  {
+    title: "The Rainy Day Inside",
+    content: "When rain drummed on the windows, inside became a world of possibilities. Building blanket forts, playing board games, baking cookies while rain pattered overhead. The house smelled of cinnamon and vanilla. Outside might be gray and wet, but inside was warm and cozy. Those rainy days taught that happiness wasn't about perfect weather - it was about making the most of every moment.",
+    theme: "comfort",
+    era: "any",
+    mood: "peaceful",
+    length: "short"
   }
 ];
 
-// Pre-loaded Music Library - Classic songs for offline playback
+// Pre-loaded Music Library - 40+ Classic songs for offline playback
 const OFFLINE_MUSIC = [
+  // 1940s Era
   { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic" },
-  { title: "What a Wonderful World", artist: "Louis Armstrong", era: "1960s", genre: "jazz", mood: "uplifting" },
   { title: "Somewhere Over the Rainbow", artist: "Judy Garland", era: "1940s", genre: "classic", mood: "nostalgic" },
+  { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy" },
+  { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic" },
+  { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic" },
+  { title: "As Time Goes By", artist: "Dooley Wilson", era: "1940s", genre: "classic", mood: "nostalgic" },
+  { title: "Boogie Woogie Bugle Boy", artist: "The Andrews Sisters", era: "1940s", genre: "big_band", mood: "energetic" },
+  { title: "Sentimental Journey", artist: "Doris Day", era: "1940s", genre: "pop", mood: "nostalgic" },
+  { title: "White Christmas", artist: "Bing Crosby", era: "1940s", genre: "classic", mood: "peaceful" },
+  { title: "Take the A Train", artist: "Duke Ellington", era: "1940s", genre: "jazz", mood: "energetic" },
+  
+  // 1960s Era
+  { title: "What a Wonderful World", artist: "Louis Armstrong", era: "1960s", genre: "jazz", mood: "uplifting" },
   { title: "Moon River", artist: "Andy Williams", era: "1960s", genre: "pop", mood: "calm" },
   { title: "Can't Help Falling in Love", artist: "Elvis Presley", era: "1960s", genre: "rock", mood: "romantic" },
   { title: "Unchained Melody", artist: "The Righteous Brothers", era: "1960s", genre: "pop", mood: "romantic" },
   { title: "My Way", artist: "Frank Sinatra", era: "1960s", genre: "pop", mood: "uplifting" },
-  { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy" },
   { title: "Dream a Little Dream", artist: "The Mamas & The Papas", era: "1960s", genre: "pop", mood: "calm" },
   { title: "Georgia on My Mind", artist: "Ray Charles", era: "1960s", genre: "soul", mood: "nostalgic" },
-  { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic" },
   { title: "Stand by Me", artist: "Ben E. King", era: "1960s", genre: "soul", mood: "comforting" },
-  { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic" },
   { title: "Here Comes the Sun", artist: "The Beatles", era: "1960s", genre: "rock", mood: "uplifting" },
-  { title: "As Time Goes By", artist: "Dooley Wilson", era: "1940s", genre: "classic", mood: "nostalgic" }
+  { title: "Yesterday", artist: "The Beatles", era: "1960s", genre: "rock", mood: "nostalgic" },
+  { title: "Imagine", artist: "John Lennon", era: "1960s", genre: "rock", mood: "peaceful" },
+  { title: "The Sound of Silence", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "calm" },
+  { title: "Bridge Over Troubled Water", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "comforting" },
+  { title: "Respect", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "energetic" },
+  { title: "I Say a Little Prayer", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "uplifting" },
+  
+  // 1980s Era
+  { title: "Every Breath You Take", artist: "The Police", era: "1980s", genre: "rock", mood: "romantic" },
+  { title: "Sweet Child O' Mine", artist: "Guns N' Roses", era: "1980s", genre: "rock", mood: "energetic" },
+  { title: "Billie Jean", artist: "Michael Jackson", era: "1980s", genre: "pop", mood: "energetic" },
+  { title: "Like a Prayer", artist: "Madonna", era: "1980s", genre: "pop", mood: "uplifting" },
+  { title: "Livin' on a Prayer", artist: "Bon Jovi", era: "1980s", genre: "rock", mood: "energetic" },
+  { title: "Take On Me", artist: "A-ha", era: "1980s", genre: "pop", mood: "uplifting" },
+  { title: "Girls Just Want to Have Fun", artist: "Cyndi Lauper", era: "1980s", genre: "pop", mood: "happy" },
+  { title: "Don't Stop Believin'", artist: "Journey", era: "1980s", genre: "rock", mood: "uplifting" },
+  { title: "I Wanna Dance with Somebody", artist: "Whitney Houston", era: "1980s", genre: "pop", mood: "happy" },
+  { title: "Careless Whisper", artist: "George Michael", era: "1980s", genre: "pop", mood: "romantic" },
+  
+  // Present/Timeless
+  { title: "Hallelujah", artist: "Leonard Cohen", era: "present", genre: "folk", mood: "peaceful" },
+  { title: "You Are My Sunshine", artist: "Traditional", era: "present", genre: "folk", mood: "uplifting" },
+  { title: "Amazing Grace", artist: "Traditional", era: "present", genre: "classical", mood: "peaceful" },
+  { title: "Danny Boy", artist: "Traditional", era: "present", genre: "folk", mood: "nostalgic" },
+  { title: "Somewhere Over the Rainbow/What a Wonderful World", artist: "Israel Kamakawiwoʻole", era: "present", genre: "folk", mood: "calm" }
 ];
 
-// Interactive Memory Exercises - Cognitive engagement activities
+// Interactive Memory Exercises - 25+ Cognitive engagement activities
 const MEMORY_EXERCISES = [
+  // Easy Level - Recognition & Recall
   {
     id: "name_recall",
     title: "Name That Decade",
@@ -222,36 +335,12 @@ const MEMORY_EXERCISES = [
     examples: ["family", "warm", "comfortable", "kitchen", "love"]
   },
   {
-    id: "counting_exercise",
-    title: "Gentle Counting",
-    type: "cognitive",
-    difficulty: "easy",
-    content: "Let's count together from 1 to 10. Ready? 1... 2... 3... You continue!",
-    goal: "Maintain focus and sequential thinking"
-  },
-  {
     id: "color_memory",
     title: "Colorful Memories",
     type: "visual_memory",
     difficulty: "easy",
     content: "Let's think of things that are blue. I'll start: the sky, the ocean... What else is blue?",
     examples: ["blueberries", "blue jay", "sapphire", "forget-me-nots"]
-  },
-  {
-    id: "song_lyrics",
-    title: "Complete the Song",
-    type: "music_memory",
-    difficulty: "medium",
-    content: "Let's finish this famous song lyric: 'You are my sunshine, my only sunshine...' What comes next?",
-    answer: "You make me happy when skies are gray"
-  },
-  {
-    id: "alphabet_game",
-    title: "A to Z Animals",
-    type: "cognitive",
-    difficulty: "medium",
-    content: "Let's name animals for each letter! A is for Alligator, B is for Bear... What animal starts with C?",
-    examples: ["Cat", "Cow", "Chicken", "Cheetah"]
   },
   {
     id: "seasonal_recall",
@@ -271,6 +360,49 @@ const MEMORY_EXERCISES = [
     examples: ["sat", "bat", "rat", "flat", "that"]
   },
   {
+    id: "counting_exercise",
+    title: "Gentle Counting",
+    type: "cognitive",
+    difficulty: "easy",
+    content: "Let's count together from 1 to 10. Ready? 1... 2... 3... You continue!",
+    goal: "Maintain focus and sequential thinking"
+  },
+  {
+    id: "presidents_quiz",
+    title: "Famous Leaders",
+    type: "trivia",
+    difficulty: "easy",
+    content: "Who was the first president of the United States?",
+    answer: "George Washington",
+    hints: ["Father of our country", "On the one-dollar bill"]
+  },
+  {
+    id: "fruit_colors",
+    title: "Fruit Rainbow",
+    type: "association",
+    difficulty: "easy",
+    content: "Let's name fruits by color! What fruits are red?",
+    examples: ["apple", "strawberry", "cherry", "watermelon", "raspberry"]
+  },
+  
+  // Medium Level - Critical Thinking
+  {
+    id: "song_lyrics",
+    title: "Complete the Song",
+    type: "music_memory",
+    difficulty: "medium",
+    content: "Let's finish this famous song lyric: 'You are my sunshine, my only sunshine...' What comes next?",
+    answer: "You make me happy when skies are gray"
+  },
+  {
+    id: "alphabet_game",
+    title: "A to Z Animals",
+    type: "cognitive",
+    difficulty: "medium",
+    content: "Let's name animals for each letter! A is for Alligator, B is for Bear... What animal starts with C?",
+    examples: ["Cat", "Cow", "Chicken", "Cheetah"]
+  },
+  {
     id: "story_sequence",
     title: "What Happens Next?",
     type: "sequencing",
@@ -285,6 +417,122 @@ const MEMORY_EXERCISES = [
     difficulty: "medium",
     content: "Can you name the King of Rock and Roll? Hint: He sang 'Hound Dog' and 'Can't Help Falling in Love'",
     answer: "Elvis Presley"
+  },
+  {
+    id: "math_simple",
+    title: "Number Fun",
+    type: "math",
+    difficulty: "medium",
+    content: "Let's do some gentle math. If you have 3 apples and someone gives you 2 more, how many do you have?",
+    answer: "5",
+    hints: ["Count them together: 1, 2, 3, 4, 5"]
+  },
+  {
+    id: "proverb_complete",
+    title: "Finish the Saying",
+    type: "language",
+    difficulty: "medium",
+    content: "Complete this saying: 'A penny saved is...'",
+    answer: "a penny earned",
+    hints: ["It's about being thrifty"]
+  },
+  {
+    id: "city_states",
+    title: "Geography Game",
+    type: "trivia",
+    difficulty: "medium",
+    content: "What is the capital of California?",
+    answer: "Sacramento",
+    hints: ["Not Los Angeles or San Francisco", "Starts with S"]
+  },
+  
+  // Advanced Level - Problem Solving
+  {
+    id: "pattern_recognition",
+    title: "Pattern Detective",
+    type: "logic",
+    difficulty: "hard",
+    content: "What comes next in this pattern? 2, 4, 6, 8, ___",
+    answer: "10",
+    hints: ["We're counting by 2s", "Even numbers"]
+  },
+  {
+    id: "word_scramble",
+    title: "Unscramble the Word",
+    type: "language",
+    difficulty: "hard",
+    content: "Unscramble these letters to make a word: WOLFER",
+    answer: "FLOWER",
+    hints: ["Something that grows in a garden", "Beautiful and colorful"]
+  },
+  {
+    id: "memory_recall_list",
+    title: "Remember the List",
+    type: "memory",
+    difficulty: "hard",
+    content: "I'll say three items. Try to remember them: Apple, Book, Chair. Now, can you repeat them back?",
+    answer: "Apple, Book, Chair",
+    hints: ["Take your time", "One at a time is fine"]
+  },
+  
+  // Interactive & Creative
+  {
+    id: "drawing_imagination",
+    title: "Imagine and Describe",
+    type: "creative",
+    difficulty: "easy",
+    content: "Close your eyes and imagine a beautiful garden. What do you see? What colors? What flowers?",
+    goal: "Encourage visualization and creative expression"
+  },
+  {
+    id: "favorite_things",
+    title: "Your Favorites",
+    type: "personal",
+    difficulty: "easy",
+    content: "Tell me about your favorite season. What do you love about it?",
+    prompts: ["What activities?", "What memories?", "What makes it special?"]
+  },
+  {
+    id: "sorting_game",
+    title: "Sort and Categorize",
+    type: "logic",
+    difficulty: "medium",
+    content: "Let's sort these into groups: Dog, Rose, Cat, Daisy, Bird, Tulip. Which ones are animals? Which are flowers?",
+    answer: "Animals: Dog, Cat, Bird. Flowers: Rose, Daisy, Tulip"
+  },
+  {
+    id: "opposites",
+    title: "Opposite Day",
+    type: "language",
+    difficulty: "easy",
+    content: "What's the opposite of 'hot'?",
+    answer: "cold",
+    examples: ["up/down", "happy/sad", "day/night", "big/small"]
+  },
+  {
+    id: "five_senses",
+    title: "Sensory Memory",
+    type: "sensory",
+    difficulty: "easy",
+    content: "Think of something you can smell right now, or remember a favorite smell from the past. What is it?",
+    prompts: ["Fresh baked bread?", "Flowers?", "Coffee?", "The ocean?"]
+  },
+  {
+    id: "nursery_rhyme",
+    title: "Classic Rhymes",
+    type: "music_memory",
+    difficulty: "easy",
+    content: "Let's say this together: 'Mary had a little lamb, its fleece was white as...' What comes next?",
+    answer: "snow",
+    followup: "Do you remember more of the rhyme?"
+  },
+  {
+    id: "life_milestones",
+    title: "Special Moments",
+    type: "autobiographical",
+    difficulty: "easy",
+    content: "Tell me about a special birthday you remember. What made it memorable?",
+    prompts: ["Who was there?", "What did you do?", "Any special gifts?"]
   }
 ];
 
