@@ -171,31 +171,43 @@ export const downloadAudioForOffline = async (audioItem) => {
   if (!db) await initOfflineDB();
 
   try {
+    if (!audioItem?.audio_url) {
+      throw new Error('Invalid audio item - missing audio_url');
+    }
+    
     const response = await fetch(audioItem.audio_url);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch audio: ${response.status}`);
+    }
+    
     const blob = await response.blob();
     
     // Store in IndexedDB
     return new Promise((resolve, reject) => {
-      const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readwrite');
-      const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
+      try {
+        const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readwrite');
+        const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
 
-      const data = {
-        id: audioItem.id,
-        title: audioItem.title,
-        type: audioItem.type, // 'music', 'story', 'message'
-        audio_blob: blob,
-        source_url: audioItem.audio_url,
-        metadata: audioItem.metadata || {},
-        downloaded_at: new Date().toISOString(),
-        storage_size: blob.size
-      };
+        const data = {
+          id: audioItem.id || `audio_${Date.now()}`,
+          title: audioItem.title || 'Untitled',
+          type: audioItem.type || 'audio',
+          audio_blob: blob,
+          source_url: audioItem.audio_url,
+          metadata: audioItem.metadata || {},
+          downloaded_at: new Date().toISOString(),
+          storage_size: blob.size
+        };
 
-      const request = store.put(data);
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
+        const request = store.put(data);
+        request.onerror = () => reject(request.error);
+        request.onsuccess = () => resolve(request.result);
+      } catch (error) {
+        reject(error);
+      }
     });
   } catch (error) {
-    console.error('Failed to download audio:', error);
+    console.error('Failed to download audio:', error.message);
     throw error;
   }
 };
