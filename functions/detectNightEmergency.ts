@@ -173,17 +173,29 @@ Respond in this exact JSON format:
       aiAnalysis.automationResults = automationResults;
     }
 
-    // Create caregiver alert if needed
+    // Create caregiver alert with nuanced severity levels
     if (aiAnalysis.notifications?.alertCaregiver) {
+      const severityMapping = {
+        low: { title: 'Night Watch: Attention Needed', priority: 'low', emoji: 'ℹ️' },
+        medium: { title: 'Night Watch: Check Required', priority: 'medium', emoji: '⚠️' },
+        high: { title: 'Night Watch: Urgent Attention', priority: 'high', emoji: '🚨' },
+        critical: { title: 'Night Watch: EMERGENCY', priority: 'urgent', emoji: '🆘' }
+      };
+      
+      const alertLevel = severityMapping[aiAnalysis.notifications.urgencyLevel] || severityMapping.medium;
+      
       await base44.asServiceRole.entities.CaregiverAlert.create({
         alert_type: aiAnalysis.emergencyType.toLowerCase(),
-        severity: aiAnalysis.notifications.urgencyLevel,
-        message: `Night Watch Emergency: ${aiAnalysis.emergencyType} detected - ${aiAnalysis.reasoning}`,
+        severity: alertLevel.priority,
+        message: `${alertLevel.emoji} ${alertLevel.title}\n\nType: ${aiAnalysis.emergencyType}\nDistress Level: ${aiAnalysis.distressLevel}/10\n\n${aiAnalysis.reasoning}\n\nAutomated actions: ${aiAnalysis.immediateActions.join(', ')}`,
         pattern_data: {
           voiceTranscript,
           distressLevel: aiAnalysis.distressLevel,
           emergencyType: aiAnalysis.emergencyType,
-          automatedActions: aiAnalysis.immediateActions
+          urgencyLevel: aiAnalysis.notifications.urgencyLevel,
+          automatedActions: aiAnalysis.immediateActions,
+          bedSensorData,
+          timestamp: new Date().toISOString()
         }
       }).catch(() => {});
     }

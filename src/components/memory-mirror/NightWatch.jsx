@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap, Lightbulb, Thermometer } from 'lucide-react';
+import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap, Lightbulb, Thermometer, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
+import RemoteCheckIn from '../caregiver/RemoteCheckIn';
 
 // Night Watch AI System - Prevents wandering, provides comfort, monitors safety
 class NightWatchSystem {
@@ -195,6 +197,8 @@ export default function NightWatch({ onClose }) {
   const [bedSensorStatus, setBedSensorStatus] = useState({ inBed: true, timeOutOfBed: 0 });
   const [emergencyDetection, setEmergencyDetection] = useState(null);
   const [automatedActionsLog, setAutomatedActionsLog] = useState([]);
+  const [showRemoteCheckIn, setShowRemoteCheckIn] = useState(false);
+  const [alertHistory, setAlertHistory] = useState([]);
   const systemRef = useRef(null);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
@@ -332,7 +336,26 @@ export default function NightWatch({ onClose }) {
   };
 
   const handleEmergencyDetected = async (detection) => {
-    toast.error(`Emergency Detected: ${detection.emergencyType}`);
+    const severityEmojis = {
+      low: 'ℹ️',
+      medium: '⚠️',
+      high: '🚨',
+      critical: '🆘'
+    };
+    
+    const urgency = detection.notifications?.urgencyLevel || 'medium';
+    const emoji = severityEmojis[urgency];
+    
+    // Different toast types based on severity
+    if (urgency === 'critical') {
+      toast.error(`${emoji} CRITICAL: ${detection.emergencyType}`);
+    } else if (urgency === 'high') {
+      toast.error(`${emoji} URGENT: ${detection.emergencyType}`);
+    } else if (urgency === 'medium') {
+      toast.warning(`${emoji} ${detection.emergencyType} detected`);
+    } else {
+      toast.info(`${emoji} ${detection.emergencyType} - monitoring`);
+    }
     
     // Speak comfort response
     speakText(detection.comfortResponse);
@@ -345,17 +368,30 @@ export default function NightWatch({ onClose }) {
         {
           timestamp: new Date().toISOString(),
           type: detection.emergencyType,
+          urgency,
           actions: detection.automationResults
         }
       ]);
     }
     
+    // Add to alert history
+    setAlertHistory(prev => [
+      {
+        type: detection.emergencyType,
+        urgency,
+        message: detection.reasoning,
+        timestamp: new Date().toISOString(),
+        distressLevel: detection.distressLevel
+      },
+      ...prev.slice(0, 9) // Keep last 10 alerts
+    ]);
+    
     // Show emergency alert
     setCurrentAlert({
       type: detection.emergencyType,
-      message: `🚨 ${detection.emergencyType} DETECTED - Automated safety protocols activated`,
+      message: `${emoji} ${detection.emergencyType} DETECTED - ${urgency.toUpperCase()} priority`,
       timestamp: new Date(),
-      urgency: detection.notifications?.urgencyLevel || 'high'
+      urgency
     });
   };
 
@@ -607,28 +643,58 @@ export default function NightWatch({ onClose }) {
           </CardContent>
         </Card>
 
-        {/* Current Alert */}
+        {/* Current Alert with Severity Levels */}
         {currentAlert && (
-          <Card className="mb-6 bg-red-900 border-red-700">
+          <Card className={`mb-6 ${
+            currentAlert.urgency === 'critical' ? 'bg-red-950 border-red-600 animate-pulse' :
+            currentAlert.urgency === 'high' ? 'bg-red-900 border-red-700' :
+            currentAlert.urgency === 'medium' ? 'bg-orange-900 border-orange-700' :
+            'bg-yellow-900 border-yellow-700'
+          }`}>
             <CardContent className="pt-6">
               <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3">
-                  <AlertTriangle className="w-6 h-6 text-red-300 flex-shrink-0 mt-1" />
-                  <div>
-                    <h3 className="font-bold text-lg text-white mb-1">Alert</h3>
-                    <p className="text-red-200">{currentAlert.message}</p>
-                    <p className="text-sm text-red-300 mt-1">
+                <div className="flex items-start gap-3 flex-1">
+                  <AlertTriangle className={`w-6 h-6 flex-shrink-0 mt-1 ${
+                    currentAlert.urgency === 'critical' || currentAlert.urgency === 'high' 
+                      ? 'text-red-300' 
+                      : currentAlert.urgency === 'medium' 
+                      ? 'text-orange-300' 
+                      : 'text-yellow-300'
+                  }`} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="font-bold text-lg text-white">Alert</h3>
+                      <Badge className={`${
+                        currentAlert.urgency === 'critical' ? 'bg-red-600' :
+                        currentAlert.urgency === 'high' ? 'bg-orange-600' :
+                        currentAlert.urgency === 'medium' ? 'bg-yellow-600' :
+                        'bg-blue-600'
+                      } text-white uppercase text-xs`}>
+                        {currentAlert.urgency}
+                      </Badge>
+                    </div>
+                    <p className="text-white">{currentAlert.message}</p>
+                    <p className="text-sm text-slate-300 mt-1">
                       {currentAlert.timestamp.toLocaleTimeString()}
                     </p>
                   </div>
                 </div>
-                <Button
-                  onClick={handleEmergencyCall}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  <Phone className="w-4 h-4 mr-2" />
-                  Call Caregiver
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    onClick={() => setShowRemoteCheckIn(true)}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    <Video className="w-4 h-4 mr-2" />
+                    Check In
+                  </Button>
+                  <Button
+                    onClick={handleEmergencyCall}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    <Phone className="w-4 h-4 mr-2" />
+                    Call
+                  </Button>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -696,6 +762,51 @@ export default function NightWatch({ onClose }) {
           </Card>
         )}
 
+        {/* Alert History */}
+        {alertHistory.length > 0 && (
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Alert History
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-60 overflow-y-auto">
+                {alertHistory.map((alert, idx) => (
+                  <div key={idx} className={`p-3 rounded-lg text-sm ${
+                    alert.urgency === 'critical' ? 'bg-red-900/40 border border-red-700' :
+                    alert.urgency === 'high' ? 'bg-orange-900/40 border border-orange-700' :
+                    alert.urgency === 'medium' ? 'bg-yellow-900/40 border border-yellow-700' :
+                    'bg-blue-900/40 border border-blue-700'
+                  }`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-white">{alert.type}</span>
+                        <Badge className={`text-xs ${
+                          alert.urgency === 'critical' ? 'bg-red-600' :
+                          alert.urgency === 'high' ? 'bg-orange-600' :
+                          alert.urgency === 'medium' ? 'bg-yellow-600' :
+                          'bg-blue-600'
+                        }`}>
+                          {alert.urgency}
+                        </Badge>
+                      </div>
+                      <span className="text-xs text-slate-400">
+                        {new Date(alert.timestamp).toLocaleTimeString()}
+                      </span>
+                    </div>
+                    <p className="text-xs text-slate-300">{alert.message}</p>
+                    <div className="text-xs text-slate-400 mt-1">
+                      Distress: {alert.distressLevel}/10
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Automated Actions Log */}
         {automatedActionsLog.length > 0 && (
           <Card className="bg-slate-800 border-slate-700 mb-6">
@@ -710,7 +821,12 @@ export default function NightWatch({ onClose }) {
                 {automatedActionsLog.map((log, idx) => (
                   <div key={idx} className="p-3 bg-cyan-900/30 rounded-lg text-white text-sm">
                     <div className="flex items-center justify-between mb-1">
-                      <div className="font-semibold text-cyan-300">{log.type}</div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-cyan-300">{log.type}</span>
+                        {log.urgency && (
+                          <Badge className="text-xs bg-cyan-700">{log.urgency}</Badge>
+                        )}
+                      </div>
                       <div className="text-xs text-slate-400">
                         {new Date(log.timestamp).toLocaleTimeString()}
                       </div>
@@ -802,6 +918,14 @@ export default function NightWatch({ onClose }) {
           </Card>
         )}
       </div>
+
+      {/* Remote Check-In Modal */}
+      {showRemoteCheckIn && (
+        <RemoteCheckIn 
+          onClose={() => setShowRemoteCheckIn(false)}
+          nightWatchActive={isActive}
+        />
+      )}
     </div>
   );
 }
