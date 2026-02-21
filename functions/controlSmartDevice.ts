@@ -12,8 +12,8 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { device_id, action, parameters = {}, routine_id = null } = body;
 
-    // Fetch device configuration
-    const devices = await base44.entities.SmartDevice.filter({ device_id });
+    // Fetch device configuration using service role
+    const devices = await base44.asServiceRole.entities.SmartDevice.filter({ device_id });
     if (!devices || devices.length === 0) {
       return Response.json({ error: 'Device not found' }, { status: 404 });
     }
@@ -59,16 +59,16 @@ Deno.serve(async (req) => {
       ...extractStateFromResponse(device.device_type, action, deviceResponse)
     };
 
-    await base44.entities.SmartDevice.update(device.id, {
+    await base44.asServiceRole.entities.SmartDevice.update(device.id, {
       current_state: updatedState
     });
 
     // Log routine execution if applicable
     if (routine_id) {
-      const routines = await base44.entities.SmartHomeRoutine.filter({ id: routine_id });
+      const routines = await base44.asServiceRole.entities.SmartHomeRoutine.filter({ id: routine_id });
       if (routines.length > 0) {
         const routine = routines[0];
-        await base44.entities.SmartHomeRoutine.update(routine.id, {
+        await base44.asServiceRole.entities.SmartHomeRoutine.update(routine.id, {
           execution_count: (routine.execution_count || 0) + 1,
           last_executed: new Date().toISOString()
         }).catch(() => {});

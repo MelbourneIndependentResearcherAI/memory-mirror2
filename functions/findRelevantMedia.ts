@@ -11,10 +11,10 @@ Deno.serve(async (req) => {
 
     const { context, current_era, conversation_topics } = await req.json();
 
-    // Fetch family media and memories
+    // Fetch family media and memories using service role
     const [media, memories] = await Promise.all([
-      base44.entities.FamilyMedia.list('-created_date', 100),
-      base44.entities.Memory.list('-created_date', 100)
+      base44.asServiceRole.entities.FamilyMedia.list('-created_date', 100),
+      base44.asServiceRole.entities.Memory.list('-created_date', 100)
     ]);
 
     // Use AI to intelligently match media/memories to conversation context
