@@ -28,6 +28,9 @@ if (typeof window !== 'undefined') {
   initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
   offlineDataCache.init().catch(e => console.log('Offline data cache init:', e.message));
   
+  // Register service worker for offline support
+  registerServiceWorker();
+  
   // Request persistent storage for offline data
   requestPersistentStorage();
   
@@ -38,8 +41,8 @@ if (typeof window !== 'undefined') {
   
   // Preload essential data for 100% offline mode
   import('@/components/utils/offlinePreloader').then(module => {
-    module.preloadEssentialData().catch(e => 
-      console.log('Preload warning:', e.message)
+    module.default().catch(e => 
+      console.log('Preload warning:', e.message || 'Offline preload skipped')
     );
   });
 }

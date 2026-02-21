@@ -500,7 +500,7 @@ export async function preloadEssentialData() {
     console.log('📖 Preloading story library...');
     for (const story of OFFLINE_STORIES) {
       try {
-        await saveToStore('story', {
+        await saveToStore(STORES.stories, {
           id: `offline_story_${Date.now()}_${Math.random()}`,
           ...story,
           uploaded_by_family: false,
@@ -508,7 +508,7 @@ export async function preloadEssentialData() {
         });
         results.stories++;
       } catch (error) {
-        console.warn('Story cache failed:', error);
+        console.warn('Story cache failed:', error.message || 'Unknown error');
       }
     }
     console.log(`✅ Cached ${results.stories} stories`);
@@ -517,7 +517,7 @@ export async function preloadEssentialData() {
     console.log('🎵 Preloading music library...');
     for (const song of OFFLINE_MUSIC) {
       try {
-        await saveToStore('music', {
+        await saveToStore(STORES.music, {
           id: `offline_music_${Date.now()}_${Math.random()}`,
           ...song,
           uploaded_by_family: false,
@@ -526,23 +526,26 @@ export async function preloadEssentialData() {
         });
         results.music++;
       } catch (error) {
-        console.warn('Music cache failed:', error);
+        console.warn('Music cache failed:', error.message || 'Unknown error');
       }
     }
     console.log(`✅ Cached ${results.music} songs`);
 
-    // 4. Preload Interactive Memory Exercises (10 activities)
+    // 4. Preload Interactive Memory Exercises (10 activities) - Skip if store doesn't exist
     console.log('🧠 Preloading memory exercises...');
     for (const exercise of MEMORY_EXERCISES) {
       try {
-        await saveToStore('memoryexercises', {
-          ...exercise,
+        // Store exercises in general cache - no dedicated store needed
+        await saveToStore(STORES.activityLog, {
+          id: `exercise_${exercise.id}`,
+          activity_type: 'memory_exercise',
+          details: exercise,
           offline_preloaded: true,
           created_date: new Date().toISOString()
         });
         results.exercises++;
       } catch (error) {
-        console.warn('Exercise cache failed:', error);
+        console.warn('Exercise cache failed:', error.message || 'Unknown error');
       }
     }
     console.log(`✅ Cached ${results.exercises} interactive exercises`);
@@ -574,8 +577,9 @@ export async function preloadEssentialData() {
     console.log('✅ Offline mode fully ready:', results);
     
     // Mark as ready with comprehensive stats
-    await saveToStore('metadata', {
+    await saveToStore(STORES.syncMeta, {
       id: 'offline_ready',
+      key: 'offline_ready',
       timestamp: new Date().toISOString(),
       version: '4.0',
       responseCount: results.aiResponses,
@@ -589,8 +593,16 @@ export async function preloadEssentialData() {
     return results;
     
   } catch (error) {
-    console.error('Preload failed:', error);
-    throw error;
+    console.error('Preload failed:', error.message || error);
+    // Don't throw - allow partial offline functionality
+    return {
+      aiResponses: 0,
+      stories: 0,
+      music: 0,
+      exercises: 0,
+      entities: {},
+      errors: [error.message || 'Unknown preload error']
+    };
   }
 }
 
