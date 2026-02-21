@@ -6,6 +6,7 @@ import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
+import { LockModeProvider } from '@/components/LockModeManager';
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
@@ -74,7 +75,8 @@ export default function Layout({ children, currentPageName }) {
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <LanguageProvider>
           <AppStateProvider>
-            <ErrorBoundary>
+            <LockModeProvider>
+              <ErrorBoundary>
               <ScrollToTop />
               <GlobalLanguageSelector />
               <OfflineStatusBar />
@@ -95,7 +97,8 @@ export default function Layout({ children, currentPageName }) {
             {showFooter && <Footer />}
             {showBottomNav && <BottomNav />}
           </div>
-            </ErrorBoundary>
+              </ErrorBoundary>
+            </LockModeProvider>
           </AppStateProvider>
         </LanguageProvider>
       </ThemeProvider>

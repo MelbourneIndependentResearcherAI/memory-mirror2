@@ -3,10 +3,12 @@ import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
+import { useLockMode } from '@/components/LockModeManager';
 
 export default function BottomNav() {
   const location = useLocation();
   const { t } = useLanguage();
+  const { isAnyModeLocked } = useLockMode();
   
   const isActive = (path) => location.pathname === path;
 
@@ -54,6 +56,11 @@ export default function BottomNav() {
       color: 'text-yellow-500'
     }
   ], [t]);
+
+  // Hide bottom nav when in locked mode
+  if (isAnyModeLocked()) {
+    return null;
+  }
 
   return (
     <nav 
