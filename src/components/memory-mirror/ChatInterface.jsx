@@ -207,8 +207,20 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           content: message 
         }]);
         
-        // Speak the proactive message
-        speakResponse(message, { state: 'warm', anxietyLevel: 0 });
+        // Speak the proactive message and auto-start listening when done
+        speakResponse(message, { 
+          state: 'warm', 
+          anxietyLevel: 0,
+          onEnd: () => {
+            // Auto-start voice listening after proactive message finishes
+            if (isMountedRef.current && !isLoading) {
+              setTimeout(() => {
+                console.log('🎤 Auto-starting voice after proactive check-in');
+                startVoiceInput();
+              }, 500);
+            }
+          }
+        });
         
         // Log proactive interaction
         offlineEntities.create('ActivityLog', {
@@ -223,7 +235,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     } catch (error) {
       console.error('Proactive message error:', error);
     }
-  }, [isLoading, selectedLanguage, speakResponse, translateText]);
+  }, [isLoading, selectedLanguage, speakResponse, translateText, startVoiceInput]);
 
   const startProactiveCheckIns = useCallback(() => {
     if (proactiveIntervalRef.current) {
