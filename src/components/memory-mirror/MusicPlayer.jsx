@@ -127,15 +127,17 @@ export default function MusicPlayer({ currentEra, onClose }) {
       }
 
       playerRef.current = new window.YT.Player('youtube-player', {
-        height: '1',
-        width: '1',
+        height: '360',
+        width: '640',
         videoId: videoId,
         playerVars: {
           autoplay: 1,
           controls: 0,
           enablejsapi: 1,
           origin: window.location.origin,
-          playsinline: 1
+          playsinline: 1,
+          modestbranding: 1,
+          fs: 0
         },
         events: {
           onReady: (event) => {
@@ -205,8 +207,8 @@ export default function MusicPlayer({ currentEra, onClose }) {
       exit={{ opacity: 0, y: 20 }}
       className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800 shadow-lg"
     >
-      {/* YouTube player - hidden but must be in DOM with size for audio to work */}
-      <div id="youtube-player" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}></div>
+      {/* YouTube player - hidden but must have proper dimensions for audio to work */}
+      <div id="youtube-player" style={{ position: 'absolute', left: '-9999px', width: '640px', height: '360px', opacity: 0, pointerEvents: 'none' }}></div>
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
