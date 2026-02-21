@@ -68,6 +68,14 @@ const faqCategories = [
         a: 'In the portal, you can: set up user profiles, upload family photos and videos, create music playlists, manage activity reminders, view insights and analytics, read conversation logs, monitor anxiety trends, configure smart home automations, and review night watch incidents.'
       },
       {
+        q: 'How do I lock Phone or Security Mode to prevent patients from exiting?',
+        a: 'Phone Mode and Security Mode can be locked by caregivers to prevent patients from navigating away. Click the "Lock Mode" button in the top-right corner when in Phone or Security Mode. The default PIN is 1234. To unlock, enter this PIN. You can change the PIN in the Caregiver Portal settings. This ensures patients stay in the safe mode until you unlock it.'
+      },
+      {
+        q: 'What is the default PIN for locked modes?',
+        a: 'The default caregiver PIN is 1234. This PIN is required to unlock Phone Mode or Security Mode when they are locked. For security, it is strongly recommended to change this PIN to a unique code that only caregivers know. Change the PIN in Caregiver Portal → Settings.'
+      },
+      {
         q: 'How do I set up activity reminders?',
         a: 'Go to Caregiver Portal → Activity Reminders. Create reminders for medication, meals, exercise, social calls, etc. Set the time, frequency, and custom voice prompts. Reminders appear as gentle notifications with optional voice announcements.'
       },

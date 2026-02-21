@@ -275,6 +275,39 @@ export default function CaregiverPortal() {
                   </p>
                 </div>
               </div>
+              
+              {/* Lock Mode Instructions */}
+              <div className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">🔒</span>
+                  <div className="flex-1">
+                    <h3 className="font-bold text-amber-900 dark:text-amber-300 mb-2">
+                      Lock Mode Feature - Keep Patients Safe
+                    </h3>
+                    <p className="text-sm text-amber-800 dark:text-amber-400 mb-3">
+                      You can lock Phone Mode or Security Mode to prevent patients from exiting these screens. 
+                      This ensures they stay in a safe, controlled interface until you unlock it.
+                    </p>
+                    <div className="bg-white dark:bg-slate-800 rounded-lg p-3 space-y-2">
+                      <div className="flex items-center gap-2 text-sm">
+                        <span className="font-semibold text-slate-700 dark:text-slate-300">Default PIN:</span>
+                        <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-blue-600 dark:text-blue-400 font-mono">
+                          1234
+                        </code>
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        <strong>How to lock:</strong> Navigate to Phone Mode or Security Mode, then tap the "Lock Mode" button in the top-right corner.
+                      </p>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        <strong>How to unlock:</strong> Enter the PIN (default: 1234) when prompted.
+                      </p>
+                      <p className="text-xs text-amber-700 dark:text-amber-400 font-semibold mt-2">
+                        ⚠️ Important: Change the default PIN for security! (Coming soon in Settings)
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <OfflineReadyIndicator />
