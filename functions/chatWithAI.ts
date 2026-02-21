@@ -9,9 +9,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { message, conversationHistory, detectedEra, userLanguage } = await req.json();
+    const body = await req.json();
+    const { message, userMessage, conversationHistory, detectedEra, userLanguage } = body;
+    
+    const userText = message || userMessage;
 
-    if (!message) {
+    if (!userText) {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
 
@@ -93,7 +96,7 @@ Respond to their message with warmth, understanding, and dignity. Keep your resp
     const aiResponse = await base44.integrations.Core.InvokeLLM({
       prompt: `${systemPrompt}
 
-Current message from ${userProfile?.preferred_name || 'them'}: "${message}"
+Current message from ${userProfile?.preferred_name || 'them'}: "${userText}"
 
 Respond naturally and compassionately. Include meta-data in your response:
 - Start with [ERA:1940s|1960s|1980s|present] based on what era they seem to be experiencing
