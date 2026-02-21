@@ -2,12 +2,27 @@ import React, { useState } from 'react';
 import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
+import { base44 } from '@/api/base44Client';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
+  const navigate = useNavigate();
+
+  const handleLearnMoreClick = async () => {
+    try {
+      const isAuthenticated = await base44.auth.isAuthenticated();
+      if (isAuthenticated) {
+        navigate(createPageUrl('ChatMode'));
+      } else {
+        base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+      }
+    } catch (error) {
+      base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
@@ -181,9 +196,9 @@ export default function Landing() {
                 size="lg" 
                 variant="outline" 
                 className="px-8 md:px-10 py-4 md:py-5 text-base md:text-lg rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:shadow-md transition-all duration-300 w-full min-h-[52px] font-medium"
-                onClick={() => document.getElementById('how-it-works').scrollIntoView({ behavior: 'smooth' })}
+                onClick={handleLearnMoreClick}
               >
-                Learn More About Memory Mirror →
+                Get Started with Memory Mirror →
               </Button>
             </div>
           </div>
