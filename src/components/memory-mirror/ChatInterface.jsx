@@ -235,7 +235,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     } catch (error) {
       console.error('Proactive message error:', error);
     }
-  }, [isLoading, selectedLanguage, speakResponse, translateText, startVoiceInput]);
+  }, [isLoading, selectedLanguage, speakResponse, translateText]);
 
   const startProactiveCheckIns = useCallback(() => {
     if (proactiveIntervalRef.current) {
