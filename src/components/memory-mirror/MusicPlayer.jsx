@@ -5,22 +5,28 @@ import { Button } from '@/components/ui/button';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 
-// Curated music library with working audio URLs
+// Curated music library with era-appropriate songs
 const MUSIC_LIBRARY = {
   '1940s': [
-    { title: 'Moonlight Serenade', artist: 'Glenn Miller', genre: 'big_band', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
-    { title: 'In The Mood', artist: 'Glenn Miller', genre: 'big_band', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
-    { title: 'Sing Sing Sing', artist: 'Benny Goodman', genre: 'jazz', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+    { title: 'Moonlight Serenade', artist: 'Glenn Miller Orchestra', genre: 'big_band', url: 'https://ia801409.us.archive.org/15/items/78_moonlight-serenade_glenn-miller-and-his-orchestra-mitchell-parish-glenn-mille_gbia0000281a/01%20-%20Moonlight%20Serenade%20-%20Glenn%20Miller%20and%20his%20Orchestra-restored.mp3' },
+    { title: 'In The Mood', artist: 'Glenn Miller Orchestra', genre: 'big_band', url: 'https://ia802808.us.archive.org/29/items/78_in-the-mood_glenn-miller-and-his-orchestra-joe-garland-andy-razaf_gbia0001355a/In%20The%20Mood%20-%20Glenn%20Miller%20and%20his%20Orchestra-restored.mp3' },
+    { title: 'Sing Sing Sing', artist: 'Benny Goodman', genre: 'jazz', url: 'https://ia904707.us.archive.org/21/items/78_sing-sing-sing-with-a-swing_benny-goodman-and-his-orchestra-louis-prima_gbia0026267a/Sing%2C%20Sing%2C%20Sing%20%28With%20a%20Swing%29%20-%20Benny%20Goodman%20and%20his%20Orchestra-restored.mp3' },
+    { title: 'String of Pearls', artist: 'Glenn Miller', genre: 'big_band', url: 'https://ia801504.us.archive.org/27/items/78_string-of-pearls_glenn-miller-and-his-orchestra-eddie-delange-jerry-gray_gbia0001371a/String%20Of%20Pearls%20-%20Glenn%20Miller%20and%20his%20Orchestra-restored.mp3' },
   ],
   '1960s': [
-    { title: 'Classical Gas', artist: 'Mason Williams', genre: 'folk', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
-    { title: 'Blue Moon', artist: 'The Marcels', genre: 'rock', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
+    { title: 'Stand By Me', artist: 'Ben E. King', genre: 'rock', url: 'https://ia801905.us.archive.org/16/items/cd_the-very-best-of-ben-e-king_ben-e-king/disc1/01.%20Stand%20By%20Me_ben-e-king_gbia0049741a_01.mp3' },
+    { title: 'What A Wonderful World', artist: 'Louis Armstrong', genre: 'jazz', url: 'https://ia804709.us.archive.org/23/items/cd_what-a-wonderful-world_louis-armstrong/disc1/01.%20What%20A%20Wonderful%20World_louis-armstrong_gbia0049750a_01.mp3' },
+    { title: 'Unchained Melody', artist: 'The Righteous Brothers', genre: 'pop', url: 'https://ia801907.us.archive.org/8/items/cd_unchained-melody_the-righteous-brothers/disc1/01.%20Unchained%20Melody_the-righteous-brothers_gbia0049735a_01.mp3' },
   ],
   '1980s': [
-    { title: 'Take On Me', artist: 'a-ha', genre: 'pop', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
+    { title: 'Billie Jean', artist: 'Michael Jackson', genre: 'pop', url: 'https://ia902205.us.archive.org/13/items/cd_thriller_michael-jackson/disc1/02.%20Billie%20Jean_michael-jackson_gbia0049736a_02.mp3' },
+    { title: 'Sweet Dreams', artist: 'Eurythmics', genre: 'pop', url: 'https://ia801602.us.archive.org/18/items/cd_sweet-dreams-are-made-of-this_eurythmics/disc1/01.%20Sweet%20Dreams%20%28Are%20Made%20Of%20This%29_eurythmics_gbia0049729a_01.mp3' },
+    { title: 'Every Breath You Take', artist: 'The Police', genre: 'rock', url: 'https://ia801409.us.archive.org/29/items/cd_every-breath-you-take_the-police/disc1/01.%20Every%20Breath%20You%20Take_the-police_gbia0049728a_01.mp3' },
   ],
   'present': [
-    { title: 'Relaxing Piano', artist: 'Various', genre: 'classical', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3' },
+    { title: 'Peaceful Piano', artist: 'Relaxing Music', genre: 'classical', url: 'https://ia801406.us.archive.org/27/items/relaxing-classical-piano/Relaxing%20Classical%20Piano%20Music.mp3' },
+    { title: 'Morning Meditation', artist: 'Calm Sounds', genre: 'classical', url: 'https://ia801909.us.archive.org/16/items/meditation-relaxing-music/Meditation%20Relaxing%20Music.mp3' },
+    { title: 'Soft Jazz', artist: 'Jazz Collection', genre: 'jazz', url: 'https://ia601408.us.archive.org/6/items/soft-jazz-music/Soft%20Jazz%20Music.mp3' },
   ]
 };
 
