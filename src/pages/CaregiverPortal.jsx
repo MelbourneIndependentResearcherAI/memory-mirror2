@@ -23,6 +23,7 @@ import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer'
 import AgentSupport from '@/components/caregiver/AgentSupport';
 import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
+import ContentUploader from '@/components/caregiver/ContentUploader';
 
 const featureCards = [
   {
@@ -168,6 +169,14 @@ const featureCards = [
     description: 'Build a visual family tree with photos and memories',
     background: '#FEF3C7',
     darkBackground: '#78350F'
+  },
+  {
+    id: 19,
+    title: 'Content Library',
+    icon: '📚',
+    description: 'Upload personalized stories, music, photos & activities',
+    background: '#F3E8FF',
+    darkBackground: '#581C87'
   }
 ];
 
@@ -231,7 +240,8 @@ export default function CaregiverPortal() {
       15: 'ai-insights',   // AI Care Insights
       16: 'offline-read',  // Read Offline
       17: 'monitoring',    // System Monitoring
-      18: 'family-tree'    // Family Tree
+      18: 'family-tree',   // Family Tree
+      19: 'content'        // Content Library
     };
     
     if (viewMap[cardId]) {
@@ -468,6 +478,19 @@ export default function CaregiverPortal() {
                 <OfflineMemoryViewer onBack={() => setActiveView('home')} />
               )}
             </div>
+          </div>
+        )}
+
+        {activeView === 'content' && (
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+            <button
+              onClick={() => setActiveView('home')}
+              className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              Back to Portal
+            </button>
+            <ContentUploader />
           </div>
         )}
       </div>
