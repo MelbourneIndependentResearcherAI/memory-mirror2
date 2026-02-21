@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Tv, Mic, MicOff, ArrowUp, ArrowDown, Settings, Home, Volume2 } from 'lucide-react';
+import { Tv, Mic, MicOff, ArrowUp, ArrowDown, Settings, Home, Volume2, Image, Music, BookOpen } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { speakWithClonedVoice } from '@/components/memory-mirror/voiceUtils';
-import { offlineAIChat } from '@/components/utils/offlineAPI';
+import { useQuery } from '@tanstack/react-query';
 
 export default function TVMode() {
   const [isPaired, setIsPaired] = useState(false);
@@ -16,8 +16,33 @@ export default function TVMode() {
   const [showSettings, setShowSettings] = useState(false);
   const [textSize, setTextSize] = useState('extra-large');
   const [connectionId, setConnectionId] = useState(null);
+  const [showPhotos, setShowPhotos] = useState(false);
+  const [showMusic, setShowMusic] = useState(false);
+  const [showStories, setShowStories] = useState(false);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
+
+  // Fetch TV-viewable content
+  const { data: photos = [] } = useQuery({
+    queryKey: ['familyMedia'],
+    queryFn: () => base44.entities.FamilyMedia.list('-created_date', 20),
+    enabled: isPaired,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: music = [] } = useQuery({
+    queryKey: ['music'],
+    queryFn: () => base44.entities.Music.list('-created_date', 30),
+    enabled: isPaired,
+    staleTime: 1000 * 60 * 5,
+  });
+
+  const { data: stories = [] } = useQuery({
+    queryKey: ['stories'],
+    queryFn: () => base44.entities.Story.list('-created_date', 15),
+    enabled: isPaired,
+    staleTime: 1000 * 60 * 5,
+  });
 
   const checkPairing = async (code) => {
     if (!code || code.length !== 6) {
@@ -130,32 +155,15 @@ export default function TVMode() {
         `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`
       ).join('\n');
 
-      const prompt = `You are Memory Mirror, a warm and compassionate AI companion for people with dementia viewing on a Smart TV.
+      // Use the unified chatWithAI function for consistency
+      const response = await base44.functions.invoke('chatWithAI', {
+        userMessage: text,
+        conversationHistory: recentMessages,
+        detectedEra: 'present',
+        userLanguage: 'en'
+      });
 
-CRITICAL INSTRUCTIONS:
-- Keep responses SHORT (2-3 sentences maximum) - TV screen space is limited
-- Use SIMPLE language and avoid complex words
-- Be warm, reassuring, and supportive
-- Validate their feelings and experiences
-- Never correct or contradict them
-
-Recent conversation:
-${conversationContext}
-
-User just said: "${text}"
-
-Respond with empathy and warmth in 2-3 sentences:`;
-
-      const response = await Promise.race([
-        offlineAIChat(prompt, { add_context_from_internet: false }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('Timeout')), 12000)
-        )
-      ]);
-
-      const cleanResponse = typeof response === 'string' 
-        ? response.replace(/META:.*$/s, '').trim().substring(0, 400)
-        : 'I understand. Let\'s talk about that.';
+      const cleanResponse = response.data?.response || 'I understand. Let\'s talk about that.';
       
       const assistantMessage = { role: 'assistant', content: cleanResponse };
       setMessages(prev => [...prev, assistantMessage]);
@@ -201,14 +209,22 @@ Respond with empathy and warmth in 2-3 sentences:`;
           break;
         case 'ArrowDown':
           e.preventDefault();
-          setFocusedIndex(prev => Math.min(3, prev + 1));
+          setFocusedIndex(prev => Math.min(5, prev + 1));
           break;
         case 'Enter':
           e.preventDefault();
           if (focusedIndex === 0) {
             isListening ? stopVoiceInput() : startVoiceInput();
           } else if (focusedIndex === 1) {
+            setShowPhotos(!showPhotos);
+          } else if (focusedIndex === 2) {
+            setShowMusic(!showMusic);
+          } else if (focusedIndex === 3) {
+            setShowStories(!showStories);
+          } else if (focusedIndex === 4) {
             setShowSettings(!showSettings);
+          } else if (focusedIndex === 5) {
+            setMessages([]);
           }
           break;
         default:
@@ -323,7 +339,100 @@ Respond with empathy and warmth in 2-3 sentences:`;
       {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-8">
         <div className="max-w-6xl mx-auto space-y-8">
-          {messages.length === 0 ? (
+          {showPhotos ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-5xl font-bold text-white mb-4">📸 Family Photos</h2>
+                <Button onClick={() => setShowPhotos(false)} variant="outline" size="lg" className="bg-white/20 text-white hover:bg-white/30 text-2xl px-8 py-6">
+                  ← Back to Chat
+                </Button>
+              </div>
+              <div className="grid grid-cols-2 gap-6">
+                {photos.length > 0 ? photos.map((photo) => (
+                  <div key={photo.id} className="bg-white/10 backdrop-blur-lg rounded-2xl overflow-hidden border-4 border-white/20">
+                    <img src={photo.media_url} alt={photo.title} className="w-full h-96 object-cover" />
+                    <div className="p-6">
+                      <h3 className="text-3xl font-bold text-white mb-2">{photo.title}</h3>
+                      <p className="text-2xl text-white/80">{photo.caption}</p>
+                    </div>
+                  </div>
+                )) : (
+                  <div className="col-span-2 text-center text-white/60 py-20">
+                    <p className="text-3xl">No photos yet. Family can add photos via the Family Portal.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : showMusic ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-5xl font-bold text-white mb-4">🎵 Music Library</h2>
+                <Button onClick={() => setShowMusic(false)} variant="outline" size="lg" className="bg-white/20 text-white hover:bg-white/30 text-2xl px-8 py-6">
+                  ← Back to Chat
+                </Button>
+              </div>
+              <div className="grid grid-cols-1 gap-4">
+                {music.length > 0 ? music.map((song) => (
+                  <button
+                    key={song.id}
+                    onClick={() => {
+                      if (song.youtube_url) {
+                        window.open(song.youtube_url, '_blank');
+                        toast.success(`Playing: ${song.title}`);
+                      }
+                    }}
+                    className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border-4 border-white/20 hover:bg-white/20 transition-all text-left"
+                  >
+                    <h3 className="text-4xl font-bold text-white mb-2">{song.title}</h3>
+                    <p className="text-3xl text-white/80">{song.artist}</p>
+                    <div className="flex gap-3 mt-3">
+                      <span className="text-2xl bg-purple-600/50 px-4 py-2 rounded-full">{song.era}</span>
+                      <span className="text-2xl bg-blue-600/50 px-4 py-2 rounded-full">{song.genre}</span>
+                    </div>
+                  </button>
+                )) : (
+                  <div className="text-center text-white/60 py-20">
+                    <p className="text-3xl">No music yet. Add songs via the Music Library.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : showStories ? (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h2 className="text-5xl font-bold text-white mb-4">📖 Stories</h2>
+                <Button onClick={() => setShowStories(false)} variant="outline" size="lg" className="bg-white/20 text-white hover:bg-white/30 text-2xl px-8 py-6">
+                  ← Back to Chat
+                </Button>
+              </div>
+              <div className="space-y-4">
+                {stories.length > 0 ? stories.map((story) => (
+                  <button
+                    key={story.id}
+                    onClick={() => {
+                      setMessages([
+                        { role: 'assistant', content: `${story.title}\n\n${story.content}` }
+                      ]);
+                      setShowStories(false);
+                      speakWithClonedVoice(story.content, { rate: 0.88, emotionalState: 'warm' });
+                    }}
+                    className="w-full bg-white/10 backdrop-blur-lg rounded-2xl p-8 border-4 border-white/20 hover:bg-white/20 transition-all text-left"
+                  >
+                    <h3 className="text-4xl font-bold text-white mb-3">{story.title}</h3>
+                    <p className="text-2xl text-white/70 line-clamp-3">{story.content}</p>
+                    <div className="flex gap-3 mt-4">
+                      <span className="text-xl bg-green-600/50 px-4 py-2 rounded-full">{story.theme}</span>
+                      <span className="text-xl bg-pink-600/50 px-4 py-2 rounded-full">{story.mood}</span>
+                    </div>
+                  </button>
+                )) : (
+                  <div className="text-center text-white/60 py-20">
+                    <p className="text-3xl">No stories yet. Add stories via the Story Library.</p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ) : messages.length === 0 ? (
             <div className="text-center text-white py-20">
               <Volume2 className="w-32 h-32 mx-auto mb-8 opacity-50" />
               <p className="text-5xl font-bold mb-4">Ready to Chat</p>
@@ -354,9 +463,9 @@ Respond with empathy and warmth in 2-3 sentences:`;
 
       {/* Controls */}
       <div className="bg-black/40 backdrop-blur-sm border-t-4 border-white/20 p-8">
-        <div className="max-w-6xl mx-auto grid grid-cols-4 gap-6">
+        <div className="max-w-7xl mx-auto grid grid-cols-6 gap-4">
           <button
-            className={`p-8 rounded-2xl transition-all flex flex-col items-center gap-4 ${
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
               focusedIndex === 0
                 ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
                 : 'bg-white/20 text-white hover:bg-white/30'
@@ -364,47 +473,100 @@ Respond with empathy and warmth in 2-3 sentences:`;
             onClick={isListening ? stopVoiceInput : startVoiceInput}
           >
             {isListening ? (
-              <MicOff className="w-20 h-20" />
+              <MicOff className="w-16 h-16" />
             ) : (
-              <Mic className="w-20 h-20" />
+              <Mic className="w-16 h-16" />
             )}
-            <span className="text-2xl font-bold">
+            <span className="text-xl font-bold">
               {isListening ? 'Stop' : 'Talk'}
             </span>
           </button>
 
           <button
-            className={`p-8 rounded-2xl transition-all flex flex-col items-center gap-4 ${
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
               focusedIndex === 1
                 ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
-            onClick={() => setShowSettings(!showSettings)}
+            onClick={() => {
+              setShowPhotos(!showPhotos);
+              setShowMusic(false);
+              setShowStories(false);
+              setShowSettings(false);
+            }}
           >
-            <Settings className="w-20 h-20" />
-            <span className="text-2xl font-bold">Settings</span>
+            <Image className="w-16 h-16" />
+            <span className="text-xl font-bold">Photos</span>
           </button>
 
           <button
-            className={`p-8 rounded-2xl transition-all flex flex-col items-center gap-4 ${
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
               focusedIndex === 2
                 ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
                 : 'bg-white/20 text-white hover:bg-white/30'
             }`}
-            onClick={() => setMessages([])}
+            onClick={() => {
+              setShowMusic(!showMusic);
+              setShowPhotos(false);
+              setShowStories(false);
+              setShowSettings(false);
+            }}
           >
-            <Home className="w-20 h-20" />
-            <span className="text-2xl font-bold">Clear</span>
+            <Music className="w-16 h-16" />
+            <span className="text-xl font-bold">Music</span>
           </button>
 
-          <div className="p-8 rounded-2xl bg-white/10 flex flex-col items-center gap-2">
-            <p className="text-xl text-white/80">Use Remote</p>
-            <div className="flex gap-2">
-              <ArrowUp className="w-8 h-8 text-white" />
-              <ArrowDown className="w-8 h-8 text-white" />
-            </div>
-            <p className="text-sm text-white/60">+ OK Button</p>
-          </div>
+          <button
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
+              focusedIndex === 3
+                ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+            onClick={() => {
+              setShowStories(!showStories);
+              setShowPhotos(false);
+              setShowMusic(false);
+              setShowSettings(false);
+            }}
+          >
+            <BookOpen className="w-16 h-16" />
+            <span className="text-xl font-bold">Stories</span>
+          </button>
+
+          <button
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
+              focusedIndex === 4
+                ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+            onClick={() => {
+              setShowSettings(!showSettings);
+              setShowPhotos(false);
+              setShowMusic(false);
+              setShowStories(false);
+            }}
+          >
+            <Settings className="w-16 h-16" />
+            <span className="text-xl font-bold">Settings</span>
+          </button>
+
+          <button
+            className={`p-6 rounded-2xl transition-all flex flex-col items-center gap-3 ${
+              focusedIndex === 5
+                ? 'bg-white text-blue-900 scale-105 ring-4 ring-white'
+                : 'bg-white/20 text-white hover:bg-white/30'
+            }`}
+            onClick={() => {
+              setMessages([]);
+              setShowPhotos(false);
+              setShowMusic(false);
+              setShowStories(false);
+              setShowSettings(false);
+            }}
+          >
+            <Home className="w-16 h-16" />
+            <span className="text-xl font-bold">Clear</span>
+          </button>
         </div>
 
         {showSettings && (
