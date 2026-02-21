@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
 
     const { anxiety_level, detected_mood, conversation_context } = await req.json();
 
-    // Find applicable mood-based automations
-    const automations = await base44.entities.MoodBasedAutomation.list();
+    // Find applicable mood-based automations using service role
+    const automations = await base44.asServiceRole.entities.MoodBasedAutomation.list();
     
     // Filter automations that match the detected mood and anxiety level
     const applicableAutomations = automations.filter(auto => {
@@ -59,7 +59,7 @@ Deno.serve(async (req) => {
       // Play music if specified
       if (automation.music_playlist_id) {
         try {
-          const playlist = await base44.entities.Playlist.list();
+          const playlist = await base44.asServiceRole.entities.Playlist.list();
           const matchingPlaylist = playlist.find(p => p.id === automation.music_playlist_id);
           if (matchingPlaylist) {
             appliedChanges.push({

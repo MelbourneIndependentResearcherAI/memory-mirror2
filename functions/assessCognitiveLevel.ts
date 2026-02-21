@@ -11,8 +11,8 @@ Deno.serve(async (req) => {
 
     const { conversation_history, recent_interactions } = await req.json();
 
-    // Get previous assessments for trend analysis
-    const previousAssessments = await base44.entities.CognitiveAssessment.list('-assessment_date', 5);
+    // Get previous assessments for trend analysis using service role
+    const previousAssessments = await base44.asServiceRole.entities.CognitiveAssessment.list('-assessment_date', 5);
 
     const assessmentPrompt = `You are a dementia care AI specialist analyzing conversation patterns to assess cognitive decline stage.
 
@@ -101,9 +101,9 @@ Return JSON with cognitive assessment and specific adaptation recommendations.`;
       }
     });
 
-    // Save assessment
+    // Save assessment using service role
     const today = new Date().toISOString().split('T')[0];
-    await base44.entities.CognitiveAssessment.create({
+    await base44.asServiceRole.entities.CognitiveAssessment.create({
       assessment_date: today,
       cognitive_level: analysis.cognitive_level,
       indicators: analysis.indicators,
