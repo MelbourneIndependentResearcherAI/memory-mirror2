@@ -10,17 +10,23 @@ Deno.serve(async (req) => {
     }
 
     const body = await req.json();
-    const { routine_id, requires_confirmation = false } = body;
-
-    // Fetch routine
-    const routines = await base44.entities.SmartHomeRoutine.filter({ id: routine_id });
-    if (!routines || routines.length === 0) {
+    const { routine_id, routineName, requires_confirmation = false, override = false } = body;
+    
+    // Support lookup by name or ID
+    let routine = null;
+    if (routine_id) {
+      const routines = await base44.asServiceRole.entities.SmartHomeRoutine.filter({ id: routine_id });
+      routine = routines[0];
+    } else if (routineName) {
+      const routines = await base44.asServiceRole.entities.SmartHomeRoutine.filter({ name: routineName });
+      routine = routines[0];
+    }
+    
+    if (!routine) {
       return Response.json({ error: 'Routine not found' }, { status: 404 });
     }
 
-    const routine = routines[0];
-
-    if (!routine.is_active) {
+    if (!routine.is_active && !override) {
       return Response.json({ error: 'Routine is not active' }, { status: 400 });
     }
 
@@ -70,7 +76,7 @@ Deno.serve(async (req) => {
     }
 
     // Update routine execution stats
-    await base44.entities.SmartHomeRoutine.update(routine.id, {
+    await base44.asServiceRole.entities.SmartHomeRoutine.update(routine.id, {
       execution_count: (routine.execution_count || 0) + 1,
       last_executed: new Date().toISOString()
     }).catch(() => {});

@@ -83,12 +83,18 @@ This should feel like a gift created just for them - a reflection of their beaut
           },
           emotional_tone: { type: "string" },
           suggested_narration_style: { type: "string" }
-        }
+        },
+        required: ["title", "content"]
       }
     });
 
+    // Ensure we have valid content
+    if (!creative.title || !creative.content) {
+      throw new Error('Story generation returned incomplete data');
+    }
+
     // Save as a personalized story/poem
-    await base44.entities.Story.create({
+    await base44.asServiceRole.entities.Story.create({
       title: creative.title,
       content: creative.content,
       era: profile.favorite_era || 'any',
@@ -96,7 +102,7 @@ This should feel like a gift created just for them - a reflection of their beaut
       mood: mood || 'peaceful',
       length: contentType === 'poem' ? 'short' : 'medium',
       uploaded_by_family: false,
-      narrator_note: `Deeply personalized for ${profile.loved_one_name}. ${creative.suggested_narration_style}`
+      narrator_note: `Deeply personalized for ${profile.loved_one_name}. ${creative.suggested_narration_style || 'Read with warmth'}`
     });
 
     return Response.json({
