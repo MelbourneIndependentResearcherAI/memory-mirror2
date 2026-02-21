@@ -68,6 +68,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
 import NewsArticle from './pages/NewsArticle';
+import ImportArticle from './pages/ImportArticle';
 import __Layout from './Layout.jsx';
 
 
@@ -93,6 +94,7 @@ export const PAGES = {
     "phone": phone,
     "security": security,
     "NewsArticle": NewsArticle,
+    "ImportArticle": ImportArticle,
 }
 
 export const pagesConfig = {
