@@ -121,6 +121,104 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 15,
   });
 
+  const sendProactiveMessage = useCallback(async (type = 'checkin') => {
+    if (!isMountedRef.current || isLoading) return;
+    
+    lastProactiveCheckRef.current = Date.now();
+    
+    try {
+      const greetings = [
+        "Hello! I'm here to keep you company. How are you feeling today?",
+        "Good to see you! I'm right here if you need anything.",
+        "Hi there! I'm here whenever you'd like to chat.",
+      ];
+      
+      const checkIns = [
+        "I'm still here with you. Is there anything you'd like to talk about?",
+        "Would you like to share a story or memory?",
+        "How are you feeling right now?",
+        "Is there anything I can help you with?",
+        "I'm here if you need someone to talk to.",
+        "Would you like to listen to some music together?",
+        "Let's talk about something nice. What brings you joy?",
+      ];
+      
+      const messages = type === 'greeting' ? greetings : checkIns;
+      let message = messages[Math.floor(Math.random() * messages.length)];
+      
+      // Translate to user's language
+      if (selectedLanguage !== 'en') {
+        try {
+          message = await translateText(message, selectedLanguage, 'en');
+        } catch (error) {
+          console.error('Translation failed for proactive message:', error);
+        }
+      }
+      
+      if (isMountedRef.current) {
+        setMessages(prev => [...prev, { 
+          role: 'assistant', 
+          content: message, 
+          hasVoice: true, 
+          language: selectedLanguage,
+          isProactive: true
+        }]);
+        
+        setConversationHistory(prev => [...prev, { 
+          role: 'assistant', 
+          content: message 
+        }]);
+        
+        // Speak the proactive message
+        speakResponse(message, { state: 'warm', anxietyLevel: 0 });
+        
+        // Log proactive interaction
+        offlineEntities.create('ActivityLog', {
+          activity_type: 'chat',
+          details: { 
+            proactive: true, 
+            type: type,
+            language: selectedLanguage 
+          }
+        }).catch(() => {});
+      }
+    } catch (error) {
+      console.error('Proactive message error:', error);
+    }
+  }, [isLoading, selectedLanguage, speakResponse, translateText]);
+
+  const startProactiveCheckIns = useCallback(() => {
+    if (proactiveIntervalRef.current) {
+      clearInterval(proactiveIntervalRef.current);
+    }
+    
+    // Random interval between 5-10 minutes
+    const getRandomInterval = () => {
+      return (5 + Math.random() * 5) * 60 * 1000; // 5-10 minutes in milliseconds
+    };
+    
+    const scheduleNextCheckIn = () => {
+      const interval = getRandomInterval();
+      
+      proactiveIntervalRef.current = setTimeout(() => {
+        if (isMountedRef.current) {
+          // Only send if user hasn't interacted recently (last 4 minutes)
+          const timeSinceLastMessage = Date.now() - lastMessageTimeRef.current;
+          const timeSinceLastProactive = Date.now() - lastProactiveCheckRef.current;
+          
+          if (timeSinceLastMessage > 4 * 60 * 1000 && timeSinceLastProactive > 4 * 60 * 1000) {
+            sendProactiveMessage('checkin');
+          }
+          
+          // Schedule next check-in
+          scheduleNextCheckIn();
+        }
+      }, interval);
+    };
+    
+    scheduleNextCheckIn();
+  }, [sendProactiveMessage]);
+
   useEffect(() => {
     isMountedRef.current = true;
     
@@ -943,103 +1041,7 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
     }
   }, [sendMessage]);
 
-  const startProactiveCheckIns = useCallback(() => {
-    if (proactiveIntervalRef.current) {
-      clearInterval(proactiveIntervalRef.current);
-    }
-    
-    // Random interval between 5-10 minutes
-    const getRandomInterval = () => {
-      return (5 + Math.random() * 5) * 60 * 1000; // 5-10 minutes in milliseconds
-    };
-    
-    const scheduleNextCheckIn = () => {
-      const interval = getRandomInterval();
-      
-      proactiveIntervalRef.current = setTimeout(() => {
-        if (isMountedRef.current) {
-          // Only send if user hasn't interacted recently (last 4 minutes)
-          const timeSinceLastMessage = Date.now() - lastMessageTimeRef.current;
-          const timeSinceLastProactive = Date.now() - lastProactiveCheckRef.current;
-          
-          if (timeSinceLastMessage > 4 * 60 * 1000 && timeSinceLastProactive > 4 * 60 * 1000) {
-            sendProactiveMessage('checkin');
-          }
-          
-          // Schedule next check-in
-          scheduleNextCheckIn();
-        }
-      }, interval);
-    };
-    
-    scheduleNextCheckIn();
-  }, []);
 
-  const sendProactiveMessage = useCallback(async (type = 'checkin') => {
-    if (!isMountedRef.current || isLoading) return;
-    
-    lastProactiveCheckRef.current = Date.now();
-    
-    try {
-      const greetings = [
-        "Hello! I'm here to keep you company. How are you feeling today?",
-        "Good to see you! I'm right here if you need anything.",
-        "Hi there! I'm here whenever you'd like to chat.",
-      ];
-      
-      const checkIns = [
-        "I'm still here with you. Is there anything you'd like to talk about?",
-        "Would you like to share a story or memory?",
-        "How are you feeling right now?",
-        "Is there anything I can help you with?",
-        "I'm here if you need someone to talk to.",
-        "Would you like to listen to some music together?",
-        "Let's talk about something nice. What brings you joy?",
-      ];
-      
-      const messages = type === 'greeting' ? greetings : checkIns;
-      let message = messages[Math.floor(Math.random() * messages.length)];
-      
-      // Translate to user's language
-      if (selectedLanguage !== 'en') {
-        try {
-          message = await translateText(message, selectedLanguage, 'en');
-        } catch (error) {
-          console.error('Translation failed for proactive message:', error);
-        }
-      }
-      
-      if (isMountedRef.current) {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: message, 
-          hasVoice: true, 
-          language: selectedLanguage,
-          isProactive: true
-        }]);
-        
-        setConversationHistory(prev => [...prev, { 
-          role: 'assistant', 
-          content: message 
-        }]);
-        
-        // Speak the proactive message
-        speakResponse(message, { state: 'warm', anxietyLevel: 0 });
-        
-        // Log proactive interaction
-        offlineEntities.create('ActivityLog', {
-          activity_type: 'chat',
-          details: { 
-            proactive: true, 
-            type: type,
-            language: selectedLanguage 
-          }
-        }).catch(() => {});
-      }
-    } catch (error) {
-      console.error('Proactive message error:', error);
-    }
-  }, [isLoading, selectedLanguage, speakResponse, translateText]);
 
   return (
     <div className="flex flex-col h-full">
