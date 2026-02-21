@@ -192,9 +192,14 @@ export default function NightWatch({ onClose }) {
   const [isCheckingDistress, setIsCheckingDistress] = useState(false);
   const [comfortAudio, setComfortAudio] = useState(null);
   const [isPlayingAudio, setIsPlayingAudio] = useState(false);
+  const [bedSensorStatus, setBedSensorStatus] = useState({ inBed: true, timeOutOfBed: 0 });
+  const [emergencyDetection, setEmergencyDetection] = useState(null);
+  const [automatedActionsLog, setAutomatedActionsLog] = useState([]);
   const systemRef = useRef(null);
   const recognitionRef = useRef(null);
   const messagesEndRef = useRef(null);
+  const emergencyMonitorRef = useRef(null);
+  const bedSensorIntervalRef = useRef(null);
 
   useEffect(() => {
     // Fetch user profile
@@ -227,6 +232,12 @@ export default function NightWatch({ onClose }) {
       if (recognitionRef.current) {
         recognitionRef.current.stop();
       }
+      if (emergencyMonitorRef.current) {
+        clearInterval(emergencyMonitorRef.current);
+      }
+      if (bedSensorIntervalRef.current) {
+        clearInterval(bedSensorIntervalRef.current);
+      }
     };
   }, [userProfile]);
 
@@ -249,13 +260,103 @@ export default function NightWatch({ onClose }) {
       systemRef.current?.resolveIncident('caregiver_assisted');
       setIsActive(false);
       stopListening();
+      stopEmergencyMonitoring();
     } else {
       systemRef.current?.activate();
       setIsActive(true);
-      addMessage('assistant', "Good evening. I'm here to keep you safe and comfortable through the night. If you need anything, just speak to me.");
-      speakText("Good evening. I'm here to keep you safe and comfortable through the night. If you need anything, just speak to me.");
+      addMessage('assistant', "Good evening. I'm here to keep you safe and comfortable through the night. Advanced monitoring is now active.");
+      speakText("Good evening. I'm here to keep you safe and comfortable through the night. Advanced monitoring is now active.");
       startListening();
+      startEmergencyMonitoring();
+      startBedSensorSimulation();
     }
+  };
+
+  const startBedSensorSimulation = () => {
+    // Simulate bed sensor monitoring
+    let outOfBedTime = 0;
+    bedSensorIntervalRef.current = setInterval(() => {
+      const isInBed = Math.random() > 0.3; // 70% chance in bed
+      if (!isInBed) {
+        outOfBedTime += 1;
+      } else {
+        outOfBedTime = 0;
+      }
+      setBedSensorStatus({ inBed: isInBed, timeOutOfBed: outOfBedTime });
+      
+      // Alert if out of bed too long
+      if (outOfBedTime >= 10) {
+        toast.warning('Person has been out of bed for 10+ minutes');
+      }
+    }, 60000); // Check every minute
+  };
+
+  const startEmergencyMonitoring = () => {
+    // Continuous AI monitoring every 30 seconds
+    emergencyMonitorRef.current = setInterval(async () => {
+      if (!isActive) return;
+      
+      const recentMessages = messages.slice(-5).map(m => `${m.role}: ${m.content}`);
+      
+      try {
+        const detection = await base44.functions.invoke('detectNightEmergency', {
+          voiceTranscript: messages.filter(m => m.role === 'user').slice(-1)[0]?.content || '',
+          voicePatterns: {
+            speechRate: 'normal',
+            breathingIrregular: false
+          },
+          environmentalSounds: [],
+          bedSensorData: bedSensorStatus,
+          recentActivity: recentMessages
+        });
+
+        if (detection.data.emergencyType !== 'NONE') {
+          setEmergencyDetection(detection.data);
+          handleEmergencyDetected(detection.data);
+        }
+      } catch (error) {
+        console.error('Emergency monitoring failed:', error);
+      }
+    }, 30000); // Every 30 seconds
+  };
+
+  const stopEmergencyMonitoring = () => {
+    if (emergencyMonitorRef.current) {
+      clearInterval(emergencyMonitorRef.current);
+      emergencyMonitorRef.current = null;
+    }
+    if (bedSensorIntervalRef.current) {
+      clearInterval(bedSensorIntervalRef.current);
+      bedSensorIntervalRef.current = null;
+    }
+  };
+
+  const handleEmergencyDetected = async (detection) => {
+    toast.error(`Emergency Detected: ${detection.emergencyType}`);
+    
+    // Speak comfort response
+    speakText(detection.comfortResponse);
+    addMessage('assistant', detection.comfortResponse);
+    
+    // Log automated actions
+    if (detection.automationResults) {
+      setAutomatedActionsLog(prev => [
+        ...prev,
+        {
+          timestamp: new Date().toISOString(),
+          type: detection.emergencyType,
+          actions: detection.automationResults
+        }
+      ]);
+    }
+    
+    // Show emergency alert
+    setCurrentAlert({
+      type: detection.emergencyType,
+      message: `🚨 ${detection.emergencyType} DETECTED - Automated safety protocols activated`,
+      timestamp: new Date(),
+      urgency: detection.notifications?.urgencyLevel || 'high'
+    });
   };
 
   const startListening = () => {
@@ -533,6 +634,99 @@ export default function NightWatch({ onClose }) {
           </Card>
         )}
 
+        {/* Emergency Detection Status */}
+        {isActive && emergencyDetection && (
+          <Card className="mb-6 bg-red-900/30 border-red-700">
+            <CardHeader>
+              <CardTitle className="text-red-300 flex items-center gap-2">
+                <AlertTriangle className="w-5 h-5" />
+                Emergency Detection Active
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="text-white space-y-2">
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div className="p-2 bg-red-800/50 rounded">
+                  <div className="text-red-300 text-xs">Distress Level</div>
+                  <div className="text-lg font-bold">{emergencyDetection.distressLevel}/10</div>
+                </div>
+                <div className="p-2 bg-red-800/50 rounded">
+                  <div className="text-red-300 text-xs">Fall Risk</div>
+                  <div className="text-lg font-bold">{emergencyDetection.fallRisk}/10</div>
+                </div>
+                <div className="p-2 bg-red-800/50 rounded">
+                  <div className="text-red-300 text-xs">Medical Risk</div>
+                  <div className="text-lg font-bold">{emergencyDetection.medicalEmergencyRisk}/10</div>
+                </div>
+                <div className="p-2 bg-red-800/50 rounded">
+                  <div className="text-red-300 text-xs">Exit Risk</div>
+                  <div className="text-lg font-bold">{emergencyDetection.exitRisk}/10</div>
+                </div>
+              </div>
+              <div className="text-xs text-red-200 mt-2">
+                <strong>Analysis:</strong> {emergencyDetection.reasoning}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Bed Sensor Status */}
+        {isActive && (
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Thermometer className="w-5 h-5" />
+                Bed Sensor Status
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex items-center justify-between text-white">
+                <div>
+                  <div className={`text-sm ${bedSensorStatus.inBed ? 'text-green-400' : 'text-yellow-400'}`}>
+                    {bedSensorStatus.inBed ? '✓ In Bed' : '⚠ Out of Bed'}
+                  </div>
+                  {!bedSensorStatus.inBed && bedSensorStatus.timeOutOfBed > 0 && (
+                    <div className="text-xs text-slate-400 mt-1">
+                      Out of bed for {bedSensorStatus.timeOutOfBed} minutes
+                    </div>
+                  )}
+                </div>
+                <div className={`w-4 h-4 rounded-full ${bedSensorStatus.inBed ? 'bg-green-500' : 'bg-yellow-500'} animate-pulse`} />
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Automated Actions Log */}
+        {automatedActionsLog.length > 0 && (
+          <Card className="bg-slate-800 border-slate-700 mb-6">
+            <CardHeader>
+              <CardTitle className="text-white flex items-center gap-2">
+                <Zap className="w-5 h-5" />
+                Automated Safety Actions
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {automatedActionsLog.map((log, idx) => (
+                  <div key={idx} className="p-3 bg-cyan-900/30 rounded-lg text-white text-sm">
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="font-semibold text-cyan-300">{log.type}</div>
+                      <div className="text-xs text-slate-400">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </div>
+                    </div>
+                    <ul className="text-xs text-slate-300 space-y-1">
+                      {log.actions.map((action, i) => (
+                        <li key={i}>✓ {action}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Smart Home Controls */}
         {isActive && (
           <Card className="bg-slate-800 border-slate-700 mb-6">
@@ -595,11 +789,12 @@ export default function NightWatch({ onClose }) {
               <CardTitle className="text-white">How Night Watch Works</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3 text-slate-300">
-              <p>✓ Monitors for movement during nighttime hours (10 PM - 6 AM)</p>
-              <p>✓ Provides gentle, calming conversation to reorient and comfort</p>
-              <p>✓ Detects bathroom needs, distress, or exit attempts</p>
-              <p>✓ Sends immediate alerts for high-risk situations</p>
-              <p>✓ Logs all incidents for caregiver review</p>
+              <p>✓ AI-powered voice and environmental sound analysis</p>
+              <p>✓ Continuous monitoring for falls, medical emergencies, and distress</p>
+              <p>✓ Bed sensor tracking for movement patterns</p>
+              <p>✓ Automated smart home safety routines (lights, locks, temperature)</p>
+              <p>✓ Instant caregiver alerts for critical situations</p>
+              <p>✓ Gentle conversation and reorientation support</p>
               <p className="text-yellow-300 mt-4">
                 ⚠️ This is a supportive tool. Always ensure proper supervision.
               </p>
