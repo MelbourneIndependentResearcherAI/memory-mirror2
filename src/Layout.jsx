@@ -11,6 +11,7 @@ import ScrollToTop from '@/components/ScrollToTop';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import OfflineSyncIndicator from '@/components/memory-mirror/OfflineSyncIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
+import OfflineStatusBar from '@/components/memory-mirror/OfflineStatusBar';
 import { initOfflineDB } from '@/components/utils/offlineManager';
 import { initOfflineStorage } from '@/components/utils/offlineStorage';
 import { registerServiceWorker, requestPersistentStorage } from '@/components/utils/serviceWorkerRegister';
@@ -76,6 +77,7 @@ export default function Layout({ children, currentPageName }) {
             <ErrorBoundary>
               <ScrollToTop />
               <GlobalLanguageSelector />
+              <OfflineStatusBar />
               <OfflineIndicator />
               <OfflineSyncIndicator />
               <ReminderNotification />
