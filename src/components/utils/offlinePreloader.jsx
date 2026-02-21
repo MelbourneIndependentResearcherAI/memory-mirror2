@@ -266,8 +266,8 @@ const OFFLINE_STORIES = [
 // Pre-loaded Music Library - 40+ Classic songs for offline playback
 const OFFLINE_MUSIC = [
   // 1940s Era
-  { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic" },
-  { title: "Somewhere Over the Rainbow", artist: "Judy Garland", era: "1940s", genre: "classic", mood: "nostalgic" },
+  { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic", youtube_url: "https://www.youtube.com/watch?v=vDN5rG3wLa4" },
+  { title: "Somewhere Over the Rainbow", artist: "Judy Garland", era: "1940s", genre: "classical", mood: "nostalgic", youtube_url: "https://www.youtube.com/watch?v=PSZxmZmBfnU" },
   { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy" },
   { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic" },
   { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic" },
