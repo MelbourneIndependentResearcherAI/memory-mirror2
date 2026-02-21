@@ -1,23 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Music, Play, Pause, SkipForward, Volume2, X } from 'lucide-react';
+import { Music, Play, Pause, SkipForward, Volume2, X, Wifi, WifiOff } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { offlineEntities } from '@/components/utils/offlineAPI';
+import { isOnline } from '@/components/utils/offlineManager';
+import { offlineAudioPlayer } from '@/components/utils/offlineAudioPlayer';
 
 export default function MusicPlayer({ currentEra, onClose }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [online, setOnline] = useState(isOnline());
   const playerRef = React.useRef(null);
 
   const { data: songs = [] } = useQuery({
     queryKey: ['music', currentEra],
     queryFn: async () => {
-      const allSongs = await base44.entities.Music.list();
-      return allSongs.filter(s => s.era === currentEra || s.era === 'any');
+      const allSongs = await offlineEntities.list('Music');
+      return allSongs.filter(s => s.era === currentEra || s.era === 'any' || !s.era);
     },
   });
+
+  useEffect(() => {
+    const handleOnline = () => setOnline(true);
+    const handleOffline = () => setOnline(false);
+    
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    
+    return () => {
+      window.removeEventListener('online', handleOnline);
+      window.removeEventListener('offline', handleOffline);
+    };
+  }, []);
 
   useEffect(() => {
     if (songs.length > 0 && !currentSong) {
@@ -49,10 +66,13 @@ export default function MusicPlayer({ currentEra, onClose }) {
     return (match && match[7].length === 11) ? match[7] : null;
   };
 
-  const playPause = () => {
+  const playPause = async () => {
     if (isPlaying) {
-      if (playerRef.current && playerRef.current.pauseVideo) {
+      // Pause logic
+      if (online && playerRef.current && playerRef.current.pauseVideo) {
         playerRef.current.pauseVideo();
+      } else {
+        offlineAudioPlayer.pause();
       }
       setIsPlaying(false);
     } else {
@@ -64,17 +84,23 @@ export default function MusicPlayer({ currentEra, onClose }) {
         utterance.rate = 0.95;
         window.speechSynthesis.speak(utterance);
 
-        // Play YouTube video
-        if (currentSong.youtube_url) {
+        // Play based on online status
+        if (online && currentSong.youtube_url) {
+          // Online: Use YouTube
           initializePlayer();
+        } else {
+          // Offline: Use generated audio
+          await offlineAudioPlayer.play(currentSong, () => {
+            nextSong();
+          });
         }
         
         setIsPlaying(true);
         
         // Log activity
-        base44.entities.ActivityLog.create({
+        offlineEntities.create('ActivityLog', {
           activity_type: 'memory_viewed',
-          details: { type: 'music', title: currentSong.title, era: currentEra }
+          details: { type: 'music', title: currentSong.title, era: currentEra, offline: !online }
         }).catch(() => {});
       }
     }
@@ -148,8 +174,11 @@ export default function MusicPlayer({ currentEra, onClose }) {
   const nextSong = () => {
     if (songs.length === 0) return;
     
-    if (playerRef.current && playerRef.current.stopVideo) {
+    // Stop current playback
+    if (online && playerRef.current && playerRef.current.stopVideo) {
       playerRef.current.stopVideo();
+    } else {
+      offlineAudioPlayer.stop();
     }
     
     const nextIdx = (currentIndex + 1) % songs.length;
@@ -185,6 +214,11 @@ export default function MusicPlayer({ currentEra, onClose }) {
           <span className="font-semibold text-slate-800 dark:text-slate-100">
             {currentEra} Music
           </span>
+          {online ? (
+            <Wifi className="w-4 h-4 text-green-500" title="Online - YouTube playback" />
+          ) : (
+            <WifiOff className="w-4 h-4 text-amber-500" title="Offline - Generated audio" />
+          )}
         </div>
         <Button
           variant="ghost"
