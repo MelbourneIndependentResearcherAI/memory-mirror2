@@ -7,6 +7,7 @@ import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import BottomNav from '@/components/BottomNav';
+import ScrollToTop from '@/components/ScrollToTop';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import OfflineSyncIndicator from '@/components/memory-mirror/OfflineSyncIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
@@ -70,6 +71,7 @@ export default function Layout({ children, currentPageName }) {
         <LanguageProvider>
           <AppStateProvider>
             <ErrorBoundary>
+              <ScrollToTop />
               <GlobalLanguageSelector />
               <OfflineIndicator />
               <OfflineSyncIndicator />
