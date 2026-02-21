@@ -67,58 +67,101 @@ export async function initOfflineStorage() {
 }
 
 export async function saveToStore(storeName, data) {
-  const db = await initOfflineStorage();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const request = store.put(data);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const request = store.put(data);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.warn(`Failed to save to ${storeName}:`, error.message);
+    throw error;
+  }
 }
 
 export async function getFromStore(storeName, id) {
-  const db = await initOfflineStorage();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const request = store.get(id);
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const request = store.get(id);
+        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => reject(request.error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.warn(`Failed to get from ${storeName}:`, error.message);
+    return null;
+  }
 }
 
 export async function getAllFromStore(storeName) {
-  const db = await initOfflineStorage();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readonly');
-    const store = tx.objectStore(storeName);
-    const request = store.getAll();
-    request.onsuccess = () => resolve(request.result || []);
-    request.onerror = () => reject(request.error);
-  });
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
+        const request = store.getAll();
+        request.onsuccess = () => resolve(request.result || []);
+        request.onerror = () => reject(request.error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.warn(`Failed to get all from ${storeName}:`, error.message);
+    return [];
+  }
 }
 
 export async function deleteFromStore(storeName, id) {
-  const db = await initOfflineStorage();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const request = store.delete(id);
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const request = store.delete(id);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.warn(`Failed to delete from ${storeName}:`, error.message);
+  }
 }
 
 export async function clearStore(storeName) {
-  const db = await initOfflineStorage();
-  return new Promise((resolve, reject) => {
-    const tx = db.transaction(storeName, 'readwrite');
-    const store = tx.objectStore(storeName);
-    const request = store.clear();
-    request.onsuccess = () => resolve();
-    request.onerror = () => reject(request.error);
-  });
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      try {
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
+        const request = store.clear();
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      } catch (error) {
+        reject(error);
+      }
+    });
+  } catch (error) {
+    console.warn(`Failed to clear ${storeName}:`, error.message);
+  }
 }
 
 // Queue operation for later sync when back online
@@ -136,11 +179,16 @@ export async function getStorageInfo() {
   const info = {};
   
   for (const store of stores) {
-    const data = await getAllFromStore(store);
-    info[store] = {
-      count: data.length,
-      size: new Blob([JSON.stringify(data)]).size
-    };
+    try {
+      const data = await getAllFromStore(store);
+      info[store] = {
+        count: data.length,
+        size: new Blob([JSON.stringify(data)]).size
+      };
+    } catch (error) {
+      console.warn(`Failed to get storage info for ${store}:`, error.message);
+      info[store] = { count: 0, size: 0 };
+    }
   }
   
   return info;
