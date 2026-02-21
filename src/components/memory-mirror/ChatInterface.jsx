@@ -261,6 +261,44 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     }
   }, [cognitiveAssessments]);
 
+  const speakResponse = useCallback(async (text, emotionalContext = {}) => {
+    if (!text || !isMountedRef.current) return;
+    
+    try {
+      // Use cloned voice if available, otherwise fallback to system voice
+      await speakWithClonedVoice(text, {
+        rate: 0.92,
+        pitch: 1.05,
+        volume: 1.0,
+        emotionalState: emotionalContext.state || 'neutral',
+        anxietyLevel: emotionalContext.anxietyLevel || 0,
+        cognitiveLevel: cognitiveLevel,
+        language: selectedLanguage,
+        userProfile: userProfile,
+        onEnd: emotionalContext.onEnd
+      });
+    } catch (error) {
+      console.error('Speech synthesis error:', error);
+    }
+  }, [selectedLanguage, cognitiveLevel, userProfile]);
+
+  const translateText = useCallback(async (text, targetLang, sourceLang = null) => {
+    if (!text || !targetLang) return text;
+    if (targetLang === 'en' && !sourceLang) return text;
+    
+    try {
+      const result = await offlineFunction('translateText', {
+        text: String(text).substring(0, 5000), // Limit length
+        targetLanguage: targetLang,
+        sourceLanguage: sourceLang
+      });
+      return result?.data?.translatedText || text;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return text; // Return original on error
+    }
+  }, []);
+
   const getSystemPrompt = () => {
     const profileContext = userProfile 
       ? `\n\nPERSONALIZATION PROFILE:
@@ -354,50 +392,12 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
     }
   }, [messages]);
 
-  const speakResponse = useCallback(async (text, emotionalContext = {}) => {
-    if (!text || !isMountedRef.current) return;
-    
-    try {
-      // Use cloned voice if available, otherwise fallback to system voice
-      await speakWithClonedVoice(text, {
-        rate: 0.92,
-        pitch: 1.05,
-        volume: 1.0,
-        emotionalState: emotionalContext.state || 'neutral',
-        anxietyLevel: emotionalContext.anxietyLevel || 0,
-        cognitiveLevel: cognitiveLevel,
-        language: selectedLanguage,
-        userProfile: userProfile,
-        onEnd: emotionalContext.onEnd
-      });
-    } catch (error) {
-      console.error('Speech synthesis error:', error);
-    }
-  }, [selectedLanguage, cognitiveLevel, userProfile]);
-
   const handleLanguageChange = (languageCode) => {
     setSelectedLanguage(languageCode);
     try {
       localStorage.setItem('memoryMirrorLanguage', languageCode);
     } catch {}
   };
-
-  const translateText = useCallback(async (text, targetLang, sourceLang = null) => {
-    if (!text || !targetLang) return text;
-    if (targetLang === 'en' && !sourceLang) return text;
-    
-    try {
-      const result = await offlineFunction('translateText', {
-        text: String(text).substring(0, 5000), // Limit length
-        targetLanguage: targetLang,
-        sourceLanguage: sourceLang
-      });
-      return result?.data?.translatedText || text;
-    } catch (error) {
-      console.error('Translation error:', error);
-      return text; // Return original on error
-    }
-  }, []);
 
   const sendMessage = useCallback(async (transcribedText) => {
     // Validation
