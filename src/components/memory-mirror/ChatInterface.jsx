@@ -124,12 +124,12 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   useEffect(() => {
     isMountedRef.current = true;
     
-    // Initial greeting after 3 seconds
+    // Initial greeting after 1 second - also SPEAK it
     const greetingTimeout = setTimeout(() => {
       if (isMountedRef.current && messages.length === 0) {
         sendProactiveMessage('greeting');
       }
-    }, 3000);
+    }, 1000);
     
     // Start proactive check-ins (every 5-10 minutes)
     startProactiveCheckIns();
@@ -154,7 +154,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         } catch {}
       }
     };
-  }, []);
+  }, [sendProactiveMessage, startProactiveCheckIns]);
 
   useEffect(() => {
     if (cognitiveAssessments?.length > 0 && cognitiveAssessments[0]?.cognitive_level) {
