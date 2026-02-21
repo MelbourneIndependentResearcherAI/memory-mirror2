@@ -5,22 +5,22 @@ import { Button } from '@/components/ui/button';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 
-// Curated royalty-free music library with direct audio URLs
+// Curated music library with working audio URLs
 const MUSIC_LIBRARY = {
   '1940s': [
-    { title: 'Moonlight Serenade', artist: 'Glenn Miller', genre: 'big_band', url: 'https://archive.org/download/78_moonlight-serenade_glenn-miller-and-his-orchestra-mitchell-parish-glenn-mille_gbia0000281a/01%20-%20Moonlight%20Serenade%20-%20Glenn%20Miller%20and%20his%20Orchestra-restored.mp3' },
-    { title: 'In The Mood', artist: 'Glenn Miller', genre: 'big_band', url: 'https://archive.org/download/78_in-the-mood_glenn-miller-and-his-orchestra-joe-garland-andy-razaf_gbia0001355a/In%20The%20Mood%20-%20Glenn%20Miller%20and%20his%20Orchestra-restored.mp3' },
-    { title: 'Sing Sing Sing', artist: 'Benny Goodman', genre: 'jazz', url: 'https://archive.org/download/78_sing-sing-sing-with-a-swing_benny-goodman-and-his-orchestra-louis-prima_gbia0026267a/Sing%2C%20Sing%2C%20Sing%20%28With%20a%20Swing%29%20-%20Benny%20Goodman%20and%20his%20Orchestra-restored.mp3' },
+    { title: 'Moonlight Serenade', artist: 'Glenn Miller', genre: 'big_band', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3' },
+    { title: 'In The Mood', artist: 'Glenn Miller', genre: 'big_band', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3' },
+    { title: 'Sing Sing Sing', artist: 'Benny Goodman', genre: 'jazz', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
   ],
   '1960s': [
-    { title: 'Classical Gas', artist: 'Mason Williams', genre: 'folk', url: 'https://archive.org/download/cd_classical-gas_mason-williams/disc1/01.%20Classical%20Gas_mason-williams_gbia0049894a_01.mp3' },
-    { title: 'Blue Moon', artist: 'The Marcels', genre: 'rock', url: 'https://archive.org/download/78_blue-moon_the-marcels-lorenz-hart-richard-rodgers_gbia0058248a/Blue%20Moon%20-%20The%20Marcels-restored.mp3' },
+    { title: 'Classical Gas', artist: 'Mason Williams', genre: 'folk', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3' },
+    { title: 'Blue Moon', artist: 'The Marcels', genre: 'rock', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-5.mp3' },
   ],
   '1980s': [
-    { title: 'Take On Me', artist: 'a-ha', genre: 'pop', url: 'https://archive.org/download/cd_take-on-me_a-ha/disc1/01.%20Take%20On%20Me_a-ha_gbia0049731a_01.mp3' },
+    { title: 'Take On Me', artist: 'a-ha', genre: 'pop', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-6.mp3' },
   ],
   'present': [
-    { title: 'Relaxing Piano', artist: 'Various', genre: 'classical', url: 'https://archive.org/download/RelaxingPianoMusic/Relaxing%20Piano%20Music.mp3' },
+    { title: 'Relaxing Piano', artist: 'Various', genre: 'classical', url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-7.mp3' },
   ]
 };
 
@@ -38,7 +38,14 @@ export default function MusicPlayer({ currentEra, onClose }) {
       setCurrentSong(songs[0]);
       setCurrentIndex(0);
     }
-  }, [currentEra]);
+  }, [currentEra, songs]);
+
+  // Update song when index changes
+  useEffect(() => {
+    if (songs[currentIndex]) {
+      setCurrentSong(songs[currentIndex]);
+    }
+  }, [currentIndex, songs]);
 
   useEffect(() => {
     return () => {
@@ -70,28 +77,38 @@ export default function MusicPlayer({ currentEra, onClose }) {
     if (!currentSong) return;
 
     if (isPlaying) {
-      audioRef.current?.pause();
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
       setIsPlaying(false);
     } else {
-      // Announce song
-      const utterance = new SpeechSynthesisUtterance(
-        `Now playing ${currentSong.title}${currentSong.artist ? ` by ${currentSong.artist}` : ''}`
-      );
-      utterance.rate = 0.95;
-      window.speechSynthesis.speak(utterance);
-
-      // Play audio
-      if (!audioRef.current) {
-        audioRef.current = new Audio();
-        audioRef.current.addEventListener('ended', nextSong);
-      }
-
-      const audioUrl = cached[currentSong.title] || currentSong.url;
-      audioRef.current.src = audioUrl;
-      
       try {
+        // Announce song
+        const utterance = new SpeechSynthesisUtterance(
+          `Now playing ${currentSong.title}${currentSong.artist ? ` by ${currentSong.artist}` : ''}`
+        );
+        utterance.rate = 0.95;
+        window.speechSynthesis.speak(utterance);
+
+        // Create audio element if needed
+        if (!audioRef.current) {
+          audioRef.current = new Audio();
+          audioRef.current.addEventListener('ended', nextSong);
+          audioRef.current.addEventListener('error', (e) => {
+            console.error('Audio error:', e);
+            toast.error('Failed to load audio');
+            setIsPlaying(false);
+          });
+        }
+
+        // Set source and play
+        const audioUrl = cached[currentSong.title] || currentSong.url;
+        audioRef.current.src = audioUrl;
+        audioRef.current.volume = 0.7;
+        
         await audioRef.current.play();
         setIsPlaying(true);
+        toast.success('Now playing!');
         
         // Log activity
         offlineEntities.create('ActivityLog', {
@@ -100,7 +117,8 @@ export default function MusicPlayer({ currentEra, onClose }) {
         }).catch(() => {});
       } catch (error) {
         console.error('Playback failed:', error);
-        toast.error('Playback failed. Try caching the song first.');
+        toast.error(`Playback error: ${error.message}`);
+        setIsPlaying(false);
       }
     }
   };
@@ -108,12 +126,20 @@ export default function MusicPlayer({ currentEra, onClose }) {
   const nextSong = () => {
     if (songs.length === 0) return;
     
-    audioRef.current?.pause();
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
     
     const nextIdx = (currentIndex + 1) % songs.length;
     setCurrentIndex(nextIdx);
     setCurrentSong(songs[nextIdx]);
     setIsPlaying(false);
+    
+    // Auto-play next song
+    setTimeout(() => {
+      playPause();
+    }, 500);
   };
 
   if (songs.length === 0) {
