@@ -82,26 +82,43 @@ export default function MusicPlayer({ currentEra, onClose }) {
 
   const initializePlayer = () => {
     const videoId = extractYouTubeID(currentSong.youtube_url);
-    if (!videoId) return;
+    if (!videoId) {
+      console.error('No valid YouTube video ID found');
+      return;
+    }
 
     const onYouTubeIframeAPIReady = () => {
       if (playerRef.current && playerRef.current.destroy) {
         playerRef.current.destroy();
       }
 
+      // Create container if it doesn't exist
+      let playerContainer = document.getElementById('youtube-player');
+      if (!playerContainer) {
+        playerContainer = document.createElement('div');
+        playerContainer.id = 'youtube-player';
+        document.body.appendChild(playerContainer);
+      }
+
       playerRef.current = new window.YT.Player('youtube-player', {
-        height: '0',
-        width: '0',
+        height: '1',
+        width: '1',
         videoId: videoId,
         playerVars: {
           autoplay: 1,
           controls: 0,
+          enablejsapi: 1,
+          origin: window.location.origin,
+          playsinline: 1
         },
         events: {
           onReady: (event) => {
+            console.log('YouTube player ready, playing video...');
+            event.target.setVolume(100);
             event.target.playVideo();
           },
           onStateChange: (event) => {
+            console.log('Player state:', event.data);
             if (event.data === window.YT.PlayerState.ENDED) {
               nextSong();
             }
@@ -111,6 +128,11 @@ export default function MusicPlayer({ currentEra, onClose }) {
             if (event.data === window.YT.PlayerState.PAUSED) {
               setIsPlaying(false);
             }
+          },
+          onError: (event) => {
+            console.error('YouTube player error:', event.data);
+            // Try next song on error
+            setTimeout(() => nextSong(), 2000);
           }
         }
       });
@@ -154,8 +176,8 @@ export default function MusicPlayer({ currentEra, onClose }) {
       exit={{ opacity: 0, y: 20 }}
       className="bg-gradient-to-r from-purple-100 to-pink-100 dark:from-purple-950 dark:to-pink-950 p-6 rounded-2xl border-2 border-purple-200 dark:border-purple-800 shadow-lg"
     >
-      {/* Hidden YouTube player */}
-      <div id="youtube-player" style={{ display: 'none' }}></div>
+      {/* YouTube player - hidden but must be in DOM with size for audio to work */}
+      <div id="youtube-player" style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px' }}></div>
 
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
