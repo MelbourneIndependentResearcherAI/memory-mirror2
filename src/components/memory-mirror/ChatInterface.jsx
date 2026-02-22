@@ -282,9 +282,18 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     // Start proactive check-ins (every 5-10 minutes)
     startProactiveCheckIns();
     
+    // AUTO-START VOICE LISTENING on mount (always-on mode)
+    const autoStartVoiceTimeout = setTimeout(() => {
+      if (isMountedRef.current && !isLoading && !isListening) {
+        console.log('🎤 AUTO-STARTING voice input on load');
+        startVoiceInput();
+      }
+    }, 2000); // Start 2 seconds after page load
+    
     return () => {
       isMountedRef.current = false;
       clearTimeout(greetingTimeout);
+      clearTimeout(autoStartVoiceTimeout);
       
       // Stop proactive check-ins
       if (proactiveIntervalRef.current) {
@@ -302,7 +311,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         } catch {}
       }
     };
-  }, [sendProactiveMessage, startProactiveCheckIns]);
+  }, [sendProactiveMessage, startProactiveCheckIns, startVoiceInput, isLoading, isListening]);
 
   useEffect(() => {
     if (cognitiveAssessments?.length > 0 && cognitiveAssessments[0]?.cognitive_level) {
@@ -982,6 +991,14 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         console.log('Speech recognition ended');
         if (isMountedRef.current) {
           setIsListening(false);
+          
+          // AUTO-RESTART voice listening after 2 seconds (always-on mode)
+          setTimeout(() => {
+            if (isMountedRef.current && !isLoading) {
+              console.log('🔄 AUTO-RESTARTING voice input (always-on mode)');
+              startVoiceInput();
+            }
+          }, 2000);
         }
       };
       

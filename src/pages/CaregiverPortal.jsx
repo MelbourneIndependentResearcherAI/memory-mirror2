@@ -326,10 +326,10 @@ export default function CaregiverPortal() {
                   <div className="text-4xl mb-4">
                     {card.icon}
                   </div>
-                  <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-2">
+                  <h3 className="text-xl font-extrabold text-slate-900 dark:text-white mb-3" style={{ color: '#1e293b' }}>
                     {card.title}
                   </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                  <p className="text-base font-medium text-slate-700 dark:text-slate-300" style={{ color: '#475569' }}>
                     {card.description}
                   </p>
                 </button>
