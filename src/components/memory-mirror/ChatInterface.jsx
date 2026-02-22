@@ -165,23 +165,63 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     lastProactiveCheckRef.current = Date.now();
     
     try {
-      const greetings = [
-        "Hello! I'm here to keep you company. How are you feeling today?",
-        "Good to see you! I'm right here if you need anything.",
-        "Hi there! I'm here whenever you'd like to chat.",
+      const hour = new Date().getHours();
+      const timeOfDay = hour < 12 ? 'morning' : hour < 17 ? 'afternoon' : 'evening';
+      
+      // Memory-jogging prompts using actual stored data
+      const memoryPrompts = memories.length > 0 
+        ? memories.slice(0, 5).map(m => `I remember you shared "${m.title}". Would you like to talk about that?`)
+        : [];
+      
+      const photoPrompts = memories.filter(m => m.photo_url).length > 0
+        ? [`I notice we have some photos. Would you like to look at them together?`]
+        : [];
+      
+      // Time-based greetings
+      const timeBasedGreetings = {
+        morning: [
+          "Good morning! How did you sleep last night?",
+          "Morning! What would you like to do today?",
+          "Good morning! Let's start the day with something pleasant."
+        ],
+        afternoon: [
+          "Good afternoon! How has your day been so far?",
+          "Hello! It's a lovely afternoon. How are you feeling?",
+          "Afternoon! Would you like some music or a story?"
+        ],
+        evening: [
+          "Good evening! How was your day today?",
+          "Evening! Let's relax together. What sounds nice?",
+          "Hello! It's a peaceful evening. How are you feeling?"
+        ]
+      };
+      
+      // Mood-based check-ins with memory prompts
+      const moodCheckIns = [
+        "How are you feeling right now? I'm here to listen.",
+        "Is there anything on your mind you'd like to talk about?",
+        "I'm here with you. Would you like to share how you're feeling?",
+        ...memoryPrompts,
+        ...photoPrompts
       ];
       
-      const checkIns = [
-        "I'm still here with you. Is there anything you'd like to talk about?",
-        "Would you like to share a story or memory?",
-        "How are you feeling right now?",
-        "Is there anything I can help you with?",
-        "I'm here if you need someone to talk to.",
-        "Would you like to listen to some music together?",
-        "Let's talk about something nice. What brings you joy?",
-      ];
+      // Routine/reminder prompts
+      const routinePrompts = [];
+      if (hour === 9) routinePrompts.push("Good morning! Time for breakfast. Have you eaten yet?");
+      if (hour === 12) routinePrompts.push("It's lunchtime! Would you like me to remind someone?");
+      if (hour === 15) routinePrompts.push("Afternoon time! How about a walk or some fresh air?");
+      if (hour === 18) routinePrompts.push("Dinner time approaching. Are you feeling hungry?");
+      if (hour === 20) routinePrompts.push("Evening time. Would you like to listen to some music before bed?");
       
-      const messages = type === 'greeting' ? greetings : checkIns;
+      let messages = [];
+      if (type === 'greeting') {
+        messages = timeBasedGreetings[timeOfDay];
+      } else if (type === 'routine' && routinePrompts.length > 0) {
+        messages = routinePrompts;
+      } else {
+        messages = moodCheckIns;
+      }
+      
       let message = messages[Math.floor(Math.random() * messages.length)];
       
       // Translate to user's language
@@ -247,6 +287,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       return (5 + Math.random() * 5) * 60 * 1000; // 5-10 minutes in milliseconds
     };
     
+    // Check for routine prompts every hour
+    const checkRoutinePrompts = () => {
+      const hour = new Date().getHours();
+      const routineTimes = [9, 12, 15, 18, 20]; // Meal times and activities
+      
+      if (routineTimes.includes(hour)) {
+        const timeSinceLastMessage = Date.now() - lastMessageTimeRef.current;
+        if (timeSinceLastMessage > 30 * 60 * 1000) { // 30 min since last interaction
+          sendProactiveMessage('routine');
+        }
+      }
+    };
+    
     const scheduleNextCheckIn = () => {
       const interval = getRandomInterval();
       
@@ -257,8 +310,17 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           const timeSinceLastProactive = Date.now() - lastProactiveCheckRef.current;
           
           if (timeSinceLastMessage > 4 * 60 * 1000 && timeSinceLastProactive > 4 * 60 * 1000) {
-            sendProactiveMessage('checkin');
+            // Mood-aware check-ins
+            const anxietyLevelCheck = anxietyState.level;
+            if (anxietyLevelCheck >= 5) {
+              sendProactiveMessage('comfort');
+            } else {
+              sendProactiveMessage('checkin');
+            }
           }
+          
+          // Check routine prompts
+          checkRoutinePrompts();
           
           // Schedule next check-in
           scheduleNextCheckIn();
@@ -267,7 +329,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     };
     
     scheduleNextCheckIn();
-  }, [sendProactiveMessage]);
+  }, [sendProactiveMessage, anxietyState]);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -594,13 +656,20 @@ ${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention
 Tone: ${memoryRecall.tone_recommendation}`
         : '';
 
+      // Add recent memories for context-aware responses
+      const recentMemoriesContext = memories.length > 0
+        ? `\n\nRECENT MEMORIES AVAILABLE (mention naturally when relevant):
+${memories.slice(0, 5).map(m => `- "${m.title}" (${m.era})`).join('\n')}`
+        : '';
+
       // Get AI response (offline-aware)
-      const fullPrompt = `${getSystemPrompt()}${emotionalContext}${memoryContext}
+      const fullPrompt = `${getSystemPrompt()}${emotionalContext}${memoryContext}${recentMemoriesContext}
 
 Conversation so far:
 ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
-Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}`;
+Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}
+If appropriate, gently reference their memories or suggest looking at photos together.`;
 
       console.log('Calling AI chat...');
       let response = await offlineAIChat(fullPrompt, {
