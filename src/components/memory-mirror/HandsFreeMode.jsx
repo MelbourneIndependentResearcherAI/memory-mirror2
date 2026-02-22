@@ -29,8 +29,6 @@ export default function HandsFreeMode({
   const silenceTimeoutRef = useRef(null);
   const speechEndTimeoutRef = useRef(null);
   const audioContextRef = useRef(null);
-  const audioStreamRef = useRef(null);
-  const gainNodeRef = useRef(null);
 
   useEffect(() => {
     isMountedRef.current = true;
@@ -50,17 +48,12 @@ export default function HandsFreeMode({
         clearTimeout(speechEndTimeoutRef.current);
         speechEndTimeoutRef.current = null;
       }
-      if (audioStreamRef.current) {
-        audioStreamRef.current.getTracks().forEach(track => track.stop());
-        audioStreamRef.current = null;
-      }
       if (audioContextRef.current) {
         try {
           audioContextRef.current.close();
         } catch (e) {}
         audioContextRef.current = null;
       }
-      gainNodeRef.current = null;
       
       stopHandsFreeMode();
     };
@@ -94,7 +87,7 @@ export default function HandsFreeMode({
     }
 
     try {
-      // CRITICAL: Setup audio stream with echo cancellation & gain control
+      // Request microphone permission with enhanced settings
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ 
           audio: {
@@ -102,25 +95,15 @@ export default function HandsFreeMode({
             noiseSuppression: true,
             autoGainControl: true,
             channelCount: 1,
-            sampleRate: 48000,
-            sampleSize: 16,
-            volume: 1.0
+            sampleRate: 48000
           }
         });
-        console.log('✅ Microphone access granted with echo cancellation');
-        
-        // Setup Web Audio API for ducking (reduce mic gain while bot speaks)
-        audioContextRef.current = new (window.AudioContext || window.webkitAudioContext)();
-        const source = audioContextRef.current.createMediaStreamSource(stream);
-        gainNodeRef.current = audioContextRef.current.createGain();
-        gainNodeRef.current.gain.value = 1.0; // Normal gain
-        source.connect(gainNodeRef.current);
-        
-        audioStreamRef.current = stream;
-        console.log('✅ Audio ducking enabled - bot won\'t record itself');
+        console.log('✅ Microphone permission granted');
+        // Close stream - Speech Recognition will request it again
+        stream.getTracks().forEach(track => track.stop());
       } catch (permError) {
         console.error('❌ Microphone permission denied:', permError);
-        toast.error('🎤 Please allow microphone access to use hands-free mode');
+        toast.error('🎤 Please allow microphone access in your browser');
         setIsActive(false);
         setStatusMessage('Microphone access required');
         return;
@@ -425,12 +408,6 @@ export default function HandsFreeMode({
           }
         }
 
-        // CRITICAL: Reduce mic gain while bot speaks (prevent echo/loopback)
-        if (gainNodeRef.current) {
-          console.log('🔇 Ducking microphone during bot speech');
-          gainNodeRef.current.gain.value = 0.05; // Reduce to 5%
-        }
-        
         // Speak response with optimized parameters
         setIsSpeaking(true);
         console.log('🗣️ Starting speech synthesis...');
@@ -446,13 +423,6 @@ export default function HandsFreeMode({
           userProfile: userProfile,
           onEnd: () => {
             console.log('✅ Speech ended, preparing to resume listening');
-            
-            // CRITICAL: Restore mic gain after bot finishes speaking
-            if (gainNodeRef.current) {
-              console.log('🔊 Restoring microphone gain');
-              gainNodeRef.current.gain.value = 1.0; // Back to 100%
-            }
-            
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
@@ -488,11 +458,6 @@ export default function HandsFreeMode({
           } catch {}
         }
         
-        // CRITICAL: Duck mic during fallback too
-        if (gainNodeRef.current) {
-          gainNodeRef.current.gain.value = 0.05;
-        }
-        
         setIsSpeaking(true);
         speakWithRealisticVoice(fallback, {
           emotionalState: 'reassuring',
@@ -501,11 +466,6 @@ export default function HandsFreeMode({
           language: selectedLanguage,
           userProfile: userProfile,
           onEnd: () => {
-            // Restore mic gain
-            if (gainNodeRef.current) {
-              gainNodeRef.current.gain.value = 1.0;
-            }
-            
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
@@ -594,18 +554,13 @@ export default function HandsFreeMode({
       speechEndTimeoutRef.current = null;
     }
     
-    // Clean up audio resources
-    if (audioStreamRef.current) {
-      audioStreamRef.current.getTracks().forEach(track => track.stop());
-      audioStreamRef.current = null;
-    }
+    // Clean up audio context
     if (audioContextRef.current) {
       try {
         audioContextRef.current.close();
       } catch (e) {}
       audioContextRef.current = null;
     }
-    gainNodeRef.current = null;
     
     setStatusMessage('Stopped');
     setErrorCount(0);
