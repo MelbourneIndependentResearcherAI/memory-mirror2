@@ -142,13 +142,14 @@ export default function HandsFreeMode({
           return;
         }
 
+        // CRITICAL: Block ALL input while AI is speaking or processing
         if (isSpeaking) {
-          console.log('🔇 Ignoring - AI is speaking');
+          console.log('🔇 BLOCKING INPUT - AI is speaking');
           return;
         }
 
         if (isProcessing) {
-          console.log('⏳ Ignoring - still processing previous input');
+          console.log('⏳ BLOCKING INPUT - still processing previous input');
           return;
         }
 
@@ -300,12 +301,17 @@ export default function HandsFreeMode({
       return;
     }
 
+    // CRITICAL: Filter out echo - ignore if transcript contains system phrases
+    const lowerTranscript = transcript.toLowerCase();
+    const echoKeywords = ['hands-free', 'mode on', 'always listening', 'will respond when you speak', 'hey mirror'];
+    if (echoKeywords.some(keyword => lowerTranscript.includes(keyword))) {
+      console.log('🔇 ECHO DETECTED - Ignoring system speech:', transcript);
+      return;
+    }
+
     console.log('🎯 PROCESSING USER SPEECH:', transcript);
 
-    // STOP listening while processing (prevent echo and duplicate input)
-    setIsProcessing(true);
-    setStatusMessage(`💭 Thinking about: "${transcript.substring(0, 30)}..."`);
-    
+    // STOP listening IMMEDIATELY while processing (prevent echo)
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
@@ -313,6 +319,14 @@ export default function HandsFreeMode({
       } catch {}
     }
     setIsListening(false);
+    setIsProcessing(true);
+    setStatusMessage(`💭 Thinking about: "${transcript.substring(0, 30)}..."`);
+    
+    // Extra safety: clear any pending speech timeouts
+    if (speechEndTimeoutRef.current) {
+      clearTimeout(speechEndTimeoutRef.current);
+      speechEndTimeoutRef.current = null;
+    }
 
     // Notify parent
     if (onMessage) {
@@ -353,8 +367,9 @@ export default function HandsFreeMode({
           } catch {}
         }
 
-        // SPEAK (recognition stays OFF)
+        // CRITICAL: Set speaking state BEFORE starting TTS to block echo
         setIsSpeaking(true);
+        setIsProcessing(false); // Not processing anymore, just speaking
         
         await speakWithRealisticVoice(aiMessage, {
           rate: 0.92,
@@ -365,34 +380,21 @@ export default function HandsFreeMode({
           language: selectedLanguage,
           userProfile: userProfile,
           onEnd: () => {
-            console.log('✅ AI FINISHED SPEAKING');
+            console.log('✅ AI FINISHED SPEAKING - Waiting before resuming listening');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
-              setIsProcessing(false);
               setStatusMessage('✅ Ready - Listening...');
               lastTranscriptRef.current = '';
               
-              // CRITICAL: ALWAYS resume listening after AI stops (true hands-free)
+              // CRITICAL: Wait 1.5 seconds AFTER speech ends to avoid echo
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-                  console.log('🔄 RESUMING CONTINUOUS LISTENING - ready for next input');
+                  console.log('🔄 RESUMING LISTENING (after 1.5s delay for echo prevention)');
                   startRecognition();
                 } else {
-                  console.log('⚠️ Cannot resume yet - will retry. State:', {
-                    mounted: isMountedRef.current,
-                    active: isActive,
-                    speaking: isSpeaking,
-                    processing: isProcessing
-                  });
-                  // Retry in case of race condition
-                  setTimeout(() => {
-                    if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-                      console.log('🔄 RETRY: Starting recognition');
-                      startRecognition();
-                    }
-                  }, 500);
+                  console.log('⚠️ State check failed - not resuming');
                 }
-              }, 500);
+              }, 1500);
             }
           }
         });
@@ -411,6 +413,7 @@ export default function HandsFreeMode({
         }
         
         setIsSpeaking(true);
+        setIsProcessing(false);
         speakWithRealisticVoice(fallback, {
           emotionalState: 'reassuring',
           rate: 0.9,
@@ -419,7 +422,6 @@ export default function HandsFreeMode({
             console.log('✅ Fallback speech done');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
-              setIsProcessing(false);
               lastTranscriptRef.current = '';
               
               setTimeout(() => {
@@ -427,7 +429,7 @@ export default function HandsFreeMode({
                   console.log('🔄 Resuming after fallback');
                   startRecognition();
                 }
-              }, 500);
+              }, 1500);
             }
           }
         });
@@ -436,28 +438,31 @@ export default function HandsFreeMode({
   }, [isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, isProcessing, startRecognition]);
 
   const startHandsFreeMode = async () => {
-    console.log('🚀 START HANDS-FREE MODE - FULLY AUTOMATIC');
+    console.log('🚀 START HANDS-FREE MODE');
     setIsActive(true);
     setErrorCount(0);
-    setStatusMessage('Activating continuous listening...');
+    setStatusMessage('Activating...');
     lastTranscriptRef.current = '';
     
-    toast.success('🎤 Hands-free ON - Always listening!', { duration: 3000 });
+    toast.success('🎤 Hands-free activated!', { duration: 2000 });
     
+    // CRITICAL: Set speaking BEFORE TTS starts
     setIsSpeaking(true);
-    const greeting = "Hands-free mode is now active. I'm always listening and will respond when you speak.";
+    
+    const greeting = "Hands-free mode activated. I'm ready to listen.";
     speakWithRealisticVoice(greeting, {
       rate: 1.0,
       emotionalState: 'warm',
       language: selectedLanguage,
       onEnd: () => {
-        console.log('✅ Greeting done - starting CONTINUOUS listening');
+        console.log('✅ Greeting finished - waiting before listening');
         setIsSpeaking(false);
         if (isMountedRef.current) {
+          // Wait 2 seconds AFTER greeting to ensure no echo
           setTimeout(() => {
-            console.log('▶️ LAUNCHING continuous voice recognition');
+            console.log('▶️ Starting voice recognition (after 2s delay)');
             startRecognition();
-          }, 500);
+          }, 2000);
         }
       }
     });
