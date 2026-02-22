@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
     
     const resolutionReport = {
       timestamp: new Date().toISOString(),
-      actionsT: [],
+      actionsTaken: [],
       fixedIssues: 0,
       escalatedIssues: []
     };
