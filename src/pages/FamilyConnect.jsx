@@ -47,9 +47,7 @@ export default function FamilyConnect() {
         </div>
 
         <Tabs defaultValue="overview" className="space-y-6">
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-            <TabsList className="hidden" />
-            
+          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 h-auto bg-transparent p-0">
             <TabsTrigger value="overview" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-50 data-[state=active]:to-rose-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
                 <Heart className="w-7 h-7 text-white" />
@@ -126,7 +124,7 @@ export default function FamilyConnect() {
               </div>
               <span className="text-sm font-semibold text-slate-700">Contacts</span>
             </TabsTrigger>
-          </div>
+          </TabsList>
 
           <TabsContent value="overview">
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
