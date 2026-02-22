@@ -26,36 +26,15 @@ export default function HandsFreeMode({
   const isMountedRef = useRef(true);
   const restartTimeoutRef = useRef(null);
   const lastTranscriptRef = useRef('');
-  const silenceTimeoutRef = useRef(null);
   const speechEndTimeoutRef = useRef(null);
-  const audioContextRef = useRef(null);
+  const isRestartingRef = useRef(false);
 
+  // Cleanup on unmount
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
-      
-      // Clean up ALL timeouts and resources
-      if (restartTimeoutRef.current) {
-        clearTimeout(restartTimeoutRef.current);
-        restartTimeoutRef.current = null;
-      }
-      if (silenceTimeoutRef.current) {
-        clearTimeout(silenceTimeoutRef.current);
-        silenceTimeoutRef.current = null;
-      }
-      if (speechEndTimeoutRef.current) {
-        clearTimeout(speechEndTimeoutRef.current);
-        speechEndTimeoutRef.current = null;
-      }
-      if (audioContextRef.current) {
-        try {
-          audioContextRef.current.close();
-        } catch (e) {}
-        audioContextRef.current = null;
-      }
-      
-      stopHandsFreeMode();
+      cleanupAllResources();
     };
   }, []);
 
@@ -66,28 +45,52 @@ export default function HandsFreeMode({
     vi: 'vi-VN', th: 'th-TH', sv: 'sv-SE', no: 'nb-NO', da: 'da-DK'
   };
 
-  const stopSpeech = useCallback(() => {
+  const cleanupAllResources = useCallback(() => {
+    // Stop speech
     try {
       if ('speechSynthesis' in window) {
         speechSynthesis.cancel();
       }
-      setIsSpeaking(false);
-    } catch (error) {
-      console.error('Stop speech error:', error);
+    } catch {}
+
+    // Stop recognition
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.abort();
+        recognitionRef.current.stop();
+      } catch {}
+      recognitionRef.current = null;
     }
+    
+    // Clear all timeouts
+    if (restartTimeoutRef.current) {
+      clearTimeout(restartTimeoutRef.current);
+      restartTimeoutRef.current = null;
+    }
+    if (speechEndTimeoutRef.current) {
+      clearTimeout(speechEndTimeoutRef.current);
+      speechEndTimeoutRef.current = null;
+    }
+
+    isRestartingRef.current = false;
   }, []);
 
   const startRecognition = useCallback(async () => {
-    if (!isMountedRef.current || !isActive) return;
+    if (!isMountedRef.current || !isActive || isRestartingRef.current) {
+      console.log('⏹️ Cannot start - mounted:', isMountedRef.current, 'active:', isActive, 'restarting:', isRestartingRef.current);
+      return;
+    }
 
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      toast.error('Voice recognition not supported. Please use Chrome, Edge, or Safari.');
+    // Check browser support
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Voice not supported. Please use Chrome, Edge, or Safari.');
       setIsActive(false);
       return;
     }
 
     try {
-      // Request microphone permission with enhanced settings
+      // Request microphone permission
       try {
         const stream = await navigator.mediaDevices.getUserMedia({ 
           audio: {
@@ -98,73 +101,56 @@ export default function HandsFreeMode({
             sampleRate: 48000
           }
         });
-        console.log('✅ Microphone permission granted');
-        // Close stream - Speech Recognition will request it again
+        console.log('✅ Mic permission granted');
         stream.getTracks().forEach(track => track.stop());
       } catch (permError) {
-        console.error('❌ Microphone permission denied:', permError);
-        toast.error('🎤 Please allow microphone access in your browser');
+        console.error('❌ Mic permission denied');
+        toast.error('Please allow microphone access', { duration: 5000 });
         setIsActive(false);
         setStatusMessage('Microphone access required');
         return;
       }
 
+      // Stop existing recognition
       if (recognitionRef.current) {
         try {
-          recognitionRef.current.stop();
           recognitionRef.current.abort();
+          recognitionRef.current.stop();
         } catch {}
       }
 
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      // Create new recognition instance
       recognitionRef.current = new SpeechRecognition();
-      
-      // CRITICAL: MAXIMUM sensitivity for soft/quiet voices
-      recognitionRef.current.continuous = true;          // Always listening
-      recognitionRef.current.interimResults = true;      // Show what's being heard
-      recognitionRef.current.maxAlternatives = 3;        // More options = better soft voice detection
+      recognitionRef.current.continuous = true;
+      recognitionRef.current.interimResults = true;
+      recognitionRef.current.maxAlternatives = 3;
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
-      
-      // Enable browser-specific audio enhancements
-      if (recognitionRef.current.audioTrack !== undefined) {
-        recognitionRef.current.audioTrack = true;
-      }
-      
-      console.log('🎤 Starting ENHANCED speech recognition (soft voice optimized) with language:', langMap[selectedLanguage] || 'en-US');
-      
 
-
+      // ON START
       recognitionRef.current.onstart = () => {
-        console.log('✅ Speech recognition STARTED successfully');
-        if (isMountedRef.current) {
-          setIsListening(true);
-          setStatusMessage('🎤 Listening - speak now!');
-          setErrorCount(0);
-          toast.success('👂 I can hear you now - just speak naturally!', { duration: 2000 });
-        }
+        console.log('✅ Recognition STARTED');
+        if (!isMountedRef.current) return;
+        setIsListening(true);
+        setStatusMessage('🎤 Listening...');
+        setErrorCount(0);
       };
 
+      // ON RESULT
       recognitionRef.current.onresult = (event) => {
-        if (!isMountedRef.current || !isActive) return;
+        if (!isMountedRef.current || !isActive || isSpeaking || isProcessing) return;
 
-        // Clear ALL timeouts to prevent memory leaks
-        if (silenceTimeoutRef.current) {
-          clearTimeout(silenceTimeoutRef.current);
-          silenceTimeoutRef.current = null;
-        }
+        // Clear speech end timeout
         if (speechEndTimeoutRef.current) {
           clearTimeout(speechEndTimeoutRef.current);
           speechEndTimeoutRef.current = null;
         }
 
         try {
-          // Build COMPLETE transcript from ALL results
-          let interimText = '';
           let finalText = '';
+          let interimText = '';
           
           for (let i = 0; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
-            
             if (event.results[i].isFinal) {
               finalText += transcript + ' ';
             } else {
@@ -174,283 +160,207 @@ export default function HandsFreeMode({
           
           const completeSpeech = (finalText + interimText).trim();
           
-          console.log('🎤 Capturing:', completeSpeech.substring(0, 80));
-          
-          // Show what's being heard in real-time
-          if (completeSpeech.length > 0 && isMountedRef.current) {
-            setStatusMessage(`👂 Hearing: "${completeSpeech.substring(0, 60)}..."`);
+          if (completeSpeech.length > 0) {
+            console.log('📝 Hearing:', completeSpeech.substring(0, 60));
+            setStatusMessage(`👂 "${completeSpeech.substring(0, 50)}..."`);
           }
           
-          // Wait for user to FINISH speaking (1.5 second pause)
+          // Wait 1.5s after user stops talking
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
             
-            if (finalSpeech.length > 3 && isMountedRef.current && isActive) {
-              console.log('✅ COMPLETE SENTENCE:', finalSpeech);
+            if (finalSpeech.length > 3 && isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+              console.log('✅ FINAL:', finalSpeech);
               
-              // Avoid duplicate processing
-              const normalized = finalSpeech.toLowerCase();
-              if (normalized !== lastTranscriptRef.current.toLowerCase()) {
+              // Prevent duplicates
+              if (finalSpeech.toLowerCase() !== lastTranscriptRef.current.toLowerCase()) {
                 lastTranscriptRef.current = finalSpeech;
-                setStatusMessage(`✅ Heard: "${finalSpeech.substring(0, 60)}"`);
                 handleUserSpeech(finalSpeech);
-              } else {
-                console.log('⚠️ Duplicate, skipping');
               }
             }
             
-            // Clear the timeout reference
             speechEndTimeoutRef.current = null;
           }, 1500);
           
         } catch (error) {
-          console.error('❌ Recognition result error:', error);
+          console.error('Result error:', error);
         }
-
-        // Set silence timeout
-        silenceTimeoutRef.current = setTimeout(() => {
-          if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-            console.log('⏱️ Silence timeout - ready to listen');
-            setStatusMessage('👂 Ready - speak anytime');
-          }
-          silenceTimeoutRef.current = null;
-        }, 8000);
       };
 
+      // ON ERROR
       recognitionRef.current.onerror = (event) => {
-        console.error('❌ Speech recognition error:', event.error);
+        console.error('Recognition error:', event.error);
         if (!isMountedRef.current) return;
 
-        const errorMessages = {
-          'no-speech': '👂 Listening... (no speech detected yet)',
-          'audio-capture': '❌ Microphone not available - check device settings',
-          'not-allowed': '❌ Microphone permission denied - please enable in browser settings',
-          'network': '⚠️ Network error - working offline',
-          'aborted': '🔄 Restarting listener...',
-          'service-not-allowed': '❌ Speech service not allowed',
-          'language-not-supported': '⚠️ Language not supported, using English'
-        };
-
-        const errorMessage = errorMessages[event.error] || `Error: ${event.error}`;
-        console.log('Error message:', errorMessage);
-
-        // Only show user-facing errors for critical issues
+        // Critical errors - stop completely
         if (['audio-capture', 'not-allowed', 'service-not-allowed'].includes(event.error)) {
-          console.error('🚨 CRITICAL ERROR:', event.error);
-          toast.error(errorMessage, { duration: 5000 });
-          setStatusMessage(errorMessage);
+          toast.error('Microphone error - please check settings', { duration: 5000 });
           setIsActive(false);
-          setErrorCount(prev => prev + 1);
           return;
         }
 
-        // Handle recoverable errors silently
+        // Recoverable errors - auto-restart
         if (event.error === 'no-speech') {
-          console.log('⚠️ No speech detected, continuing to listen...');
-          setStatusMessage('👂 Listening for your voice...');
+          console.log('No speech - continuing...');
           restartRecognition(1000);
           return;
         }
 
-        if (event.error === 'language-not-supported') {
-          console.log('⚠️ Language not supported, switching to English');
-          setStatusMessage('Using English...');
-          restartRecognition(1500);
+        // Network/abort - restart
+        if (['network', 'aborted'].includes(event.error)) {
+          restartRecognition(1000);
           return;
         }
 
-        // Auto-restart on other recoverable errors
-        if (isActive && errorCount < 10) {
-          console.log(`🔄 Recoverable error ${errorCount + 1}/10, restarting...`);
-          if (['aborted', 'network'].includes(event.error)) {
-            setStatusMessage(errorMessage);
-            restartRecognition(1500);
-          } else {
-            setErrorCount(prev => prev + 1);
-            restartRecognition(2000);
-          }
-        } else if (errorCount >= 10) {
-          console.error('🚨 Too many errors, stopping');
-          toast.error('Connection unstable. Please restart hands-free mode.');
+        // Too many errors - stop
+        if (errorCount >= 8) {
+          toast.error('Connection unstable. Please restart.');
           setIsActive(false);
+        } else {
+          setErrorCount(prev => prev + 1);
+          restartRecognition(2000);
         }
       };
 
+      // ON END
       recognitionRef.current.onend = () => {
-        console.log('🛑 Speech recognition ended');
+        console.log('Recognition ended');
         if (!isMountedRef.current) return;
         
         setIsListening(false);
         
-        // CRITICAL: Auto-restart when recognition ends (only if not processing or speaking)
-        if (isActive && !isProcessing && !isSpeaking) {
-          console.log('🔄 Auto-restarting recognition in 800ms...');
-          restartRecognition(800);
-        } else {
-          console.log('⏹️ Not restarting - isActive:', isActive, 'isProcessing:', isProcessing, 'isSpeaking:', isSpeaking);
+        // Auto-restart if active and not processing/speaking
+        if (isActive && !isProcessing && !isSpeaking && !isRestartingRef.current) {
+          console.log('🔄 Auto-restart');
+          restartRecognition(500);
         }
       };
 
-      console.log('▶️ Attempting to START speech recognition...');
+      // START
+      console.log('▶️ Starting recognition...');
       recognitionRef.current.start();
-      console.log('✅ Speech recognition start() called successfully');
       
     } catch (error) {
-      console.error('Start recognition error:', error);
+      console.error('Start error:', error);
       if (isMountedRef.current) {
-        setStatusMessage('Failed to start listening');
         toast.error('Could not start voice recognition');
         setIsActive(false);
       }
     }
-  }, [isActive, selectedLanguage, errorCount, isProcessing]);
+  }, [isActive, selectedLanguage, errorCount, isProcessing, isSpeaking]);
 
-  const restartRecognition = useCallback((delay = 1000) => {
-    if (!isMountedRef.current || !isActive) {
-      console.log('⏹️ Skipping restart - mounted:', isMountedRef.current, 'active:', isActive);
-      return;
-    }
+  const restartRecognition = useCallback((delay = 500) => {
+    if (!isMountedRef.current || !isActive || isRestartingRef.current) return;
+    
+    isRestartingRef.current = true;
     
     if (restartTimeoutRef.current) {
       clearTimeout(restartTimeoutRef.current);
     }
     
-    console.log(`⏰ Scheduling restart in ${delay}ms...`);
+    console.log(`⏰ Restart in ${delay}ms`);
     restartTimeoutRef.current = setTimeout(() => {
       if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
-        console.log('🔄 Executing scheduled restart');
+        isRestartingRef.current = false;
         startRecognition();
       } else {
-        console.log('⏹️ Restart cancelled - mounted:', isMountedRef.current, 'active:', isActive, 'processing:', isProcessing, 'speaking:', isSpeaking);
+        isRestartingRef.current = false;
       }
     }, delay);
   }, [isActive, isProcessing, isSpeaking, startRecognition]);
 
   const handleUserSpeech = useCallback(async (transcript) => {
-    if (!transcript || isProcessing || !isMountedRef.current) {
-      console.log('⚠️ Skipping handleUserSpeech:', { 
-        hasTranscript: !!transcript, 
-        isProcessing, 
-        isMounted: isMountedRef.current 
-      });
-      return;
-    }
+    if (!transcript || isProcessing || !isMountedRef.current) return;
 
-    console.log('🎯 HANDLING USER SPEECH:', transcript);
+    console.log('🎯 Processing:', transcript);
 
-    // Immediate feedback
+    // STOP listening immediately (prevent echo)
     setIsProcessing(true);
-    setStatusMessage(`💭 Processing: "${transcript.substring(0, 50)}..."`);
-    toast.success(`Heard: "${transcript.substring(0, 40)}..."`, { duration: 2000 });
-
-    // Stop listening while processing (prevent echo)
+    setStatusMessage(`💭 Processing...`);
+    
     if (recognitionRef.current) {
       try {
-        console.log('⏸️ Pausing recognition during processing');
-        recognitionRef.current.stop();
         recognitionRef.current.abort();
-      } catch (e) {
-        console.log('Stop error (safe):', e.message);
-      }
+        recognitionRef.current.stop();
+      } catch {}
     }
     setIsListening(false);
 
-    // Notify parent immediately
+    // Notify parent
     if (onMessage) {
       try {
         onMessage(transcript);
-      } catch (error) {
-        console.error('Parent onMessage error:', error);
-      }
+      } catch {}
     }
 
     try {
-      // Build rich conversation context
-      const contextMessages = conversationHistory.slice(-8); // Last 4 exchanges
+      // Build prompt
+      const contextMessages = conversationHistory.slice(-6);
       const prompt = systemPrompt 
-        ? `${systemPrompt}\n\nRecent conversation:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser just said: "${transcript}"\n\nRespond warmly and naturally in 1-3 short sentences. Be conversational and supportive. Keep it brief.`
-        : `You are a compassionate companion. User said: "${transcript}". Respond warmly in 1-2 short sentences.`;
+        ? `${systemPrompt}\n\nRecent:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser: "${transcript}"\n\nRespond warmly in 1-2 sentences.`
+        : `Compassionate companion. User: "${transcript}". Respond warmly in 1-2 sentences.`;
 
-      setStatusMessage('🤖 Getting AI response...');
-      console.log('📤 Sending to AI:', transcript.substring(0, 50));
+      setStatusMessage('🤖 Getting response...');
       
       const response = await Promise.race([
         offlineAIChat(prompt, { add_context_from_internet: false }),
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('AI timeout')), 20000)
-        )
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 15000))
       ]);
-
-      console.log('✅ AI response received:', typeof response, response);
 
       let aiMessage = typeof response === 'string' ? response : response?.text || response;
       
-      // Clean up AI response
       if (aiMessage) {
-        aiMessage = aiMessage.replace(/META:.*$/s, '').trim();
-        aiMessage = aiMessage.substring(0, 600); // Limit length for speech
-        console.log('✅ Cleaned AI message:', aiMessage.substring(0, 100));
-      } else {
-        console.error('❌ No AI message extracted from response');
+        aiMessage = aiMessage.replace(/META:.*$/s, '').trim().substring(0, 500);
       }
       
-      if (aiMessage && isMountedRef.current) {
-        console.log('🔊 Preparing to speak response');
-        setStatusMessage(`🔊 Speaking: "${aiMessage.substring(0, 40)}..."`);
+      if (!aiMessage) throw new Error('Empty response');
+      
+      if (isMountedRef.current) {
+        console.log('🔊 Speaking...');
+        setStatusMessage(`🔊 Speaking...`);
         
-        // Notify parent of AI response FIRST
         if (onAIResponse) {
           try {
-            console.log('📤 Notifying parent of AI response');
             onAIResponse(aiMessage);
-          } catch (error) {
-            console.error('❌ Parent onAIResponse error:', error);
-          }
+          } catch {}
         }
 
-        // Speak response with optimized parameters
+        // SPEAK (recognition stays OFF)
         setIsSpeaking(true);
-        console.log('🗣️ Starting speech synthesis...');
         
         await speakWithRealisticVoice(aiMessage, {
           rate: 0.92,
           pitch: 1.05,
           volume: 1.0,
           emotionalState: 'warm',
-          anxietyLevel: 0,
           cognitiveLevel: cognitiveLevel,
           language: selectedLanguage,
           userProfile: userProfile,
           onEnd: () => {
-            console.log('✅ Speech ended, preparing to resume listening');
+            console.log('✅ Speech done');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
-              setStatusMessage('✅ Ready - speak anytime');
+              setStatusMessage('✅ Ready');
               lastTranscriptRef.current = '';
               
-              // Quick resume of listening
+              // Resume listening after 300ms
               setTimeout(() => {
-                if (isMountedRef.current && isActive && !isSpeaking) {
-                  console.log('🔄 Resuming listening after AI response');
+                if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                  console.log('🔄 Resuming...');
                   startRecognition();
                 }
-              }, 500);
+              }, 300);
             }
           }
         });
-        console.log('✅ Speech synthesis initiated');
-      } else {
-        console.error('❌ No AI message to speak');
-        throw new Error('Empty AI response');
       }
     } catch (error) {
-      console.error('❌ AI response error:', error.message);
+      console.error('AI error:', error.message);
       
       if (isMountedRef.current) {
-        const fallback = "I'm here with you. Everything is okay.";
-        setStatusMessage('⚠️ Using backup response');
-        console.log('🔄 Using fallback message');
+        const fallback = "I'm here with you.";
+        setStatusMessage('Using backup');
         
         if (onAIResponse) {
           try {
@@ -462,28 +372,62 @@ export default function HandsFreeMode({
         speakWithRealisticVoice(fallback, {
           emotionalState: 'reassuring',
           rate: 0.9,
-          cognitiveLevel: cognitiveLevel,
           language: selectedLanguage,
-          userProfile: userProfile,
           onEnd: () => {
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
-              setStatusMessage('Ready - speak anytime');
               lastTranscriptRef.current = '';
               
               setTimeout(() => {
-                if (isMountedRef.current && isActive && !isSpeaking) {
-                  console.log('🔄 Resuming listening after fallback');
+                if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
                   startRecognition();
                 }
-              }, 500);
+              }, 300);
             }
           }
         });
       }
     }
-  }, [isMountedRef, isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, userProfile, selectedLanguage, isProcessing]);
+  }, [isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, isProcessing, startRecognition]);
+
+  const startHandsFreeMode = async () => {
+    console.log('🚀 START HANDS-FREE');
+    setIsActive(true);
+    setErrorCount(0);
+    setStatusMessage('Starting...');
+    lastTranscriptRef.current = '';
+    
+    toast.success('🎤 Hands-free activated!', { duration: 3000 });
+    
+    const greeting = "Hands-free mode on. I'm listening.";
+    speakWithRealisticVoice(greeting, {
+      rate: 1.0,
+      emotionalState: 'warm',
+      language: selectedLanguage,
+      onEnd: () => {
+        if (isMountedRef.current) {
+          setTimeout(() => {
+            startRecognition();
+          }, 300);
+        }
+      }
+    });
+  };
+
+  const stopHandsFreeMode = () => {
+    console.log('🛑 STOP HANDS-FREE');
+    setIsActive(false);
+    setIsListening(false);
+    setIsProcessing(false);
+    setIsSpeaking(false);
+    setStatusMessage('Stopped');
+    setErrorCount(0);
+    lastTranscriptRef.current = '';
+    
+    cleanupAllResources();
+    toast.success('Stopped', { duration: 2000 });
+  };
 
   const toggleHandsFreeMode = () => {
     if (isActive) {
@@ -493,269 +437,148 @@ export default function HandsFreeMode({
     }
   };
 
-  const startHandsFreeMode = async () => {
-    console.log('🚀 STARTING HANDS-FREE MODE');
-    setIsActive(true);
-    setErrorCount(0);
-    setStatusMessage('Starting up...');
-    
-    toast.success('🎤 Hands-free mode activated - just start talking naturally!', {
-      duration: 4000
-    });
-    
-    // Speak activation confirmation
-    const activationMessage = "Hands-free mode activated. I'm listening - just speak naturally and I'll respond.";
-    speakWithRealisticVoice(activationMessage, {
-      rate: 1.0,
-      emotionalState: 'warm',
-      language: selectedLanguage,
-      onEnd: () => {
-        // Start recognition after greeting
-        if (isMountedRef.current) {
-          console.log('🎤 Starting recognition after activation message...');
-          setTimeout(() => {
-            startRecognition();
-          }, 500);
-        }
-      }
-    });
-  };
-
-  const stopHandsFreeMode = () => {
-    console.log('🛑 STOPPING HANDS-FREE MODE');
-    setIsActive(false);
-    setIsListening(false);
-    setIsProcessing(false);
-    setIsSpeaking(false);
-    stopSpeech();
-    
-    // Clean up recognition
-    if (recognitionRef.current) {
-      try {
-        recognitionRef.current.abort();
-        recognitionRef.current.stop();
-      } catch (e) {
-        console.log('Stop error (safe):', e.message);
-      }
-      recognitionRef.current = null;
-    }
-    
-    // Clean up ALL timeouts
-    if (restartTimeoutRef.current) {
-      clearTimeout(restartTimeoutRef.current);
-      restartTimeoutRef.current = null;
-    }
-    if (silenceTimeoutRef.current) {
-      clearTimeout(silenceTimeoutRef.current);
-      silenceTimeoutRef.current = null;
-    }
-    if (speechEndTimeoutRef.current) {
-      clearTimeout(speechEndTimeoutRef.current);
-      speechEndTimeoutRef.current = null;
-    }
-    
-    // Clean up audio context
-    if (audioContextRef.current) {
-      try {
-        audioContextRef.current.close();
-      } catch (e) {}
-      audioContextRef.current = null;
-    }
-    
-    setStatusMessage('Stopped');
-    setErrorCount(0);
-    lastTranscriptRef.current = '';
-    toast.success('Hands-free mode stopped', { duration: 2000 });
-  };
-
-  // Auto-restart recognition if language changes
-  useEffect(() => {
-    if (isActive && !isProcessing && !isSpeaking) {
-      console.log('🌍 Language changed, restarting with new language:', selectedLanguage);
-      if (recognitionRef.current) {
-        try {
-          recognitionRef.current.abort();
-        } catch {}
-      }
-      restartRecognition(1000);
-    }
-  }, [selectedLanguage, isActive, isProcessing, isSpeaking, restartRecognition]);
-
   return (
     <>
-      {/* Always Listening Indicator - Fixed at bottom */}
+      {/* Floating Status Indicator */}
       {isActive && (
-        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 animate-fade-in-up pointer-events-none">
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
           {isListening && !isProcessing && !isSpeaking && (
-            <div className="bg-gradient-to-r from-green-500 to-emerald-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-2xl flex items-center gap-3 md:gap-4 border-2 border-white">
+            <div className="bg-green-500 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 border-4 border-white">
               <div className="relative">
-                <div className="w-4 h-4 md:w-5 md:h-5 bg-white rounded-full animate-pulse" />
-                <div className="absolute inset-0 w-4 h-4 md:w-5 md:h-5 bg-white rounded-full animate-ping opacity-75" />
+                <div className="w-5 h-5 bg-white rounded-full animate-pulse" />
+                <div className="absolute inset-0 w-5 h-5 bg-white rounded-full animate-ping opacity-75" />
               </div>
-              <div className="flex flex-col items-center">
-                <p className="text-base md:text-lg font-bold tracking-wide">
-                  🎤 Listening
-                </p>
-                <p className="text-xs opacity-90">Speak anytime</p>
+              <div>
+                <p className="text-lg font-bold">🎤 LISTENING</p>
+                <p className="text-xs opacity-90">Speak now</p>
               </div>
             </div>
           )}
           {isSpeaking && (
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-2xl flex items-center gap-3 md:gap-4 border-2 border-white">
-              <Volume2 className="w-5 h-5 md:w-6 md:h-6 animate-pulse" />
-              <div className="flex flex-col items-center">
-                <p className="text-base md:text-lg font-bold tracking-wide">
-                  🔊 Speaking
-                </p>
+            <div className="bg-blue-500 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 border-4 border-white">
+              <Volume2 className="w-6 h-6 animate-pulse" />
+              <div>
+                <p className="text-lg font-bold">🔊 SPEAKING</p>
                 <p className="text-xs opacity-90">Please wait</p>
               </div>
             </div>
           )}
           {isProcessing && !isSpeaking && (
-            <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white px-6 py-3 md:px-8 md:py-4 rounded-full shadow-2xl flex items-center gap-3 md:gap-4 border-2 border-white">
-              <Loader2 className="w-5 h-5 md:w-6 md:h-6 animate-spin" />
-              <div className="flex flex-col items-center">
-                <p className="text-base md:text-lg font-bold tracking-wide">
-                  💭 Thinking
-                </p>
-                <p className="text-xs opacity-90">Processing your message</p>
+            <div className="bg-purple-500 text-white px-8 py-4 rounded-full shadow-2xl flex items-center gap-4 border-4 border-white">
+              <Loader2 className="w-6 h-6 animate-spin" />
+              <div>
+                <p className="text-lg font-bold">💭 THINKING</p>
+                <p className="text-xs opacity-90">Processing</p>
               </div>
             </div>
           )}
         </div>
       )}
 
-      <Card className={`p-6 border-2 transition-all duration-300 ${
-        isActive 
-          ? 'border-green-500 bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-950/20 dark:to-emerald-950/20 shadow-lg' 
-          : 'border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900'
-      }`}>
+      <Card className={`p-6 border-2 ${isActive ? 'border-green-500 bg-green-50 dark:bg-green-950/20 shadow-xl' : 'border-slate-300'}`}>
         <div className="flex flex-col gap-4">
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className={`p-3 rounded-full transition-all duration-300 ${
-              isActive 
-                ? 'bg-gradient-to-br from-green-500 to-emerald-500 shadow-lg animate-pulse' 
-                : 'bg-slate-300 dark:bg-slate-700'
-            }`}>
-              <Mic className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h3 className="text-xl font-bold text-slate-900 dark:text-white">
-                Hands-Free Mode
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {isActive ? '✨ Always-on voice conversation' : 'Tap Start to activate'}
-              </p>
-            </div>
-          </div>
-          
-          <Button
-            size="lg"
-            onClick={toggleHandsFreeMode}
-            className={`${
-              isActive
-                ? 'bg-gradient-to-r from-red-500 to-rose-600 hover:from-red-600 hover:to-rose-700 shadow-lg'
-                : 'bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 shadow-lg'
-            } min-w-[120px] font-semibold transition-all duration-300`}
-          >
-            <Power className="w-5 h-5 mr-2" />
-            {isActive ? 'Stop' : 'Start'}
-          </Button>
-        </div>
-
-        {/* Status Indicators */}
-        {isActive && (
-          <div className="flex flex-col gap-3 p-5 bg-gradient-to-br from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-xl border-2 border-slate-200 dark:border-slate-700 shadow-sm">
+          {/* Header */}
+          <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              {isListening && !isProcessing && !isSpeaking && (
-                <div className="flex items-center gap-3 text-blue-600 dark:text-blue-400 animate-fade-in-up">
-                  <div className="relative">
-                    <Mic className="w-6 h-6 animate-pulse" />
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full animate-ping" />
-                  </div>
-                  <span className="font-semibold text-base">Listening for your voice...</span>
-                </div>
-              )}
-              {isProcessing && !isSpeaking && (
-                <div className="flex items-center gap-3 text-purple-600 dark:text-purple-400 animate-fade-in-up">
-                  <Loader2 className="w-6 h-6 animate-spin" />
-                  <span className="font-semibold text-base">Processing your message...</span>
-                </div>
-              )}
-              {isSpeaking && (
-                <div className="flex items-center gap-3 text-emerald-600 dark:text-emerald-400 animate-fade-in-up">
-                  <Volume2 className="w-6 h-6 animate-pulse" />
-                  <span className="font-semibold text-base">Speaking response...</span>
-                </div>
-              )}
-              {!isListening && !isProcessing && !isSpeaking && (
-                <div className="flex items-center gap-3 text-green-600 dark:text-green-400">
-                  <CheckCircle2 className="w-6 h-6" />
-                  <span className="font-semibold text-base">Ready to listen</span>
-                </div>
-              )}
-            </div>
-            
-            <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3 border border-slate-200 dark:border-slate-700">
-              <p className="text-sm text-slate-700 dark:text-slate-300 font-medium">
-                {statusMessage}
-              </p>
-            </div>
-            
-            {errorCount > 0 && errorCount < 8 && (
-              <div className="bg-yellow-50 dark:bg-yellow-950/20 border border-yellow-200 dark:border-yellow-800 rounded-lg p-3">
-                <p className="text-xs text-yellow-800 dark:text-yellow-200">
-                  ⚠️ Minor connection issues detected ({errorCount}/10) - auto-recovering...
-                </p>
+              <div className={`p-3 rounded-full ${isActive ? 'bg-green-500 animate-pulse' : 'bg-slate-300'}`}>
+                <Mic className="w-6 h-6 text-white" />
               </div>
-            )}
+              <div>
+                <h3 className="text-xl font-bold">Hands-Free Mode</h3>
+                <p className="text-sm text-slate-600">{isActive ? '✨ Always listening' : 'Press Start'}</p>
+              </div>
+            </div>
+            
+            <Button
+              size="lg"
+              onClick={toggleHandsFreeMode}
+              className={`${isActive ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} min-w-[120px] font-bold`}
+            >
+              <Power className="w-5 h-5 mr-2" />
+              {isActive ? 'STOP' : 'START'}
+            </Button>
           </div>
-        )}
 
-        {/* Instructions */}
-        {!isActive && (
-          <div className="flex items-start gap-4 p-6 bg-gradient-to-br from-blue-50 via-cyan-50 to-blue-50 dark:from-blue-950/30 dark:via-cyan-950/30 dark:to-blue-950/30 rounded-xl border-2 border-blue-300 dark:border-blue-700 shadow-md">
-            <AlertCircle className="w-7 h-7 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-            <div className="text-sm text-blue-900 dark:text-blue-100">
-              <p className="font-bold mb-3 text-lg">✨ True Hands-Free Voice Experience</p>
-              <ul className="space-y-2.5">
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Always listening</strong> - No buttons to press, just speak naturally</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Instant responses</strong> - AI hears you and responds with warm, human-like voice</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Natural conversation</strong> - Talk back-and-forth seamlessly</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Multi-language support</strong> - Currently set to {selectedLanguage.toUpperCase()}</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Auto-recovery</strong> - Keeps working even with brief interruptions</span>
-                </li>
-                <li className="flex items-start gap-2.5">
-                  <span className="text-green-600 dark:text-green-400 font-bold mt-0.5 text-base">✓</span>
-                  <span className="leading-relaxed"><strong>Privacy first</strong> - Everything stays on your device</span>
-                </li>
-              </ul>
-              <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg border border-blue-200 dark:border-blue-800">
-                <p className="text-xs text-blue-800 dark:text-blue-200 font-medium">
-                  💡 <strong>Pro Tip:</strong> Use Chrome, Edge, or Safari for the best voice recognition experience
-                </p>
+          {/* Status */}
+          {isActive && (
+            <div className="p-5 bg-white dark:bg-slate-900 rounded-xl border-2 border-slate-200 shadow-sm">
+              <div className="flex items-center gap-3 mb-3">
+                {isListening && !isProcessing && !isSpeaking && (
+                  <>
+                    <Mic className="w-6 h-6 text-green-600 animate-pulse" />
+                    <span className="font-bold text-green-600">LISTENING</span>
+                  </>
+                )}
+                {isProcessing && !isSpeaking && (
+                  <>
+                    <Loader2 className="w-6 h-6 text-purple-600 animate-spin" />
+                    <span className="font-bold text-purple-600">PROCESSING</span>
+                  </>
+                )}
+                {isSpeaking && (
+                  <>
+                    <Volume2 className="w-6 h-6 text-blue-600 animate-pulse" />
+                    <span className="font-bold text-blue-600">SPEAKING</span>
+                  </>
+                )}
+                {!isListening && !isProcessing && !isSpeaking && (
+                  <>
+                    <CheckCircle2 className="w-6 h-6 text-green-600" />
+                    <span className="font-bold text-green-600">READY</span>
+                  </>
+                )}
+              </div>
+              
+              <div className="bg-slate-100 dark:bg-slate-800 rounded-lg p-3">
+                <p className="text-sm font-medium">{statusMessage}</p>
+              </div>
+              
+              {errorCount > 0 && errorCount < 8 && (
+                <div className="mt-3 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                  <p className="text-xs text-yellow-800">⚠️ Connection issues ({errorCount}/8) - recovering...</p>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Instructions */}
+          {!isActive && (
+            <div className="p-6 bg-blue-50 dark:bg-blue-950/30 rounded-xl border-2 border-blue-300">
+              <div className="flex gap-4">
+                <AlertCircle className="w-7 h-7 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="font-bold text-lg mb-3">🎤 100% Hands-Free Healthcare Voice</p>
+                  <ul className="space-y-2">
+                    <li className="flex gap-2">
+                      <span className="text-green-600 font-bold">✓</span>
+                      <span><strong>Always Listening</strong> - No buttons, just speak</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-green-600 font-bold">✓</span>
+                      <span><strong>Instant Response</strong> - AI answers immediately</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-green-600 font-bold">✓</span>
+                      <span><strong>Echo Prevention</strong> - Won't hear itself</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-green-600 font-bold">✓</span>
+                      <span><strong>Auto-Recovery</strong> - Never stops working</span>
+                    </li>
+                    <li className="flex gap-2">
+                      <span className="text-green-600 font-bold">✓</span>
+                      <span><strong>Healthcare Grade</strong> - Built for reliability</span>
+                    </li>
+                  </ul>
+                  <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                    <p className="text-xs font-medium">💡 Use Chrome or Edge for best results</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </div>
-    </Card>
+          )}
+        </div>
+      </Card>
     </>
   );
 }
