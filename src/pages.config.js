@@ -53,7 +53,9 @@ import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
 import Feedback from './pages/Feedback';
 import Home from './pages/Home';
+import ImportArticle from './pages/ImportArticle';
 import Landing from './pages/Landing';
+import NewsArticle from './pages/NewsArticle';
 import NightWatch from './pages/NightWatch';
 import OfflineAudio from './pages/OfflineAudio';
 import PhoneMode from './pages/PhoneMode';
@@ -67,8 +69,7 @@ import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import NewsArticle from './pages/NewsArticle';
-import ImportArticle from './pages/ImportArticle';
+import MusicTherapy from './pages/MusicTherapy';
 import __Layout from './Layout.jsx';
 
 
@@ -79,7 +80,9 @@ export const PAGES = {
     "FamilyConnect": FamilyConnect,
     "Feedback": Feedback,
     "Home": Home,
+    "ImportArticle": ImportArticle,
     "Landing": Landing,
+    "NewsArticle": NewsArticle,
     "NightWatch": NightWatch,
     "OfflineAudio": OfflineAudio,
     "PhoneMode": PhoneMode,
@@ -93,8 +96,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "NewsArticle": NewsArticle,
-    "ImportArticle": ImportArticle,
+    "MusicTherapy": MusicTherapy,
 }
 
 export const pagesConfig = {
