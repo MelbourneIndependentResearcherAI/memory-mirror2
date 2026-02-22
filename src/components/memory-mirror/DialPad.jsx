@@ -54,25 +54,29 @@ export default function DialPad({ onPress }) {
   };
 
   return (
-    <div className="grid grid-cols-3 gap-4 max-w-sm mx-auto px-4 mb-6">
-      {digits.map(({ number, letters }) => (
-        <motion.button
-          key={number}
-          onClick={() => handlePress(number)}
-          whileTap={{ scale: 0.92 }}
-          className="relative h-20 bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white rounded-full shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center border border-slate-300 dark:border-slate-600 active:shadow-inner"
-          style={{
-            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 -2px 4px rgba(0, 0, 0, 0.1)'
-          }}
-        >
-          <span className="text-3xl font-semibold tracking-tight">{number}</span>
-          {letters && (
-            <span className="text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-wider mt-0.5">
-              {letters}
-            </span>
-          )}
-        </motion.button>
-      ))}
+    <div className="w-full max-w-[360px] mx-auto px-4 sm:px-6">
+      <div className="grid grid-cols-3 gap-3 sm:gap-4">
+        {digits.map(({ number, letters }) => (
+          <motion.button
+            key={number}
+            onClick={() => handlePress(number)}
+            whileTap={{ scale: 0.92 }}
+            className="relative aspect-square bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white rounded-full shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center border border-slate-300 dark:border-slate-600 active:shadow-inner touch-manipulation"
+            style={{
+              boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 -2px 4px rgba(0, 0, 0, 0.1)',
+              minHeight: '64px',
+              minWidth: '64px'
+            }}
+          >
+            <span className="text-2xl sm:text-3xl md:text-4xl font-semibold tracking-tight">{number}</span>
+            {letters && (
+              <span className="text-[9px] sm:text-[10px] font-medium text-slate-600 dark:text-slate-400 tracking-wider mt-0.5 sm:mt-1">
+                {letters}
+              </span>
+            )}
+          </motion.button>
+        ))}
+      </div>
     </div>
   );
 }
