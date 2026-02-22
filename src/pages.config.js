@@ -55,6 +55,7 @@ import Feedback from './pages/Feedback';
 import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
 import Landing from './pages/Landing';
+import MusicTherapy from './pages/MusicTherapy';
 import NewsArticle from './pages/NewsArticle';
 import NightWatch from './pages/NightWatch';
 import OfflineAudio from './pages/OfflineAudio';
@@ -69,7 +70,7 @@ import VoiceSetup from './pages/VoiceSetup';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import MusicTherapy from './pages/MusicTherapy';
+import MemoryGames from './pages/MemoryGames';
 import __Layout from './Layout.jsx';
 
 
@@ -82,6 +83,7 @@ export const PAGES = {
     "Home": Home,
     "ImportArticle": ImportArticle,
     "Landing": Landing,
+    "MusicTherapy": MusicTherapy,
     "NewsArticle": NewsArticle,
     "NightWatch": NightWatch,
     "OfflineAudio": OfflineAudio,
@@ -96,7 +98,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "MusicTherapy": MusicTherapy,
+    "MemoryGames": MemoryGames,
 }
 
 export const pagesConfig = {
