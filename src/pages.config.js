@@ -73,6 +73,7 @@ import security from './pages/security';
 import MemoryGames from './pages/MemoryGames';
 import MyBank from './pages/MyBank';
 import Security from './pages/Security';
+import YouthMirror from './pages/YouthMirror';
 import __Layout from './Layout.jsx';
 
 
@@ -103,6 +104,7 @@ export const PAGES = {
     "MemoryGames": MemoryGames,
     "MyBank": MyBank,
     "Security": Security,
+    "YouthMirror": YouthMirror,
 }
 
 export const pagesConfig = {
