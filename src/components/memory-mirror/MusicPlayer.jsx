@@ -80,41 +80,71 @@ export default function MusicPlayer({ currentEra, onClose }) {
   };
 
   const playPause = async () => {
-    if (!currentSong) return;
+    if (!currentSong) {
+      toast.error('No song selected');
+      return;
+    }
 
     if (isPlaying) {
       if (audioRef.current) {
         audioRef.current.pause();
+        console.log('🔇 Paused audio');
       }
       setIsPlaying(false);
+      toast.info('Paused');
     } else {
       try {
-        // Announce song
+        console.log('🎵 Starting playback:', currentSong.title);
+        
+        // Announce song with voice
         const utterance = new SpeechSynthesisUtterance(
           `Now playing ${currentSong.title}${currentSong.artist ? ` by ${currentSong.artist}` : ''}`
         );
         utterance.rate = 0.95;
+        utterance.volume = 0.8;
         window.speechSynthesis.speak(utterance);
 
         // Create audio element if needed
         if (!audioRef.current) {
+          console.log('🔊 Creating new Audio element');
           audioRef.current = new Audio();
-          audioRef.current.addEventListener('ended', nextSong);
+          audioRef.current.crossOrigin = 'anonymous';
+          
+          audioRef.current.addEventListener('ended', () => {
+            console.log('✅ Song ended, playing next');
+            nextSong();
+          });
+          
           audioRef.current.addEventListener('error', (e) => {
-            console.error('Audio error:', e);
-            toast.error('Failed to load audio');
+            console.error('❌ Audio error:', e);
+            console.error('Audio error details:', audioRef.current?.error);
+            toast.error(`Audio error: ${audioRef.current?.error?.message || 'Failed to load'}`);
             setIsPlaying(false);
+          });
+          
+          audioRef.current.addEventListener('canplay', () => {
+            console.log('✅ Audio ready to play');
+          });
+          
+          audioRef.current.addEventListener('loadedmetadata', () => {
+            console.log('✅ Audio metadata loaded, duration:', audioRef.current?.duration);
           });
         }
 
         // Set source and play
         const audioUrl = cached[currentSong.title] || currentSong.url;
+        console.log('📡 Loading audio from:', audioUrl.substring(0, 80) + '...');
+        
         audioRef.current.src = audioUrl;
         audioRef.current.volume = 0.7;
+        audioRef.current.load(); // Force load
         
+        console.log('▶️ Attempting to play...');
         await audioRef.current.play();
+        
         setIsPlaying(true);
-        toast.success('Now playing!');
+        console.log('✅ PLAYBACK STARTED SUCCESSFULLY');
+        toast.success(`🎵 Now playing: ${currentSong.title}`);
         
         // Log activity
         offlineEntities.create('ActivityLog', {
@@ -122,8 +152,10 @@ export default function MusicPlayer({ currentEra, onClose }) {
           details: { type: 'music', title: currentSong.title, era: currentEra }
         }).catch(() => {});
       } catch (error) {
-        console.error('Playback failed:', error);
-        toast.error(`Playback error: ${error.message}`);
+        console.error('❌ Playback failed:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        toast.error(`Cannot play: ${error.message}`);
         setIsPlaying(false);
       }
     }

@@ -7,103 +7,132 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
   const [isListening, setIsListening] = useState(false);
   const [wakeWordDetected, setWakeWordDetected] = useState(false);
   const recognitionRef = useRef(null);
+  const isRestartingRef = useRef(false);
 
   useEffect(() => {
+    if (!isActive || !isListening) return;
+    
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      console.log('Speech recognition not supported');
+      console.log('❌ Speech recognition not supported');
       return;
     }
 
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    recognitionRef.current = new SpeechRecognition();
-    recognitionRef.current.continuous = true;
-    recognitionRef.current.interimResults = true;
-    recognitionRef.current.lang = 'en-US';
-
-    recognitionRef.current.onresult = (event) => {
-      const transcript = Array.from(event.results)
-        .map(result => result[0])
-        .map(result => result.transcript)
-        .join('')
-        .toLowerCase();
-
-      // Check for wake words with variations
-      const wakeWords = [
-        'memory mirror',
-        'hey mirror', 
-        'ok mirror',
-        'hey memory',
-        'okay mirror',
-        'hi mirror'
-      ];
+    
+    const startRecognition = () => {
+      if (isRestartingRef.current) return;
       
-      const detected = wakeWords.some(word => transcript.includes(word));
-      
-      if (detected) {
-        setWakeWordDetected(true);
-        
-        // Speak confirmation
-        const utterance = new SpeechSynthesisUtterance("I'm here. How can I help?");
-        utterance.rate = 0.95;
-        utterance.volume = 1.0;
-        window.speechSynthesis.speak(utterance);
-        
-        onWakeWordDetected();
-        
-        // Visual feedback
-        setTimeout(() => setWakeWordDetected(false), 2000);
-      }
-    };
-
-    recognitionRef.current.onerror = (event) => {
-      console.log('Wake word recognition error:', event.error);
-      if (event.error === 'no-speech' || event.error === 'aborted') {
-        // Restart listening after a short delay
-        if (isListening) {
-          setTimeout(() => {
-            try {
-              if (recognitionRef.current && isListening) {
-                recognitionRef.current.start();
-              }
-            } catch (e) {
-              console.log('Error restarting:', e);
-            }
-          }, 500);
+      try {
+        if (recognitionRef.current) {
+          recognitionRef.current.stop();
         }
+        
+        recognitionRef.current = new SpeechRecognition();
+        recognitionRef.current.continuous = true;
+        recognitionRef.current.interimResults = true;
+        recognitionRef.current.lang = 'en-US';
+
+        recognitionRef.current.onstart = () => {
+          console.log('✅ Wake word listening started');
+        };
+
+        recognitionRef.current.onresult = (event) => {
+          const transcript = Array.from(event.results)
+            .map(result => result[0])
+            .map(result => result.transcript)
+            .join('')
+            .toLowerCase();
+
+          console.log('👂 Wake word check:', transcript.substring(0, 50));
+
+          // Check for wake words with variations
+          const wakeWords = [
+            'memory mirror',
+            'hey mirror', 
+            'ok mirror',
+            'hey memory',
+            'okay mirror',
+            'hi mirror'
+          ];
+          
+          const detected = wakeWords.some(word => transcript.includes(word));
+          
+          if (detected) {
+            console.log('🎯 WAKE WORD DETECTED!');
+            setWakeWordDetected(true);
+            
+            // Speak confirmation
+            const utterance = new SpeechSynthesisUtterance("I'm here. How can I help?");
+            utterance.rate = 0.95;
+            utterance.volume = 1.0;
+            window.speechSynthesis.speak(utterance);
+            
+            onWakeWordDetected();
+            
+            // Visual feedback
+            setTimeout(() => setWakeWordDetected(false), 2000);
+          }
+        };
+
+        recognitionRef.current.onerror = (event) => {
+          console.log('⚠️ Wake word error:', event.error);
+          if (event.error === 'no-speech' || event.error === 'aborted') {
+            // Restart after short delay
+            if (isListening && !isRestartingRef.current) {
+              isRestartingRef.current = true;
+              setTimeout(() => {
+                isRestartingRef.current = false;
+                if (isListening) startRecognition();
+              }, 1000);
+            }
+          }
+        };
+
+        recognitionRef.current.onend = () => {
+          console.log('⏹️ Wake word ended');
+          // Auto-restart
+          if (isListening && !isRestartingRef.current) {
+            isRestartingRef.current = true;
+            setTimeout(() => {
+              isRestartingRef.current = false;
+              if (isListening) startRecognition();
+            }, 500);
+          }
+        };
+
+        recognitionRef.current.start();
+        console.log('▶️ Wake word recognition started');
+      } catch (e) {
+        console.error('❌ Error starting wake word:', e);
       }
     };
 
-    recognitionRef.current.onend = () => {
-      // Auto-restart if still supposed to be listening
-      if (isListening) {
-        setTimeout(() => {
-          try {
-            if (recognitionRef.current && isListening) {
-              recognitionRef.current.start();
-            }
-          } catch (e) {
-            console.log('Error restarting on end:', e);
-          }
-        }, 500);
-      }
-    };
+    startRecognition();
 
     return () => {
+      isRestartingRef.current = false;
       if (recognitionRef.current) {
         recognitionRef.current.stop();
+        recognitionRef.current = null;
       }
     };
-  }, [isListening, onWakeWordDetected]);
+  }, [isListening, isActive, onWakeWordDetected]);
 
   const toggleListening = () => {
-    if (!recognitionRef.current) {
-      alert('Speech recognition is not supported in this browser. Please use Chrome or Edge.');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+      alert('Speech recognition not supported. Please use Chrome, Edge, or Safari.');
       return;
     }
 
     if (isListening) {
-      recognitionRef.current.stop();
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
       setIsListening(false);
+      isRestartingRef.current = false;
+      console.log('🔇 Wake word disabled');
       
       // Audio feedback
       const utterance = new SpeechSynthesisUtterance("Wake word disabled");
@@ -111,18 +140,14 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
       utterance.volume = 0.7;
       window.speechSynthesis.speak(utterance);
     } else {
-      try {
-        recognitionRef.current.start();
-        setIsListening(true);
-        
-        // Audio feedback
-        const utterance = new SpeechSynthesisUtterance("Wake word enabled. Say Hey Mirror to activate.");
-        utterance.rate = 1.0;
-        utterance.volume = 0.9;
-        window.speechSynthesis.speak(utterance);
-      } catch (e) {
-        console.error('Error starting recognition:', e);
-      }
+      setIsListening(true);
+      console.log('🎤 Wake word enabled');
+      
+      // Audio feedback
+      const utterance = new SpeechSynthesisUtterance("Wake word enabled. Say Hey Mirror to activate.");
+      utterance.rate = 1.0;
+      utterance.volume = 0.9;
+      window.speechSynthesis.speak(utterance);
     }
   };
 
