@@ -512,52 +512,125 @@ export default function NightWatch({ onClose }) {
   };
 
   const startListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
-      toast.error('Voice recognition not supported');
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      toast.error('Voice recognition not supported - use Chrome or Edge');
       return;
     }
 
-    const recognition = new webkitSpeechRecognition();
+    // Stop any existing recognition
+    if (recognitionRef.current) {
+      try {
+        recognitionRef.current.stop();
+      } catch {}
+    }
+
+    const recognition = new SpeechRecognition();
     recognition.continuous = true;
-    recognition.interimResults = false;
+    recognition.interimResults = true;
     recognition.lang = 'en-US';
+    recognition.maxAlternatives = 1;
+
+    let finalTranscript = '';
 
     recognition.onstart = () => {
+      console.log('✅ Night Watch voice STARTED');
       setIsListening(true);
     };
 
     recognition.onresult = async (event) => {
-      const transcript = event.results[event.results.length - 1][0].transcript.trim();
+      if (isSpeaking) {
+        console.log('🔇 Ignoring - AI is speaking');
+        return;
+      }
+
+      let interimTranscript = '';
+      finalTranscript = '';
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript + ' ';
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      const completeSpeech = (finalTranscript + interimTranscript).trim();
       
-      // Ignore empty transcripts
-      if (!transcript) return;
-      
-      addMessage('user', transcript);
-      
-      const response = await systemRef.current?.processUserStatement(transcript);
-      if (response) {
-        addMessage('assistant', response);
-        speakText(response);
+      if (completeSpeech.length > 0) {
+        console.log('👂 Hearing:', completeSpeech);
+      }
+
+      // Process final speech
+      if (finalTranscript.trim().length > 3) {
+        const userInput = finalTranscript.trim();
+        console.log('✅ FINAL speech:', userInput);
+        
+        addMessage('user', userInput);
+        
+        // Stop listening while processing
+        if (recognitionRef.current) {
+          try {
+            recognitionRef.current.stop();
+          } catch {}
+        }
+        setIsListening(false);
+        
+        const response = await systemRef.current?.processUserStatement(userInput);
+        if (response) {
+          addMessage('assistant', response);
+          speakText(response);
+        }
+        
+        finalTranscript = '';
       }
     };
 
     recognition.onerror = (event) => {
-      console.error('Recognition error:', event.error);
-      if (event.error !== 'no-speech') {
+      console.error('❌ Night Watch voice error:', event.error);
+      
+      // Critical errors - don't restart
+      if (['not-allowed', 'service-not-allowed', 'audio-capture'].includes(event.error)) {
+        toast.error('Microphone access denied - check browser settings');
         setIsListening(false);
+        return;
+      }
+      
+      // Recoverable errors - auto-restart
+      if (['no-speech', 'aborted', 'network'].includes(event.error)) {
+        console.log('🔄 Recoverable error - restarting...');
+        setTimeout(() => {
+          if (isActive && !isSpeaking) {
+            startListening();
+          }
+        }, 1000);
       }
     };
 
     recognition.onend = () => {
-      if (isActive) {
-        recognition.start(); // Keep listening continuously
-      } else {
-        setIsListening(false);
+      console.log('⏹️ Night Watch voice ENDED');
+      setIsListening(false);
+      
+      // Auto-restart if still active and not speaking
+      if (isActive && !isSpeaking) {
+        console.log('🔄 Auto-restarting voice...');
+        setTimeout(() => {
+          if (isActive && !isSpeaking) {
+            startListening();
+          }
+        }, 500);
       }
     };
 
-    recognition.start();
-    recognitionRef.current = recognition;
+    try {
+      recognition.start();
+      recognitionRef.current = recognition;
+      console.log('▶️ Starting Night Watch voice recognition');
+    } catch (error) {
+      console.error('Failed to start recognition:', error);
+      toast.error('Could not start voice recognition');
+    }
   };
 
   const stopListening = () => {
@@ -570,6 +643,7 @@ export default function NightWatch({ onClose }) {
 
   const speakText = (text) => {
     if ('speechSynthesis' in window) {
+      // Stop any ongoing speech
       window.speechSynthesis.cancel();
       
       const utterance = new SpeechSynthesisUtterance(text);
@@ -577,8 +651,31 @@ export default function NightWatch({ onClose }) {
       utterance.pitch = 1.0;
       utterance.volume = 0.9;
       
-      utterance.onstart = () => setIsSpeaking(true);
-      utterance.onend = () => setIsSpeaking(false);
+      utterance.onstart = () => {
+        console.log('🔊 AI speaking - voice paused');
+        setIsSpeaking(true);
+      };
+      
+      utterance.onend = () => {
+        console.log('✅ AI done speaking - resuming voice');
+        setIsSpeaking(false);
+        
+        // Resume listening after speech ends
+        setTimeout(() => {
+          if (isActive && !isSpeaking) {
+            console.log('🔄 Resuming voice recognition...');
+            startListening();
+          }
+        }, 300);
+      };
+      
+      utterance.onerror = () => {
+        console.log('❌ Speech error - resuming voice');
+        setIsSpeaking(false);
+        setTimeout(() => {
+          if (isActive) startListening();
+        }, 300);
+      };
       
       window.speechSynthesis.speak(utterance);
     }

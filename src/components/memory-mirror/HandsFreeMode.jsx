@@ -137,7 +137,20 @@ export default function HandsFreeMode({
 
       // ON RESULT
       recognitionRef.current.onresult = (event) => {
-        if (!isMountedRef.current || !isActive || isSpeaking || isProcessing) return;
+        if (!isMountedRef.current || !isActive) {
+          console.log('⏹️ Ignoring - not mounted or not active');
+          return;
+        }
+
+        if (isSpeaking) {
+          console.log('🔇 Ignoring - AI is speaking');
+          return;
+        }
+
+        if (isProcessing) {
+          console.log('⏳ Ignoring - still processing previous input');
+          return;
+        }
 
         // Clear speech end timeout
         if (speechEndTimeoutRef.current) {
@@ -165,22 +178,24 @@ export default function HandsFreeMode({
             setStatusMessage(`👂 "${completeSpeech.substring(0, 50)}..."`);
           }
           
-          // Wait 1.5s after user stops talking
+          // Wait 1.2s after user stops talking (reduced from 1.5s for faster response)
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
             
             if (finalSpeech.length > 3 && isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-              console.log('✅ FINAL:', finalSpeech);
+              console.log('✅ FINAL SPEECH:', finalSpeech);
               
               // Prevent duplicates
               if (finalSpeech.toLowerCase() !== lastTranscriptRef.current.toLowerCase()) {
                 lastTranscriptRef.current = finalSpeech;
                 handleUserSpeech(finalSpeech);
+              } else {
+                console.log('🚫 Duplicate detected - ignored');
               }
             }
             
             speechEndTimeoutRef.current = null;
-          }, 1500);
+          }, 1200);
           
         } catch (error) {
           console.error('Result error:', error);
@@ -337,20 +352,22 @@ export default function HandsFreeMode({
           language: selectedLanguage,
           userProfile: userProfile,
           onEnd: () => {
-            console.log('✅ Speech done');
+            console.log('✅ AI FINISHED SPEAKING');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
-              setStatusMessage('✅ Ready');
+              setStatusMessage('✅ Ready - Listening...');
               lastTranscriptRef.current = '';
               
-              // Resume listening after 300ms
+              // CRITICAL: Resume listening after AI stops speaking
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-                  console.log('🔄 Resuming...');
+                  console.log('🔄 RESUMING VOICE RECOGNITION NOW');
                   startRecognition();
+                } else {
+                  console.log('⚠️ Cannot resume - mounted:', isMountedRef.current, 'active:', isActive, 'speaking:', isSpeaking, 'processing:', isProcessing);
                 }
-              }, 300);
+              }, 500);
             }
           }
         });
@@ -374,6 +391,7 @@ export default function HandsFreeMode({
           rate: 0.9,
           language: selectedLanguage,
           onEnd: () => {
+            console.log('✅ Fallback speech done');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
               setIsProcessing(false);
@@ -381,9 +399,10 @@ export default function HandsFreeMode({
               
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                  console.log('🔄 Resuming after fallback');
                   startRecognition();
                 }
-              }, 300);
+              }, 500);
             }
           }
         });
