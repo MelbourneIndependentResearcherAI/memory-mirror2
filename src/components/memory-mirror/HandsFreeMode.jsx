@@ -128,10 +128,10 @@ export default function HandsFreeMode({
 
       // ON START
       recognitionRef.current.onstart = () => {
-        console.log('✅ Recognition STARTED');
+        console.log('✅ VOICE RECOGNITION ACTIVE - Always listening for your voice');
         if (!isMountedRef.current) return;
         setIsListening(true);
-        setStatusMessage('🎤 Listening...');
+        setStatusMessage('🎤 Always listening - speak anytime');
         setErrorCount(0);
       };
 
@@ -178,12 +178,12 @@ export default function HandsFreeMode({
             setStatusMessage(`👂 "${completeSpeech.substring(0, 50)}..."`);
           }
           
-          // Wait 1.2s after user stops talking (reduced from 1.5s for faster response)
+          // Wait for user to finish speaking (1.5s silence = done speaking)
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
             
             if (finalSpeech.length > 3 && isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-              console.log('✅ FINAL SPEECH:', finalSpeech);
+              console.log('✅ USER FINISHED SPEAKING - Processing:', finalSpeech);
               
               // Prevent duplicates
               if (finalSpeech.toLowerCase() !== lastTranscriptRef.current.toLowerCase()) {
@@ -192,10 +192,14 @@ export default function HandsFreeMode({
               } else {
                 console.log('🚫 Duplicate detected - ignored');
               }
+            } else if (isSpeaking) {
+              console.log('🔇 AI is speaking - ignoring input');
+            } else if (isProcessing) {
+              console.log('⏳ Still processing - ignoring new input');
             }
             
             speechEndTimeoutRef.current = null;
-          }, 1200);
+          }, 1500);
           
         } catch (error) {
           console.error('Result error:', error);
@@ -239,15 +243,21 @@ export default function HandsFreeMode({
 
       // ON END
       recognitionRef.current.onend = () => {
-        console.log('Recognition ended');
+        console.log('⚠️ Recognition ended - auto-restarting for continuous listening');
         if (!isMountedRef.current) return;
         
         setIsListening(false);
         
-        // Auto-restart if active and not processing/speaking
-        if (isActive && !isProcessing && !isSpeaking && !isRestartingRef.current) {
-          console.log('🔄 Auto-restart');
-          restartRecognition(500);
+        // CRITICAL: Always auto-restart for true hands-free (unless processing/speaking)
+        if (isActive && !isRestartingRef.current) {
+          if (isSpeaking) {
+            console.log('🔇 AI speaking - will restart after speech ends');
+          } else if (isProcessing) {
+            console.log('⏳ Processing - will restart after response');
+          } else {
+            console.log('🔄 IMMEDIATE AUTO-RESTART for continuous listening');
+            restartRecognition(300);
+          }
         }
       };
 
@@ -285,13 +295,16 @@ export default function HandsFreeMode({
   }, [isActive, isProcessing, isSpeaking, startRecognition]);
 
   const handleUserSpeech = useCallback(async (transcript) => {
-    if (!transcript || isProcessing || !isMountedRef.current) return;
+    if (!transcript || isProcessing || isSpeaking || !isMountedRef.current) {
+      console.log('⚠️ Cannot process - already busy or invalid state');
+      return;
+    }
 
-    console.log('🎯 Processing:', transcript);
+    console.log('🎯 PROCESSING USER SPEECH:', transcript);
 
-    // STOP listening immediately (prevent echo)
+    // STOP listening while processing (prevent echo and duplicate input)
     setIsProcessing(true);
-    setStatusMessage(`💭 Processing...`);
+    setStatusMessage(`💭 Thinking about: "${transcript.substring(0, 30)}..."`);
     
     if (recognitionRef.current) {
       try {
@@ -359,13 +372,25 @@ export default function HandsFreeMode({
               setStatusMessage('✅ Ready - Listening...');
               lastTranscriptRef.current = '';
               
-              // CRITICAL: Resume listening after AI stops speaking
+              // CRITICAL: ALWAYS resume listening after AI stops (true hands-free)
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-                  console.log('🔄 RESUMING VOICE RECOGNITION NOW');
+                  console.log('🔄 RESUMING CONTINUOUS LISTENING - ready for next input');
                   startRecognition();
                 } else {
-                  console.log('⚠️ Cannot resume - mounted:', isMountedRef.current, 'active:', isActive, 'speaking:', isSpeaking, 'processing:', isProcessing);
+                  console.log('⚠️ Cannot resume yet - will retry. State:', {
+                    mounted: isMountedRef.current,
+                    active: isActive,
+                    speaking: isSpeaking,
+                    processing: isProcessing
+                  });
+                  // Retry in case of race condition
+                  setTimeout(() => {
+                    if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                      console.log('🔄 RETRY: Starting recognition');
+                      startRecognition();
+                    }
+                  }, 500);
                 }
               }, 500);
             }
@@ -411,24 +436,28 @@ export default function HandsFreeMode({
   }, [isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, isProcessing, startRecognition]);
 
   const startHandsFreeMode = async () => {
-    console.log('🚀 START HANDS-FREE');
+    console.log('🚀 START HANDS-FREE MODE - FULLY AUTOMATIC');
     setIsActive(true);
     setErrorCount(0);
-    setStatusMessage('Starting...');
+    setStatusMessage('Activating continuous listening...');
     lastTranscriptRef.current = '';
     
-    toast.success('🎤 Hands-free activated!', { duration: 3000 });
+    toast.success('🎤 Hands-free ON - Always listening!', { duration: 3000 });
     
-    const greeting = "Hands-free mode on. I'm listening.";
+    setIsSpeaking(true);
+    const greeting = "Hands-free mode is now active. I'm always listening and will respond when you speak.";
     speakWithRealisticVoice(greeting, {
       rate: 1.0,
       emotionalState: 'warm',
       language: selectedLanguage,
       onEnd: () => {
+        console.log('✅ Greeting done - starting CONTINUOUS listening');
+        setIsSpeaking(false);
         if (isMountedRef.current) {
           setTimeout(() => {
+            console.log('▶️ LAUNCHING continuous voice recognition');
             startRecognition();
-          }, 300);
+          }, 500);
         }
       }
     });
