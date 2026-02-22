@@ -92,24 +92,24 @@ export default function PhoneInterface() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 dark:from-black dark:via-slate-950 dark:to-black min-h-screen pb-32">
-      <div className="p-6">
-        <Alert className="mb-6 bg-amber-900/20 border-amber-600/50 text-amber-200 backdrop-blur-sm">
+    <div className="bg-gradient-to-b from-slate-900 via-slate-900 to-slate-800 dark:from-black dark:via-slate-950 dark:to-black min-h-screen pb-24">
+      <div className="p-4">
+        <Alert className="mb-4 bg-amber-900/20 border-amber-600/50 text-amber-200 backdrop-blur-sm">
           <AlertTriangle className="w-4 h-4" />
-          <AlertDescription className="text-sm">
+          <AlertDescription className="text-xs">
             <strong>Caregiver Note:</strong> Safe phone redirects to AI support
           </AlertDescription>
         </Alert>
 
-        <div className="bg-slate-800/50 dark:bg-slate-950/50 backdrop-blur-sm rounded-2xl p-6 mb-8 text-center border border-slate-700/50">
-          <div className="text-white text-5xl font-light tracking-wider mb-3 h-16 flex items-center justify-center">
-            {phoneNumber ? formatPhoneNumber(phoneNumber) : <span className="text-slate-600 dark:text-slate-700 text-3xl">Enter Number</span>}
+        <div className="bg-slate-800/50 dark:bg-slate-950/50 backdrop-blur-sm rounded-2xl p-4 mb-4 text-center border border-slate-700/50">
+          <div className="text-white text-3xl sm:text-4xl font-light tracking-wider mb-2 h-12 flex items-center justify-center">
+            {phoneNumber ? formatPhoneNumber(phoneNumber) : <span className="text-slate-600 dark:text-slate-700 text-2xl">Enter Number</span>}
           </div>
           {contactName && (
             <motion.div 
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="text-emerald-400 text-lg font-medium"
+              className="text-emerald-400 text-base font-medium"
             >
               {contactName}
             </motion.div>
@@ -118,25 +118,25 @@ export default function PhoneInterface() {
 
         <QuickDial onSelect={handleQuickDial} customContacts={contacts} />
 
-        <div className="mb-8">
+        <div className="mb-4">
           <DialPad onPress={handleDialPress} />
         </div>
 
-        <div className="flex justify-center gap-6 max-w-sm mx-auto px-6 mb-12">
+        <div className="flex justify-center gap-4 max-w-sm mx-auto px-4 mb-8">
           <motion.button
             onClick={handleCall}
             disabled={phoneNumber.length < 3}
             whileTap={{ scale: 0.95 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-slate-700 disabled:to-slate-800 shadow-2xl disabled:opacity-50 transition-all flex items-center justify-center border-4 border-emerald-400/30 disabled:border-slate-600/30"
+            className="w-16 h-16 rounded-full bg-gradient-to-br from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 disabled:from-slate-700 disabled:to-slate-800 shadow-2xl disabled:opacity-50 transition-all flex items-center justify-center border-4 border-emerald-400/30 disabled:border-slate-600/30"
           >
-            <Phone className="w-8 h-8 text-white" />
+            <Phone className="w-7 h-7 text-white" />
           </motion.button>
           <motion.button
             onClick={handleClear}
             whileTap={{ scale: 0.95 }}
-            className="w-20 h-20 rounded-full bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-2xl transition-all flex items-center justify-center border-4 border-red-400/30"
+            className="w-16 h-16 rounded-full bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-2xl transition-all flex items-center justify-center border-4 border-red-400/30"
           >
-            <X className="w-8 h-8 text-white" />
+            <X className="w-7 h-7 text-white" />
           </motion.button>
         </div>
       </div>
