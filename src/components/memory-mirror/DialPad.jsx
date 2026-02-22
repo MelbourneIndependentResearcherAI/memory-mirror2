@@ -54,8 +54,8 @@ export default function DialPad({ onPress }) {
   };
 
   return (
-    <div className="w-full max-w-[280px] mx-auto px-2">
-      <div className="grid grid-cols-3 gap-2">
+    <div className="w-full max-w-[240px] mx-auto px-1">
+      <div className="grid grid-cols-3 gap-1.5">
         {digits.map(({ number, letters }) => (
           <motion.button
             key={number}
@@ -64,13 +64,15 @@ export default function DialPad({ onPress }) {
             className="relative aspect-square bg-gradient-to-b from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-800 hover:from-slate-200 hover:to-slate-300 dark:hover:from-slate-600 dark:hover:to-slate-700 text-slate-900 dark:text-white rounded-full shadow-lg hover:shadow-xl transition-all flex flex-col items-center justify-center border border-slate-300 dark:border-slate-600 active:shadow-inner touch-manipulation"
             style={{
               boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06), inset 0 -2px 4px rgba(0, 0, 0, 0.1)',
-              minHeight: '56px',
-              minWidth: '56px'
+              minHeight: '50px',
+              minWidth: '50px',
+              maxHeight: '70px',
+              maxWidth: '70px'
             }}
           >
-            <span className="text-xl sm:text-2xl font-semibold tracking-tight">{number}</span>
+            <span className="text-lg font-semibold tracking-tight">{number}</span>
             {letters && (
-              <span className="text-[8px] sm:text-[9px] font-medium text-slate-600 dark:text-slate-400 tracking-wider mt-0.5">
+              <span className="text-[7px] font-medium text-slate-600 dark:text-slate-400 tracking-wider mt-0.5">
                 {letters}
               </span>
             )}
