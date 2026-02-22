@@ -896,38 +896,19 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
         if (!isMountedRef.current) return;
         
         try {
-          // Clear any existing timeout
-          if (speechEndTimeoutRef.current) {
-            clearTimeout(speechEndTimeoutRef.current);
-            speechEndTimeoutRef.current = null;
-          }
-
-          // Build the COMPLETE transcript from ALL results
-          let interimTranscript = '';
-          let finalTranscript = '';
+          // Get only the LATEST result to avoid duplicates
+          const lastResultIndex = event.results.length - 1;
+          const lastResult = event.results[lastResultIndex];
+          const transcript = lastResult[0].transcript;
           
-          for (let i = 0; i < event.results.length; i++) {
-            const transcript = event.results[i][0].transcript;
+          console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
+          
+          // Only send when we have a FINAL result
+          if (lastResult.isFinal) {
+            const finalSpeech = transcript.trim();
             
-            if (event.results[i].isFinal) {
-              finalTranscript += transcript + ' ';
-            } else {
-              interimTranscript += transcript + ' ';
-            }
-          }
-          
-          // Show what's being captured
-          const currentSpeech = (finalTranscript + interimTranscript).trim();
-          if (currentSpeech) {
-            console.log('📝 Capturing speech:', currentSpeech);
-          }
-          
-          // Wait for user to FINISH speaking (1.5 second pause)
-          speechEndTimeoutRef.current = setTimeout(() => {
-            const completeSpeech = (finalTranscript + interimTranscript).trim();
-            
-            if (completeSpeech.length > 0 && isMountedRef.current) {
-              console.log('✅ COMPLETE SENTENCE CAPTURED:', completeSpeech);
+            if (finalSpeech.length > 0 && isMountedRef.current) {
+              console.log('✅ FINAL SPEECH:', finalSpeech);
               
               // Stop listening
               if (recognitionRef.current) {
@@ -940,19 +921,13 @@ Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactiv
               
               setIsListening(false);
               
-              // Send the FULL message
-              sendMessage(completeSpeech);
+              // Send the message
+              sendMessage(finalSpeech);
             }
-            
-            speechEndTimeoutRef.current = null;
-          }, 1500);
+          }
         } catch (error) {
           console.error('Recognition result error:', error);
           setIsListening(false);
-          if (speechEndTimeoutRef.current) {
-            clearTimeout(speechEndTimeoutRef.current);
-            speechEndTimeoutRef.current = null;
-          }
         }
       };
       
