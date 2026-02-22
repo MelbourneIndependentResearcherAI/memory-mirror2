@@ -7,6 +7,20 @@ import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import { base44 } from '@/api/base44Client';
 
+/**
+ * Memory Mirror - AI Companion for Dementia Care
+ * 
+ * Copyright © 2026 Memory Mirror. All Rights Reserved.
+ * 
+ * This application and its components are proprietary software.
+ * Unauthorized copying, distribution, or modification is strictly prohibited.
+ * 
+ * Music Library: Uses only royalty-free and public domain sources
+ * AI Technology: Powered by licensed third-party AI services
+ * 
+ * For licensing inquiries, contact: support@memorymirror.app
+ */
+
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();

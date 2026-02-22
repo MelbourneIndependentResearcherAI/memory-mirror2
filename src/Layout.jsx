@@ -7,6 +7,12 @@ import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
+
+/**
+ * Memory Mirror Application Layout
+ * Copyright © 2026 Memory Mirror. All Rights Reserved.
+ * Proprietary and Confidential.
+ */
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
