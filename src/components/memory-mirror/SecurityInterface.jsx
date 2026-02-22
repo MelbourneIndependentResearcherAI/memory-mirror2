@@ -170,16 +170,15 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
   };
 
   return (
-    <PullToRefresh onRefresh={handleRefresh} className="bg-slate-900 dark:bg-black min-h-[500px]">
-      <div className="p-4">
-        <div className="mb-3">
+    <PullToRefresh onRefresh={handleRefresh} className="bg-slate-900 dark:bg-black min-h-screen">
+      <div className="max-w-2xl mx-auto p-4 sm:p-6">
+        <div className="mb-4">
           <Button
             variant="outline"
-            size="sm"
             onClick={() => onMemoryGalleryOpen && onMemoryGalleryOpen()}
-            className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white border-slate-700 hover:bg-slate-700 min-h-[44px]"
+            className="w-full flex items-center justify-center gap-2 bg-slate-800 text-white border-slate-700 hover:bg-slate-700 min-h-[48px] sm:min-h-[52px] text-base sm:text-lg touch-manipulation"
           >
-            <BookHeart className="w-4 h-4" />
+            <BookHeart className="w-5 h-5 sm:w-6 sm:h-6" />
             View Happy Memories
           </Button>
         </div>
@@ -198,22 +197,22 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
           />
         )}
         
-        <div className="bg-gradient-to-b from-emerald-900/50 to-emerald-800/30 rounded-2xl p-5 mb-4 text-center">
-          <h2 className="text-emerald-400 text-2xl font-semibold flex items-center justify-center gap-2 mb-2">
-            <Shield className="w-6 h-6" />
+        <div className="bg-gradient-to-b from-emerald-900/50 to-emerald-800/30 rounded-2xl p-5 sm:p-6 mb-4 sm:mb-6 text-center">
+          <h2 className="text-emerald-400 text-xl sm:text-2xl md:text-3xl font-semibold flex items-center justify-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+            <Shield className="w-6 h-6 sm:w-8 sm:h-8" />
             Home Security System
           </h2>
-          <div className="flex items-center justify-center gap-3 text-emerald-300 text-lg">
+          <div className="flex items-center justify-center gap-3 text-emerald-300 text-base sm:text-lg md:text-xl">
             <motion.div
               animate={{ scale: [1, 1.2, 1], opacity: [1, 0.6, 1] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="w-4 h-4 rounded-full bg-emerald-400"
+              className="w-3 h-3 sm:w-4 sm:h-4 rounded-full bg-emerald-400"
             />
             All Systems Secure
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
           {cameras.map((camera, idx) => (
             <CameraView key={idx} label={camera.label} status={camera.status} />
           ))}
@@ -221,42 +220,42 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
 
         <SecurityLog entries={logs} />
 
-        <div className="grid grid-cols-2 gap-3 mt-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mt-4 sm:mt-6">
           <Button
             onClick={runSecurityCheck}
             disabled={isLoading}
-            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex flex-col sm:flex-row items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
           >
-            {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Search className="w-4 h-4" />}
-            Run Check
+            {isLoading ? <Loader2 className="w-5 h-5 sm:w-6 sm:h-6 animate-spin" /> : <Search className="w-5 h-5 sm:w-6 sm:h-6" />}
+            <span className="font-semibold">Run Check</span>
           </Button>
           <Button
             onClick={lockAllDoors}
-            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex flex-col sm:flex-row items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
           >
-            <Lock className="w-4 h-4" />
-            Lock All
+            <Lock className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="font-semibold">Lock All</span>
           </Button>
           <Button
             onClick={lightCheck}
-            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex flex-col sm:flex-row items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
           >
-            <Lightbulb className="w-4 h-4" />
-            Lights Check
+            <Lightbulb className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="font-semibold">Lights Check</span>
           </Button>
           <Button
             onClick={talkToSecurity}
             disabled={isLoading}
-            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+            className="bg-emerald-900 hover:bg-emerald-800 border-2 border-emerald-700 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex flex-col sm:flex-row items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
           >
-            <MessageCircle className="w-4 h-4" />
-            Talk to Guard
+            <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
+            <span className="font-semibold">Talk to Guard</span>
           </Button>
           <Button
             onClick={contactFamily}
-            className="col-span-2 bg-red-900 hover:bg-red-800 border-2 border-red-600 text-white p-4 min-h-[60px] flex items-center justify-center gap-2"
+            className="col-span-2 bg-red-900 hover:bg-red-800 border-2 border-red-600 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex items-center justify-center gap-3 text-base sm:text-lg font-bold touch-manipulation"
           >
-            <AlertTriangle className="w-4 h-4" />
+            <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7" />
             Call Family
           </Button>
         </div>
