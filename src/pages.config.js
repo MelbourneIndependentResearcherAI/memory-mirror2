@@ -71,6 +71,8 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
 import MemoryGames from './pages/MemoryGames';
+import MyBank from './pages/MyBank';
+import Security from './pages/Security';
 import __Layout from './Layout.jsx';
 
 
@@ -99,6 +101,8 @@ export const PAGES = {
     "phone": phone,
     "security": security,
     "MemoryGames": MemoryGames,
+    "MyBank": MyBank,
+    "Security": Security,
 }
 
 export const pagesConfig = {
