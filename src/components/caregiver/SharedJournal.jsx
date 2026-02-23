@@ -20,6 +20,7 @@ export default function SharedJournal({ patientProfileId }) {
     tags: '',
     observations: ''
   });
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
 
   // Get current user
   const { data: currentUser } = useQuery({
