@@ -33,7 +33,7 @@ export default function OfflineAudioLibrary() {
         ...music.map(m => ({ ...m, type: 'music', entity_id: m.id })),
         ...stories.map(s => ({ ...s, type: 'story', entity_id: s.id })),
         ...messages.map(m => ({ ...m, type: 'message', entity_id: m.id }))
-      ].filter(item => item.audio_url || item.youtube_url);
+      ].filter(item => item.audio_url || item.audio_file_url || item.youtube_url);
     }
   });
 
@@ -55,13 +55,13 @@ export default function OfflineAudioLibrary() {
 
   const handleDownload = async (audioItem) => {
     setDownloadingIds(prev => new Set([...prev, audioItem.id]));
-    
+
     try {
       await downloadAudioForOffline({
         id: audioItem.id,
         title: audioItem.title || audioItem.name || 'Unknown',
         type: audioItem.type,
-        audio_url: audioItem.audio_url,
+        audio_url: audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url,
         metadata: {
           entity_id: audioItem.entity_id,
           artist: audioItem.artist,
@@ -72,7 +72,7 @@ export default function OfflineAudioLibrary() {
       await loadOfflineLibrary();
     } catch (error) {
       console.error('Download failed:', error);
-      alert('Failed to download audio. Please try again.');
+      alert(`Failed to download audio: ${error.message}`);
     } finally {
       setDownloadingIds(prev => {
         const newSet = new Set(prev);

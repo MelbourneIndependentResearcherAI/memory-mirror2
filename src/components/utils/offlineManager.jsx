@@ -171,16 +171,26 @@ export const downloadAudioForOffline = async (audioItem) => {
   if (!db) await initOfflineDB();
 
   try {
-    if (!audioItem?.audio_url) {
-      throw new Error('Invalid audio item - missing audio_url');
+    // Support multiple audio URL formats
+    const audioUrl = audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url;
+    if (!audioUrl) {
+      throw new Error('Invalid audio item - missing audio URL (audio_url, audio_file_url, or youtube_url required)');
     }
     
-    const response = await fetch(audioItem.audio_url);
+    const response = await fetch(audioUrl, { 
+      method: 'GET',
+      headers: { 'Accept': 'audio/*' },
+      credentials: 'same-origin'
+    });
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch audio: ${response.status}`);
+      throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
     }
     
     const blob = await response.blob();
+    if (blob.size === 0) {
+      throw new Error('Downloaded audio file is empty');
+    }
     
     // Store in IndexedDB
     return new Promise((resolve, reject) => {
@@ -190,18 +200,28 @@ export const downloadAudioForOffline = async (audioItem) => {
 
         const data = {
           id: audioItem.id || `audio_${Date.now()}`,
-          title: audioItem.title || 'Untitled',
+          title: audioItem.title || audioItem.name || 'Untitled',
           type: audioItem.type || 'audio',
           audio_blob: blob,
-          source_url: audioItem.audio_url,
-          metadata: audioItem.metadata || {},
+          source_url: audioUrl,
+          metadata: audioItem.metadata || {
+            artist: audioItem.artist,
+            era: audioItem.era,
+            genre: audioItem.genre
+          },
           downloaded_at: new Date().toISOString(),
           storage_size: blob.size
         };
 
         const request = store.put(data);
-        request.onerror = () => reject(request.error);
-        request.onsuccess = () => resolve(request.result);
+        request.onerror = () => {
+          console.error('IndexedDB store error:', request.error);
+          reject(request.error);
+        };
+        request.onsuccess = () => {
+          console.log('✅ Audio cached successfully:', data.title);
+          resolve(request.result);
+        };
       } catch (error) {
         reject(error);
       }
