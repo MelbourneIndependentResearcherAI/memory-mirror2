@@ -29,9 +29,12 @@ export default function Settings() {
         )
       );
 
-      // Logout and redirect
-      await base44.auth.logout();
-      window.location.href = '/';
+      // Logout and redirect to landing page
+      await base44.auth.logout('/');
+      // Fallback navigation in case logout doesn't redirect
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     } catch (error) {
       setDeleteError('Failed to delete account. Please try again or contact support.');
       setIsDeleting(false);

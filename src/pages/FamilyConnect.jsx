@@ -25,6 +25,21 @@ function FamilyConnectMain() {
   const location = useLocation();
   const activeTab = location.pathname.split('/')[2] || 'overview';
 
+  // Preserve tab state in sessionStorage
+  React.useEffect(() => {
+    if (activeTab) {
+      sessionStorage.setItem('familyConnectLastTab', activeTab);
+    }
+  }, [activeTab]);
+
+  // Restore last tab on mount
+  React.useEffect(() => {
+    const lastTab = sessionStorage.getItem('familyConnectLastTab');
+    if (lastTab && activeTab === 'overview' && location.pathname === '/FamilyConnect') {
+      navigate(`/FamilyConnect/${lastTab}`, { replace: true });
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 dark:from-slate-950 dark:via-pink-950 dark:to-orange-950 p-4 md:p-6 pb-16">
       <div className="max-w-6xl mx-auto">
