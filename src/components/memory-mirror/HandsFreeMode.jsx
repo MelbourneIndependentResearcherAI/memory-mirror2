@@ -168,13 +168,13 @@ export default function HandsFreeMode({
             setStatusMessage(`👂 "${completeSpeech.substring(0, 50)}..."`);
           }
           
-          // Wait for user to finish speaking (1.5s silence = done speaking)
+          // Wait for user to finish speaking (2s silence = done speaking)
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
-            
-            if (finalSpeech.length > 3 && isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+
+            if (finalSpeech.length > 3 && isMountedRef.current && isActive) {
               console.log('✅ USER FINISHED SPEAKING - Processing:', finalSpeech);
-              
+
               // Prevent duplicates
               if (finalSpeech.toLowerCase() !== lastTranscriptRef.current.toLowerCase()) {
                 lastTranscriptRef.current = finalSpeech;
@@ -182,14 +182,10 @@ export default function HandsFreeMode({
               } else {
                 console.log('🚫 Duplicate detected - ignored');
               }
-            } else if (isSpeaking) {
-              console.log('🔇 AI is speaking - ignoring input');
-            } else if (isProcessing) {
-              console.log('⏳ Still processing - ignoring new input');
             }
-            
+
             speechEndTimeoutRef.current = null;
-          }, 1500);
+          }, 2000);
           
         } catch (error) {
           console.error('Result error:', error);
