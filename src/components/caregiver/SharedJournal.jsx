@@ -103,7 +103,7 @@ export default function SharedJournal({ patientProfileId }) {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <BookOpen className="w-6 h-6 text-blue-600" />
           <div>
@@ -113,11 +113,36 @@ export default function SharedJournal({ patientProfileId }) {
             </p>
           </div>
         </div>
-        <Button onClick={() => setShowNewEntry(!showNewEntry)} className="gap-2">
-          <Plus className="w-4 h-4" />
-          New Entry
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button onClick={() => setShowAIAssistant(!showAIAssistant)} variant="outline" className="gap-2">
+            <Sparkles className="w-4 h-4" />
+            AI Assistant
+          </Button>
+          <Button onClick={() => setShowNewEntry(!showNewEntry)} className="gap-2">
+            <Plus className="w-4 h-4" />
+            New Entry
+          </Button>
+        </div>
       </div>
+
+      {/* AI Journal Assistant */}
+       <AnimatePresence>
+        {showAIAssistant && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            <AIJournalAssistant 
+              onPromptSelected={(prompt) => {
+                setNewEntry({ ...newEntry, entry_text: prompt });
+                setShowNewEntry(true);
+                setShowAIAssistant(false);
+              }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* New Entry Form */}
       <AnimatePresence>
