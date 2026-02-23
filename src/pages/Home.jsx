@@ -8,6 +8,7 @@ import PhoneMode from './PhoneMode';
 import SecurityMode from './SecurityMode';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
+import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflectionSession';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
@@ -17,6 +18,7 @@ export default function Home() {
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [currentMode, setCurrentMode] = useState('chat');
   const [showBadDayMode, setShowBadDayMode] = useState(false);
+  const [showReflection, setShowReflection] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
   const { t } = useLanguage();
@@ -135,14 +137,22 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Bad Day Button - Prominent and Gentle */}
-        <div className="p-4">
+        {/* Quick Access Buttons */}
+        <div className="p-4 space-y-3">
           <button
             onClick={() => setShowBadDayMode(true)}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold select-none"
           >
             <HeartCrack className="w-8 h-8" />
             {t('havingBadDay')}
+          </button>
+          
+          <button
+            onClick={() => setShowReflection(true)}
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-5 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg font-semibold select-none"
+          >
+            <MessageCircle className="w-7 h-7" />
+            Memory Reflection
           </button>
         </div>
 
@@ -205,6 +215,10 @@ export default function Home() {
           onClose={() => setShowBadDayMode(false)}
           userProfile={userProfiles[0]}
         />
+      )}
+
+      {showReflection && (
+        <MemoryReflectionSession onClose={() => setShowReflection(false)} />
       )}
     </div>
   );
