@@ -24,7 +24,7 @@ class VoicePatternAnalyzer {
       preferredSpeechRate: 'normal',
       preferredVolume: 'normal',
       emotionalBaseline: 'calm',
-      anxiety Triggers: [],
+      anxietyTriggers: [],
       comfortingFactors: []
     };
   }
