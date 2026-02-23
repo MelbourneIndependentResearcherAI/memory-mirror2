@@ -23,23 +23,71 @@ import { base44 } from '@/api/base44Client';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  const handleLearnMoreClick = async () => {
-    try {
-      const isAuthenticated = await base44.auth.isAuthenticated();
-      if (isAuthenticated) {
-        navigate(createPageUrl('ChatMode'));
-      } else {
-        base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+  React.useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const authenticated = await base44.auth.isAuthenticated();
+        setIsAuthenticated(authenticated);
+      } catch {
+        setIsAuthenticated(false);
       }
-    } catch (error) {
+    };
+    checkAuth();
+  }, []);
+
+  const handleGetStarted = () => {
+    if (isAuthenticated) {
+      navigate(createPageUrl('ChatMode'));
+    } else {
       base44.auth.redirectToLogin(createPageUrl('ChatMode'));
     }
   };
 
+  const handleSignIn = () => {
+    base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
+      {/* Top Navigation Bar */}
+      <div className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-7xl">
+          <div className="flex items-center gap-3">
+            <Heart className="w-7 h-7 text-blue-500" />
+            <span className="text-xl font-bold text-slate-900 dark:text-white">Memory Mirror</span>
+          </div>
+          <div className="flex items-center gap-3">
+            {!isAuthenticated ? (
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={handleSignIn}
+                  className="min-h-[44px] text-base font-medium"
+                >
+                  Sign In
+                </Button>
+                <Button
+                  onClick={handleSignIn}
+                  className="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-base font-semibold px-6"
+                >
+                  Get Started Free
+                </Button>
+              </>
+            ) : (
+              <Button
+                onClick={() => navigate(createPageUrl('ChatMode'))}
+                className="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-base font-semibold px-6"
+              >
+                Go to App
+              </Button>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
         <div className="text-center max-w-5xl mx-auto">
@@ -64,7 +112,7 @@ export default function Landing() {
 
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
-          <Link to="/chat" className="w-full group">
+          <button onClick={handleGetStarted} className="w-full group">
               <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
                 <div className="flex items-start gap-5">
                   <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -84,7 +132,7 @@ export default function Landing() {
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <Link to="/phone" className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -98,9 +146,9 @@ export default function Landing() {
                     </p>
                   </div>
                 </div>
-              </Link>
+              </button>
 
-              <Link to="/security" className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -114,9 +162,9 @@ export default function Landing() {
                     </p>
                   </div>
                 </div>
-              </Link>
+              </button>
 
-              <Link to={createPageUrl('NightWatch')} className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-gradient-to-br from-slate-800 to-slate-950 hover:from-slate-900 hover:to-black rounded-2xl shadow-lg border border-white/10 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -130,11 +178,11 @@ export default function Landing() {
                     </p>
                   </div>
                 </div>
-              </Link>
+              </button>
             </div>
 
             {/* Voice Setup Card */}
-            <Link to={createPageUrl('VoiceSetup')} className="w-full group">
+            <button onClick={handleGetStarted} className="w-full group">
               <div className="bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -150,11 +198,11 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </button>
 
             {/* Portal Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <Link to={createPageUrl('FamilyConnect')} className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-blue-200/60 dark:border-blue-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">👨‍👩‍👧‍👦</div>
@@ -168,9 +216,9 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </button>
 
-              <Link to={createPageUrl('CaregiverPortal')} className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-purple-200/60 dark:border-purple-700/40 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">🧠</div>
@@ -184,9 +232,9 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </button>
 
-              <Link to={createPageUrl('TVPairing')} className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-indigo-200/60 dark:border-indigo-700/40 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">📺</div>
@@ -200,20 +248,34 @@ export default function Landing() {
                     </div>
                   </div>
                 </div>
-              </Link>
+              </button>
             </div>
 
             <div className="flex flex-col gap-4 items-center">
               <InstallAppButton />
               
-              <Button 
-                size="lg" 
-                variant="outline" 
-                className="px-8 md:px-10 py-4 md:py-5 text-base md:text-lg rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-800 shadow-sm hover:shadow-md transition-all duration-300 w-full min-h-[52px] font-medium"
-                onClick={handleLearnMoreClick}
-              >
-                Get Started with Memory Mirror →
-              </Button>
+              {!isAuthenticated ? (
+                <div className="w-full space-y-3">
+                  <Button 
+                    size="lg" 
+                    className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+                    onClick={handleSignIn}
+                  >
+                    Sign In / Create Free Account →
+                  </Button>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
+                    No credit card required • 100% free during beta
+                  </p>
+                </div>
+              ) : (
+                <Button 
+                  size="lg" 
+                  className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+                  onClick={handleGetStarted}
+                >
+                  Go to Memory Mirror →
+                </Button>
+              )}
             </div>
           </div>
         </div>
