@@ -119,13 +119,16 @@ export default function PatientAccess() {
         <div className="max-w-4xl w-full">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
-              <MessageCircle className="w-10 h-10 text-white" />
+              <MessageCircle className="w-10 h-10 text-white" aria-hidden="true" />
             </div>
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
               Welcome to Memory Mirror
             </h1>
             <p className="text-xl text-slate-600 dark:text-slate-400">
               Choose how you'd like to start
+            </p>
+            <p className="sr-only">
+              This application has been designed for accessibility. Use keyboard Tab to navigate, Enter to select, and Alt+A for accessibility settings.
             </p>
           </div>
 
