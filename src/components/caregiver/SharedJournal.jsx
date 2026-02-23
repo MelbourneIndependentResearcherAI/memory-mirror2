@@ -10,7 +10,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { BookOpen, Plus, User, Calendar, Tag, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
-import AIJournalAssistant from './AIJournalAssistant';
+import AIJournalAssistant from '@/components/family/AIJournalAssistant';
 
 export default function SharedJournal({ patientProfileId }) {
   const queryClient = useQueryClient();
