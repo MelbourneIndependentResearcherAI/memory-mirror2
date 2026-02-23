@@ -1331,6 +1331,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           <StoryTeller 
             currentEra={selectedEra === 'auto' ? detectedEra : selectedEra}
             currentMood={anxietyState.level < 4 ? 'peaceful' : 'comforting'}
+            userProfile={userProfile}
             onClose={() => setShowStory(false)} 
           />
         )}
