@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone } from 'lucide-react';
+import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WellbeingOverview from '../components/family/WellbeingOverview';
@@ -14,6 +14,8 @@ import EmergencyContactsManager from '../components/caregiver/EmergencyContactsM
 import SharedPhotoAlbum from '../components/family/SharedPhotoAlbum';
 import MemoryTimelineBuilder from '../components/family/MemoryTimelineBuilder';
 import RemoteTriggerPanel from '../components/family/RemoteTriggerPanel';
+import FamilyTreeBuilder from '../components/family/FamilyTreeBuilder';
+import PlaylistManager from '../components/music/PlaylistManager';
 
 function FamilyConnectMain() {
   const navigate = useNavigate();
@@ -126,6 +128,20 @@ function FamilyConnectMain() {
               </div>
               <span className="text-sm font-semibold text-slate-700">Contacts</span>
             </TabsTrigger>
+
+            <TabsTrigger value="family-tree" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-50 data-[state=active]:to-green-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow-lg">
+                <GitBranch className="w-7 h-7 text-white" />
+              </div>
+              <span className="text-sm font-semibold text-slate-700">Family Tree</span>
+            </TabsTrigger>
+
+            <TabsTrigger value="playlists" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-50 data-[state=active]:to-red-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+                <ListMusic className="w-7 h-7 text-white" />
+              </div>
+              <span className="text-sm font-semibold text-slate-700">Playlists</span>
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview">
@@ -199,6 +215,20 @@ function FamilyConnectMain() {
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
               <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Emergency Contacts</h2>
               <EmergencyContactsManager />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="family-tree">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Family Tree</h2>
+              <FamilyTreeBuilder />
+            </div>
+          </TabsContent>
+
+          <TabsContent value="playlists">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Music Playlists</h2>
+              <PlaylistManager />
             </div>
           </TabsContent>
         </Tabs>
