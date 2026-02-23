@@ -605,6 +605,9 @@ export default function Landing() {
           <DonationModal onClose={() => setShowDonationModal(false)} />
         )}
 
+        {/* Community Feedback Section */}
+        <CommunityFeedbackSection />
+
         {/* Bottom Text Section */}
         <div 
           className="text-center relative px-4 z-10 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-16 md:py-20"
