@@ -814,14 +814,28 @@ If appropriate, gently reference their memories or suggest looking at photos tog
                            detectedAnxiety >= 3 ? 'warm' :
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
-      // Speak the response
+      // Speak the response - CRITICAL: Ensure voice output
       if (assistantMessage && isMountedRef.current) {
-        console.log('Speaking response...');
-        speakResponse(assistantMessage, { 
-          state: emotionalState, 
-          anxietyLevel: detectedAnxiety,
-          onEnd: () => console.log('Speech complete')
-        });
+        console.log('🔊 Speaking response with state:', emotionalState);
+        try {
+          // Use native Web Speech API directly as failsafe
+          const utterance = new SpeechSynthesisUtterance(assistantMessage);
+          utterance.rate = 0.85;
+          utterance.pitch = 1.0;
+          utterance.volume = 1.0;
+          
+          // Try to get a quality voice
+          const voices = window.speechSynthesis.getVoices();
+          if (voices.length > 0) {
+            utterance.voice = voices[0];
+          }
+          
+          window.speechSynthesis.cancel(); // Clear any previous speech
+          window.speechSynthesis.speak(utterance);
+          console.log('✅ Speech synthesis started');
+        } catch (voiceError) {
+          console.error('Voice synthesis error:', voiceError);
+        }
       }
 
       // Show anxiety alert if needed
