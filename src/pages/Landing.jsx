@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -7,6 +7,7 @@ import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import { base44 } from '@/api/base44Client';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
+import FeatureTutorial from '@/components/landing/FeatureTutorial';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
