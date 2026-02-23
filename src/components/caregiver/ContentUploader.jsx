@@ -170,7 +170,7 @@ export default function ContentUploader() {
         ? photo.people_in_media.split(',').map(p => p.trim())
         : [];
       
-      return await offlineEntities.create('FamilyMedia', {
+      const created = await offlineEntities.create('FamilyMedia', {
         title: photo.title,
         caption: photo.caption,
         media_url: uploadResult.file_url,
@@ -178,6 +178,32 @@ export default function ContentUploader() {
         era: photo.era,
         people_in_media: peopleArray
       });
+
+      // Notify care team of new media upload
+      try {
+        const currentUser = await base44.auth.me();
+        const profiles = await base44.entities.UserProfile.list();
+        const patientProfile = profiles?.[0];
+        if (patientProfile?.id) {
+          await base44.entities.CaregiverNotification.create({
+            patient_profile_id: patientProfile.id,
+            notification_type: 'new_media_upload',
+            severity: 'low',
+            title: 'New Photo Added',
+            message: `${currentUser?.full_name || 'A caregiver'} uploaded "${photo.title}"`,
+            data: {
+              media_id: created.id,
+              media_type: 'photo',
+              uploaded_by: currentUser?.full_name
+            },
+            triggered_by: 'content_upload'
+          });
+        }
+      } catch (err) {
+        console.log('Team notification skipped:', err.message);
+      }
+
+      return created;
     },
     onMutate: async (file) => {
       await queryClient.cancelQueries({ queryKey: ['familyPhotos'] });
