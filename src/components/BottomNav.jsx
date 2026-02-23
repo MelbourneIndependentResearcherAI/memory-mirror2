@@ -14,19 +14,19 @@ export default function BottomNav() {
 
   const navItems = React.useMemo(() => [
     {
-      path: '/chat',
+      path: createPageUrl('ChatMode'),
       icon: MessageCircle,
       label: t('chat'),
       color: 'text-blue-500'
     },
     {
-      path: '/phone',
+      path: createPageUrl('PhoneMode'),
       icon: Phone,
       label: t('phone'),
       color: 'text-green-500'
     },
     {
-      path: '/security',
+      path: createPageUrl('Security'),
       icon: Shield,
       label: t('security'),
       color: 'text-purple-500'
