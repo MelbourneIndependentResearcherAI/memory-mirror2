@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Music, Play, Pause, SkipForward, Volume2, X, Download, Check } from 'lucide-react';
+import { Music, Play, Pause, SkipForward, Volume2, X, Download, Check, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
+import PlaylistGenerator from '../music/PlaylistGenerator';
 
 // Curated music library with era-appropriate songs
 const MUSIC_LIBRARY = {
@@ -35,6 +36,7 @@ export default function MusicPlayer({ currentEra, onClose }) {
   const [currentSong, setCurrentSong] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [cached, setCached] = useState({});
+  const [showPlaylistGenerator, setShowPlaylistGenerator] = useState(false);
   const audioRef = useRef(null);
 
   const songs = MUSIC_LIBRARY[currentEra] || MUSIC_LIBRARY['present'];
@@ -205,15 +207,36 @@ export default function MusicPlayer({ currentEra, onClose }) {
             {currentEra} Music
           </span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="h-8 w-8"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowPlaylistGenerator(true)}
+            className="h-8 w-8"
+            title="Create AI Playlist"
+          >
+            <Sparkles className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
+
+      {showPlaylistGenerator && (
+        <PlaylistGenerator
+          onPlaylistGenerated={() => {
+            setShowPlaylistGenerator(false);
+            toast.success('Playlist added to your collection');
+          }}
+          onClose={() => setShowPlaylistGenerator(false)}
+        />
+      )}
 
       {currentSong && (
         <div className="mb-6">
