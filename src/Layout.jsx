@@ -27,6 +27,8 @@ import { registerServiceWorker, requestPersistentStorage } from '@/components/ut
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { initGlobalErrorHandler } from '@/components/utils/errorLogger';
+import ComplianceWrapper from '@/components/compliance/ComplianceWrapper';
+import AccessibilityWrapper from '@/components/accessibility/AccessibilityWrapper';
 
 // Initialize app capabilities on load
 if (typeof window !== 'undefined') {
