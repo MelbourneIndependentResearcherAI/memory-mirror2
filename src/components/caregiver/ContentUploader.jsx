@@ -779,13 +779,89 @@ export default function ContentUploader() {
         </TabsContent>
 
         {/* Activity Creation */}
-        <TabsContent value="activity">
+         <TabsContent value="activity">
           <Card>
             <CardHeader>
               <CardTitle>Create Interactive Activity</CardTitle>
-              <CardDescription>Design custom cognitive exercises and games</CardDescription>
+              <CardDescription>Design custom cognitive exercises and games (Bingo & Crosswords for all cognitive levels)</CardDescription>
             </CardHeader>
             <CardContent>
+              <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex items-start gap-3">
+                  <Brain className="w-5 h-5 text-blue-600 mt-0.5" />
+                  <div className="text-sm text-blue-900 dark:text-blue-100">
+                    <p className="font-semibold mb-1">AI-Powered Cognitive Exercises</p>
+                    <p>Generate personalized bingo games and crosswords tailored to 6 cognitive levels - from mild decline to severe dementia.</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 mb-6">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Select Cognitive Level</label>
+                  <Select value={activity.difficulty} onValueChange={(val) => setActivity({...activity, difficulty: val})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="level1">Level 1 - Very Mild Decline (Complex activities with minor support)</SelectItem>
+                      <SelectItem value="level2">Level 2 - Mild Decline (Needs guidance, enjoys games)</SelectItem>
+                      <SelectItem value="level3">Level 3 - Moderate Decline (Shorter games, simple rules)</SelectItem>
+                      <SelectItem value="level4">Level 4 - Moderately Severe (Very simple games, large text)</SelectItem>
+                      <SelectItem value="level5">Level 5 - Severe (Extremely simple, sensory engagement)</SelectItem>
+                      <SelectItem value="level6">Level 6 - Very Severe (Recognition, music, touch, comfort)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Exercise Type</label>
+                  <Select value={activity.type} onValueChange={(val) => setActivity({...activity, type: val})}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bingo">Bingo Game</SelectItem>
+                      <SelectItem value="crossword">Crossword Puzzle</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <Button
+                  type="button"
+                  onClick={() => {
+                    if (!userProfile) {
+                      toast.error('User profile not found');
+                      return;
+                    }
+                    setGeneratingAI(true);
+                    base44.functions.invoke('generateAIContent', {
+                      type: 'cognitive_exercise',
+                      userProfile,
+                      cognitiveLevel: parseInt(activity.difficulty.replace('level', ''))
+                    }).then(response => {
+                      if (response.data?.exercise) {
+                        setActivity({
+                          ...activity,
+                          title: response.data.exercise.title || 'Generated Exercise',
+                          content: JSON.stringify(response.data.exercise, null, 2)
+                        });
+                        toast.success('Exercise generated! Review and adjust as needed.');
+                      }
+                    }).catch(err => {
+                      toast.error('Failed to generate exercise: ' + err.message);
+                    }).finally(() => {
+                      setGeneratingAI(false);
+                    });
+                  }}
+                  disabled={generatingAI || !userProfile}
+                  className="w-full gap-2 bg-blue-600 hover:bg-blue-700"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  {generatingAI ? 'Generating...' : 'Generate Exercise'}
+                </Button>
+              </div>
+
               <form onSubmit={handleActivitySubmit} className="space-y-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Activity Title *</label>
