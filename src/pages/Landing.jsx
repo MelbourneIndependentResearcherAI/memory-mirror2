@@ -60,30 +60,13 @@ export default function Landing() {
             <span className="text-xl font-bold text-slate-900 dark:text-white">Memory Mirror</span>
           </div>
           <div className="flex items-center gap-3">
-            {!isAuthenticated ? (
-              <>
-                <Button
-                  variant="ghost"
-                  onClick={handleSignIn}
-                  className="min-h-[44px] text-base font-medium"
-                >
-                  Sign In
-                </Button>
-                <Button
-                  onClick={handleSignIn}
-                  className="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-base font-semibold px-6"
-                >
-                  Get Started Free
-                </Button>
-              </>
-            ) : (
-              <Button
-                onClick={() => navigate(createPageUrl('ChatMode'))}
-                className="min-h-[44px] bg-blue-600 hover:bg-blue-700 text-base font-semibold px-6"
-              >
-                Go to App
-              </Button>
-            )}
+            <Button
+              variant="ghost"
+              onClick={() => navigate(createPageUrl('CaregiverLogin'))}
+              className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
+            >
+              👨‍⚕️ Caregiver Login
+            </Button>
           </div>
         </div>
       </div>
@@ -109,6 +92,77 @@ export default function Landing() {
           <p className="text-lg md:text-xl lg:text-2xl text-blue-600 dark:text-blue-400 mb-8 md:mb-12 font-light px-4">
             with dignity, warmth, and genuine understanding
           </p>
+
+          {/* Dual Access Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
+            {/* Patient Access */}
+            <button
+              onClick={() => navigate(createPageUrl('PatientAccess'))}
+              className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+            >
+              <div className="flex flex-col items-start gap-4">
+                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                  <MessageCircle className="w-12 h-12 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-3xl font-bold text-white mb-3">
+                    Start Companion
+                  </h3>
+                  <p className="text-lg text-white/90 leading-relaxed mb-4">
+                    For patients - Quick access, no login required
+                  </p>
+                  <div className="flex flex-col gap-2 text-sm text-white/80">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Instant AI companion</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Optional PIN protection</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Hands-free voice access</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
+
+            {/* Caregiver Access */}
+            <button
+              onClick={() => navigate(createPageUrl('CaregiverSignup'))}
+              className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+            >
+              <div className="flex flex-col items-start gap-4">
+                <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                  <Brain className="w-12 h-12 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-3xl font-bold text-white mb-3">
+                    Caregiver Portal
+                  </h3>
+                  <p className="text-lg text-white/90 leading-relaxed mb-4">
+                    For caregivers - Full dashboard & controls
+                  </p>
+                  <div className="flex flex-col gap-2 text-sm text-white/80">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Monitor activity & wellbeing</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Configure AI behavior</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                      <span>Get smart notifications</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </button>
+          </div>
 
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
