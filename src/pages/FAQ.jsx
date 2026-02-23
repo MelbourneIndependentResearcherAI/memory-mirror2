@@ -1,58 +1,46 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, Search } from 'lucide-react';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown, ChevronUp, MessageCircle, Heart } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 
-const faqCategories = [
+const faqs = [
   {
     category: 'Getting Started',
     questions: [
       {
         q: 'What is Memory Mirror?',
-        a: 'Memory Mirror is an AI-powered companion app specifically designed for people living with dementia. It provides gentle, compassionate interaction through voice and chat, adapts to different mental time periods (eras), and helps manage anxiety while keeping loved ones safe and engaged.'
+        a: 'Memory Mirror is an AI companion specifically designed for individuals living with dementia and their caregivers. It uses advanced artificial intelligence to provide compassionate conversation, emotional support, and practical assistance through voice interaction.'
       },
       {
-        q: 'How do I set up Memory Mirror?',
-        a: 'Simply visit the app, and you can start using it immediately. Caregivers should visit the Caregiver Portal to set up a user profile, upload photos and memories, configure reminders, and customize settings. The AI will adapt to your loved one automatically over time.'
+        q: 'How do I start using Memory Mirror?',
+        a: 'Simply say "Hey Mirror" to activate voice mode, or tap the microphone button. The AI will greet you warmly and adapt to your mental state and time period awareness. No complex setup required.'
       },
       {
-        q: 'What devices does Memory Mirror work on?',
-        a: 'Memory Mirror works on any modern web browser on smartphones, tablets, and computers. It works best on touch-screen devices. For voice features, ensure your device has a microphone and speakers.'
-      },
-      {
-        q: 'Does Memory Mirror work offline?',
-        a: 'Yes! Memory Mirror has extensive offline capabilities. Once loaded, many features work without internet, including voice interaction, memories, music playback, and games. The app automatically syncs when reconnected.'
+        q: 'Is Memory Mirror free?',
+        a: 'Yes! Memory Mirror is currently 100% free while we finalize development. When we introduce the $9.99/month subscription later, we\'ll give advance notice and ensure the experience is flawless first.'
       }
     ]
   },
   {
-    category: 'Features & Modes',
+    category: 'Core Features',
     questions: [
       {
-        q: 'What is Chat Mode?',
-        a: 'Chat Mode provides conversational AI interaction through voice or text. The AI companion adapts to different eras (1940s, 1960s, 1980s, present) to meet your loved one where they are mentally, never correcting or reality-orienting.'
+        q: 'What is Era Detection?',
+        a: 'Memory Mirror automatically detects which time period a person is mentally experiencing (1940s, 1960s, 1980s, or present day) and adapts its language, cultural references, and conversation style accordingly for genuine connection.'
+      },
+      {
+        q: 'How does Anxiety Detection work?',
+        a: 'The AI monitors conversation patterns for signs of distress, confusion, or agitation. When detected, it automatically responds with calming techniques, familiar patterns, and emotional safety without ever telling the person they\'re wrong.'
       },
       {
         q: 'What is Phone Mode?',
-        a: 'Phone Mode provides a simplified calling interface with large buttons for emergency contacts and family members. It includes hands-free calling and quick-dial options designed for easy use.'
+        a: 'A realistic dial pad that connects to the AI companion instead of emergency services. This prevents costly 911 calls at night while giving your loved one the comfort of "calling someone" when they need reassurance.'
       },
       {
-        q: 'What is Security Mode?',
-        a: 'Security Mode offers reassuring checks for doors, windows, lights, and overall safety. It uses gentle language to provide peace of mind without triggering anxiety about security concerns.'
-      },
-      {
-        q: 'What is Night Watch?',
-        a: 'Night Watch is a specialized nighttime companion that gently redirects confused nighttime wandering, provides comfort during distress, and logs incidents for caregiver review. It operates in a calming low-light interface.'
-      },
-      {
-        q: 'What is Bad Day Mode?',
-        a: 'Bad Day Mode can be activated by voice ("Hey Mirror, I\'m having a bad day"), button press, or remotely by caregivers. It provides guided breathing exercises, plays calming music, shows happy memories, and offers gentle comfort. It automatically alerts caregivers.'
-      },
-      {
-        q: 'How does era adaptation work?',
-        a: 'The AI detects which time period your loved one is mentally experiencing and adapts its language, cultural references, and conversation style accordingly. You can also manually select an era or use auto-detection mode.'
+        q: 'What is Security Scanner?',
+        a: 'A realistic AI-controlled security check that never makes real alerts or calls. It provides purely reassuring visuals to reduce anxiety about locks and safety, helping users feel calm and secure without actual security functions.'
       }
     ]
   },
@@ -60,353 +48,210 @@ const faqCategories = [
     category: 'For Caregivers',
     questions: [
       {
-        q: 'How do I access the Caregiver Portal?',
-        a: 'Click the Settings icon (gear) in the top-right corner of the home screen, or visit the Caregiver Portal link in the footer. You\'ll need to log in or create an account.'
+        q: 'What is the Caregiver Portal?',
+        a: 'A comprehensive dashboard where caregivers can monitor wellbeing, view anxiety trends, access chat history, manage photos and music, configure settings, and receive proactive alerts about concerning patterns.'
       },
       {
-        q: 'What can I do in the Caregiver Portal?',
-        a: 'In the portal, you can: set up user profiles, upload family photos and videos, create music playlists, manage activity reminders, view insights and analytics, read conversation logs, monitor anxiety trends, configure smart home automations, and review night watch incidents.'
+        q: 'Can I upload personal photos and memories?',
+        a: 'Yes! The Media Library lets you upload photos, videos, and personal stories. The AI can proactively recall these during conversations to spark joy and connection.'
       },
       {
-        q: 'How do I lock Phone or Security Mode to prevent patients from exiting?',
-        a: 'Phone Mode and Security Mode can be locked by caregivers to prevent patients from navigating away. Click the "Lock Mode" button in the top-right corner when in Phone or Security Mode. The default PIN is 1234. To unlock, enter this PIN. You can change the PIN in the Caregiver Portal settings. This ensures patients stay in the safe mode until you unlock it.'
+        q: 'What is Night Watch Mode?',
+        a: 'A gentle nighttime companion that prevents wandering, provides comfort during confusion, and keeps caregivers informed via the Night Watch Log. It uses calming visuals and voice to redirect safely.'
       },
       {
-        q: 'What is the default PIN for locked modes?',
-        a: 'The default caregiver PIN is 1234. This PIN is required to unlock Phone Mode or Security Mode when they are locked. For security, it is strongly recommended to change this PIN to a unique code that only caregivers know. Change the PIN in Caregiver Portal → Settings.'
-      },
-      {
-        q: 'How do I set up activity reminders?',
-        a: 'Go to Caregiver Portal → Activity Reminders. Create reminders for medication, meals, exercise, social calls, etc. Set the time, frequency, and custom voice prompts. Reminders appear as gentle notifications with optional voice announcements.'
-      },
-      {
-        q: 'Can I upload my own photos and videos?',
-        a: 'Yes! In the Caregiver Portal → Photo Library, upload family photos and videos with captions. The AI will use these to spark conversations and show them at appropriate times.'
-      },
-      {
-        q: 'How do I monitor anxiety levels?',
-        a: 'The Insights & Analytics section shows anxiety trends over time, common triggers, and patterns. The system tracks conversational cues and logs high-anxiety moments automatically.'
-      },
-      {
-        q: 'Can I remotely activate Bad Day Mode?',
-        a: 'Yes! From the Caregiver Portal home screen, click "Activate Bad Day Mode" to remotely trigger calming interventions when your loved one needs extra support.'
+        q: 'Can I customize the AI voice?',
+        a: 'Yes! Voice Cloning allows you to upload audio samples of family members. The AI can then speak in familiar voices (like a daughter or spouse) for deeper emotional comfort.'
       }
     ]
   },
   {
-    category: 'Voice & AI Features',
-    questions: [
-      {
-        q: 'How do I use voice commands?',
-        a: 'Tap the large microphone button and speak clearly. Say "Hey Mirror" as a wake word, or use specific commands like "I\'m having a bad day," "Play some music," "Show me memories," or "Call my daughter."'
-      },
-      {
-        q: 'What languages does Memory Mirror support?',
-        a: 'Memory Mirror supports 20+ languages including English, Spanish, French, German, Italian, Portuguese, Chinese, Japanese, Arabic, Hindi, and more. Select your language in the language selector.'
-      },
-      {
-        q: 'Can I customize the AI\'s voice?',
-        a: 'The AI uses natural speech synthesis with gentle pacing and warm tone. Voice settings adapt automatically based on anxiety levels - slower and calmer during distress.'
-      },
-      {
-        q: 'How does the AI detect anxiety?',
-        a: 'The AI analyzes conversation tone, word choice, repetition patterns, and emotional cues to detect anxiety levels (0-10 scale). High anxiety triggers gentle redirections to "safe memory zones" and can suggest mode switches.'
-      },
-      {
-        q: 'What are Safe Memory Zones?',
-        a: 'Safe Memory Zones are pre-configured positive topics (like family, hobbies, favorite places) that the AI redirects to when anxiety is detected, avoiding triggering subjects.'
-      }
-    ]
-  },
-  {
-    category: 'Smart Home Integration',
-    questions: [
-      {
-        q: 'Can Memory Mirror control smart home devices?',
-        a: 'Yes! Connect smart lights, thermostats, door locks, and plugs. The AI can adjust lighting and temperature based on mood, time of day, or routines. Configure in Caregiver Portal → Smart Home.'
-      },
-      {
-        q: 'What are Mood-Based Automations?',
-        a: 'Mood-Based Automations automatically adjust your environment based on detected emotional state. For example, dimming lights and playing calm music when anxiety is high, or brightening lights during happy moments.'
-      },
-      {
-        q: 'Which smart home brands are supported?',
-        a: 'Memory Mirror works with most Wi-Fi smart devices including Philips Hue, LIFX, Nest, Ecobee, August, Ring, and generic WiFi plugs/lights. Devices must have API access.'
-      }
-    ]
-  },
-  {
-    category: 'Privacy & Security',
+    category: 'Privacy & Safety',
     questions: [
       {
         q: 'Is my data secure?',
-        a: 'Yes. All conversations and personal data are encrypted. Data is stored securely and never shared with third parties. You have full control to delete any data at any time.'
+        a: 'Absolutely. All data is encrypted in transit and at rest. We\'re fully compliant with HIPAA, GDPR, and PIPEDA healthcare privacy regulations. Video calls use end-to-end encryption with no server recording.'
       },
       {
-        q: 'Are conversations recorded?',
-        a: 'Conversations are logged for caregiver review and to improve AI responses, but audio is not permanently recorded. Logs can be viewed or deleted from the Caregiver Portal.'
+        q: 'Does Memory Mirror make real emergency calls?',
+        a: 'No. Phone Mode and Security Scanner are purely for emotional reassurance - they never dial real numbers or create actual alerts. This prevents false alarms while providing comfort.'
       },
       {
-        q: 'Who can access the caregiver features?',
-        a: 'Only authorized caregivers with login credentials can access the portal. You can invite additional family members as caregivers or regular users.'
+        q: 'Can I use Memory Mirror offline?',
+        a: 'Yes! Memory Mirror includes 250+ pre-loaded AI responses, 20 stories, 15 songs, and 10 memory exercises. Essential features work without internet, with automatic data caching for reliability.'
       },
       {
-        q: 'Can I export my data?',
-        a: 'Yes. Visit Caregiver Portal → Settings to export all your data including conversation logs, memories, photos, and analytics in standard formats.'
+        q: 'What happens to conversation data?',
+        a: 'Conversations are analyzed in real-time for anxiety and context, then encrypted and stored securely. Only you (the caregiver) can access historical data. We never sell or share personal information.'
       }
     ]
   },
   {
-    category: 'Memories & Media',
+    category: 'Smart Features',
     questions: [
       {
-        q: 'How does Smart Memory Recall work?',
-        a: 'The AI analyzes conversations in real-time and proactively suggests relevant photos, videos, and memories from your library. It shows them at appropriate moments to spark positive reminiscence.'
+        q: 'What is Smart Home Integration?',
+        a: 'Connect Philips Hue, Nest, and other smart devices. Memory Mirror can automatically adjust lighting, temperature, and music based on detected mood and anxiety levels to create calming environments.'
       },
       {
-        q: 'Can I organize memories by era?',
-        a: 'Yes! When uploading memories, tag them by era (1940s, 1960s, 1980s, present). The AI prioritizes showing memories from the mental time period your loved one is currently experiencing.'
+        q: 'What are Mood Automations?',
+        a: 'Pre-configured smart home responses triggered by anxiety or agitation. For example: dim lights + play calm music + lower temperature when anxiety reaches level 7.'
       },
       {
-        q: 'What music features are available?',
-        a: 'Create custom playlists organized by era and mood (uplifting, calm, nostalgic). The AI can play music on request or automatically during Bad Day Mode. Search for songs by decade or artist.'
+        q: 'What is Bad Day Mode?',
+        a: 'A one-tap feature that activates enhanced calming support: softer voice, simpler prompts, favorite memories, and notification to caregivers. Can be triggered remotely by family members.'
+      },
+      {
+        q: 'Can family members share content remotely?',
+        a: 'Yes! The Family Portal allows family to send photos, messages, music playlists, and memory prompts that appear instantly on the loved one\'s device.'
       }
     ]
   },
   {
-    category: 'Technical & Troubleshooting',
+    category: 'Technical Support',
     questions: [
       {
-        q: 'The microphone isn\'t working. What should I do?',
-        a: 'Ensure your browser has microphone permissions enabled. On mobile, check device settings. Try refreshing the page. Voice features require Chrome, Safari, or Edge browsers.'
+        q: 'What devices work with Memory Mirror?',
+        a: 'Memory Mirror works on smartphones, tablets, and TVs via web browser. We recommend tablets (10-12 inches) for optimal visibility and voice interaction.'
       },
       {
-        q: 'The app seems slow or laggy.',
-        a: 'Memory Mirror works best with a stable internet connection. However, most features work offline once cached. Try clearing your browser cache or restarting the app. Check your connection speed.'
+        q: 'Does it work on TV?',
+        a: 'Yes! Use TV Pairing mode to connect your smart TV. The interface automatically switches to extra-large text, voice controls, and simplified navigation perfect for viewing from a distance.'
       },
       {
-        q: 'Voice recognition isn\'t understanding my loved one.',
-        a: 'Speak clearly and ensure there\'s minimal background noise. The AI learns speech patterns over time. You can also use the text input option instead of voice.'
-      },
-      {
-        q: 'How do I sync data across devices?',
-        a: 'Data syncs automatically when online. Visit Sync & Backup page to manually trigger sync or check sync status. Ensure you\'re logged in with the same account on all devices.'
-      },
-      {
-        q: 'Can multiple caregivers access the same account?',
-        a: 'Yes! Invite additional caregivers from the Settings page. Each can have admin or viewer roles with different permission levels.'
-      }
-    ]
-  },
-  {
-    category: 'Legal & Disclaimers',
-    questions: [
-      {
-        q: 'Is Memory Mirror a medical device?',
-        a: 'No. Memory Mirror is NOT a medical device and is NOT intended to diagnose, treat, cure, or prevent any disease. It is a companion tool designed to supplement professional dementia care, not replace it. Always consult healthcare professionals for medical advice.'
-      },
-      {
-        q: 'What are the liability limitations?',
-        a: 'Memory Mirror is provided "as is" without warranties. We are not liable for any damages, harm, or losses resulting from app use. This includes AI errors, technical failures, or any physical, emotional, or financial harm. See our Terms of Service for complete details.'
-      },
-      {
-        q: 'Who is responsible for the safety of my loved one?',
-        a: 'Caregivers and family members are fully responsible for the safety and wellbeing of their loved ones. Memory Mirror is a support tool that should be used under supervision, not as a replacement for human care and medical oversight.'
-      },
-      {
-        q: 'Can I use Memory Mirror without caregiver supervision?',
-        a: 'No. Memory Mirror should always be used under the supervision of a qualified caregiver or family member. It is not designed for unsupervised use by individuals with dementia.'
-      },
-      {
-        q: 'What should I do in an emergency?',
-        a: 'Memory Mirror is NOT for emergencies. In case of medical emergency, call emergency services immediately (911, 999, 112, or your local emergency number). Do not rely on the app for urgent medical situations.'
-      },
-      {
-        q: 'Is the AI perfect?',
-        a: 'No. AI may produce incorrect, inappropriate, or unexpected responses. All AI interactions should be monitored by caregivers. We do not guarantee the accuracy or reliability of AI-generated content.'
-      },
-      {
-        q: 'What laws govern my use of Memory Mirror?',
-        a: 'Memory Mirror complies with HIPAA (US), GDPR (EU), CCPA (California), PIPEDA (Canada), and Australian Privacy Act. These Terms are governed by California law. International users must comply with their local laws.'
-      }
-    ]
-  },
-  {
-    category: 'Pricing & Support',
-    questions: [
-      {
-        q: 'How much does Memory Mirror cost?',
-        a: 'Memory Mirror offers a free tier with daily limited access. Premium subscription is $9.99/month - intentionally priced well below other dementia care apps. IMPORTANT: Subscription fees will not begin until the app is running smoothly and all final tweaks are complete. We will notify you before billing starts.'
-      },
-      {
-        q: 'Is there a free trial?',
-        a: 'Yes! All premium features are available free for 30 days. No credit card required to start. Cancel anytime without charge.'
-      },
-      {
-        q: 'How do I cancel my subscription?',
-        a: 'Visit Caregiver Portal → Settings → Billing. Click "Cancel Subscription." Your access continues until the end of the paid period.'
+        q: 'What if internet connection is lost?',
+        a: 'Memory Mirror continues functioning with cached data and offline mode. When reconnected, it syncs updates automatically. The Offline Status Bar shows connection state.'
       },
       {
         q: 'How do I get support?',
-        a: 'Email support: mcnamaram86@gmail.com. We typically respond within 24 hours. For urgent issues, use the in-app chat support (premium members get priority response).'
+        a: 'Email support@memorymirror.app or use the Feedback page. Our creator personally responds to all messages, typically within 24 hours.'
+      }
+    ]
+  },
+  {
+    category: 'Billing & Account',
+    questions: [
+      {
+        q: 'When will the subscription start?',
+        a: 'Not yet determined. We\'ll announce the subscription launch well in advance (at least 30 days notice) and only after Memory Mirror is running perfectly. No surprise charges - ever.'
       },
       {
-        q: 'Do you offer discounts for families in need?',
-        a: 'Yes. We offer financial assistance for families who cannot afford the subscription. Contact us at mcnamaram86@gmail.com to apply.'
+        q: 'Can I cancel anytime?',
+        a: 'Yes. When subscriptions begin, you can cancel anytime with no penalties. Your access continues until the end of the paid period.'
+      },
+      {
+        q: 'Are there family discounts?',
+        a: 'When subscriptions launch, we plan to offer family plans at reduced rates. Pricing details will be announced closer to the subscription start date.'
+      },
+      {
+        q: 'Can I donate now to support development?',
+        a: 'Yes! Donations help keep servers running and development moving forward. Click the "Donate" button on the landing page. 100% goes to operational costs, never personal use.'
       }
     ]
   }
 ];
 
 export default function FAQ() {
-  const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState('');
-  const [openQuestions, setOpenQuestions] = useState(new Set());
+  const [expandedItems, setExpandedItems] = useState({});
 
-  const toggleQuestion = (categoryIdx, questionIdx) => {
-    const key = `${categoryIdx}-${questionIdx}`;
-    setOpenQuestions(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(key)) {
-        newSet.delete(key);
-      } else {
-        newSet.add(key);
-      }
-      return newSet;
-    });
+  const toggleItem = (categoryIndex, questionIndex) => {
+    const key = `${categoryIndex}-${questionIndex}`;
+    setExpandedItems(prev => ({
+      ...prev,
+      [key]: !prev[key]
+    }));
   };
 
-  const filteredCategories = searchTerm
-    ? faqCategories.map(cat => ({
-        ...cat,
-        questions: cat.questions.filter(q =>
-          q.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          q.a.toLowerCase().includes(searchTerm.toLowerCase())
-        )
-      })).filter(cat => cat.questions.length > 0)
-    : faqCategories;
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white py-12">
-        <div className="max-w-4xl mx-auto px-4">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(-1)}
-            className="text-white hover:bg-white/20 mb-6"
-          >
-            <ArrowLeft className="w-5 h-5 mr-2" />
-            Back
-          </Button>
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">Frequently Asked Questions</h1>
-          <p className="text-xl text-white/90">Everything you need to know about Memory Mirror</p>
-        </div>
-      </div>
-
-      {/* Search */}
-      <div className="max-w-4xl mx-auto px-4 -mt-8">
-        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl p-4">
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-            <Input
-              type="text"
-              placeholder="Search questions..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-12 h-12 text-lg"
-            />
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 p-4 md:p-8">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-4">
+            <MessageCircle className="w-16 h-16 text-blue-600 dark:text-blue-400" />
           </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Everything you need to know about Memory Mirror and compassionate dementia care
+          </p>
         </div>
-      </div>
 
-      {/* FAQ Content */}
-      <div className="max-w-4xl mx-auto px-4 py-12">
-        {filteredCategories.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500 text-lg">No questions found matching "{searchTerm}"</p>
-          </div>
-        ) : (
-          <div className="space-y-8">
-            {filteredCategories.map((category, catIdx) => (
-              <div key={catIdx}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-3">
-                  <span className="text-3xl">{
-                    catIdx === 0 ? '🚀' :
-                    catIdx === 1 ? '✨' :
-                    catIdx === 2 ? '👨‍👩‍👧' :
-                    catIdx === 3 ? '🎤' :
-                    catIdx === 4 ? '🏠' :
-                    catIdx === 5 ? '🔒' :
-                    catIdx === 6 ? '⚖️' :
-                    catIdx === 7 ? '📸' :
-                    catIdx === 8 ? '🔧' :
-                    '💳'
-                  }</span>
-                  {category.category}
-                </h2>
-                
-                <div className="space-y-3">
-                  {category.questions.map((item, qIdx) => {
-                    const isOpen = openQuestions.has(`${catIdx}-${qIdx}`);
-                    return (
-                      <div
-                        key={qIdx}
-                        className="bg-white dark:bg-slate-800 rounded-xl shadow-md overflow-hidden"
+        {/* FAQ Sections */}
+        <div className="space-y-8 mb-12">
+          {faqs.map((category, categoryIndex) => (
+            <div key={categoryIndex}>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+                <Heart className="w-6 h-6 text-blue-600" />
+                {category.category}
+              </h2>
+              <div className="space-y-3">
+                {category.questions.map((item, questionIndex) => {
+                  const key = `${categoryIndex}-${questionIndex}`;
+                  const isExpanded = expandedItems[key];
+
+                  return (
+                    <Card
+                      key={questionIndex}
+                      className="overflow-hidden border-2 hover:border-blue-300 dark:hover:border-blue-700 transition-all"
+                    >
+                      <button
+                        onClick={() => toggleItem(categoryIndex, questionIndex)}
+                        className="w-full text-left p-6 flex items-center justify-between gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors min-h-[72px]"
                       >
-                        <button
-                          onClick={() => toggleQuestion(catIdx, qIdx)}
-                          className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
-                        >
-                          <span className="font-semibold text-gray-900 dark:text-white pr-4">
-                            {item.q}
-                          </span>
-                          <motion.div
-                            animate={{ rotate: isOpen ? 180 : 0 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            <ChevronDown className="w-5 h-5 text-gray-500 flex-shrink-0" />
-                          </motion.div>
-                        </button>
-                        
-                        <AnimatePresence>
-                          {isOpen && (
-                            <motion.div
-                              initial={{ height: 0, opacity: 0 }}
-                              animate={{ height: 'auto', opacity: 1 }}
-                              exit={{ height: 0, opacity: 0 }}
-                              transition={{ duration: 0.2 }}
-                            >
-                              <div className="px-6 py-4 bg-gray-50 dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700">
-                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
-                                  {item.a}
-                                </p>
-                              </div>
-                            </motion.div>
-                          )}
-                        </AnimatePresence>
-                      </div>
-                    );
-                  })}
-                </div>
+                        <span className="font-semibold text-slate-900 dark:text-white text-lg">
+                          {item.q}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp className="w-6 h-6 text-blue-600 flex-shrink-0" />
+                        ) : (
+                          <ChevronDown className="w-6 h-6 text-slate-400 flex-shrink-0" />
+                        )}
+                      </button>
+                      {isExpanded && (
+                        <CardContent className="pt-0 pb-6 px-6">
+                          <p className="text-slate-600 dark:text-slate-400 leading-relaxed">
+                            {item.a}
+                          </p>
+                        </CardContent>
+                      )}
+                    </Card>
+                  );
+                })}
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          ))}
+        </div>
 
         {/* Contact Support */}
-        <div className="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-3">Still have questions?</h2>
-          <p className="text-white/90 mb-6">
-            We're here to help! Contact our support team anytime.
-          </p>
-          <a
-            href="mailto:mcnamaram86@gmail.com"
-            className="inline-block bg-white text-blue-600 px-8 py-3 rounded-full font-semibold hover:bg-blue-50 transition-colors"
-          >
-            Contact Support
-          </a>
-        </div>
+        <Card className="bg-gradient-to-br from-blue-600 to-cyan-600 text-white border-0">
+          <CardContent className="p-8 text-center">
+            <h3 className="text-2xl font-bold mb-3">Still have questions?</h3>
+            <p className="mb-6 text-white/90">
+              We're here to help. Reach out anytime.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={() => window.location.href = 'mailto:support@memorymirror.app'}
+                variant="secondary"
+                size="lg"
+                className="bg-white text-blue-600 hover:bg-blue-50"
+              >
+                Email Support
+              </Button>
+              <Link to={createPageUrl('Feedback')}>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  className="border-2 border-white text-white hover:bg-white/10"
+                >
+                  Send Feedback
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
