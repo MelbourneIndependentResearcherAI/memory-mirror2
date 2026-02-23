@@ -147,7 +147,7 @@ export default function PatientRegistration() {
           <Alert className="mb-6 bg-blue-50 dark:bg-blue-950/30 border-blue-200 dark:border-blue-800">
             <Mail className="w-4 h-4 text-blue-600" />
             <AlertDescription className="text-slate-700 dark:text-slate-300">
-              <strong>Email Collection:</strong> Register patients here to collect their email addresses. Patients can still access the app without login using their PIN or voice name.
+              <strong>Email Tracking:</strong> Your caregiver email is automatically tracked. Patient email is optional—only add it if available for future contact.
             </AlertDescription>
           </Alert>
 
@@ -215,16 +215,16 @@ export default function PatientRegistration() {
                 </div>
 
                 <div>
-                  <Label htmlFor="patient_email">Email Address *</Label>
+                  <Label htmlFor="patient_email">Patient Email (optional)</Label>
                   <Input
                     id="patient_email"
                     type="email"
                     value={formData.patient_email}
                     onChange={(e) => setFormData({ ...formData, patient_email: e.target.value })}
-                    placeholder="patient@example.com"
-                    required
+                    placeholder="patient@example.com (if available)"
                     className="mt-1"
                   />
+                  <p className="text-xs text-slate-500 mt-1">Leave blank if not available</p>
                 </div>
               </div>
 
@@ -390,7 +390,7 @@ export default function PatientRegistration() {
             <Alert className="mt-6 bg-green-50 dark:bg-green-950/30 border-green-200 dark:border-green-800">
               <Mail className="w-4 h-4 text-green-600" />
               <AlertDescription className="text-slate-700 dark:text-slate-300">
-                <strong>Email Collection Active:</strong> You're now tracking {patients.length} patient{patients.length !== 1 ? 's' : ''} with their email addresses. Export this data anytime from your admin dashboard.
+                <strong>Tracking Active:</strong> {patients.length} patient{patients.length !== 1 ? 's' : ''} registered. {patients.filter(p => p.patient_email).length} email{patients.filter(p => p.patient_email).length !== 1 ? 's' : ''} collected for future contact.
               </AlertDescription>
             </Alert>
           )}
