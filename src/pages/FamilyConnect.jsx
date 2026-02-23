@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic, Brain, MessagesSquare } from 'lucide-react';
+import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic, Brain, MessagesSquare, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WellbeingOverview from '../components/family/WellbeingOverview';
@@ -18,6 +18,7 @@ import FamilyTreeBuilder from '../components/family/FamilyTreeBuilder';
 import PlaylistManager from '../components/music/PlaylistManager';
 import SmartAlertSystem from '../components/family/SmartAlertSystem';
 import FamilyChatRoom from '../components/family/FamilyChatRoom';
+import VideoCallLauncher from '../components/video/VideoCallLauncher';
 
 function FamilyConnectMain() {
   const navigate = useNavigate();
@@ -54,6 +55,13 @@ function FamilyConnectMain() {
 
         <Tabs value={activeTab} onValueChange={(val) => navigate(`/FamilyConnect/${val}`)} className="space-y-6">
           <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 h-auto bg-transparent p-0">
+            <TabsTrigger value="video-call" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-purple-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-50 data-[state=active]:to-indigo-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+                <Video className="w-7 h-7 text-white" />
+              </div>
+              <span className="text-sm font-semibold text-slate-700">Video Call</span>
+            </TabsTrigger>
+
             <TabsTrigger value="chat" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-green-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-50 data-[state=active]:to-emerald-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
                 <MessagesSquare className="w-7 h-7 text-white" />
@@ -159,6 +167,12 @@ function FamilyConnectMain() {
               <span className="text-sm font-semibold text-slate-700">Playlists</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="video-call">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <VideoCallLauncher />
+            </div>
+          </TabsContent>
 
           <TabsContent value="chat">
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">

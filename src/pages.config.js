@@ -48,6 +48,7 @@
  * The mainPage value must match a key in the PAGES object exactly.
  */
 import CaregiverPortal from './pages/CaregiverPortal';
+import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import ChatMode from './pages/ChatMode';
 import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
@@ -74,12 +75,12 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
+    "CaregiverPortalRouter": CaregiverPortalRouter,
     "ChatMode": ChatMode,
     "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
@@ -106,7 +107,6 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "CaregiverPortalRouter": CaregiverPortalRouter,
 }
 
 export const pagesConfig = {
