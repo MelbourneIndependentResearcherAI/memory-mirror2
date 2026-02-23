@@ -856,8 +856,16 @@ export async function preloadEssentialData() {
 
 // Auto-preload on app start
 if (typeof window !== 'undefined') {
+  // Check if in Android WebView
+  const isAndroidWebView = /Android/.test(navigator.userAgent) && /WebView/.test(navigator.userAgent);
+  
   setTimeout(() => {
-    preloadEssentialData().catch(err => 
+    preloadEssentialData().then((result) => {
+      // Notify native Android code when preload completes
+      if (isAndroidWebView && window.AndroidInterface?.onOfflinePreloadComplete) {
+        window.AndroidInterface.onOfflinePreloadComplete(JSON.stringify(result));
+      }
+    }).catch(err => 
       console.log('Preload warning:', err.message)
     );
   }, 2000);
@@ -866,6 +874,14 @@ if (typeof window !== 'undefined') {
   window.addEventListener('online', () => {
     console.log('📶 Back online - refreshing offline cache...');
     setTimeout(() => preloadEssentialData(), 1000);
+  });
+
+  // Notify native code when going offline
+  window.addEventListener('offline', () => {
+    console.log('📴 Went offline - using cached data...');
+    if (isAndroidWebView && window.AndroidInterface?.onOffline) {
+      window.AndroidInterface.onOffline();
+    }
   });
 }
 
