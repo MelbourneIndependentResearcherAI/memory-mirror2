@@ -111,7 +111,10 @@ export default function AdminUserTracking() {
     admins: users.filter(u => u.role === 'admin').length,
     caregivers: users.filter(u => u.role === 'user').length,
     patients: patients.length,
-    allEmails: [...users.map(u => u.email), ...patients.map(p => p.patient_email)]
+    allEmails: [
+      ...users.map(u => u.email),
+      ...patients.filter(p => p.patient_email).map(p => p.patient_email)
+    ]
   };
 
   return (

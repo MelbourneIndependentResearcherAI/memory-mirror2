@@ -67,11 +67,24 @@ export default function PhoneInterface() {
       if (navigator.vibrate) navigator.vibrate([50, 100, 50]);
       setIsInCall(true);
       
-      // Log phone call activity
+      // Log phone call activity and track patient session
       base44.entities.ActivityLog.create({
         activity_type: 'phone_call',
         details: { number: phoneNumber, contact: contactName }
       }).catch(() => {});
+      
+      const sessionData = sessionStorage.getItem('patientSession');
+      if (sessionData) {
+        try {
+          const session = JSON.parse(sessionData);
+          if (session.patientId) {
+            base44.functions.invoke('trackPatientSession', {
+              patient_id: session.patientId,
+              session_type: 'phone_interaction'
+            }).catch(() => {});
+          }
+        } catch {}
+      }
     }
   };
 

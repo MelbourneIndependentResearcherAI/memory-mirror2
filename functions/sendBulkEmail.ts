@@ -22,8 +22,11 @@ Deno.serve(async (req) => {
       const patients = await base44.asServiceRole.entities.PatientProfile.list();
       recipientEmails = [
         ...users.map(u => u.email),
-        ...patients.map(p => p.patient_email)
+        ...patients.filter(p => p.patient_email).map(p => p.patient_email)
       ];
+    } else {
+      // Filter out null/undefined emails
+      recipientEmails = recipientEmails.filter(email => email && email.trim());
     }
 
     if (!subject || !body || !recipientEmails || recipientEmails.length === 0) {
