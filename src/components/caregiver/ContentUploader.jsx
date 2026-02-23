@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, BookOpen, Music, Image, Video, Loader2, X, Save, Plus } from 'lucide-react';
+import { Upload, BookOpen, Music, Image, Video, Loader2, X, Save, Plus, Sparkles, Brain } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,7 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { base44 } from '@/api/base44Client';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient, useQuery } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 import { saveToStore, STORES } from '@/components/utils/offlineStorage';
