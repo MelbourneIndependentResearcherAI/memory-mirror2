@@ -1,6 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic, Brain } from 'lucide-react';
+import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic, Brain, MessagesSquare } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import WellbeingOverview from '../components/family/WellbeingOverview';
@@ -17,6 +17,7 @@ import RemoteTriggerPanel from '../components/family/RemoteTriggerPanel';
 import FamilyTreeBuilder from '../components/family/FamilyTreeBuilder';
 import PlaylistManager from '../components/music/PlaylistManager';
 import SmartAlertSystem from '../components/family/SmartAlertSystem';
+import FamilyChatRoom from '../components/family/FamilyChatRoom';
 
 function FamilyConnectMain() {
   const navigate = useNavigate();
@@ -53,6 +54,13 @@ function FamilyConnectMain() {
 
         <Tabs value={activeTab} onValueChange={(val) => navigate(`/FamilyConnect/${val}`)} className="space-y-6">
           <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 h-auto bg-transparent p-0">
+            <TabsTrigger value="chat" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-green-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-50 data-[state=active]:to-emerald-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+                <MessagesSquare className="w-7 h-7 text-white" />
+              </div>
+              <span className="text-sm font-semibold text-slate-700">Family Chat</span>
+            </TabsTrigger>
+
             <TabsTrigger value="overview" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-50 data-[state=active]:to-rose-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
                 <Heart className="w-7 h-7 text-white" />
@@ -151,6 +159,12 @@ function FamilyConnectMain() {
               <span className="text-sm font-semibold text-slate-700">Playlists</span>
             </TabsTrigger>
           </TabsList>
+
+          <TabsContent value="chat">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
+              <FamilyChatRoom />
+            </div>
+          </TabsContent>
 
           <TabsContent value="overview">
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
