@@ -69,7 +69,7 @@ export default function VoiceCloningManager() {
     },
     onError: (error) => {
       if (error.message.includes('API key not configured')) {
-        toast.error('Please configure your ElevenLabs API key in settings');
+        toast.error('Voice cloning requires ElevenLabs API key. Contact admin to configure ELEVENLABS_API_KEY secret.');
       } else {
         toast.error(error.message || 'Failed to clone voice');
       }
