@@ -1,15 +1,17 @@
 import React, { useState } from 'react';
-import { BookOpen, Sparkles, Play, Pause, RotateCw, X } from 'lucide-react';
+import { BookOpen, Sparkles, Play, Pause, RotateCw, X, Wand2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
+import PersonalizedStoryGenerator from './PersonalizedStoryGenerator';
 
-export default function StoryTeller({ currentEra, currentMood = 'peaceful', onClose }) {
+export default function StoryTeller({ currentEra, currentMood = 'peaceful', userProfile, onClose }) {
   const [selectedStory, setSelectedStory] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isTelling, setIsTelling] = useState(false);
+  const [showPersonalizedGenerator, setShowPersonalizedGenerator] = useState(false);
 
   const { data: stories = [] } = useQuery({
     queryKey: ['stories', currentEra],
@@ -94,15 +96,37 @@ export default function StoryTeller({ currentEra, currentMood = 'peaceful', onCl
           <BookOpen className="w-5 h-5 text-amber-600 dark:text-amber-400" />
           <span className="font-semibold text-slate-800 dark:text-slate-100">Story Time</span>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onClose}
-          className="h-8 w-8"
-        >
-          <X className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => setShowPersonalizedGenerator(true)}
+            className="h-8 w-8"
+            title="Create Personalized Story"
+          >
+            <Wand2 className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onClose}
+            className="h-8 w-8"
+          >
+            <X className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
+
+      {showPersonalizedGenerator && (
+        <PersonalizedStoryGenerator
+          userProfile={userProfile}
+          onStoryGenerated={(story) => {
+            setSelectedStory(story);
+            setShowPersonalizedGenerator(false);
+          }}
+          onClose={() => setShowPersonalizedGenerator(false)}
+        />
+      )}
 
       {!selectedStory ? (
         <div className="space-y-4">
@@ -120,23 +144,32 @@ export default function StoryTeller({ currentEra, currentMood = 'peaceful', onCl
             ))}
           </div>
           
-          <Button
-            onClick={generateStory}
-            disabled={isGenerating}
-            className="w-full bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700"
-          >
-            {isGenerating ? (
-              <>
-                <RotateCw className="w-4 h-4 mr-2 animate-spin" />
-                Creating Story...
-              </>
-            ) : (
-              <>
-                <Sparkles className="w-4 h-4 mr-2" />
-                Generate New Story
-              </>
-            )}
-          </Button>
+          <div className="grid grid-cols-2 gap-2">
+            <Button
+              onClick={generateStory}
+              disabled={isGenerating}
+              className="bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-600 hover:to-orange-700"
+            >
+              {isGenerating ? (
+                <>
+                  <RotateCw className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                <>
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Generate
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={() => setShowPersonalizedGenerator(true)}
+              variant="outline"
+            >
+              <Wand2 className="w-4 h-4 mr-2" />
+              Custom
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="space-y-4">
