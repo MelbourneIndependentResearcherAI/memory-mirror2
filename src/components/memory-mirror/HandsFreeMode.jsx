@@ -345,32 +345,31 @@ export default function HandsFreeMode({
         setIsProcessing(false); // Not processing anymore, just speaking
         
         await speakWithRealisticVoice(aiMessage, {
-          rate: 0.92,
-          pitch: 1.05,
-          volume: 1.0,
-          emotionalState: 'warm',
-          cognitiveLevel: cognitiveLevel,
-          language: selectedLanguage,
-          userProfile: userProfile,
-          onEnd: () => {
-            console.log('✅ AI FINISHED SPEAKING - Waiting before resuming listening');
-            if (isMountedRef.current && isActive) {
-              setIsSpeaking(false);
-              setStatusMessage('✅ Ready - Listening...');
-              lastTranscriptRef.current = '';
-              
-              // CRITICAL: Wait 1.5 seconds AFTER speech ends to avoid echo
-              setTimeout(() => {
-                if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
-                  console.log('🔄 RESUMING LISTENING (after 1.5s delay for echo prevention)');
-                  startRecognition();
-                } else {
-                  console.log('⚠️ State check failed - not resuming');
-                }
-              }, 1500);
+            rate: 0.92,
+            pitch: 1.05,
+            volume: 1.0,
+            emotionalState: 'warm',
+            cognitiveLevel: cognitiveLevel,
+            language: selectedLanguage,
+            userProfile: userProfile,
+            onEnd: () => {
+              console.log('✅ AI FINISHED SPEAKING - Immediately resuming listening');
+              if (isMountedRef.current && isActive) {
+                setIsSpeaking(false);
+                setIsProcessing(false);
+                setStatusMessage('✅ Ready - Listening...');
+                lastTranscriptRef.current = '';
+
+                // Resume immediately with minimal delay
+                setTimeout(() => {
+                  if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                    console.log('🔄 RESUMING LISTENING immediately');
+                    startRecognition();
+                  }
+                }, 500); // Shorter delay for immediate resumption
+              }
             }
-          }
-        });
+          });
       }
     } catch (error) {
       console.error('AI error:', error.message);
