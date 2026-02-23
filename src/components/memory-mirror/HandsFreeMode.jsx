@@ -192,7 +192,7 @@ export default function HandsFreeMode({
         }
       };
 
-      // ON ERROR
+      // ON ERROR - Auto-recovery for continuous listening
       recognitionRef.current.onerror = (event) => {
         console.error('Recognition error:', event.error);
         if (!isMountedRef.current) return;
@@ -204,26 +204,16 @@ export default function HandsFreeMode({
           return;
         }
 
-        // Recoverable errors - auto-restart
-        if (event.error === 'no-speech') {
-          console.log('No speech - continuing...');
-          restartRecognition(1000);
-          return;
-        }
+        // ALL other errors auto-recover
+        console.log('🔄 Auto-recovering from error:', event.error);
 
-        // Network/abort - restart
-        if (['network', 'aborted'].includes(event.error)) {
-          restartRecognition(1000);
-          return;
-        }
-
-        // Too many errors - stop
-        if (errorCount >= 8) {
-          toast.error('Connection unstable. Please restart.');
-          setIsActive(false);
-        } else {
+        // Aggressive recovery - restart ASAP
+        if (errorCount < 15) {
           setErrorCount(prev => prev + 1);
-          restartRecognition(2000);
+          restartRecognition(500); // Faster recovery
+        } else {
+          toast.warning('Too many errors. Please restart hands-free mode.');
+          setIsActive(false);
         }
       };
 
