@@ -285,7 +285,11 @@ export default function HandsFreeMode({
 
     console.log('🎯 PROCESSING USER SPEECH:', transcript);
 
-    // STOP listening IMMEDIATELY while processing (prevent echo)
+    // Analyze voice pattern for learning
+    const voiceAnalysis = voicePatternAnalyzer.analyzeVoiceInput(transcript);
+    console.log('📊 Voice Analysis:', voiceAnalysis);
+
+    // STOP listening IMMEDIATELY while processing
     if (recognitionRef.current) {
       try {
         recognitionRef.current.abort();
@@ -295,7 +299,7 @@ export default function HandsFreeMode({
     setIsListening(false);
     setIsProcessing(true);
     setStatusMessage(`💭 Thinking about: "${transcript.substring(0, 30)}..."`);
-    
+
     // Extra safety: clear any pending speech timeouts
     if (speechEndTimeoutRef.current) {
       clearTimeout(speechEndTimeoutRef.current);
