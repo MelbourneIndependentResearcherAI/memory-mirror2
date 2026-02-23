@@ -352,6 +352,9 @@ export default function Landing() {
           </div>
         </div>
 
+        {/* Feature Tutorial */}
+        <FeatureTutorial />
+
         {/* Spacing */}
         <div style={{ height: '80px' }}></div>
 
