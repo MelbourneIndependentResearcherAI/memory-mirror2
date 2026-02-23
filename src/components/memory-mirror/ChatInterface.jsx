@@ -939,8 +939,8 @@ If appropriate, gently reference their memories or suggest looking at photos tog
   }, []);
 
   const startVoiceInput = useCallback(async () => {
-    if (!isMountedRef.current || isLoading) {
-      console.log('Cannot start voice: mounted=', isMountedRef.current, 'loading=', isLoading);
+    if (!isMountedRef.current) {
+      console.log('Cannot start voice: component not mounted');
       return;
     }
     
