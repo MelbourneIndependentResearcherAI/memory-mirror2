@@ -7,6 +7,7 @@ export const translations = {
     nightWatch: 'Night Watch',
     offline: 'Offline',
     sync: 'Sync',
+    myBank: 'Bank',
     settings: 'Settings',
     
     // Home
