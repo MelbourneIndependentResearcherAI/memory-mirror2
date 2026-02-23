@@ -271,16 +271,14 @@ export default function HandsFreeMode({
   }, [isActive, isProcessing, isSpeaking, startRecognition]);
 
   const handleUserSpeech = useCallback(async (transcript) => {
-    if (!transcript || isProcessing || isSpeaking || !isMountedRef.current) {
-      console.log('⚠️ Cannot process - already busy or invalid state');
+    if (!transcript || !isMountedRef.current) {
+      console.log('⚠️ Cannot process - invalid transcript');
       return;
     }
 
-    // CRITICAL: Filter out echo - ignore if transcript contains system phrases
-    const lowerTranscript = transcript.toLowerCase();
-    const echoKeywords = ['hands-free', 'mode on', 'always listening', 'will respond when you speak', 'hey mirror'];
-    if (echoKeywords.some(keyword => lowerTranscript.includes(keyword))) {
-      console.log('🔇 ECHO DETECTED - Ignoring system speech:', transcript);
+    // Prevent duplicate processing
+    if (transcript.toLowerCase() === lastTranscriptRef.current.toLowerCase()) {
+      console.log('🚫 Duplicate speech - ignored');
       return;
     }
 
