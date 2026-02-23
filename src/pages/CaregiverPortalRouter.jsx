@@ -28,6 +28,7 @@ import AuditLogViewer from '@/components/admin/AuditLogViewer';
 import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
 import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
 import PatientRegistration from '@/components/caregiver/PatientRegistration';
+import CaregiverReports from '@/components/caregiver/CaregiverReports';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
