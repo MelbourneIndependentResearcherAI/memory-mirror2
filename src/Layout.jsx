@@ -93,10 +93,12 @@ export default function Layout({ children, currentPageName }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <LanguageProvider>
-          <AppStateProvider>
-            <LockModeProvider>
-              <ErrorBoundary>
+        <ComplianceWrapper>
+          <AccessibilityWrapper>
+            <LanguageProvider>
+              <AppStateProvider>
+                <LockModeProvider>
+                  <ErrorBoundary>
               <ScrollToTop />
               <GlobalLanguageSelector />
               <OfflineStatusBar />
