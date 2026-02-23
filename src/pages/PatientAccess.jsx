@@ -111,7 +111,11 @@ export default function PatientAccess() {
 
   if (!accessMode) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 p-6 flex items-center justify-center">
+      <div 
+        className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-sky-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 p-6 flex items-center justify-center"
+        role="main"
+        aria-label="Patient Access Portal"
+      >
         <div className="max-w-4xl w-full">
           <div className="text-center mb-12">
             <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-600 rounded-full mb-6">
