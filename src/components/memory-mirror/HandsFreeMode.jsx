@@ -135,21 +135,10 @@ export default function HandsFreeMode({
         setErrorCount(0);
       };
 
-      // ON RESULT
+      // ON RESULT - CRITICAL: Always listening, never blocking legitimate user input
       recognitionRef.current.onresult = (event) => {
         if (!isMountedRef.current || !isActive) {
           console.log('⏹️ Ignoring - not mounted or not active');
-          return;
-        }
-
-        // CRITICAL: Block ALL input while AI is speaking or processing
-        if (isSpeaking) {
-          console.log('🔇 BLOCKING INPUT - AI is speaking');
-          return;
-        }
-
-        if (isProcessing) {
-          console.log('⏳ BLOCKING INPUT - still processing previous input');
           return;
         }
 
