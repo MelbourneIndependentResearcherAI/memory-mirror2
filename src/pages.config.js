@@ -78,6 +78,7 @@ import security from './pages/security';
 import PatientAccess from './pages/PatientAccess';
 import CaregiverSignup from './pages/CaregiverSignup';
 import CaregiverLogin from './pages/CaregiverLogin';
+import AdminUserTracking from './pages/AdminUserTracking';
 import __Layout from './Layout.jsx';
 
 
@@ -113,6 +114,7 @@ export const PAGES = {
     "PatientAccess": PatientAccess,
     "CaregiverSignup": CaregiverSignup,
     "CaregiverLogin": CaregiverLogin,
+    "AdminUserTracking": AdminUserTracking,
 }
 
 export const pagesConfig = {
