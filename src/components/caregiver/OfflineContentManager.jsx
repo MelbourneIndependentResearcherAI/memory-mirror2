@@ -206,11 +206,26 @@ export default function OfflineContentManager({ onBack }) {
 
   const saveToOfflineStore = async (storeName, data) => {
     try {
-      const { initOfflineStorage, saveToStore } = await import('@/components/utils/offlineStorage');
-      await initOfflineStorage();
-      await saveToStore(storeName, data);
+      const offlineSync = await import('@/components/utils/offlineContentSync');
+      
+      // Use appropriate download function based on content type
+      if (storeName === 'music') {
+        await offlineSync.downloadMusicForOffline(data);
+      } else if (storeName === 'familyMedia') {
+        await offlineSync.downloadPhotoForOffline(data);
+      } else if (storeName === 'stories') {
+        await offlineSync.downloadStoryForOffline(data);
+      } else if (storeName === 'memories') {
+        await offlineSync.downloadMemoryForOffline(data);
+      } else {
+        // Fallback to direct storage
+        const { initOfflineStorage, saveToStore } = await import('@/components/utils/offlineStorage');
+        await initOfflineStorage();
+        await saveToStore(storeName, data);
+      }
     } catch (error) {
       console.error('Failed to save to offline store:', error);
+      throw error;
     }
   };
 

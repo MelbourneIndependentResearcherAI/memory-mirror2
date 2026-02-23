@@ -22,8 +22,15 @@ import {
 } from '@/components/utils/offlineManager';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
+import { runOfflineHealthCheck, getStorageBreakdown } from '@/components/utils/offlineHealthCheck';
 
 const tests = [
+  {
+    id: 'comprehensive_check',
+    name: 'Comprehensive System Check',
+    description: 'Run full offline health diagnostic',
+    icon: CheckCircle2
+  },
   {
     id: 'storage_init',
     name: 'IndexedDB Initialization',
@@ -59,6 +66,12 @@ const tests = [
     name: 'Content Stores',
     description: 'Verify all content stores are accessible',
     icon: Database
+  },
+  {
+    id: 'storage_breakdown',
+    name: 'Storage Breakdown',
+    description: 'Detailed storage usage by category',
+    icon: HardDrive
   }
 ];
 
@@ -75,6 +88,36 @@ export default function OfflineContentTester() {
       let result;
       
       switch (testId) {
+        case 'comprehensive_check':
+          const healthCheck = await runOfflineHealthCheck();
+          const statusEmoji = {
+            fully_operational: '✅',
+            operational_with_warnings: '⚠️',
+            degraded: '⚠️',
+            critical: '❌'
+          };
+          result = {
+            status: healthCheck.overall_status === 'fully_operational' ? 'passed' : 
+                   healthCheck.overall_status === 'critical' ? 'failed' : 'warning',
+            message: `${statusEmoji[healthCheck.overall_status]} ${healthCheck.overall_status.replace(/_/g, ' ').toUpperCase()} - ${healthCheck.checks.length} checks completed, ${healthCheck.errors.length} errors, ${healthCheck.warnings.length} warnings`
+          };
+          break;
+
+        case 'storage_breakdown':
+          const breakdown = await getStorageBreakdown();
+          const totalSize = Object.values(breakdown).reduce((sum, store) => sum + parseFloat(store.sizeMB || 0), 0);
+          const totalItems = Object.values(breakdown).reduce((sum, store) => sum + (store.count || 0), 0);
+          const topStores = Object.entries(breakdown)
+            .sort((a, b) => parseFloat(b[1].sizeMB || 0) - parseFloat(a[1].sizeMB || 0))
+            .slice(0, 5)
+            .map(([key, data]) => `${key}: ${data.count} items (${data.sizeMB} MB)`)
+            .join(', ');
+          result = {
+            status: 'passed',
+            message: `Total: ${totalSize.toFixed(2)} MB, ${totalItems} items. Top stores: ${topStores}`
+          };
+          break;
+
         case 'storage_init':
           await initOfflineStorage();
           await initOfflineDB();
