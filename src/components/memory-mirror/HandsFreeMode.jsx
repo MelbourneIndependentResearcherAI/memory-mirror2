@@ -394,14 +394,15 @@ export default function HandsFreeMode({
             console.log('✅ Fallback speech done');
             if (isMountedRef.current && isActive) {
               setIsSpeaking(false);
+              setIsProcessing(false);
               lastTranscriptRef.current = '';
-              
+
               setTimeout(() => {
                 if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
                   console.log('🔄 Resuming after fallback');
                   startRecognition();
                 }
-              }, 1500);
+              }, 500); // Shorter delay for faster recovery
             }
           }
         });
