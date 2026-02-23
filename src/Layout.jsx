@@ -135,9 +135,11 @@ export default function Layout({ children, currentPageName }) {
             {showBottomNav && <BottomNav />}
           </div>
               </ErrorBoundary>
-            </LockModeProvider>
-          </AppStateProvider>
-        </LanguageProvider>
+                </LockModeProvider>
+              </AppStateProvider>
+            </LanguageProvider>
+          </AccessibilityWrapper>
+        </ComplianceWrapper>
       </ThemeProvider>
     </QueryClientProvider>
   );
