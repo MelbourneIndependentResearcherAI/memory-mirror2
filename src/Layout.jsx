@@ -99,45 +99,47 @@ export default function Layout({ children, currentPageName }) {
               <AppStateProvider>
                 <LockModeProvider>
                   <ErrorBoundary>
-              <ScrollToTop />
-              <GlobalLanguageSelector />
-              <OfflineStatusBar />
-              <OfflineIndicator />
-              <OfflineSyncIndicator />
-              <ReminderNotification />
-              <div 
-            className="min-h-screen bg-background text-foreground flex flex-col"
-            style={{
-              paddingTop: 'env(safe-area-inset-top)',
-              paddingBottom: showBottomNav ? 'calc(100px + env(safe-area-inset-bottom))' : 'calc(20px + env(safe-area-inset-bottom))',
-              overscrollBehaviorY: 'none'
-            }}
-          >
-            <div className="flex-1 relative overflow-hidden">
-              <AnimatePresence mode="wait" initial={false}>
-                {isMainPage ? (
-                  <motion.div
-                    key={location.pathname}
-                    initial={{ x: 300, opacity: 0 }}
-                    animate={{ x: 0, opacity: 1 }}
-                    exit={{ x: -300, opacity: 0 }}
-                    transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
-                    className="absolute inset-0"
-                  >
-                    {children}
-                  </motion.div>
-                ) : (
-                  <div>{children}</div>
-                )}
-              </AnimatePresence>
-            </div>
-            {showFooter && <Footer />}
-            {showBottomNav && <BottomNav />}
-          </div>
-              </ErrorBoundary>
+                    <ScrollToTop />
+                    <GlobalLanguageSelector />
+                    <OfflineStatusBar />
+                    <OfflineIndicator />
+                    <OfflineSyncIndicator />
+                    <ReminderNotification />
+                    <div 
+                      className="min-h-screen bg-background text-foreground flex flex-col"
+                      style={{
+                        paddingTop: 'env(safe-area-inset-top)',
+                        paddingBottom: showBottomNav ? 'calc(100px + env(safe-area-inset-bottom))' : 'calc(20px + env(safe-area-inset-bottom))',
+                        overscrollBehaviorY: 'none'
+                      }}
+                    >
+                      <div className="flex-1 relative overflow-hidden">
+                        <AnimatePresence mode="wait" initial={false}>
+                          {isMainPage ? (
+                            <motion.div
+                              key={location.pathname}
+                              initial={{ x: 300, opacity: 0 }}
+                              animate={{ x: 0, opacity: 1 }}
+                              exit={{ x: -300, opacity: 0 }}
+                              transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+                              className="absolute inset-0"
+                            >
+                              {children}
+                            </motion.div>
+                          ) : (
+                            <div>{children}</div>
+                          )}
+                        </AnimatePresence>
+                      </div>
+                      {showFooter && <Footer />}
+                      {showBottomNav && <BottomNav />}
+                    </div>
+                  </ErrorBoundary>
                 </LockModeProvider>
               </AppStateProvider>
             </LanguageProvider>
+          </AccessibilityWrapper>
+        </ComplianceWrapper>
           </AccessibilityWrapper>
         </ComplianceWrapper>
       </ThemeProvider>
