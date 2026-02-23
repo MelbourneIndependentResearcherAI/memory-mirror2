@@ -139,10 +139,8 @@ export default function Layout({ children, currentPageName }) {
               </AppStateProvider>
             </LanguageProvider>
           </AccessibilityWrapper>
-        </ComplianceWrapper>
-          </AccessibilityWrapper>
-        </ComplianceWrapper>
-      </ThemeProvider>
-    </QueryClientProvider>
-  );
-}
+          </ComplianceWrapper>
+          </ThemeProvider>
+          </QueryClientProvider>
+          );
+          }
