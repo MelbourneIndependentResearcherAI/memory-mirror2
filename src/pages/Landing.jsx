@@ -128,7 +128,7 @@ export default function Landing() {
                   </div>
                 </div>
               </div>
-            </Link>
+            </button>
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
