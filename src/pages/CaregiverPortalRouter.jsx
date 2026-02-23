@@ -31,6 +31,9 @@ import PatientRegistration from '@/components/caregiver/PatientRegistration';
 import CaregiverReports from '@/components/caregiver/CaregiverReports';
 import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
 import OfflineContentTester from '@/components/caregiver/OfflineContentTester';
+import CaregiverTeamManager from '@/components/caregiver/CaregiverTeamManager';
+import CaregiverNotificationCenter from '@/components/caregiver/CaregiverNotificationCenter';
+import SharedJournal from '@/components/caregiver/SharedJournal';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
@@ -58,7 +61,10 @@ const featureCards = [
   { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' },
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/CaregiverPortal/reports', background: '#E0E7FF' },
   { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/CaregiverPortal/offline-content', background: '#DBEAFE' },
-  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/CaregiverPortal/offline-test', background: '#F0FDF4' }
+  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/CaregiverPortal/offline-test', background: '#F0FDF4' },
+  { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CaregiverPortal/care-team', background: '#EFF6FF' },
+  { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/CaregiverPortal/shared-journal', background: '#F0F9FF' },
+  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/CaregiverPortal/notifications', background: '#FEF3C7' }
 ];
 
 function CaregiverPortalHome() {
@@ -350,6 +356,30 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <OfflineContentTester />
+            </div>
+          } />
+          <Route path="/care-team" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <CaregiverTeamManager patientProfileId={userProfile?.id} />
+            </div>
+          } />
+          <Route path="/shared-journal" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <SharedJournal patientProfileId={userProfile?.id} />
+            </div>
+          } />
+          <Route path="/notifications" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <CaregiverNotificationCenter patientProfileId={userProfile?.id} />
             </div>
           } />
         </Routes>

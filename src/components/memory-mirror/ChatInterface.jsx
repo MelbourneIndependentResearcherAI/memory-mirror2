@@ -565,6 +565,30 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
           pattern_data: sentimentAnalysis
         }).catch(() => {});
+        
+        // Also create team notification for collaborative care
+        try {
+          const profiles = await offlineEntities.list('UserProfile');
+          const patientProfile = profiles?.[0];
+          if (patientProfile?.id) {
+            await offlineEntities.create('CaregiverNotification', {
+              patient_profile_id: patientProfile.id,
+              notification_type: 'high_anxiety',
+              severity: 'urgent',
+              title: '⚠️ High Anxiety Detected',
+              message: `Patient is experiencing high anxiety (level ${sentimentAnalysis.anxiety_level}/10)`,
+              data: {
+                anxiety_level: sentimentAnalysis.anxiety_level,
+                trigger_words: sentimentAnalysis.trigger_words || [],
+                emotional_tone: sentimentAnalysis.emotional_tone || [],
+                user_message: userMessage.substring(0, 200)
+              },
+              triggered_by: 'AI_sentiment_analysis'
+            });
+          }
+        } catch (err) {
+          console.log('Team notification skipped:', err.message);
+        }
       }
     } catch (error) {
       console.error('Sentiment analysis failed:', error);
