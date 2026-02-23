@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { speakWithRealisticVoice } from './voiceUtils';
 import { offlineAIChat } from '@/components/utils/offlineAPI';
+import { voicePatternAnalyzer } from '@/components/utils/voicePatternAnalyzer';
 import { toast } from 'sonner';
 
 export default function HandsFreeMode({ 
