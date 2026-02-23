@@ -34,6 +34,21 @@ export default function FakeBankInterface({ onClose }) {
 
   const handleRefresh = () => {
     setRefreshing(true);
+    
+    // Track patient session
+    const sessionData = sessionStorage.getItem('patientSession');
+    if (sessionData) {
+      try {
+        const session = JSON.parse(sessionData);
+        if (session.patientId) {
+          base44.functions.invoke('trackPatientSession', {
+            patient_id: session.patientId,
+            session_type: 'bank_interaction'
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+    
     setTimeout(() => {
       setRefreshing(false);
       toast.success('Account updated');
