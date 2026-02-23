@@ -6,6 +6,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import { base44 } from '@/api/base44Client';
+import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
