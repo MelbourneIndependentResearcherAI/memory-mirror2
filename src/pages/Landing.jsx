@@ -256,6 +256,25 @@ export default function Landing() {
               </div>
             </button>
 
+            {/* Fake Banking Card */}
+            <button onClick={handleGetStarted} className="w-full group">
+              <div className="bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
+                <div className="flex items-start gap-4">
+                  <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
+                    <CreditCard className="w-8 h-8 text-white" />
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl md:text-2xl font-semibold text-white mb-2">
+                      Fake Banking
+                    </h3>
+                    <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                      Safe simulated banking experience with no real transactions — perfect for users who want familiar financial interactions
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </button>
+
             {/* Portal Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
               <button onClick={handleGetStarted} className="w-full group">
