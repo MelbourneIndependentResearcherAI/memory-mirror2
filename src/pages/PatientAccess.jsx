@@ -231,7 +231,10 @@ export default function PatientAccess() {
                 placeholder="••••"
                 className="text-center text-3xl tracking-widest font-bold h-16"
                 autoFocus
+                aria-label="Enter your 4-digit PIN"
+                aria-describedby="pin-instructions"
               />
+              <p id="pin-instructions" className="sr-only">Enter the 4-digit PIN provided by your caregiver. Each digit will be masked for security.</p>
               <Button type="submit" className="w-full h-14 text-lg" disabled={pin.length !== 4}>
                 Start Companion
               </Button>
