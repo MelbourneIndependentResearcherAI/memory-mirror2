@@ -57,7 +57,6 @@ const agents = [
 ];
 
 export default function AgentMonitor() {
-  // Fetch recent maintenance activity
   const { data: recentActivity = [] } = useQuery({
     queryKey: ['maintenanceActivity'],
     queryFn: async () => {
@@ -68,7 +67,7 @@ export default function AgentMonitor() {
       );
       return logs;
     },
-    refetchInterval: 60000 // Refresh every minute
+    refetchInterval: 60000
   });
 
   const lastRun = recentActivity[0];
@@ -85,7 +84,6 @@ export default function AgentMonitor() {
         </p>
       </div>
 
-      {/* Status Overview */}
       <div className="grid grid-cols-3 gap-4">
         <Card>
           <CardContent className="p-6">
@@ -126,7 +124,6 @@ export default function AgentMonitor() {
         </Card>
       </div>
 
-      {/* Agent Grid */}
       <div className="grid grid-cols-2 gap-4">
         {agents.map((agent) => {
           const Icon = agent.icon;
@@ -157,7 +154,6 @@ export default function AgentMonitor() {
         })}
       </div>
 
-      {/* Recent Activity */}
       <Card>
         <CardHeader>
           <CardTitle>Recent Maintenance Activity</CardTitle>
