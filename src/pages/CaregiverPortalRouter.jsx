@@ -29,6 +29,7 @@ import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
 import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
 import PatientRegistration from '@/components/caregiver/PatientRegistration';
 import CaregiverReports from '@/components/caregiver/CaregiverReports';
+import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
@@ -54,7 +55,8 @@ const featureCards = [
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/CaregiverPortal/bank-settings', background: '#E0F2FE' },
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/CaregiverPortal/emergency-alerts', background: '#FEE2E2' },
   { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' },
-  { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/CaregiverPortal/reports', background: '#E0E7FF' }
+  { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/CaregiverPortal/reports', background: '#E0E7FF' },
+  { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/CaregiverPortal/offline-content', background: '#DBEAFE' }
 ];
 
 function CaregiverPortalHome() {
@@ -333,6 +335,11 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <CaregiverReports />
+            </div>
+          } />
+          <Route path="/offline-content" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <OfflineContentManager onBack={() => navigate('/CaregiverPortal')} />
             </div>
           } />
         </Routes>
