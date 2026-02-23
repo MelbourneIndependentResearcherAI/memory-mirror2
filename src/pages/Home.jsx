@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Phone, Shield, Settings, HeartCrack } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Settings, HeartCrack, CreditCard } from 'lucide-react';
 import { Link, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import ChatMode from './ChatMode';
 import PhoneMode from './PhoneMode';
 import SecurityMode from './SecurityMode';
+import MyBank from './MyBank';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
 import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflectionSession';
@@ -31,7 +32,8 @@ export default function Home() {
   // Detect mode from URL
   React.useEffect(() => {
     const mode = location.pathname.includes('PhoneMode') || location.pathname === '/phone' ? 'phone' 
-      : location.pathname.includes('Security') || location.pathname === '/security' ? 'security' 
+      : location.pathname.includes('Security') || location.pathname === '/security' ? 'security'
+      : location.pathname.includes('MyBank') || location.pathname === '/bank' ? 'bank'
       : 'chat';
     setCurrentMode(mode);
   }, [location.pathname]);
@@ -75,6 +77,7 @@ export default function Home() {
       },
       phone: 'from-blue-100 via-indigo-100 to-purple-100 dark:from-blue-900 dark:via-indigo-900 dark:to-purple-900',
       security: 'from-emerald-100 via-teal-100 to-cyan-100 dark:from-emerald-900 dark:via-teal-900 dark:to-cyan-900',
+      bank: 'from-green-100 via-emerald-100 to-teal-100 dark:from-green-900 dark:via-emerald-900 dark:to-teal-900',
     };
 
     if (currentMode === 'chat') {
@@ -97,6 +100,7 @@ export default function Home() {
     { id: 'chat', label: t('chat'), icon: MessageCircle, path: createPageUrl('ChatMode') },
     { id: 'phone', label: t('phone'), icon: Phone, path: createPageUrl('PhoneMode') },
     { id: 'security', label: t('security'), icon: Shield, path: createPageUrl('Security') },
+    { id: 'bank', label: t('myBank') || 'Bank', icon: CreditCard, path: createPageUrl('MyBank') },
   ];
 
   const handleButtonClick = (mode) => {
@@ -170,6 +174,9 @@ export default function Home() {
           </div>
           <div style={{ display: currentMode === 'security' ? 'block' : 'none' }}>
             <SecurityMode onModeSwitch={handleModeSwitch} />
+          </div>
+          <div style={{ display: currentMode === 'bank' ? 'block' : 'none' }}>
+            <MyBank />
           </div>
         </div>
 
