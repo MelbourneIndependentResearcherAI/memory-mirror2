@@ -74,6 +74,26 @@ export default function ContentUploader() {
       
       return created;
     },
+    onMutate: async () => {
+      // Optimistic update
+      await queryClient.cancelQueries({ queryKey: ['stories'] });
+      const previousStories = queryClient.getQueryData(['stories']);
+      
+      const optimisticStory = {
+        id: `temp_${Date.now()}`,
+        ...story,
+        uploaded_by_family: true,
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['stories'], (old = []) => [...old, optimisticStory]);
+      
+      return { previousStories };
+    },
+    onError: (error, _, context) => {
+      queryClient.setQueryData(['stories'], context.previousStories);
+      toast.error('Failed to upload story: ' + error.message);
+    },
     onSuccess: () => {
       toast.success('Story uploaded successfully!');
       setStory({
@@ -86,9 +106,6 @@ export default function ContentUploader() {
         narrator_note: ''
       });
       queryClient.invalidateQueries({ queryKey: ['stories'] });
-    },
-    onError: (error) => {
-      toast.error('Failed to upload story: ' + error.message);
     }
   });
 
@@ -110,6 +127,26 @@ export default function ContentUploader() {
       
       return created;
     },
+    onMutate: async () => {
+      await queryClient.cancelQueries({ queryKey: ['music'] });
+      const previousMusic = queryClient.getQueryData(['music']);
+      
+      const optimisticMusic = {
+        id: `temp_${Date.now()}`,
+        ...music,
+        youtube_url: 'pending',
+        uploaded_by_family: true,
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['music'], (old = []) => [...old, optimisticMusic]);
+      
+      return { previousMusic };
+    },
+    onError: (error, _, context) => {
+      queryClient.setQueryData(['music'], context.previousMusic);
+      toast.error('Failed to upload music: ' + error.message);
+    },
     onSuccess: () => {
       toast.success('Music uploaded successfully!');
       setMusic({
@@ -122,9 +159,6 @@ export default function ContentUploader() {
       });
       if (musicFileRef.current) musicFileRef.current.value = '';
       queryClient.invalidateQueries({ queryKey: ['music'] });
-    },
-    onError: (error) => {
-      toast.error('Failed to upload music: ' + error.message);
     }
   });
 
@@ -145,6 +179,28 @@ export default function ContentUploader() {
         people_in_media: peopleArray
       });
     },
+    onMutate: async (file) => {
+      await queryClient.cancelQueries({ queryKey: ['familyPhotos'] });
+      const previousPhotos = queryClient.getQueryData(['familyPhotos']);
+      
+      const optimisticPhoto = {
+        id: `temp_${Date.now()}`,
+        title: photo.title,
+        caption: photo.caption,
+        media_url: URL.createObjectURL(file),
+        media_type: 'photo',
+        era: photo.era,
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['familyPhotos'], (old = []) => [...old, optimisticPhoto]);
+      
+      return { previousPhotos };
+    },
+    onError: (error, _, context) => {
+      queryClient.setQueryData(['familyPhotos'], context.previousPhotos);
+      toast.error('Failed to upload photo: ' + error.message);
+    },
     onSuccess: () => {
       toast.success('Photo uploaded successfully!');
       setPhoto({
@@ -155,9 +211,6 @@ export default function ContentUploader() {
       });
       if (photoFileRef.current) photoFileRef.current.value = '';
       queryClient.invalidateQueries({ queryKey: ['familyPhotos'] });
-    },
-    onError: (error) => {
-      toast.error('Failed to upload photo: ' + error.message);
     }
   });
 

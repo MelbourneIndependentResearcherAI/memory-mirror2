@@ -220,3 +220,14 @@ export default function FamilyConnect() {
     </div>
   );
 }
+
+export default function FamilyConnect() {
+  const navigate = useNavigate();
+  
+  return (
+    <Routes>
+      <Route path="/" element={<FamilyConnectHome />} />
+      <Route path="/:tab" element={<FamilyConnectHome />} />
+    </Routes>
+  );
+}

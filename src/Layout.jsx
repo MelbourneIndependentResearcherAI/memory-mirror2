@@ -7,6 +7,8 @@ import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
+import { AnimatePresence, motion } from 'framer-motion';
+import { useLocation } from 'react-router-dom';
 
 /**
  * Memory Mirror Application Layout
@@ -73,8 +75,13 @@ const queryClient = new QueryClient({
 });
 
 export default function Layout({ children, currentPageName }) {
+  const location = useLocation();
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
-  const showBottomNav = !showFooter; // Show bottom nav on all pages except landing and caregiver portal
+  const showBottomNav = !showFooter;
+
+  // Main bottom tab pages for page transitions
+  const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
+  const isMainPage = mainPages.includes(currentPageName);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -97,8 +104,23 @@ export default function Layout({ children, currentPageName }) {
               overscrollBehaviorY: 'none'
             }}
           >
-            <div className="flex-1">
-              {children}
+            <div className="flex-1 relative overflow-hidden">
+              <AnimatePresence mode="wait" initial={false}>
+                {isMainPage ? (
+                  <motion.div
+                    key={location.pathname}
+                    initial={{ x: 300, opacity: 0 }}
+                    animate={{ x: 0, opacity: 1 }}
+                    exit={{ x: -300, opacity: 0 }}
+                    transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+                    className="absolute inset-0"
+                  >
+                    {children}
+                  </motion.div>
+                ) : (
+                  <div>{children}</div>
+                )}
+              </AnimatePresence>
             </div>
             {showFooter && <Footer />}
             {showBottomNav && <BottomNav />}

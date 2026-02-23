@@ -42,6 +42,28 @@ export default function MediaLibrary({ onBack }) {
         genre: 'other'
       });
     },
+    onMutate: async (file) => {
+      await queryClient.cancelQueries({ queryKey: ['musicFiles'] });
+      const previousMusic = queryClient.getQueryData(['musicFiles']);
+      
+      const optimisticMusic = {
+        id: `temp_${Date.now()}`,
+        title: musicTitle || file.name,
+        youtube_url: 'pending',
+        era: 'present',
+        uploaded_by_family: true,
+        genre: 'other',
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['musicFiles'], (old = []) => [...old, optimisticMusic]);
+      
+      return { previousMusic };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(['musicFiles'], context.previousMusic);
+      alert('Failed to upload music');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['musicFiles'] });
       setMusicTitle('');
@@ -60,6 +82,28 @@ export default function MediaLibrary({ onBack }) {
         era: 'present'
       });
     },
+    onMutate: async (file) => {
+      await queryClient.cancelQueries({ queryKey: ['familyPhotos'] });
+      const previousPhotos = queryClient.getQueryData(['familyPhotos']);
+      
+      const optimisticPhoto = {
+        id: `temp_${Date.now()}`,
+        title: photoCaption || file.name,
+        caption: photoCaption,
+        media_url: URL.createObjectURL(file),
+        media_type: 'photo',
+        era: 'present',
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['familyPhotos'], (old = []) => [...old, optimisticPhoto]);
+      
+      return { previousPhotos };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(['familyPhotos'], context.previousPhotos);
+      alert('Failed to upload photo');
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyPhotos'] });
       setPhotoCaption('');
@@ -76,6 +120,27 @@ export default function MediaLibrary({ onBack }) {
         media_type: 'video',
         era: 'present'
       });
+    },
+    onMutate: async (file) => {
+      await queryClient.cancelQueries({ queryKey: ['familyVideos'] });
+      const previousVideos = queryClient.getQueryData(['familyVideos']);
+      
+      const optimisticVideo = {
+        id: `temp_${Date.now()}`,
+        title: file.name,
+        media_url: URL.createObjectURL(file),
+        media_type: 'video',
+        era: 'present',
+        created_date: new Date().toISOString()
+      };
+      
+      queryClient.setQueryData(['familyVideos'], (old = []) => [...old, optimisticVideo]);
+      
+      return { previousVideos };
+    },
+    onError: (_, __, context) => {
+      queryClient.setQueryData(['familyVideos'], context.previousVideos);
+      alert('Failed to upload video');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyVideos'] });
