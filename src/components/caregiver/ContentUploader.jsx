@@ -445,11 +445,23 @@ export default function ContentUploader() {
         </TabsList>
 
         {/* Story Upload */}
-        <TabsContent value="story">
+         <TabsContent value="story">
           <Card>
-            <CardHeader>
-              <CardTitle>Upload a Story</CardTitle>
-              <CardDescription>Create personalized stories for meaningful engagement</CardDescription>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Upload a Story</CardTitle>
+                <CardDescription>Create personalized stories for meaningful engagement</CardDescription>
+              </div>
+              <Button
+                type="button"
+                onClick={handleGenerateStory}
+                disabled={generatingAI || !userProfile}
+                variant="outline"
+                className="gap-2"
+              >
+                <Sparkles className="w-4 h-4" />
+                {generatingAI ? 'Generating...' : 'Generate with AI'}
+              </Button>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleStorySubmit} className="space-y-4">
