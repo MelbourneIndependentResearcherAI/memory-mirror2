@@ -16,6 +16,27 @@ export default function ContentUploader() {
   const queryClient = useQueryClient();
   const [uploading, setUploading] = useState(false);
   const [activeTab, setActiveTab] = useState('story');
+  const [generatingAI, setGeneratingAI] = useState(false);
+
+  // Fetch user profile for AI content generation
+  const { data: userProfile } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: async () => {
+      const profiles = await base44.entities.UserProfile.list();
+      return profiles?.[0] || null;
+    }
+  });
+
+  // Fetch existing stories and memories
+  const { data: existingStories = [] } = useQuery({
+    queryKey: ['stories'],
+    queryFn: () => base44.entities.Story.list('-created_date', 10)
+  });
+
+  const { data: existingMemories = [] } = useQuery({
+    queryKey: ['memories'],
+    queryFn: () => base44.entities.Memory.list('-created_date', 10)
+  });
 
   // Story state
   const [story, setStory] = useState({
