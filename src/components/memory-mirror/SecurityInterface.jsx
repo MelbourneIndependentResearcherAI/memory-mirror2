@@ -104,6 +104,20 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
     const concern = prompt('What would you like to report to security?');
     if (!concern) return;
 
+    // Track patient session
+    const sessionData = sessionStorage.getItem('patientSession');
+    if (sessionData) {
+      try {
+        const session = JSON.parse(sessionData);
+        if (session.patientId) {
+          base44.functions.invoke('trackPatientSession', {
+            patient_id: session.patientId,
+            session_type: 'security_interaction'
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+
     // Detect anxiety in security concern
     const anxietyDetection = detectAnxiety(concern);
 
