@@ -395,6 +395,9 @@ export default function Landing() {
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
                 Memory Mirror will transition to a premium subscription at a very accessible <strong className="text-blue-600 dark:text-blue-400">$9.99 per month</strong> — intentionally priced low because we believe quality dementia care support should be within reach for every family.
               </p>
+              <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed mb-3">
+                Your subscription keeps Memory Mirror running smoothly for everyone — covering AI service costs, server infrastructure, ongoing development, and 24/7 reliability. These contributions ensure we can continue supporting families worldwide with the compassionate care they deserve.
+              </p>
               <div className="bg-green-100 dark:bg-green-900/30 border border-green-300 dark:border-green-700 rounded-lg p-4 mb-3">
                 <p className="text-sm md:text-base text-slate-700 dark:text-slate-300 leading-relaxed font-medium">
                   <strong className="text-green-700 dark:text-green-400">💚 No Family Gets Turned Away</strong>
@@ -404,7 +407,7 @@ export default function Landing() {
                 </p>
               </div>
               <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed italic">
-                Thank you for your patience and support as we continue to refine Memory Mirror for you and your loved ones. 💙
+                Thank you for your support — it allows us to support you and your loved ones in return. Together, we keep Memory Mirror alive for all families who need it. 💙
               </p>
             </div>
 
