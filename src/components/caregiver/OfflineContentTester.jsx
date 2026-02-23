@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   PlayCircle, CheckCircle2, XCircle, Loader2, 
-  Database, Wifi, WifiOff, FileText, Music, Image, Brain
+  Database, Wifi, WifiOff, FileText, Music, Image, Brain, HardDrive, AlertCircle
 } from 'lucide-react';
 import { 
   initOfflineStorage, 
