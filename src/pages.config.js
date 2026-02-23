@@ -80,6 +80,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
 import AccessibilityStatement from './pages/AccessibilityStatement';
+import CarePlans from './pages/CarePlans';
 import __Layout from './Layout.jsx';
 
 
@@ -117,6 +118,7 @@ export const PAGES = {
     "phone": phone,
     "security": security,
     "AccessibilityStatement": AccessibilityStatement,
+    "CarePlans": CarePlans,
 }
 
 export const pagesConfig = {
