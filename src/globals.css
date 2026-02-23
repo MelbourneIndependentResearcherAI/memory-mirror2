@@ -116,4 +116,101 @@
     animation-delay: 0.2s;
     opacity: 0;
   }
+
+  /* Accessibility - Screen Reader Only */
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  /* Focus Visible - WCAG 2.1 2.4.7 */
+  :focus-visible {
+    outline: 3px solid #2563eb;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+
+  /* Reduced Motion Support - WCAG 2.1 */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  /* High Contrast Mode */
+  .high-contrast-mode {
+    filter: contrast(1.3) saturate(1.1);
+  }
+
+  /* Elderly User Enhancements */
+  button,
+  a[role="button"],
+  input[type="button"],
+  input[type="submit"],
+  .button {
+    min-height: 48px;
+    min-width: 48px;
+    font-size: 1.1em;
+  }
+
+  /* Large Touch Targets - Accessibility */
+  button,
+  a,
+  input[type="checkbox"],
+  input[type="radio"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Form Accessibility */
+  input,
+  select,
+  textarea {
+    min-height: 44px;
+    padding: 10px 12px;
+    font-size: 16px;
+    border: 2px solid #ccc;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+  }
+
+  /* Link Accessibility - WCAG 2.1 1.4.1 */
+  a {
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 4px;
+  }
+
+  /* Error & Success Messages */
+  .error,
+  [role="alert"] {
+    padding: 12px;
+    background-color: #ffebee;
+    border-left: 4px solid #d32f2f;
+    color: #d32f2f;
+    border-radius: 4px;
+  }
+
+  .success,
+  [role="status"] {
+    padding: 12px;
+    background-color: #e8f5e9;
+    border-left: 4px solid #388e3c;
+    color: #388e3c;
+    border-radius: 4px;
+  }
 }
