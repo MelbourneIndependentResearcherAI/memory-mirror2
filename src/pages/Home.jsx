@@ -30,8 +30,8 @@ export default function Home() {
 
   // Detect mode from URL
   React.useEffect(() => {
-    const mode = location.pathname === '/phone' ? 'phone' 
-      : location.pathname === '/security' ? 'security' 
+    const mode = location.pathname.includes('PhoneMode') || location.pathname === '/phone' ? 'phone' 
+      : location.pathname.includes('Security') || location.pathname === '/security' ? 'security' 
       : 'chat';
     setCurrentMode(mode);
   }, [location.pathname]);
@@ -44,13 +44,13 @@ export default function Home() {
     }
     
     // Redirect root to chat
-    if (location.pathname === '/') {
-      navigate('/chat', { replace: true });
+    if (location.pathname === '/' || location.pathname === '/Home') {
+      navigate(createPageUrl('ChatMode'), { replace: true });
     }
   }, [location.pathname, navigate]);
 
   const handleWakeWord = () => {
-    navigate('/chat');
+    navigate(createPageUrl('ChatMode'));
     setWakeWordActive(true);
     setTimeout(() => setWakeWordActive(false), 2000);
   };
@@ -94,9 +94,9 @@ export default function Home() {
   };
 
   const modes = [
-    { id: 'chat', label: t('chat'), icon: MessageCircle, path: '/chat' },
-    { id: 'phone', label: t('phone'), icon: Phone, path: '/phone' },
-    { id: 'security', label: t('security'), icon: Shield, path: '/security' },
+    { id: 'chat', label: t('chat'), icon: MessageCircle, path: createPageUrl('ChatMode') },
+    { id: 'phone', label: t('phone'), icon: Phone, path: createPageUrl('PhoneMode') },
+    { id: 'security', label: t('security'), icon: Shield, path: createPageUrl('Security') },
   ];
 
   const handleButtonClick = (mode) => {

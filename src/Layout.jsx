@@ -30,6 +30,11 @@ import { initGlobalErrorHandler } from '@/components/utils/errorLogger';
 
 // Initialize app capabilities on load
 if (typeof window !== 'undefined') {
+  // Bug fixes
+  import('@/components/utils/bugFixes').then(module => {
+    module.initAllBugFixes();
+  }).catch(e => console.log('Bug fixes init:', e.message));
+  
   // Error logging
   initGlobalErrorHandler();
   
