@@ -47,8 +47,11 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import AdminUserTracking from './pages/AdminUserTracking';
+import CaregiverLogin from './pages/CaregiverLogin';
 import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
+import CaregiverSignup from './pages/CaregiverSignup';
 import ChatMode from './pages/ChatMode';
 import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
@@ -62,6 +65,7 @@ import MyBank from './pages/MyBank';
 import NewsArticle from './pages/NewsArticle';
 import NightWatch from './pages/NightWatch';
 import OfflineAudio from './pages/OfflineAudio';
+import PatientAccess from './pages/PatientAccess';
 import PhoneMode from './pages/PhoneMode';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Security from './pages/Security';
@@ -75,16 +79,15 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import PatientAccess from './pages/PatientAccess';
-import CaregiverSignup from './pages/CaregiverSignup';
-import CaregiverLogin from './pages/CaregiverLogin';
-import AdminUserTracking from './pages/AdminUserTracking';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
+    "AdminUserTracking": AdminUserTracking,
+    "CaregiverLogin": CaregiverLogin,
     "CaregiverPortal": CaregiverPortal,
     "CaregiverPortalRouter": CaregiverPortalRouter,
+    "CaregiverSignup": CaregiverSignup,
     "ChatMode": ChatMode,
     "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
@@ -98,6 +101,7 @@ export const PAGES = {
     "NewsArticle": NewsArticle,
     "NightWatch": NightWatch,
     "OfflineAudio": OfflineAudio,
+    "PatientAccess": PatientAccess,
     "PhoneMode": PhoneMode,
     "PrivacyPolicy": PrivacyPolicy,
     "Security": Security,
@@ -111,10 +115,6 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "PatientAccess": PatientAccess,
-    "CaregiverSignup": CaregiverSignup,
-    "CaregiverLogin": CaregiverLogin,
-    "AdminUserTracking": AdminUserTracking,
 }
 
 export const pagesConfig = {

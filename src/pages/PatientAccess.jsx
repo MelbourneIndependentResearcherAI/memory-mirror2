@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { createPageUrl } from '../utils';
+import { base44 } from '@/api/base44Client';
+import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -8,34 +10,71 @@ import { MessageCircle, Lock, Mic, ArrowRight, Shield } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function PatientAccess() {
-  const [accessMode, setAccessMode] = useState(null); // 'pin', 'voice', 'direct'
+  const [accessMode, setAccessMode] = useState(null);
   const [pin, setPin] = useState('');
   const [name, setName] = useState('');
   const [isListening, setIsListening] = useState(false);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  const { data: patients = [] } = useQuery({
+    queryKey: ['patientProfiles'],
+    queryFn: () => base44.entities.PatientProfile.list(),
+  });
+
+  // Handle QR code access
+  useEffect(() => {
+    const qrKey = searchParams.get('qr');
+    if (qrKey) {
+      const patient = patients.find(p => p.qr_code_access_key === qrKey);
+      if (patient) {
+        sessionStorage.setItem('patientSession', JSON.stringify({
+          type: 'qr',
+          patientId: patient.id,
+          patientName: patient.patient_name,
+          startedAt: new Date().toISOString()
+        }));
+        toast.success(`Welcome ${patient.patient_name}!`);
+        setTimeout(() => navigate(createPageUrl('ChatMode')), 1000);
+      } else {
+        toast.error('Invalid access code');
+      }
+    }
+  }, [searchParams, patients, navigate]);
 
   const handleDirectAccess = () => {
-    // Start session without authentication
     sessionStorage.setItem('patientSession', JSON.stringify({
       type: 'anonymous',
       startedAt: new Date().toISOString()
     }));
+    
+    // Log anonymous access
+    base44.entities.ActivityLog.create({
+      activity_type: 'anonymous_access',
+      details: { access_method: 'quick_start' }
+    }).catch(() => {});
+    
     toast.success('Welcome! Starting your AI companion...');
     setTimeout(() => {
       navigate(createPageUrl('ChatMode'));
     }, 1000);
   };
 
-  const handlePinSubmit = (e) => {
+  const handlePinSubmit = async (e) => {
     e.preventDefault();
     if (pin.length === 4) {
-      // Verify PIN (in production, check against caregiver-set PIN)
+      // Verify PIN against patient profiles
+      const matchingPatient = patients.find(p => p.access_pin === pin);
+      
       sessionStorage.setItem('patientSession', JSON.stringify({
         type: 'pin',
         pin: pin,
+        patientId: matchingPatient?.id,
+        patientName: matchingPatient?.patient_name,
         startedAt: new Date().toISOString()
       }));
-      toast.success('PIN verified! Starting companion...');
+      
+      toast.success(matchingPatient ? `Welcome ${matchingPatient.patient_name}!` : 'PIN verified!');
       setTimeout(() => {
         navigate(createPageUrl('ChatMode'));
       }, 1000);
@@ -44,18 +83,25 @@ export default function PatientAccess() {
     }
   };
 
-  const handleVoiceIdentification = () => {
+  const handleVoiceIdentification = async () => {
     setIsListening(true);
-    // Simulate voice recognition
     setTimeout(() => {
       setIsListening(false);
       if (name) {
+        // Find patient by voice name
+        const matchingPatient = patients.find(p => 
+          p.voice_name?.toLowerCase() === name.toLowerCase()
+        );
+        
         sessionStorage.setItem('patientSession', JSON.stringify({
           type: 'voice',
           name: name,
+          patientId: matchingPatient?.id,
+          patientName: matchingPatient?.patient_name || name,
           startedAt: new Date().toISOString()
         }));
-        toast.success(`Welcome ${name}! Starting your companion...`);
+        
+        toast.success(`Welcome ${matchingPatient?.patient_name || name}! Starting your companion...`);
         setTimeout(() => {
           navigate(createPageUrl('ChatMode'));
         }, 1000);

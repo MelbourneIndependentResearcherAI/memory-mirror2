@@ -334,6 +334,20 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   useEffect(() => {
     isMountedRef.current = true;
     
+    // Track patient session on mount
+    const sessionData = sessionStorage.getItem('patientSession');
+    if (sessionData) {
+      try {
+        const session = JSON.parse(sessionData);
+        if (session.patientId) {
+          base44.functions.invoke('trackPatientSession', {
+            patient_id: session.patientId,
+            session_type: 'chat_started'
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+    
     // Initial greeting after 1 second - also SPEAK it
     const greetingTimeout = setTimeout(() => {
       if (isMountedRef.current && messages.length === 0) {

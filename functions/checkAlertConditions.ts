@@ -78,12 +78,12 @@ Deno.serve(async (req) => {
           
           for (const method of notificationMethods) {
             if (method === 'email' || method === 'app_notification') {
-              // Send email notification
+              // Send email notification (contact.phone contains email for emergency contacts)
               try {
                 await base44.asServiceRole.integrations.Core.SendEmail({
-                  to: contact.phone, // Assuming email in phone field or separate
+                  to: contact.phone,
                   subject: `🚨 ${condition.severity.toUpperCase()} Alert: ${condition.condition_name}`,
-                  body: `Alert Condition Triggered:\n\n${condition.condition_name}\n\nType: ${condition.condition_type}\nSeverity: ${condition.severity}\n\nPlease check on your loved one immediately.\n\n- Memory Mirror Alert System`,
+                  body: `Alert Condition Triggered:\n\n${condition.condition_name}\n\nType: ${condition.condition_type}\nSeverity: ${condition.severity}\nThreshold: ${condition.threshold_value} ${condition.threshold_unit}\n\nPlease check on your loved one immediately.\n\nContact: ${contact.name}\nRelationship: ${contact.relationship || 'Not specified'}\n\n- Memory Mirror Alert System`,
                   from_name: 'Memory Mirror Alerts'
                 });
               } catch (err) {

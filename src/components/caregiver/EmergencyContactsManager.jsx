@@ -96,7 +96,7 @@ export default function EmergencyContactsManager() {
       <Card>
         <CardHeader>
           <div className="flex justify-between items-center">
-            <CardTitle>Emergency Contacts (Phone Mode)</CardTitle>
+            <CardTitle>Emergency Contacts</CardTitle>
             <Button onClick={() => setShowForm(!showForm)} className="bg-indigo-600 hover:bg-indigo-700 min-h-[44px]">
               <Plus className="w-4 h-4 mr-2" />
               Add Contact
@@ -118,11 +118,12 @@ export default function EmergencyContactsManager() {
                 onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
               />
               <Input
-                placeholder="Phone Number"
+                placeholder="Email or Phone Number"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 required
               />
+              <p className="text-xs text-slate-500 mt-1">Use email for alert notifications</p>
               <Select value={formData.icon} onValueChange={(value) => setFormData({ ...formData, icon: value })}>
                 <SelectTrigger>
                   <SelectValue placeholder="Icon" />
