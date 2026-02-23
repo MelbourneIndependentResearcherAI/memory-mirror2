@@ -52,7 +52,8 @@ const featureCards = [
   { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/CaregiverPortal/audit-logs', background: '#DBEAFE' },
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/CaregiverPortal/bank-settings', background: '#E0F2FE' },
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/CaregiverPortal/emergency-alerts', background: '#FEE2E2' },
-  { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' }
+  { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' },
+  { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/CaregiverPortal/reports', background: '#E0E7FF' }
 ];
 
 function CaregiverPortalHome() {
@@ -323,6 +324,14 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <PatientRegistration />
+            </div>
+          } />
+          <Route path="/reports" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <CaregiverReports />
             </div>
           } />
         </Routes>
