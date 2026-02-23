@@ -148,7 +148,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleGetStarted} className="w-full group">
+              <button onClick={handleGetStarted} className="w-full group" type="button">
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
