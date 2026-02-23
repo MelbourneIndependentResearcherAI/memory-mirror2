@@ -100,6 +100,7 @@ export default function Layout({ children, currentPageName }) {
               <AppStateProvider>
                 <LockModeProvider>
                   <ErrorBoundary>
+                    <AndroidWebViewOptimizer />
                     <ScrollToTop />
                     <GlobalLanguageSelector />
                     <OfflineStatusBar />
