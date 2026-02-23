@@ -11,6 +11,13 @@ import {
   Download, Upload, HardDrive, RefreshCw, Trash2, CheckCircle2, 
   AlertCircle, Music, Image, BookOpen, Brain, ArrowUp, ArrowDown
 } from 'lucide-react';
+import {
+  downloadPhotoForOffline,
+  downloadMusicForOffline,
+  downloadStoryForOffline,
+  downloadMemoryForOffline,
+  getOfflineContentSize
+} from '@/components/utils/offlineContentSync';
 
 const priorityColors = {
   critical: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400',
@@ -60,8 +67,9 @@ export default function OfflineContentManager({ onBack }) {
 
   // Calculate storage estimate
   useEffect(() => {
-    if (navigator.storage && navigator.storage.estimate) {
-      navigator.storage.estimate().then(estimate => {
+    const loadStorage = async () => {
+      if (navigator.storage && navigator.storage.estimate) {
+        const estimate = await navigator.storage.estimate();
         const usedMB = (estimate.usage || 0) / (1024 * 1024);
         const totalMB = (estimate.quota || 0) / (1024 * 1024);
         const availableMB = totalMB - usedMB;
@@ -70,9 +78,20 @@ export default function OfflineContentManager({ onBack }) {
           available: availableMB.toFixed(2),
           total: totalMB.toFixed(2)
         });
-      });
-    }
-  }, []);
+      }
+      
+      // Also load offline content specific size
+      const contentSize = await getOfflineContentSize();
+      setStorageInfo(prev => ({
+        ...prev,
+        offlineContent: contentSize.totalSizeMB
+      }));
+    };
+    
+    loadStorage();
+    const interval = setInterval(loadStorage, 10000);
+    return () => clearInterval(interval);
+  }, [offlinePriorities]);
 
   const updatePriorityMutation = useMutation({
     mutationFn: ({ id, priority }) => 
@@ -97,10 +116,12 @@ export default function OfflineContentManager({ onBack }) {
   });
 
   const handleAddToOffline = async (contentType, item) => {
+    // Estimate file sizes
     let fileSize = 100; // Default estimate in KB
     if (contentType === 'photo') fileSize = 500;
     if (contentType === 'music') fileSize = 3000;
     if (contentType === 'story') fileSize = 50;
+    if (contentType === 'memory') fileSize = 200;
 
     await createPriorityMutation.mutateAsync({
       content_type: contentType,
@@ -108,7 +129,8 @@ export default function OfflineContentManager({ onBack }) {
       content_title: item.title || item.name || 'Untitled',
       priority: 'medium',
       file_size_kb: fileSize,
-      sync_enabled: true
+      sync_enabled: true,
+      is_synced: false
     });
   };
 
@@ -116,26 +138,80 @@ export default function OfflineContentManager({ onBack }) {
     setSyncing(true);
     setSyncStatus('Starting sync...');
     
-    // Simulate syncing process
     const syncItems = offlinePriorities.filter(p => p.sync_enabled && !p.is_synced);
     
-    for (let i = 0; i < syncItems.length; i++) {
-      setSyncStatus(`Syncing ${i + 1} of ${syncItems.length}...`);
-      await new Promise(resolve => setTimeout(resolve, 500));
-      
-      // Mark as synced
-      await base44.entities.OfflineContentPriority.update(syncItems[i].id, {
-        is_synced: true,
-        last_synced: new Date().toISOString()
-      });
+    if (syncItems.length === 0) {
+      setSyncStatus('All content already synced!');
+      setTimeout(() => {
+        setSyncing(false);
+        setSyncStatus('');
+      }, 2000);
+      return;
     }
     
-    setSyncStatus('Sync complete!');
+    let successCount = 0;
+    
+    for (let i = 0; i < syncItems.length; i++) {
+      const item = syncItems[i];
+      setSyncStatus(`Syncing ${i + 1} of ${syncItems.length}: ${item.content_title}...`);
+      
+      try {
+        // Actually download the content based on type
+        if (item.content_type === 'music') {
+          const musicItem = music.find(m => m.id === item.content_id);
+          if (musicItem?.audio_file_url || musicItem?.youtube_url) {
+            // Cache music metadata locally
+            await saveToOfflineStore('music', musicItem);
+          }
+        } else if (item.content_type === 'photo') {
+          const photoItem = photos.find(p => p.id === item.content_id);
+          if (photoItem?.media_url) {
+            // Cache photo metadata locally
+            await saveToOfflineStore('familyMedia', photoItem);
+          }
+        } else if (item.content_type === 'story') {
+          const storyItem = stories.find(s => s.id === item.content_id);
+          if (storyItem) {
+            await saveToOfflineStore('stories', storyItem);
+          }
+        } else if (item.content_type === 'memory') {
+          const memoryItem = memories.find(m => m.id === item.content_id);
+          if (memoryItem) {
+            await saveToOfflineStore('memories', memoryItem);
+          }
+        }
+        
+        // Mark as synced in database
+        await base44.entities.OfflineContentPriority.update(item.id, {
+          is_synced: true,
+          last_synced: new Date().toISOString()
+        });
+        
+        successCount++;
+      } catch (error) {
+        console.error(`Failed to sync ${item.content_title}:`, error);
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
+    
+    setSyncStatus(`✅ Sync complete! ${successCount} of ${syncItems.length} items synced.`);
     queryClient.invalidateQueries(['offlineContentPriority']);
+    
     setTimeout(() => {
       setSyncing(false);
       setSyncStatus('');
-    }, 2000);
+    }, 3000);
+  };
+
+  const saveToOfflineStore = async (storeName, data) => {
+    try {
+      const { initOfflineStorage, saveToStore } = await import('@/components/utils/offlineStorage');
+      await initOfflineStorage();
+      await saveToStore(storeName, data);
+    } catch (error) {
+      console.error('Failed to save to offline store:', error);
+    }
   };
 
   const storagePercentage = storageInfo.total > 0 

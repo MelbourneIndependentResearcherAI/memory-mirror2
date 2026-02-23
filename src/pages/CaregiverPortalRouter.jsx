@@ -30,6 +30,7 @@ import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
 import PatientRegistration from '@/components/caregiver/PatientRegistration';
 import CaregiverReports from '@/components/caregiver/CaregiverReports';
 import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
+import OfflineContentTester from '@/components/caregiver/OfflineContentTester';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
@@ -56,7 +57,8 @@ const featureCards = [
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/CaregiverPortal/emergency-alerts', background: '#FEE2E2' },
   { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' },
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/CaregiverPortal/reports', background: '#E0E7FF' },
-  { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/CaregiverPortal/offline-content', background: '#DBEAFE' }
+  { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/CaregiverPortal/offline-content', background: '#DBEAFE' },
+  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/CaregiverPortal/offline-test', background: '#F0FDF4' }
 ];
 
 function CaregiverPortalHome() {
@@ -340,6 +342,14 @@ export default function CaregiverPortalRouter() {
           <Route path="/offline-content" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <OfflineContentManager onBack={() => navigate('/CaregiverPortal')} />
+            </div>
+          } />
+          <Route path="/offline-test" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <OfflineContentTester />
             </div>
           } />
         </Routes>

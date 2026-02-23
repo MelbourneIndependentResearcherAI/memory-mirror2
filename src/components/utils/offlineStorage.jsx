@@ -24,7 +24,11 @@ const STORES = {
   pendingOps: 'pendingOps',
   aiResponses: 'aiResponses',
   audioLibrary: 'audioLibrary',
-  syncMeta: 'syncMeta'
+  syncMeta: 'syncMeta',
+  userprofile: 'userProfile',
+  safememoryzones: 'safeZones',
+  familymedia: 'familyMedia',
+  cognitiveAssessment: 'cognitiveassessment'
 };
 
 let dbInstance = null;
