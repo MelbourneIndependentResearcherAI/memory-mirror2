@@ -239,7 +239,11 @@ class VoicePatternAnalyzer {
       anxietyTriggers: [],
       comfortingFactors: []
     };
-    localStorage.removeItem('voicePatterns');
+    try {
+      localStorage.removeItem('voicePatterns');
+    } catch (e) {
+      console.log('Could not clear localStorage:', e.message);
+    }
   }
 }
 
