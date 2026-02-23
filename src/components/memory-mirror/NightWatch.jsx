@@ -278,6 +278,20 @@ export default function NightWatch({ onClose }) {
       startListening();
       startEmergencyMonitoring();
       startBedSensorSimulation();
+      
+      // Track night watch activation
+      const sessionData = sessionStorage.getItem('patientSession');
+      if (sessionData) {
+        try {
+          const session = JSON.parse(sessionData);
+          if (session.patientId) {
+            base44.functions.invoke('trackPatientSession', {
+              patient_id: session.patientId,
+              session_type: 'night_watch_activated'
+            }).catch(() => {});
+          }
+        } catch {}
+      }
     }
   };
 
