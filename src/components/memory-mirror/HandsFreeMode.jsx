@@ -332,12 +332,20 @@ export default function HandsFreeMode({
       ]);
 
       let aiMessage = typeof response === 'string' ? response : response?.text || response;
-      
+
       if (aiMessage) {
-        aiMessage = aiMessage.replace(/META:.*$/s, '').trim().substring(0, 500);
+        aiMessage = aiMessage.replace(/META:.*$/s, '').trim().substring(0, 1000); // Longer responses for lengthier conversations
       }
-      
+
       if (!aiMessage) throw new Error('Empty response');
+
+      // Update voice pattern learning with response context
+      voicePatternAnalyzer.updateUserProfile({
+        commonPhrases: transcript.split(' ').filter(w => w.length > 3),
+        comfortTopic: voiceAnalysis.predictedEmotion === 'happy' || voiceAnalysis.predictedEmotion === 'nostalgic' ? transcript : null,
+        anxietyTopic: voiceAnalysis.detectedStress?.stressLevel > 5 ? transcript : null
+      });
+      voicePatternAnalyzer.persistPatterns();
       
       if (isMountedRef.current) {
         console.log('🔊 Speaking...');
