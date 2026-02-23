@@ -1,162 +1,211 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { DollarSign, TrendingUp, Shield, Eye, EyeOff, CheckCircle } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { Badge } from '@/components/ui/badge';
+import { ArrowRight, CreditCard, Eye, EyeOff, ArrowUpCircle, ArrowDownCircle, RefreshCw } from 'lucide-react';
+import { toast } from 'sonner';
 
-export default function FakeBankInterface() {
+export default function FakeBankInterface({ onClose }) {
   const [showBalance, setShowBalance] = useState(true);
-  const [accountData, setAccountData] = useState({
-    balance: 45230.50,
-    savingsBalance: 12500.00,
-    lastDeposit: 2500.00,
-    monthlyIncome: 3200.00
+  const [refreshing, setRefreshing] = useState(false);
+
+  const { data: settings = [], isLoading } = useQuery({
+    queryKey: ['bankSettings'],
+    queryFn: async () => {
+      const allSettings = await base44.entities.BankAccountSettings.list();
+      return allSettings.filter(s => s.is_active);
+    }
   });
 
-  useEffect(() => {
-    // Log that patient viewed bank to reduce anxiety tracking
-    base44.entities.ActivityLog.create({
-      activity_type: 'bank_check',
-      description: 'Patient checked bank balance for reassurance',
-      mood_before: 'anxious',
-      mood_after: 'calm'
-    }).catch(() => {});
-  }, []);
+  const currentSettings = settings[0] || {
+    account_name: 'Savings Account',
+    account_number: '****1234',
+    balance: 5000,
+    available_balance: 4500,
+    show_recent_transactions: true,
+    recent_transactions: [
+      { date: '2026-02-20', description: 'Grocery Store', amount: -85.50, type: 'debit' },
+      { date: '2026-02-18', description: 'Pension Payment', amount: 1200.00, type: 'credit' },
+      { date: '2026-02-15', description: 'Pharmacy', amount: -32.75, type: 'debit' }
+    ]
+  };
 
-  const transactions = [
-    { date: 'Today', description: 'Monthly Pension', amount: 3200.00, type: 'credit' },
-    { date: 'Yesterday', description: 'Grocery Store', amount: -45.20, type: 'debit' },
-    { date: '2 days ago', description: 'Pharmacy', amount: -12.50, type: 'debit' },
-    { date: '3 days ago', description: 'Interest Payment', amount: 125.00, type: 'credit' },
-  ];
+  const handleRefresh = () => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+      toast.success('Account updated');
+    }, 1000);
+  };
+
+  const formatCurrency = (amount) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(Math.abs(amount));
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 p-4 flex items-center justify-center">
+        <div className="text-white text-xl">Loading your account...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-blue-900 mb-2">Your Bank Account</h1>
-        <p className="text-gray-600 flex items-center justify-center gap-2">
-          <Shield className="w-5 h-5 text-green-600" />
-          Secure and Protected
-        </p>
-      </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-900 via-indigo-900 to-purple-900 p-4 pb-24">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-white flex items-center gap-2">
+            <CreditCard className="w-8 h-8" />
+            My Bank
+          </h1>
+          <Button
+            onClick={handleRefresh}
+            variant="ghost"
+            size="icon"
+            className="text-white hover:bg-white/20 min-h-[44px] min-w-[44px]"
+          >
+            <RefreshCw className={`w-5 h-5 ${refreshing ? 'animate-spin' : ''}`} />
+          </Button>
+        </div>
 
-      {/* Main Balance Card */}
-      <Card className="bg-gradient-to-br from-blue-600 to-blue-800 text-white shadow-xl">
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-white text-lg">Current Account</CardTitle>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setShowBalance(!showBalance)}
-              className="text-white hover:bg-white/20"
-            >
-              {showBalance ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <p className="text-sm opacity-90">Available Balance</p>
-            <p className="text-5xl font-bold">
-              {showBalance ? `$${accountData.balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}` : '••••••'}
-            </p>
-            <div className="flex items-center gap-2 text-green-300 mt-4">
-              <CheckCircle className="w-5 h-5" />
-              <span className="text-sm">All bills paid - Account in good standing</span>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Savings Account */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <TrendingUp className="w-6 h-6 text-green-600" />
-            Savings Account
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold text-gray-800">
-            ${accountData.savingsBalance.toLocaleString('en-US', { minimumFractionDigits: 2 })}
-          </p>
-          <p className="text-sm text-green-600 mt-2">+2.5% interest rate</p>
-        </CardContent>
-      </Card>
-
-      {/* Quick Summary */}
-      <div className="grid grid-cols-2 gap-4">
-        <Card>
+        {/* Account Balance Card */}
+        <Card className="bg-gradient-to-br from-blue-600 to-indigo-700 border-0 text-white mb-6 shadow-2xl">
           <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                <DollarSign className="w-6 h-6 text-green-600" />
-              </div>
+            <div className="flex justify-between items-start mb-4">
               <div>
-                <p className="text-sm text-gray-600">Last Deposit</p>
-                <p className="text-xl font-bold text-gray-900">
-                  ${accountData.lastDeposit.toFixed(2)}
-                </p>
+                <p className="text-blue-100 text-sm mb-1">{currentSettings.account_name}</p>
+                <p className="text-blue-200 text-xs">{currentSettings.account_number}</p>
               </div>
+              <Button
+                onClick={() => setShowBalance(!showBalance)}
+                variant="ghost"
+                size="icon"
+                className="text-white hover:bg-white/20 min-h-[44px] min-w-[44px]"
+              >
+                {showBalance ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+              </Button>
             </div>
-          </CardContent>
-        </Card>
 
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
-              </div>
-              <div>
-                <p className="text-sm text-gray-600">Monthly Income</p>
-                <p className="text-xl font-bold text-gray-900">
-                  ${accountData.monthlyIncome.toFixed(2)}
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* Recent Transactions */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Recent Transactions</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            {transactions.map((txn, idx) => (
-              <div key={idx} className="flex justify-between items-center py-3 border-b last:border-b-0">
-                <div>
-                  <p className="font-semibold text-gray-900">{txn.description}</p>
-                  <p className="text-sm text-gray-500">{txn.date}</p>
-                </div>
-                <p className={`font-bold text-lg ${txn.type === 'credit' ? 'text-green-600' : 'text-gray-600'}`}>
-                  {txn.type === 'credit' ? '+' : ''}{txn.amount < 0 ? txn.amount : `+${txn.amount.toFixed(2)}`}
-                </p>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Reassurance Message */}
-      <Card className="bg-green-50 border-green-200">
-        <CardContent className="pt-6">
-          <div className="flex items-start gap-3">
-            <CheckCircle className="w-8 h-8 text-green-600 flex-shrink-0 mt-1" />
-            <div>
-              <h3 className="font-bold text-green-900 text-lg mb-2">Everything is Perfect!</h3>
-              <p className="text-green-800">
-                Your finances are in excellent shape. All your bills are paid, you have plenty of money in your accounts, 
-                and your pension is deposited automatically every month. There's nothing to worry about.
+            <div className="mb-6">
+              <p className="text-sm text-blue-100 mb-1">Current Balance</p>
+              <p className="text-4xl font-bold">
+                {showBalance ? formatCurrency(currentSettings.balance) : '••••••'}
               </p>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-white/10 rounded-lg p-3">
+                <p className="text-xs text-blue-100 mb-1">Available</p>
+                <p className="text-lg font-semibold">
+                  {showBalance ? formatCurrency(currentSettings.available_balance) : '••••••'}
+                </p>
+              </div>
+              <div className="bg-white/10 rounded-lg p-3">
+                <p className="text-xs text-blue-100 mb-1">On Hold</p>
+                <p className="text-lg font-semibold">
+                  {showBalance ? formatCurrency(currentSettings.balance - currentSettings.available_balance) : '••••••'}
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Quick Actions */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <Button
+            onClick={() => toast.info('Transfer feature coming soon')}
+            className="h-24 bg-white/10 hover:bg-white/20 text-white border border-white/20 flex flex-col gap-2"
+            disabled={!currentSettings.enable_transfers}
+          >
+            <ArrowUpCircle className="w-6 h-6" />
+            <span>Send Money</span>
+          </Button>
+          <Button
+            onClick={() => toast.info('Payment feature coming soon')}
+            className="h-24 bg-white/10 hover:bg-white/20 text-white border border-white/20 flex flex-col gap-2"
+          >
+            <ArrowDownCircle className="w-6 h-6" />
+            <span>Pay Bills</span>
+          </Button>
+        </div>
+
+        {/* Recent Transactions */}
+        {currentSettings.show_recent_transactions && currentSettings.recent_transactions?.length > 0 && (
+          <Card className="bg-white dark:bg-slate-900">
+            <CardHeader>
+              <CardTitle className="text-lg">Recent Transactions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {currentSettings.recent_transactions.map((transaction, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                >
+                  <div className="flex items-center gap-3">
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                      transaction.type === 'credit' 
+                        ? 'bg-green-100 dark:bg-green-950' 
+                        : 'bg-red-100 dark:bg-red-950'
+                    }`}>
+                      {transaction.type === 'credit' ? (
+                        <ArrowDownCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
+                      ) : (
+                        <ArrowUpCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
+                      )}
+                    </div>
+                    <div>
+                      <p className="font-semibold text-slate-900 dark:text-white">
+                        {transaction.description}
+                      </p>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        {formatDate(transaction.date)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-bold ${
+                      transaction.type === 'credit' 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : 'text-red-600 dark:text-red-400'
+                    }`}>
+                      {transaction.type === 'credit' ? '+' : '-'}{formatCurrency(transaction.amount)}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        )}
+
+        {/* Security Notice */}
+        <div className="mt-6 bg-blue-900/50 border border-blue-400/30 rounded-lg p-4">
+          <p className="text-blue-100 text-sm text-center">
+            🔒 Your account is secure and protected
+          </p>
+        </div>
+
+        {/* Close Button */}
+        {onClose && (
+          <Button
+            onClick={onClose}
+            variant="outline"
+            className="w-full mt-6 bg-white/10 hover:bg-white/20 text-white border-white/30 min-h-[44px]"
+          >
+            Close Banking
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

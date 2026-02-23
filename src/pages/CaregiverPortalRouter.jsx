@@ -25,6 +25,7 @@ import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
 import ContentUploader from '@/components/caregiver/ContentUploader';
 import AuditLogViewer from '@/components/admin/AuditLogViewer';
+import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
@@ -46,7 +47,8 @@ const featureCards = [
   { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF' },
   { id: 18, title: 'Family Tree', icon: '🌳', description: 'Build a visual family tree with photos and memories', path: '/CaregiverPortal/family-tree', background: '#FEF3C7' },
   { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/CaregiverPortal/content', background: '#F3E8FF' },
-  { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/CaregiverPortal/audit-logs', background: '#DBEAFE' }
+  { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/CaregiverPortal/audit-logs', background: '#DBEAFE' },
+  { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/CaregiverPortal/bank-settings', background: '#E0F2FE' }
 ];
 
 function CaregiverPortalHome() {
@@ -296,6 +298,11 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <AuditLogViewer />
+            </div>
+          } />
+          <Route path="/bank-settings" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <BankSettingsManager onBack={() => navigate('/CaregiverPortal')} />
             </div>
           } />
         </Routes>

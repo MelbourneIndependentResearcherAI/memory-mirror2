@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard } from 'lucide-react';
 import { createPageUrl } from '../utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { useLockMode } from '@/components/LockModeManager';
@@ -54,6 +54,12 @@ export default function BottomNav() {
       icon: Star,
       label: 'Feedback',
       color: 'text-yellow-500'
+    },
+    {
+      path: createPageUrl('MyBank'),
+      icon: CreditCard,
+      label: t('myBank') || 'Bank',
+      color: 'text-emerald-500'
     }
   ], [t]);
 
