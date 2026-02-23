@@ -362,6 +362,61 @@ export default function ContentUploader() {
     }
   };
 
+  const handleGenerateStory = async () => {
+    if (!userProfile) {
+      toast.error('User profile not found');
+      return;
+    }
+    setGeneratingAI(true);
+    try {
+      const response = await base44.functions.invoke('generateAIContent', {
+        type: 'story',
+        userProfile,
+        existingStories
+      });
+      if (response.data?.story) {
+        setStory({
+          title: response.data.story.title,
+          content: response.data.story.content,
+          theme: response.data.story.theme || 'family',
+          era: 'any',
+          mood: response.data.story.mood || 'peaceful',
+          length: 'short',
+          narrator_note: ''
+        });
+        toast.success('Story generated! Review and customize before uploading.');
+      }
+    } catch (error) {
+      toast.error('Failed to generate story: ' + error.message);
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
+  const handleGeneratePrompts = async () => {
+    if (!userProfile) {
+      toast.error('User profile not found');
+      return;
+    }
+    setGeneratingAI(true);
+    try {
+      const response = await base44.functions.invoke('generateAIContent', {
+        type: 'journal_prompt',
+        userProfile,
+        existingMemories
+      });
+      if (response.data?.prompts) {
+        toast.success('Journal prompts generated! Copy to use.');
+        const promptText = response.data.prompts.join('\n\n');
+        navigator.clipboard.writeText(promptText);
+      }
+    } catch (error) {
+      toast.error('Failed to generate prompts: ' + error.message);
+    } finally {
+      setGeneratingAI(false);
+    }
+  };
+
   return (
     <div className="max-w-5xl mx-auto p-6 space-y-6">
       <div>
