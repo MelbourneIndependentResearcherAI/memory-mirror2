@@ -79,6 +79,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import AccessibilityStatement from './pages/AccessibilityStatement';
 import __Layout from './Layout.jsx';
 
 
@@ -115,6 +116,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
+    "AccessibilityStatement": AccessibilityStatement,
 }
 
 export const pagesConfig = {
