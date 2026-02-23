@@ -47,13 +47,19 @@ export default function AdminUserTracking() {
     enabled: user?.role === 'admin'
   });
 
+  const { data: patients = [] } = useQuery({
+    queryKey: ['patientProfiles'],
+    queryFn: () => base44.entities.PatientProfile.list(),
+    enabled: user?.role === 'admin'
+  });
+
   // Send bulk email mutation
   const sendEmailMutation = useMutation({
     mutationFn: async ({ subject, body }) => {
       const response = await base44.functions.invoke('sendBulkEmail', {
         subject,
         body,
-        recipientEmails: users.map(u => u.email)
+        recipientEmails: userStats.allEmails
       });
       return response.data;
     },
@@ -103,7 +109,9 @@ export default function AdminUserTracking() {
   const userStats = {
     total: users.length,
     admins: users.filter(u => u.role === 'admin').length,
-    caregivers: users.filter(u => u.role === 'user').length
+    caregivers: users.filter(u => u.role === 'user').length,
+    patients: patients.length,
+    allEmails: [...users.map(u => u.email), ...patients.map(p => p.patient_email)]
   };
 
   return (
@@ -130,7 +138,7 @@ export default function AdminUserTracking() {
         </div>
 
         {/* User Statistics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -178,6 +186,22 @@ export default function AdminUserTracking() {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-center gap-4">
+                <div className="p-3 bg-pink-100 dark:bg-pink-900 rounded-lg">
+                  <Users className="w-8 h-8 text-pink-600 dark:text-pink-400" />
+                </div>
+                <div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Patients</p>
+                  <p className="text-3xl font-bold text-slate-900 dark:text-white">
+                    {userStats.patients}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Bulk Email Section */}
@@ -198,7 +222,7 @@ export default function AdminUserTracking() {
               <Alert className="bg-amber-50 dark:bg-amber-950/30 border-amber-200 dark:border-amber-800">
                 <AlertCircle className="w-4 h-4 text-amber-600" />
                 <AlertDescription className="text-slate-700 dark:text-slate-300">
-                  This will send an email to all {userStats.total} registered users. Use responsibly.
+                  This will send an email to all {userStats.allEmails.length} users ({userStats.total} caregivers + {userStats.patients} patients). Use responsibly.
                 </AlertDescription>
               </Alert>
 
@@ -236,7 +260,7 @@ export default function AdminUserTracking() {
                 ) : (
                   <>
                     <Send className="w-5 h-5 mr-2" />
-                    Send Email to {userStats.total} Users
+                    Send Email to {userStats.allEmails.length} Users
                   </>
                 )}
               </Button>

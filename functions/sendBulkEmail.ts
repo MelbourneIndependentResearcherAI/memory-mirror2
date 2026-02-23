@@ -14,7 +14,17 @@ Deno.serve(async (req) => {
     }
 
     // Parse request body
-    const { subject, body, recipientEmails } = await req.json();
+    let { subject, body, recipientEmails } = await req.json();
+
+    // If no recipients provided, fetch all users and patients
+    if (!recipientEmails || recipientEmails.length === 0) {
+      const users = await base44.asServiceRole.entities.User.list();
+      const patients = await base44.asServiceRole.entities.PatientProfile.list();
+      recipientEmails = [
+        ...users.map(u => u.email),
+        ...patients.map(p => p.patient_email)
+      ];
+    }
 
     if (!subject || !body || !recipientEmails || recipientEmails.length === 0) {
       return Response.json(

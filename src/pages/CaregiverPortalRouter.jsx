@@ -27,6 +27,7 @@ import ContentUploader from '@/components/caregiver/ContentUploader';
 import AuditLogViewer from '@/components/admin/AuditLogViewer';
 import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
 import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
+import PatientRegistration from '@/components/caregiver/PatientRegistration';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
@@ -50,7 +51,8 @@ const featureCards = [
   { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/CaregiverPortal/content', background: '#F3E8FF' },
   { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/CaregiverPortal/audit-logs', background: '#DBEAFE' },
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/CaregiverPortal/bank-settings', background: '#E0F2FE' },
-  { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/CaregiverPortal/emergency-alerts', background: '#FEE2E2' }
+  { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/CaregiverPortal/emergency-alerts', background: '#FEE2E2' },
+  { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE' }
 ];
 
 function CaregiverPortalHome() {
@@ -313,6 +315,14 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <EmergencyAlertSystem />
+            </div>
+          } />
+          <Route path="/patient-registration" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <PatientRegistration />
             </div>
           } />
         </Routes>
