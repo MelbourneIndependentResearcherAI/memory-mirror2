@@ -219,6 +219,8 @@ export default function OfflineContentTester() {
       return <Loader2 className="w-5 h-5 text-blue-500 animate-spin" />;
     } else if (result.status === 'passed') {
       return <CheckCircle2 className="w-5 h-5 text-green-500" />;
+    } else if (result.status === 'warning') {
+      return <AlertCircle className="w-5 h-5 text-amber-500" />;
     } else {
       return <XCircle className="w-5 h-5 text-red-500" />;
     }
@@ -332,6 +334,8 @@ export default function OfflineContentTester() {
                       ? 'bg-green-50 text-green-800 dark:bg-green-900/20 dark:text-green-400' 
                       : result.status === 'failed'
                       ? 'bg-red-50 text-red-800 dark:bg-red-900/20 dark:text-red-400'
+                      : result.status === 'warning'
+                      ? 'bg-amber-50 text-amber-800 dark:bg-amber-900/20 dark:text-amber-400'
                       : 'bg-blue-50 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400'
                   }`}>
                     {result.message}

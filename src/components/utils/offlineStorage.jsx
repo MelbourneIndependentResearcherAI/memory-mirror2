@@ -74,10 +74,14 @@ export async function initOfflineStorage() {
 export async function saveToStore(storeName, data) {
   try {
     const db = await initOfflineStorage();
+    
+    // Normalize store name to handle case variations
+    const normalizedStore = STORES[storeName] || storeName;
+    
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
+        const tx = db.transaction(normalizedStore, 'readwrite');
+        const store = tx.objectStore(normalizedStore);
         const request = store.put(data);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
@@ -94,10 +98,12 @@ export async function saveToStore(storeName, data) {
 export async function getFromStore(storeName, id) {
   try {
     const db = await initOfflineStorage();
+    const normalizedStore = STORES[storeName] || storeName;
+    
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
+        const tx = db.transaction(normalizedStore, 'readonly');
+        const store = tx.objectStore(normalizedStore);
         const request = store.get(id);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
@@ -114,10 +120,12 @@ export async function getFromStore(storeName, id) {
 export async function getAllFromStore(storeName) {
   try {
     const db = await initOfflineStorage();
+    const normalizedStore = STORES[storeName] || storeName;
+    
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(storeName, 'readonly');
-        const store = tx.objectStore(storeName);
+        const tx = db.transaction(normalizedStore, 'readonly');
+        const store = tx.objectStore(normalizedStore);
         const request = store.getAll();
         request.onsuccess = () => resolve(request.result || []);
         request.onerror = () => reject(request.error);
@@ -134,10 +142,12 @@ export async function getAllFromStore(storeName) {
 export async function deleteFromStore(storeName, id) {
   try {
     const db = await initOfflineStorage();
+    const normalizedStore = STORES[storeName] || storeName;
+    
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
+        const tx = db.transaction(normalizedStore, 'readwrite');
+        const store = tx.objectStore(normalizedStore);
         const request = store.delete(id);
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
@@ -153,10 +163,12 @@ export async function deleteFromStore(storeName, id) {
 export async function clearStore(storeName) {
   try {
     const db = await initOfflineStorage();
+    const normalizedStore = STORES[storeName] || storeName;
+    
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(storeName, 'readwrite');
-        const store = tx.objectStore(storeName);
+        const tx = db.transaction(normalizedStore, 'readwrite');
+        const store = tx.objectStore(normalizedStore);
         const request = store.clear();
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
