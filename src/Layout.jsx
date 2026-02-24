@@ -11,7 +11,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation } from 'react-router-dom';
 
 /**
- * Memory Mirror Application Layout
+ * Memory Mirror - AI Companion for Dementia Care
  * Copyright © 2026 Memory Mirror. All Rights Reserved.
  * Proprietary and Confidential.
  */

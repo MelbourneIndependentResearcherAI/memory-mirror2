@@ -60,8 +60,10 @@ import CareTeam from './pages/CareTeam';
 import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
+import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatMode from './pages/ChatMode';
 import ContentLibrary from './pages/ContentLibrary';
+import ConversationAnalytics from './pages/ConversationAnalytics';
 import EmergencyAlerts from './pages/EmergencyAlerts';
 import FAQ from './pages/FAQ';
 import FakeBankSettings from './pages/FakeBankSettings';
@@ -97,9 +99,13 @@ import MusicTherapy from './pages/MusicTherapy';
 import MyBank from './pages/MyBank';
 import NewsArticle from './pages/NewsArticle';
 import NightWatch from './pages/NightWatch';
+import NightWatchDashboard from './pages/NightWatchDashboard';
+import NightWatchIncidents from './pages/NightWatchIncidents';
 import NightWatchPage from './pages/NightWatchPage';
 import OfflineAudio from './pages/OfflineAudio';
+import OfflineCapabilities from './pages/OfflineCapabilities';
 import OfflineContent from './pages/OfflineContent';
+import OfflineModeDashboard from './pages/OfflineModeDashboard';
 import OfflineTest from './pages/OfflineTest';
 import PatientAccess from './pages/PatientAccess';
 import PatientRegistration from './pages/PatientRegistration';
@@ -118,21 +124,15 @@ import TVPairing from './pages/TVPairing';
 import TVPhotoGallery from './pages/TVPhotoGallery';
 import TeamNotifications from './pages/TeamNotifications';
 import TermsOfService from './pages/TermsOfService';
+import VoiceAlwaysOnDashboard from './pages/VoiceAlwaysOnDashboard';
 import VoiceCloning from './pages/VoiceCloning';
+import VoiceCommands from './pages/VoiceCommands';
 import VoiceSetup from './pages/VoiceSetup';
+import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import NightWatchDashboard from './pages/NightWatchDashboard';
-import NightWatchIncidents from './pages/NightWatchIncidents';
-import VoiceAlwaysOnDashboard from './pages/VoiceAlwaysOnDashboard';
-import VoiceCommands from './pages/VoiceCommands';
-import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
-import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
-import ConversationAnalytics from './pages/ConversationAnalytics';
-import OfflineModeDashboard from './pages/OfflineModeDashboard';
-import OfflineCapabilities from './pages/OfflineCapabilities';
 import __Layout from './Layout.jsx';
 
 
@@ -150,8 +150,10 @@ export const PAGES = {
     "CaregiverDashboard": CaregiverDashboard,
     "CaregiverPortal": CaregiverPortal,
     "CaregiverPortalRouter": CaregiverPortalRouter,
+    "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatMode": ChatMode,
     "ContentLibrary": ContentLibrary,
+    "ConversationAnalytics": ConversationAnalytics,
     "EmergencyAlerts": EmergencyAlerts,
     "FAQ": FAQ,
     "FakeBankSettings": FakeBankSettings,
@@ -187,9 +189,13 @@ export const PAGES = {
     "MyBank": MyBank,
     "NewsArticle": NewsArticle,
     "NightWatch": NightWatch,
+    "NightWatchDashboard": NightWatchDashboard,
+    "NightWatchIncidents": NightWatchIncidents,
     "NightWatchPage": NightWatchPage,
     "OfflineAudio": OfflineAudio,
+    "OfflineCapabilities": OfflineCapabilities,
     "OfflineContent": OfflineContent,
+    "OfflineModeDashboard": OfflineModeDashboard,
     "OfflineTest": OfflineTest,
     "PatientAccess": PatientAccess,
     "PatientRegistration": PatientRegistration,
@@ -208,21 +214,15 @@ export const PAGES = {
     "TVPhotoGallery": TVPhotoGallery,
     "TeamNotifications": TeamNotifications,
     "TermsOfService": TermsOfService,
+    "VoiceAlwaysOnDashboard": VoiceAlwaysOnDashboard,
     "VoiceCloning": VoiceCloning,
+    "VoiceCommands": VoiceCommands,
     "VoiceSetup": VoiceSetup,
+    "VoiceUsageAnalytics": VoiceUsageAnalytics,
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
     "security": security,
-    "NightWatchDashboard": NightWatchDashboard,
-    "NightWatchIncidents": NightWatchIncidents,
-    "VoiceAlwaysOnDashboard": VoiceAlwaysOnDashboard,
-    "VoiceCommands": VoiceCommands,
-    "VoiceUsageAnalytics": VoiceUsageAnalytics,
-    "ChatCompanionDashboard": ChatCompanionDashboard,
-    "ConversationAnalytics": ConversationAnalytics,
-    "OfflineModeDashboard": OfflineModeDashboard,
-    "OfflineCapabilities": OfflineCapabilities,
 }
 
 export const pagesConfig = {
