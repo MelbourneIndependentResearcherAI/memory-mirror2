@@ -56,10 +56,12 @@ import ChatMode from './pages/ChatMode';
 import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
 import Feedback from './pages/Feedback';
+import HealthMonitor from './pages/HealthMonitor';
 import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
 import Landing from './pages/Landing';
 import MemoryGames from './pages/MemoryGames';
+import MemorySessions from './pages/MemorySessions';
 import MusicTherapy from './pages/MusicTherapy';
 import MyBank from './pages/MyBank';
 import NewsArticle from './pages/NewsArticle';
@@ -79,8 +81,6 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
-import HealthMonitor from './pages/HealthMonitor';
-import MemorySessions from './pages/MemorySessions';
 import __Layout from './Layout.jsx';
 
 
@@ -94,10 +94,12 @@ export const PAGES = {
     "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
     "Feedback": Feedback,
+    "HealthMonitor": HealthMonitor,
     "Home": Home,
     "ImportArticle": ImportArticle,
     "Landing": Landing,
     "MemoryGames": MemoryGames,
+    "MemorySessions": MemorySessions,
     "MusicTherapy": MusicTherapy,
     "MyBank": MyBank,
     "NewsArticle": NewsArticle,
@@ -117,8 +119,6 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
-    "HealthMonitor": HealthMonitor,
-    "MemorySessions": MemorySessions,
 }
 
 export const pagesConfig = {
