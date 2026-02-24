@@ -115,13 +115,12 @@ export default function Layout({ children, currentPageName }) {
                     <ScrollToTop />
                     <GlobalLanguageSelector />
                     <OfflineStatusBar />
-                    <OfflineIndicator />
                     <OfflineSyncIndicator />
                     <ReminderNotification />
                     <div 
                       className="min-h-screen bg-background text-foreground flex flex-col"
                       style={{
-                        paddingTop: 'env(safe-area-inset-top)',
+                        paddingTop: 'calc(env(safe-area-inset-top) + 60px)',
                         paddingBottom: showBottomNav ? 'calc(100px + env(safe-area-inset-bottom))' : 'calc(20px + env(safe-area-inset-bottom))',
                         overscrollBehaviorY: 'none'
                       }}
