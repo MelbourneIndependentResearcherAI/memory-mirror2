@@ -35,7 +35,7 @@ export default function PatientAccess() {
           startedAt: new Date().toISOString()
         }));
         toast.success(`Welcome ${patient.patient_name}!`);
-        setTimeout(() => navigate(createPageUrl('ChatMode')), 1000);
+        setTimeout(() => navigate(createPageUrl('Home')), 1000);
       } else {
         toast.error('Invalid access code');
       }
@@ -56,7 +56,7 @@ export default function PatientAccess() {
     
     toast.success('Welcome! Starting your AI companion...');
     setTimeout(() => {
-      navigate(createPageUrl('ChatMode'));
+      navigate(createPageUrl('Home'));
     }, 1000);
   };
 
@@ -76,7 +76,7 @@ export default function PatientAccess() {
       
       toast.success(matchingPatient ? `Welcome ${matchingPatient.patient_name}!` : 'PIN verified!');
       setTimeout(() => {
-        navigate(createPageUrl('ChatMode'));
+        navigate(createPageUrl('Home'));
       }, 1000);
     } else {
       toast.error('Please enter a 4-digit PIN');
@@ -103,7 +103,7 @@ export default function PatientAccess() {
         
         toast.success(`Welcome ${matchingPatient?.patient_name || name}! Starting your companion...`);
         setTimeout(() => {
-          navigate(createPageUrl('ChatMode'));
+          navigate(createPageUrl('Home'));
         }, 1000);
       }
     }, 2000);

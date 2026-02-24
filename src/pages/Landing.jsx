@@ -42,14 +42,14 @@ export default function Landing() {
 
   const handleGetStarted = () => {
     if (isAuthenticated) {
-      navigate(createPageUrl('ChatMode'));
+      navigate(createPageUrl('Home'));
     } else {
-      base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+      base44.auth.redirectToLogin(createPageUrl('Home'));
     }
   };
 
   const handleSignIn = () => {
-    base44.auth.redirectToLogin(createPageUrl('ChatMode'));
+    base44.auth.redirectToLogin(createPageUrl('Home'));
   };
 
   const handleBankingClick = () => {
@@ -72,7 +72,7 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => navigate(createPageUrl('CaregiverLogin'))}
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'))}
               className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
             >
               👨‍⚕️ Caregiver Login
@@ -141,7 +141,7 @@ export default function Landing() {
 
             {/* Caregiver Access */}
             <button
-              onClick={() => navigate(createPageUrl('CaregiverSignup'))}
+              onClick={() => base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'))}
               className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
