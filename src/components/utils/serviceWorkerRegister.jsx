@@ -1,37 +1,8 @@
 // Service Worker Registration for Offline Support
+// DISABLED: Service worker file not available in Base44 environment
 export function registerServiceWorker() {
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      const swUrl = `/service-worker.js`;
-      
-      navigator.serviceWorker
-        .register(swUrl)
-        .then((registration) => {
-          console.log('SW registered:', registration);
-          
-          // Check for updates periodically
-          setInterval(() => {
-            registration.update();
-          }, 60000); // Check every minute
-          
-          // Listen for updates
-          registration.addEventListener('updatefound', () => {
-            const newWorker = registration.installing;
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New service worker available
-                if (confirm('New version available! Reload to update?')) {
-                  window.location.reload();
-                }
-              }
-            });
-          });
-        })
-        .catch((error) => {
-          console.log('SW registration failed:', error);
-        });
-    });
-  }
+  // Service worker registration disabled - app works without it
+  console.log('Service worker registration skipped (not required)');
 }
 
 // Request persistent storage
