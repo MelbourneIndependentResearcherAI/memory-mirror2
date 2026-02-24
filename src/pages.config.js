@@ -104,6 +104,22 @@ import CareTeam from './pages/CareTeam';
 import SharedJournal from './pages/SharedJournal';
 import TeamNotifications from './pages/TeamNotifications';
 import AIAgentTeam from './pages/AIAgentTeam';
+import FamilyVideoCall from './pages/FamilyVideoCall';
+import FamilyChatRoom from './pages/FamilyChatRoom';
+import FamilyOverview from './pages/FamilyOverview';
+import FamilyNotifications from './pages/FamilyNotifications';
+import FamilyAIInsights from './pages/FamilyAIInsights';
+import FamilyPhotoAlbum from './pages/FamilyPhotoAlbum';
+import FamilyTimeline from './pages/FamilyTimeline';
+import FamilyRemoteTrigger from './pages/FamilyRemoteTrigger';
+import FamilyCalendar from './pages/FamilyCalendar';
+import FamilyMediaAlbum from './pages/FamilyMediaAlbum';
+import FamilyMessages from './pages/FamilyMessages';
+import FamilyMusic from './pages/FamilyMusic';
+import FamilyStories from './pages/FamilyStories';
+import FamilyContacts from './pages/FamilyContacts';
+import FamilyTreePage from './pages/FamilyTreePage';
+import FamilyPlaylists from './pages/FamilyPlaylists';
 import __Layout from './Layout.jsx';
 
 
@@ -165,6 +181,22 @@ export const PAGES = {
     "SharedJournal": SharedJournal,
     "TeamNotifications": TeamNotifications,
     "AIAgentTeam": AIAgentTeam,
+    "FamilyVideoCall": FamilyVideoCall,
+    "FamilyChatRoom": FamilyChatRoom,
+    "FamilyOverview": FamilyOverview,
+    "FamilyNotifications": FamilyNotifications,
+    "FamilyAIInsights": FamilyAIInsights,
+    "FamilyPhotoAlbum": FamilyPhotoAlbum,
+    "FamilyTimeline": FamilyTimeline,
+    "FamilyRemoteTrigger": FamilyRemoteTrigger,
+    "FamilyCalendar": FamilyCalendar,
+    "FamilyMediaAlbum": FamilyMediaAlbum,
+    "FamilyMessages": FamilyMessages,
+    "FamilyMusic": FamilyMusic,
+    "FamilyStories": FamilyStories,
+    "FamilyContacts": FamilyContacts,
+    "FamilyTreePage": FamilyTreePage,
+    "FamilyPlaylists": FamilyPlaylists,
 }
 
 export const pagesConfig = {
