@@ -38,13 +38,16 @@ export default function CaregiverSignup() {
     }
 
     setIsLoading(true);
-    try {
-      // Redirect to login with pre-filled email
-      base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
-    } catch (error) {
-      toast.error('Signup failed. Please try again.');
-      setIsLoading(false);
-    }
+    
+    // Store signup data for after authentication
+    sessionStorage.setItem('pendingSignup', JSON.stringify({
+      patientName: formData.patientName,
+      relationship: formData.relationship,
+      phoneNumber: formData.phoneNumber
+    }));
+    
+    // Redirect to Base44 authentication
+    base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
   };
 
   return (

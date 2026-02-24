@@ -21,13 +21,8 @@ export default function CaregiverLogin() {
     e.preventDefault();
     setIsLoading(true);
     
-    try {
-      // Use Base44's built-in authentication
-      base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
-    } catch (error) {
-      toast.error('Login failed. Please check your credentials.');
-      setIsLoading(false);
-    }
+    // Redirect to Base44 login with next URL
+    base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
   };
 
   const handleForgotPassword = () => {
