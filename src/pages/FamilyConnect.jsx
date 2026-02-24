@@ -22,23 +22,6 @@ import VideoCallLauncher from '../components/video/VideoCallLauncher';
 
 function FamilyConnectMain() {
   const navigate = useNavigate();
-  const location = useLocation();
-  const activeTab = location.pathname.split('/')[2] || 'overview';
-
-  // Preserve tab state in sessionStorage
-  React.useEffect(() => {
-    if (activeTab) {
-      sessionStorage.setItem('familyConnectLastTab', activeTab);
-    }
-  }, [activeTab]);
-
-  // Restore last tab on mount
-  React.useEffect(() => {
-    const lastTab = sessionStorage.getItem('familyConnectLastTab');
-    if (lastTab && activeTab === 'overview' && location.pathname === '/FamilyConnect') {
-      navigate(`/FamilyConnect/${lastTab}`, { replace: true });
-    }
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50 via-pink-50 to-orange-50 dark:from-slate-950 dark:via-pink-950 dark:to-orange-950 p-4 md:p-6 pb-16">
@@ -68,227 +51,167 @@ function FamilyConnectMain() {
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={(val) => navigate(`/FamilyConnect/${val}`)} className="space-y-6">
-          <TabsList className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6 h-auto bg-transparent p-0">
-            <TabsTrigger value="video-call" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-purple-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-50 data-[state=active]:to-indigo-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
-                <Video className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Video Call</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="chat" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-green-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-50 data-[state=active]:to-emerald-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                <MessagesSquare className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Family Chat</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="overview" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-pink-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-pink-50 data-[state=active]:to-rose-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
-                <Heart className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Overview</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="notifications" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-amber-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-amber-50 data-[state=active]:to-orange-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
-                <Bell className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Alerts</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="smart-alerts" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-purple-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-50 data-[state=active]:to-pink-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
-                <Brain className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">AI Insights</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="photo-album" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-purple-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-purple-50 data-[state=active]:to-violet-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center shadow-lg">
-                <Image className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Photos</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="timeline" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-blue-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-blue-50 data-[state=active]:to-cyan-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                <Clock className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Timeline</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="remote" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-green-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-green-50 data-[state=active]:to-emerald-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
-                <Send className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Send Now</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="calendar" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-indigo-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-indigo-50 data-[state=active]:to-blue-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shadow-lg">
-                <Calendar className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Calendar</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="album" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-fuchsia-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-fuchsia-50 data-[state=active]:to-pink-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center shadow-lg">
-                <Image className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Album</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="messages" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-teal-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-teal-50 data-[state=active]:to-cyan-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
-                <MessageSquare className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Messages</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="music" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-red-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-red-50 data-[state=active]:to-pink-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg">
-                <Music className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Music</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="stories" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-yellow-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-yellow-50 data-[state=active]:to-amber-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-500 to-amber-500 flex items-center justify-center shadow-lg">
-                <BookOpen className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Stories</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="contacts" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-slate-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-slate-50 data-[state=active]:to-gray-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-slate-500 to-gray-500 flex items-center justify-center shadow-lg">
-                <Phone className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Contacts</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="family-tree" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-emerald-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-emerald-50 data-[state=active]:to-green-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow-lg">
-                <GitBranch className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Family Tree</span>
-            </TabsTrigger>
-
-            <TabsTrigger value="playlists" className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl border-2 border-transparent data-[state=active]:border-orange-500 data-[state=active]:bg-gradient-to-br data-[state=active]:from-orange-50 data-[state=active]:to-red-50 bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-                <ListMusic className="w-7 h-7 text-white" />
-              </div>
-              <span className="text-sm font-semibold text-slate-700">Playlists</span>
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="video-call">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <VideoCallLauncher />
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+          <button
+            onClick={() => navigate('/FamilyVideoCall')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center shadow-lg">
+              <Video className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Video Call</span>
+          </button>
 
-          <TabsContent value="chat">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <FamilyChatRoom />
+          <button
+            onClick={() => navigate('/FamilyChatRoom')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+              <MessagesSquare className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Family Chat</span>
+          </button>
 
-          <TabsContent value="overview">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Well-being Overview</h2>
-              <WellbeingOverview />
+          <button
+            onClick={() => navigate('/FamilyOverview')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-500 to-rose-500 flex items-center justify-center shadow-lg">
+              <Heart className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Overview</span>
+          </button>
 
-          <TabsContent value="notifications">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Notifications & Alerts</h2>
-              <NotificationCenter />
+          <button
+            onClick={() => navigate('/FamilyNotifications')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center shadow-lg">
+              <Bell className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Alerts</span>
+          </button>
 
-          <TabsContent value="smart-alerts">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <SmartAlertSystem />
+          <button
+            onClick={() => navigate('/FamilyAIInsights')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center shadow-lg">
+              <Brain className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">AI Insights</span>
+          </button>
 
-          <TabsContent value="photo-album">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <SharedPhotoAlbum />
+          <button
+            onClick={() => navigate('/FamilyPhotoAlbum')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-purple-500 to-violet-500 flex items-center justify-center shadow-lg">
+              <Image className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Photos</span>
+          </button>
 
-          <TabsContent value="timeline">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <MemoryTimelineBuilder />
+          <button
+            onClick={() => navigate('/FamilyTimeline')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center shadow-lg">
+              <Clock className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Timeline</span>
+          </button>
 
-          <TabsContent value="remote">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <RemoteTriggerPanel />
+          <button
+            onClick={() => navigate('/FamilyRemoteTrigger')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-green-500 to-emerald-500 flex items-center justify-center shadow-lg">
+              <Send className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Send Now</span>
+          </button>
 
-          <TabsContent value="calendar">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Family Calendar</h2>
-              <CalendarManager />
+          <button
+            onClick={() => navigate('/FamilyCalendar')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-indigo-500 to-blue-500 flex items-center justify-center shadow-lg">
+              <Calendar className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Calendar</span>
+          </button>
 
-          <TabsContent value="album">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Family Photo & Video Album</h2>
-              <MediaAlbum />
+          <button
+            onClick={() => navigate('/FamilyMediaAlbum')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-fuchsia-500 to-pink-500 flex items-center justify-center shadow-lg">
+              <Image className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Album</span>
+          </button>
 
-          <TabsContent value="messages">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Family Messages</h2>
-              <MessageManager />
+          <button
+            onClick={() => navigate('/FamilyMessages')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-teal-500 to-cyan-500 flex items-center justify-center shadow-lg">
+              <MessageSquare className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Messages</span>
+          </button>
 
-          <TabsContent value="music">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Music Library</h2>
-              <MusicLibrary />
+          <button
+            onClick={() => navigate('/FamilyMusic')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-red-500 to-pink-500 flex items-center justify-center shadow-lg">
+              <Music className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Music</span>
+          </button>
 
-          <TabsContent value="stories">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Story Collection</h2>
-              <StoryLibrary />
+          <button
+            onClick={() => navigate('/FamilyStories')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-yellow-500 to-amber-500 flex items-center justify-center shadow-lg">
+              <BookOpen className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Stories</span>
+          </button>
 
-          <TabsContent value="contacts">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Emergency Contacts</h2>
-              <EmergencyContactsManager />
+          <button
+            onClick={() => navigate('/FamilyContacts')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-slate-500 to-gray-500 flex items-center justify-center shadow-lg">
+              <Phone className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Contacts</span>
+          </button>
 
-          <TabsContent value="family-tree">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Family Tree</h2>
-              <FamilyTreeBuilder />
+          <button
+            onClick={() => navigate('/FamilyTreePage')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-emerald-500 to-green-500 flex items-center justify-center shadow-lg">
+              <GitBranch className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
+            <span className="text-sm font-semibold text-slate-700">Family Tree</span>
+          </button>
 
-          <TabsContent value="playlists">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6">
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Music Playlists</h2>
-              <PlaylistManager />
+          <button
+            onClick={() => navigate('/FamilyPlaylists')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-white hover:bg-slate-50 shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
+              <ListMusic className="w-7 h-7 text-white" />
             </div>
-          </TabsContent>
-        </Tabs>
+            <span className="text-sm font-semibold text-slate-700">Playlists</span>
+          </button>
+        </div>
       </div>
     </div>
   );
