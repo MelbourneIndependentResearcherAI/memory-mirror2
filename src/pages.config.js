@@ -81,6 +81,29 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import InsightsAnalytics from './pages/InsightsAnalytics';
+import PhotoLibrary from './pages/PhotoLibrary';
+import MusicPlayer from './pages/MusicPlayer';
+import CareJournalPage from './pages/CareJournalPage';
+import NightWatchPage from './pages/NightWatchPage';
+import SmartHome from './pages/SmartHome';
+import MoodAutomations from './pages/MoodAutomations';
+import ActivityReminders from './pages/ActivityReminders';
+import VoiceCloning from './pages/VoiceCloning';
+import AICareInsights from './pages/AICareInsights';
+import FamilyTree from './pages/FamilyTree';
+import ContentLibrary from './pages/ContentLibrary';
+import AuditTrail from './pages/AuditTrail';
+import FakeBankSettings from './pages/FakeBankSettings';
+import EmergencyAlerts from './pages/EmergencyAlerts';
+import PatientRegistration from './pages/PatientRegistration';
+import ActivityReports from './pages/ActivityReports';
+import OfflineContent from './pages/OfflineContent';
+import OfflineTest from './pages/OfflineTest';
+import CareTeam from './pages/CareTeam';
+import SharedJournal from './pages/SharedJournal';
+import TeamNotifications from './pages/TeamNotifications';
+import AIAgentTeam from './pages/AIAgentTeam';
 import __Layout from './Layout.jsx';
 
 
@@ -119,6 +142,29 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "security": security,
+    "InsightsAnalytics": InsightsAnalytics,
+    "PhotoLibrary": PhotoLibrary,
+    "MusicPlayer": MusicPlayer,
+    "CareJournalPage": CareJournalPage,
+    "NightWatchPage": NightWatchPage,
+    "SmartHome": SmartHome,
+    "MoodAutomations": MoodAutomations,
+    "ActivityReminders": ActivityReminders,
+    "VoiceCloning": VoiceCloning,
+    "AICareInsights": AICareInsights,
+    "FamilyTree": FamilyTree,
+    "ContentLibrary": ContentLibrary,
+    "AuditTrail": AuditTrail,
+    "FakeBankSettings": FakeBankSettings,
+    "EmergencyAlerts": EmergencyAlerts,
+    "PatientRegistration": PatientRegistration,
+    "ActivityReports": ActivityReports,
+    "OfflineContent": OfflineContent,
+    "OfflineTest": OfflineTest,
+    "CareTeam": CareTeam,
+    "SharedJournal": SharedJournal,
+    "TeamNotifications": TeamNotifications,
+    "AIAgentTeam": AIAgentTeam,
 }
 
 export const pagesConfig = {

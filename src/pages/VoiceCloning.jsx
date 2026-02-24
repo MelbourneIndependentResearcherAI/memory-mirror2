@@ -1,25 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
-import AlwaysOnVoice from '@/components/memory-mirror/AlwaysOnVoice';
+import VoiceCloningManager from '@/components/caregiver/VoiceCloningManager';
 
-export default function VoiceSetupPage() {
+export default function VoiceCloningPage() {
   const navigate = useNavigate();
-  const [userProfile, setUserProfile] = useState(null);
-
-  useEffect(() => {
-    const loadProfile = async () => {
-      try {
-        const profiles = await base44.entities.UserProfile.list();
-        if (profiles.length > 0) setUserProfile(profiles[0]);
-      } catch (error) {
-        console.error('Profile load failed:', error);
-      }
-    };
-    loadProfile();
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">
@@ -32,7 +17,7 @@ export default function VoiceSetupPage() {
           Back
         </button>
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-          <AlwaysOnVoice userProfile={userProfile} onClose={() => navigate(-1)} />
+          <VoiceCloningManager />
         </div>
       </div>
     </div>

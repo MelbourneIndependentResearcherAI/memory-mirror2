@@ -2,10 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
-import AlwaysOnVoice from '@/components/memory-mirror/AlwaysOnVoice';
+import SharedJournalComponent from '@/components/caregiver/SharedJournal';
 
-export default function VoiceSetupPage() {
+export default function SharedJournalPage() {
   const navigate = useNavigate();
   const [userProfile, setUserProfile] = useState(null);
 
@@ -32,7 +31,7 @@ export default function VoiceSetupPage() {
           Back
         </button>
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-          <AlwaysOnVoice userProfile={userProfile} onClose={() => navigate(-1)} />
+          <SharedJournalComponent patientProfileId={userProfile?.id} />
         </div>
       </div>
     </div>
