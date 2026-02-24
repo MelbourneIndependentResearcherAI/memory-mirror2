@@ -131,6 +131,8 @@ import VoiceCommands from './pages/VoiceCommands';
 import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ConversationAnalytics from './pages/ConversationAnalytics';
+import OfflineModeDashboard from './pages/OfflineModeDashboard';
+import OfflineCapabilities from './pages/OfflineCapabilities';
 import __Layout from './Layout.jsx';
 
 
@@ -219,6 +221,8 @@ export const PAGES = {
     "VoiceUsageAnalytics": VoiceUsageAnalytics,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ConversationAnalytics": ConversationAnalytics,
+    "OfflineModeDashboard": OfflineModeDashboard,
+    "OfflineCapabilities": OfflineCapabilities,
 }
 
 export const pagesConfig = {
