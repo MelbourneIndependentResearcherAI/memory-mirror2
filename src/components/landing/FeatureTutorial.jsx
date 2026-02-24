@@ -3,6 +3,13 @@ import { ChevronRight, MessageCircle, Phone, Shield, Moon, Volume2, CreditCard, 
 
 export default function FeatureTutorial() {
   const [expandedFeature, setExpandedFeature] = useState(null);
+  const [isDismissed, setIsDismissed] = useState(() => {
+    return localStorage.getItem('feature_tutorial_dismissed') === 'true';
+  });
+
+  if (isDismissed) {
+    return null;
+  }
 
   const features = [
     {
@@ -79,15 +86,26 @@ export default function FeatureTutorial() {
     }
   ];
 
+  const handleDismiss = () => {
+    localStorage.setItem('feature_tutorial_dismissed', 'true');
+    setIsDismissed(true);
+  };
+
   return (
     <div className="max-w-5xl mx-auto px-4 py-16 md:py-20">
       <div className="text-center mb-12 md:mb-16">
         <h2 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
           Complete Feature Tour
         </h2>
-        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400">
+        <p className="text-lg md:text-xl text-slate-600 dark:text-slate-400 mb-4">
           Explore all the features that make Memory Mirror your companion
         </p>
+        <button
+          onClick={handleDismiss}
+          className="text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 underline"
+        >
+          Hide this section
+        </button>
       </div>
 
       <div className="grid grid-cols-1 gap-4">

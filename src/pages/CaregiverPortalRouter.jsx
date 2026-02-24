@@ -74,6 +74,11 @@ function CaregiverPortalHome() {
   const [badDayActivated, setBadDayActivated] = React.useState(false);
 
   const handleCardClick = async (card) => {
+    // Prevent navigation for card 5 (Chat History - coming soon)
+    if (card.id === 5) {
+      return;
+    }
+
     if (card.id === 12) {
       setBadDayActivated(true);
       try {
@@ -92,8 +97,6 @@ function CaregiverPortalHome() {
     
     if (card.path) {
       navigate(card.path);
-    } else {
-      alert(`${card.title} - Coming soon!`);
     }
   };
 

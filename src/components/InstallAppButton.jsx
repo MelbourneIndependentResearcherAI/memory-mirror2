@@ -59,39 +59,6 @@ export default function InstallAppButton() {
     setShowPrompt(false);
   };
 
-  // Don't show if already installed
-  if (isInstalled) {
-    return (
-      <div className="flex items-center gap-2 text-green-600 dark:text-green-400 text-sm font-medium">
-        <Check className="w-5 h-5" />
-        <span>App Installed</span>
-      </div>
-    );
-  }
-
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-      >
-        <Button
-          onClick={handleInstallClick}
-          size="lg"
-          className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white shadow-xl hover:shadow-2xl transition-all px-8 py-6 text-lg font-bold min-h-[56px] rounded-xl"
-        >
-          <Download className="w-6 h-6 mr-3" />
-          Download App to Home Screen
-          <Smartphone className="w-5 h-5 ml-3" />
-        </Button>
-        
-        {showPrompt && (
-          <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 text-center">
-            Install for offline access and quick launch
-          </p>
-        )}
-      </motion.div>
-    </AnimatePresence>
-  );
+  // Don't show anything - no install button needed
+  return null;
 }
