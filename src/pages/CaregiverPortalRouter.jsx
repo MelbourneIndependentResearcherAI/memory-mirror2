@@ -176,43 +176,18 @@ export default function CaregiverPortalRouter() {
   const location = useLocation();
   const [userProfile, setUserProfile] = React.useState(null);
   const [showOfflineOptions, setShowOfflineOptions] = React.useState(false);
-  const [isAuthenticated, setIsAuthenticated] = React.useState(null);
 
   React.useEffect(() => {
-    const checkAuth = async () => {
+    const loadProfile = async () => {
       try {
-        const authenticated = await base44.auth.isAuthenticated();
-        setIsAuthenticated(authenticated);
-        
-        if (!authenticated) {
-          // Redirect to landing page
-          navigate(createPageUrl('Landing'));
-          return;
-        }
-
-        // Load profile if authenticated
         const profiles = await base44.entities.UserProfile.list();
         if (profiles.length > 0) setUserProfile(profiles[0]);
       } catch (error) {
-        console.error('Auth check failed:', error);
-        setIsAuthenticated(false);
-        navigate(createPageUrl('Landing'));
+        console.error('Profile load failed:', error);
       }
     };
-    checkAuth();
-  }, [navigate]);
-
-  // Show loading while checking authentication
-  if (isAuthenticated === null) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-slate-600 dark:text-slate-400">Loading...</p>
-        </div>
-      </div>
-    );
-  }
+    loadProfile();
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">

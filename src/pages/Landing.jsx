@@ -25,39 +25,14 @@ import FeatureTutorial from '@/components/landing/FeatureTutorial';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    const checkAuth = async () => {
-      try {
-        const authenticated = await base44.auth.isAuthenticated();
-        setIsAuthenticated(authenticated);
-      } catch {
-        setIsAuthenticated(false);
-      }
-    };
-    checkAuth();
-  }, []);
-
   const handleGetStarted = () => {
-    if (isAuthenticated) {
-      navigate(createPageUrl('Home'));
-    } else {
-      base44.auth.redirectToLogin(createPageUrl('Home'));
-    }
-  };
-
-  const handleSignIn = () => {
-    base44.auth.redirectToLogin(createPageUrl('Home'));
+    navigate(createPageUrl('Home'));
   };
 
   const handleBankingClick = () => {
-    if (isAuthenticated) {
-      navigate(createPageUrl('MyBank'));
-    } else {
-      base44.auth.redirectToLogin(createPageUrl('MyBank'));
-    }
+    navigate(createPageUrl('MyBank'));
   };
 
   return (
@@ -72,10 +47,10 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
               className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
             >
-              👨‍⚕️ Caregiver Login
+              👨‍⚕️ Caregiver Portal
             </Button>
           </div>
         </div>
@@ -141,7 +116,7 @@ export default function Landing() {
 
             {/* Caregiver Access */}
             <button
-              onClick={() => base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
               className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
@@ -353,28 +328,13 @@ export default function Landing() {
             <div className="flex flex-col gap-4 items-center">
               <InstallAppButton />
               
-              {!isAuthenticated ? (
-                <div className="w-full space-y-3">
-                  <Button 
-                    size="lg" 
-                    className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
-                    onClick={handleSignIn}
-                  >
-                    Sign In / Create Free Account →
-                  </Button>
-                  <p className="text-sm text-slate-500 dark:text-slate-400 text-center">
-                    No credit card required • 100% free during beta
-                  </p>
-                </div>
-              ) : (
-                <Button 
-                  size="lg" 
-                  className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
-                  onClick={handleGetStarted}
-                >
-                  Go to Memory Mirror →
-                </Button>
-              )}
+              <Button 
+                size="lg" 
+                className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+                onClick={handleGetStarted}
+              >
+                Go to Memory Mirror →
+              </Button>
             </div>
           </div>
         </div>
