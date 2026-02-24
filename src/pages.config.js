@@ -121,6 +121,9 @@ import FamilyContacts from './pages/FamilyContacts';
 import FamilyTreePage from './pages/FamilyTreePage';
 import FamilyPlaylists from './pages/FamilyPlaylists';
 import CaregiverDashboard from './pages/CaregiverDashboard';
+import TVDashboard from './pages/TVDashboard';
+import TVPhotoGallery from './pages/TVPhotoGallery';
+import TVMusicTherapy from './pages/TVMusicTherapy';
 import __Layout from './Layout.jsx';
 
 
@@ -199,6 +202,9 @@ export const PAGES = {
     "FamilyTreePage": FamilyTreePage,
     "FamilyPlaylists": FamilyPlaylists,
     "CaregiverDashboard": CaregiverDashboard,
+    "TVDashboard": TVDashboard,
+    "TVPhotoGallery": TVPhotoGallery,
+    "TVMusicTherapy": TVMusicTherapy,
 }
 
 export const pagesConfig = {
