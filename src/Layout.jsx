@@ -27,7 +27,6 @@ import { registerServiceWorker, requestPersistentStorage } from '@/components/ut
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { initGlobalErrorHandler } from '@/components/utils/errorLogger';
-import ComplianceWrapper from '@/components/compliance/ComplianceWrapper';
 import AccessibilityWrapper from '@/components/accessibility/AccessibilityWrapper';
 import AndroidWebViewOptimizer from '@/components/AndroidWebViewOptimizer';
 
@@ -94,9 +93,8 @@ export default function Layout({ children, currentPageName }) {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <ComplianceWrapper>
-          <AccessibilityWrapper>
-            <LanguageProvider>
+        <AccessibilityWrapper>
+          <LanguageProvider>
               <AppStateProvider>
                 <LockModeProvider>
                   <ErrorBoundary>
@@ -141,8 +139,7 @@ export default function Layout({ children, currentPageName }) {
               </AppStateProvider>
             </LanguageProvider>
           </AccessibilityWrapper>
-          </ComplianceWrapper>
-          </ThemeProvider>
-          </QueryClientProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
           );
           }
