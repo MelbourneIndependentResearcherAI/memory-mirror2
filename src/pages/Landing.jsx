@@ -52,6 +52,14 @@ export default function Landing() {
     base44.auth.redirectToLogin(createPageUrl('ChatMode'));
   };
 
+  const handleBankingClick = () => {
+    if (isAuthenticated) {
+      navigate(createPageUrl('MyBank'));
+    } else {
+      base44.auth.redirectToLogin(createPageUrl('MyBank'));
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
       {/* Top Navigation Bar */}
@@ -257,7 +265,7 @@ export default function Landing() {
             </button>
 
             {/* Fake Banking Card */}
-            <button onClick={handleGetStarted} className="w-full group">
+            <button onClick={handleBankingClick} className="w-full group">
               <div className="bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -325,7 +333,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleGetStarted} className="w-full group">
+              <button onClick={handleBankingClick} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-green-200/60 dark:border-green-700/40 hover:border-green-300 dark:hover:border-green-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">💳</div>
