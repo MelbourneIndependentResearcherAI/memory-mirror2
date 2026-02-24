@@ -50,10 +50,8 @@
 import AccessibilityStatement from './pages/AccessibilityStatement';
 import AdminUserTracking from './pages/AdminUserTracking';
 import CarePlans from './pages/CarePlans';
-import CaregiverLogin from './pages/CaregiverLogin';
 import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
-import CaregiverSignup from './pages/CaregiverSignup';
 import ChatMode from './pages/ChatMode';
 import FAQ from './pages/FAQ';
 import FamilyConnect from './pages/FamilyConnect';
@@ -88,10 +86,8 @@ export const PAGES = {
     "AccessibilityStatement": AccessibilityStatement,
     "AdminUserTracking": AdminUserTracking,
     "CarePlans": CarePlans,
-    "CaregiverLogin": CaregiverLogin,
     "CaregiverPortal": CaregiverPortal,
     "CaregiverPortalRouter": CaregiverPortalRouter,
-    "CaregiverSignup": CaregiverSignup,
     "ChatMode": ChatMode,
     "FAQ": FAQ,
     "FamilyConnect": FamilyConnect,
