@@ -7,11 +7,9 @@ export default function VoiceAlwaysOnDashboardPage() {
 
   const voiceOptions = [
     { id: 1, title: 'Always-On Voice', icon: '🎤', description: 'Activate continuous voice listening', path: '/VoiceSetup', background: '#1E3A8A' },
-    { id: 2, title: 'Voice Commands', icon: '🗣️', description: 'Set up and manage voice commands', path: '/VoiceSetup', background: '#5B21B6' },
-    { id: 3, title: 'Audio Library', icon: '🎵', description: 'Download audio for offline use', path: '/OfflineAudio', background: '#0E7490' },
-    { id: 4, title: 'Voice Profiles', icon: '👤', description: 'Manage voice recognition profiles', path: '/VoiceCloning', background: '#7C2D12' },
-    { id: 5, title: 'Usage Analytics', icon: '📊', description: 'Track voice interactions and patterns', path: '/InsightsAnalytics', background: '#164E63' },
-    { id: 6, title: 'Settings & Preferences', icon: '⚙️', description: 'Configure voice system settings', path: '/VoiceSetup', background: '#1F2937' }
+    { id: 2, title: 'Voice Commands', icon: '🗣️', description: 'Set up and manage voice commands', path: '/VoiceCommands', background: '#5B21B6' },
+    { id: 3, title: 'Voice Profiles', icon: '👤', description: 'Manage voice cloning and profiles', path: '/VoiceCloning', background: '#7C2D12' },
+    { id: 4, title: 'Usage Analytics', icon: '📊', description: 'Track voice interactions and patterns', path: '/VoiceUsageAnalytics', background: '#164E63' }
   ];
 
   return (
@@ -35,7 +33,7 @@ export default function VoiceAlwaysOnDashboardPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {voiceOptions.map(option => (
             <button
               key={option.id}

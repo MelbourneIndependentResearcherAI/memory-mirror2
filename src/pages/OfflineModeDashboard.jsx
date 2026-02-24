@@ -9,9 +9,7 @@ export default function OfflineModeDashboardPage() {
     { id: 1, title: 'Audio Library', icon: '🎵', description: 'Download audio for offline access', path: '/OfflineAudio', background: '#1E40AF' },
     { id: 2, title: 'Content Manager', icon: '📦', description: 'Manage offline content and media', path: '/OfflineContent', background: '#7C2D12' },
     { id: 3, title: 'Sync & Backup', icon: '🔄', description: 'Sync data and backup to cloud', path: '/SyncBackup', background: '#0E7490' },
-    { id: 4, title: 'Offline Status', icon: '📊', description: 'Monitor offline capabilities', path: '/OfflineTest', background: '#6D28D9' },
-    { id: 5, title: 'Storage Info', icon: '💾', description: 'Check storage usage and limits', path: '/OfflineContent', background: '#059669' },
-    { id: 6, title: 'Health Check', icon: '⚕️', description: 'Verify offline system health', path: '/OfflineTest', background: '#DC2626' }
+    { id: 4, title: 'Offline Capabilities', icon: '⚙️', description: 'Check features and storage usage', path: '/OfflineCapabilities', background: '#059669' }
   ];
 
   return (
@@ -35,7 +33,7 @@ export default function OfflineModeDashboardPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {offlineOptions.map(option => (
             <button
               key={option.id}

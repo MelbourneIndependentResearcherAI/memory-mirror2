@@ -7,11 +7,9 @@ export default function ChatCompanionDashboardPage() {
 
   const chatOptions = [
     { id: 1, title: 'Chat Mode', icon: '💬', description: 'Start conversation with AI companion', path: '/ChatMode', background: '#1E40AF' },
-    { id: 2, title: 'Personal Care', icon: '❤️', description: 'Personalized companionship features', path: '/ChatMode', background: '#BE185D' },
-    { id: 3, title: 'Music & Stories', icon: '🎵', description: 'Play music and listen to stories', path: '/MusicPlayer', background: '#6D28D9' },
-    { id: 4, title: 'Memory Recall', icon: '📸', description: 'View and discuss family memories', path: '/PhotoLibrary', background: '#0891B2' },
-    { id: 5, title: 'Memory Games', icon: '🎮', description: 'Interactive cognitive games', path: '/MemoryGames', background: '#D97706' },
-    { id: 6, title: 'Conversation Analytics', icon: '📊', description: 'Track emotional patterns and insights', path: '/InsightsAnalytics', background: '#059669' }
+    { id: 2, title: 'Conversation Analytics', icon: '📊', description: 'Track emotional patterns and insights', path: '/ConversationAnalytics', background: '#059669' },
+    { id: 3, title: 'Memory Recall', icon: '📸', description: 'View and discuss family memories', path: '/PhotoLibrary', background: '#0891B2' },
+    { id: 4, title: 'Memory Games', icon: '🎮', description: 'Interactive cognitive games', path: '/MemoryGames', background: '#D97706' }
   ];
 
   return (
@@ -35,7 +33,7 @@ export default function ChatCompanionDashboardPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {chatOptions.map(option => (
             <button
               key={option.id}
