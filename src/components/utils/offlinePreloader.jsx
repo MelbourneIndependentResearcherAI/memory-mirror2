@@ -860,16 +860,23 @@ if (typeof window !== 'undefined') {
   // Check if in Android WebView
   const isAndroidWebView = /Android/.test(navigator.userAgent) && /WebView/.test(navigator.userAgent);
   
-  setTimeout(() => {
-    preloadEssentialData().then((result) => {
-      // Notify native Android code when preload completes
-      if (isAndroidWebView && window.AndroidInterface?.onOfflinePreloadComplete) {
-        window.AndroidInterface.onOfflinePreloadComplete(JSON.stringify(result));
-      }
-    }).catch(err => 
-      console.log('Preload warning:', err.message)
-    );
-  }, 2000);
+  // Only preload once per session to improve load times
+  const PRELOAD_SESSION_KEY = 'offline_preload_done';
+  const sessionPreloaded = sessionStorage.getItem(PRELOAD_SESSION_KEY);
+  
+  if (!sessionPreloaded) {
+    setTimeout(() => {
+      preloadEssentialData().then((result) => {
+        sessionStorage.setItem(PRELOAD_SESSION_KEY, 'true');
+        // Notify native Android code when preload completes
+        if (isAndroidWebView && window.AndroidInterface?.onOfflinePreloadComplete) {
+          window.AndroidInterface.onOfflinePreloadComplete(JSON.stringify(result));
+        }
+      }).catch(err => 
+        console.log('Preload warning:', err.message)
+      );
+    }, 3000); // Delayed to not block initial render
+  }
 
   // Re-preload when back online
   window.addEventListener('online', () => {

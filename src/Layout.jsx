@@ -51,17 +51,30 @@ if (typeof window !== 'undefined') {
   // Request persistent storage for offline data
   requestPersistentStorage();
   
-  // Cache remote data when online
-  if (navigator.onLine) {
-    offlineSyncManager.cacheRemoteData().catch(e => console.log('Cache preload:', e.message));
+  // Cache remote data only if not recently done
+  const CACHE_KEY = 'last_cache_time';
+  const lastCache = localStorage.getItem(CACHE_KEY);
+  const CACHE_INTERVAL = 10 * 60 * 1000; // 10 minutes
+  
+  if (navigator.onLine && (!lastCache || Date.now() - parseInt(lastCache) > CACHE_INTERVAL)) {
+    offlineSyncManager.cacheRemoteData().then(() => {
+      localStorage.setItem(CACHE_KEY, Date.now().toString());
+    }).catch(e => console.log('Cache preload:', e.message));
   }
   
-  // Preload essential data for 100% offline mode
-  import('@/components/utils/offlinePreloader').then(module => {
-    module.default().catch(e => 
-      console.log('Preload warning:', e.message || 'Offline preload skipped')
-    );
-  });
+  // Preload essential data only once per session
+  const PRELOAD_KEY = 'offline_preload_session';
+  const lastPreload = sessionStorage.getItem(PRELOAD_KEY);
+  const ONE_HOUR = 60 * 60 * 1000;
+  
+  if (!lastPreload || Date.now() - parseInt(lastPreload) > ONE_HOUR) {
+    import('@/components/utils/offlinePreloader').then(module => {
+      module.default().catch(e => 
+        console.log('Preload warning:', e.message || 'Offline preload skipped')
+      );
+      sessionStorage.setItem(PRELOAD_KEY, Date.now().toString());
+    });
+  }
 }
 
 // Optimized query configuration for fast, reliable data fetching
