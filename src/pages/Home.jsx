@@ -10,6 +10,7 @@ import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflection
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSelector from '@/components/LanguageSelector';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
@@ -84,6 +85,12 @@ export default function Home() {
               {getEraLabel()}
             </div>
           </div>
+        </div>
+
+        {/* Language Selector */}
+        <div className="p-4 mb-2">
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300 mb-2">{t('chat')} Language:</label>
+          <LanguageSelector />
         </div>
 
         {/* Quick Access Buttons */}
