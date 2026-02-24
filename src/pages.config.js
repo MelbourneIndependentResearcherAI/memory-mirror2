@@ -120,6 +120,7 @@ import FamilyStories from './pages/FamilyStories';
 import FamilyContacts from './pages/FamilyContacts';
 import FamilyTreePage from './pages/FamilyTreePage';
 import FamilyPlaylists from './pages/FamilyPlaylists';
+import CaregiverDashboard from './pages/CaregiverDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -197,6 +198,7 @@ export const PAGES = {
     "FamilyContacts": FamilyContacts,
     "FamilyTreePage": FamilyTreePage,
     "FamilyPlaylists": FamilyPlaylists,
+    "CaregiverDashboard": CaregiverDashboard,
 }
 
 export const pagesConfig = {
