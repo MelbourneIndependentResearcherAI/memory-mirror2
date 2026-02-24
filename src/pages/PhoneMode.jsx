@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import PhoneInterface from '@/components/memory-mirror/PhoneInterface';
 import VoiceCommandListener from '@/components/voice/VoiceCommandListener';
-import ComplianceWrapper from '@/components/compliance/ComplianceWrapper';
 import { useLockMode } from '@/components/LockModeManager';
 import UnlockModal from '@/components/UnlockModal';
 import { Button } from '@/components/ui/button';
@@ -49,9 +48,8 @@ export default function PhoneMode() {
   };
 
   return (
-    <ComplianceWrapper>
-      <div className="h-screen flex flex-col">
-        {/* Lock/Unlock Button - Always visible for caregivers */}
+    <div className="h-screen flex flex-col">
+      {/* Lock/Unlock Button - Always visible for caregivers */}
       <div className="absolute top-4 right-4 z-50">
         <Button
           onClick={handleLockToggle}
@@ -76,13 +74,12 @@ export default function PhoneMode() {
       <PhoneInterface />
       <VoiceCommandListener currentMode="phone" />
 
-        <UnlockModal
-          isOpen={showUnlockModal}
-          onUnlock={handleUnlock}
-          onCancel={() => {}}
-          modeName="Phone Mode"
-        />
-      </div>
-    </ComplianceWrapper>
+      <UnlockModal
+        isOpen={showUnlockModal}
+        onUnlock={handleUnlock}
+        onCancel={() => {}}
+        modeName="Phone Mode"
+      />
+    </div>
   );
 }
