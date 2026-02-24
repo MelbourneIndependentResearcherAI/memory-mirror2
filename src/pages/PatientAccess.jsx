@@ -31,7 +31,7 @@ export default function PatientAccess() {
       console.log('Session tracking skipped:', error.message);
     }
     
-    navigate('/');
+    navigate('/ChatMode');
   };
 
   const handlePinAccess = async () => {
@@ -62,7 +62,7 @@ export default function PatientAccess() {
       }
       
       toast.success(`Welcome back, ${patient.patient_name}!`);
-      navigate('/');
+      navigate('/ChatMode');
     } else {
       toast.error('Invalid PIN. Try again or use Instant Access.');
     }
@@ -100,7 +100,7 @@ export default function PatientAccess() {
       }
       
       toast.success(`Hello ${patient.patient_name}!`);
-      navigate('/');
+      navigate('/ChatMode');
     } else {
       toast.error('Name not recognized. Try Instant Access.');
     }
