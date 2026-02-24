@@ -27,7 +27,17 @@ const STORES = {
   syncMeta: 'syncMeta',
   userprofile: 'userProfile',
   safememoryzones: 'safeZones',
+  safememoryzone: 'safeZones',
+  memory: 'memories',
+  story: 'stories',
+  playlist: 'playlists',
+  reminder: 'reminders',
+  reminders: 'reminders',
   familymedia: 'familyMedia',
+  familymessage: 'familyEvents',
+  smartdevice: 'smartDevices',
+  voiceprofile: 'voiceProfiles',
+  voiceProfiles: 'voiceProfiles',
   cognitiveAssessment: 'cognitiveassessment'
 };
 
@@ -48,8 +58,11 @@ export async function initOfflineStorage() {
     request.onupgradeneeded = (event) => {
       const db = event.target.result;
 
+      // Create unique store names
+      const uniqueStores = [...new Set(Object.values(STORES))];
+
       // Create all object stores if they don't exist
-      Object.values(STORES).forEach((storeName) => {
+      uniqueStores.forEach((storeName) => {
         if (!db.objectStoreNames.contains(storeName)) {
           if (storeName === 'messages') {
             const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });

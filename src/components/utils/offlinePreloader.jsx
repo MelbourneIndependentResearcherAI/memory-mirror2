@@ -6,17 +6,10 @@ import { isOnline } from './offlineManager';
 // Essential data categories for offline mode
 const ESSENTIAL_CATEGORIES = [
   'UserProfile',
-  'SafeMemoryZone', 
-  'Memory',
   'Music',
-  'Story',
-  'Playlist',
-  'VoiceProfile',
-  'Reminder',
   'CognitiveAssessment',
   'FamilyMedia',
-  'FamilyMessage',
-  'SmartDevice'
+  'VoiceProfile'
 ];
 
 // Pre-loaded Stories Library - 20 comforting stories for offline access
@@ -810,12 +803,20 @@ export async function preloadEssentialData() {
         const data = await base44.entities[entityName].list();
         const storeName = entityName.toLowerCase();
         
+        let savedCount = 0;
         for (const item of data) {
-          await saveToStore(storeName, item);
+          try {
+            await saveToStore(storeName, item);
+            savedCount++;
+          } catch (err) {
+            console.warn(`Failed to save ${entityName} item:`, err.message);
+          }
         }
         
-        results.entities[entityName] = data.length;
-        console.log(`✅ Cached ${data.length} ${entityName} records`);
+        results.entities[entityName] = savedCount;
+        if (savedCount > 0) {
+          console.log(`✅ Cached ${savedCount} ${entityName} records`);
+        }
       } catch (error) {
         console.log(`⚠️ Skipping ${entityName}:`, error.message);
         results.errors.push(`${entityName}: ${error.message}`);
