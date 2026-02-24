@@ -247,19 +247,11 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           content: message 
         }]);
         
-        // Speak the proactive message and auto-start listening when done
+        // Speak the proactive message BUT DO NOT auto-start listening for proactive check-ins
+        // Only auto-listen after conversational replies (handled elsewhere)
         speakResponse(message, { 
           state: 'warm', 
-          anxietyLevel: 0,
-          onEnd: () => {
-            // Auto-start voice listening after proactive message finishes
-            if (isMountedRef.current && !isLoading) {
-              setTimeout(() => {
-                console.log('🎤 Auto-starting voice after proactive check-in');
-                startVoiceInput();
-              }, 500);
-            }
-          }
+          anxietyLevel: 0
         });
         
         // Log proactive interaction
@@ -305,11 +297,12 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       
       proactiveIntervalRef.current = setTimeout(() => {
         if (isMountedRef.current) {
-          // Only send if user hasn't interacted recently (last 4 minutes)
+          // FIXED: Only send if NO conversation is happening (last 10 minutes)
           const timeSinceLastMessage = Date.now() - lastMessageTimeRef.current;
           const timeSinceLastProactive = Date.now() - lastProactiveCheckRef.current;
           
-          if (timeSinceLastMessage > 4 * 60 * 1000 && timeSinceLastProactive > 4 * 60 * 1000) {
+          // Only trigger proactive check-in if there's been no activity for 10+ minutes
+          if (timeSinceLastMessage > 10 * 60 * 1000 && timeSinceLastProactive > 10 * 60 * 1000) {
             // Mood-aware check-ins
             const anxietyLevelCheck = anxietyState.level;
             if (anxietyLevelCheck >= 5) {
@@ -814,11 +807,11 @@ If appropriate, gently reference their memories or suggest looking at photos tog
                            detectedAnxiety >= 3 ? 'warm' :
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
-      // Speak the response - CRITICAL: Ensure voice output
+      // CRITICAL FIX: Speak the response AND immediately start listening after it finishes
       if (assistantMessage && isMountedRef.current) {
         console.log('🔊 Speaking response with state:', emotionalState);
         try {
-          // Use native Web Speech API directly as failsafe
+          // Use native Web Speech API with auto-listen callback
           const utterance = new SpeechSynthesisUtterance(assistantMessage);
           utterance.rate = 0.85;
           utterance.pitch = 1.0;
@@ -830,9 +823,17 @@ If appropriate, gently reference their memories or suggest looking at photos tog
             utterance.voice = voices[0];
           }
           
+          // CRITICAL FIX #1: Auto-start listening immediately after AI finishes speaking
+          utterance.onend = () => {
+            if (isMountedRef.current && !isLoading) {
+              console.log('🎤 HANDS-FREE: Auto-starting voice after AI response');
+              setTimeout(() => startVoiceInput(), 800); // Short delay for natural flow
+            }
+          };
+          
           window.speechSynthesis.cancel(); // Clear any previous speech
           window.speechSynthesis.speak(utterance);
-          console.log('✅ Speech synthesis started');
+          console.log('✅ Speech synthesis started with auto-listen callback');
         } catch (voiceError) {
           console.error('Voice synthesis error:', voiceError);
         }
@@ -927,20 +928,21 @@ If appropriate, gently reference their memories or suggest looking at photos tog
 
   const requestMicrophonePermission = useCallback(async () => {
     try {
-      // Request microphone with MAXIMUM sensitivity settings for soft voices
+      // CRITICAL FIX #3: Request microphone with MAXIMUM sensitivity for soft/quiet voices
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
-          noiseSuppression: true,
-          autoGainControl: true,  // CRITICAL: Boosts soft/quiet voices
+          noiseSuppression: false,    // DISABLED to capture soft voices better
+          autoGainControl: true,       // CRITICAL: Boosts quiet speech significantly
           channelCount: 1,
-          sampleRate: 48000,      // Higher sample rate for better quality
+          sampleRate: 48000,           // High sample rate for quality
           sampleSize: 16,
-          volume: 1.0
+          volume: 1.0,
+          latency: 0                   // Minimize delay for responsiveness
         }
       });
       
-      console.log('✅ Microphone access granted with enhanced settings for soft voice detection');
+      console.log('✅ Microphone access granted with MAXIMUM sensitivity for soft voice detection');
       
       // Close the stream - we just wanted permission
       stream.getTracks().forEach(track => track.stop());
@@ -1024,12 +1026,12 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           
           console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
           
-          // Only send when we have a FINAL result
+          // CRITICAL FIX #2: Send message immediately when final result arrives
           if (lastResult.isFinal) {
             const finalSpeech = transcript.trim();
             
             if (finalSpeech.length > 0 && isMountedRef.current) {
-              console.log('✅ FINAL SPEECH:', finalSpeech);
+              console.log('✅ FINAL SPEECH - INSTANT REPLY:', finalSpeech);
               
               // Stop listening
               if (recognitionRef.current) {
@@ -1042,7 +1044,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
               
               setIsListening(false);
               
-              // Send the message
+              // CRITICAL: Send message immediately for continuous conversation
               sendMessage(finalSpeech);
             }
           }
