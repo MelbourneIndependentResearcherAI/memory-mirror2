@@ -38,7 +38,7 @@ import SharedJournal from '@/components/caregiver/SharedJournal';
 import AgentMonitor from '@/components/admin/AgentMonitor';
 
 const featureCards = [
-  { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/CaregiverPortal/profile', background: '#FFF5F5' },
+  { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/CaregiverPortal/memory-session', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/CaregiverPortal/insights', background: '#EFF6FF' },
   { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/CaregiverPortal/media', background: '#FAF5FF' },

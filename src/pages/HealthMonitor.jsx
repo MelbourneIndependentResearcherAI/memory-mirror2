@@ -1,254 +1,215 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Heart, TrendingUp, Brain, Activity } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Badge } from '@/components/ui/badge';
+import { useQuery } from '@tanstack/react-query';
 
 export default function HealthMonitor() {
   const navigate = useNavigate();
-
-  const { data: userProfiles = [] } = useQuery({
-    queryKey: ['userProfile'],
-    queryFn: () => base44.entities.UserProfile.list()
-  });
-
-  const { data: anxietyTrends = [] } = useQuery({
-    queryKey: ['anxietyTrends'],
-    queryFn: () => base44.entities.AnxietyTrend.list('-created_date', 30)
-  });
+  const [emotionalState, setEmotionalState] = useState('calm');
+  const [anxietyLevel, setAnxietyLevel] = useState(3);
 
   const { data: activityLogs = [] } = useQuery({
-    queryKey: ['recentActivity'],
-    queryFn: () => base44.entities.ActivityLog.list('-created_date', 10)
+    queryKey: ['activityLogs'],
+    queryFn: () => base44.entities.ActivityLog.list().catch(() => [])
   });
 
-  const { data: cognitiveAssessments = [] } = useQuery({
-    queryKey: ['cognitiveAssessments'],
-    queryFn: () => base44.entities.CognitiveAssessment.list('-created_date', 5)
-  });
+  useEffect(() => {
+    // Analyze recent activity to determine emotional state
+    if (activityLogs.length > 0) {
+      const recentLogs = activityLogs.slice(0, 10);
+      
+      // Calculate anxiety level from recent activities
+      const anxietyDetected = recentLogs.filter(log => 
+        log.activity_type?.includes('anxiety') || 
+        log.details?.anxiety_level !== undefined
+      ).length;
+      
+      const avgAnxiety = recentLogs.reduce((sum, log) => {
+        return sum + (log.anxiety_level || log.details?.anxiety_level || 3);
+      }, 0) / Math.max(recentLogs.length, 1);
 
-  const userProfile = userProfiles[0];
-  const latestAnxiety = anxietyTrends[0];
-  const latestAssessment = cognitiveAssessments[0];
+      setAnxietyLevel(Math.round(Math.min(10, Math.max(1, avgAnxiety))));
 
-  const averageAnxiety = anxietyTrends.length > 0
-    ? (anxietyTrends.reduce((sum, t) => sum + (t.anxiety_level || 0), 0) / anxietyTrends.length).toFixed(1)
-    : 0;
+      // Determine emotional state based on anxiety
+      if (avgAnxiety > 7) {
+        setEmotionalState('distressed');
+      } else if (avgAnxiety > 5) {
+        setEmotionalState('anxious');
+      } else if (avgAnxiety > 3) {
+        setEmotionalState('neutral');
+      } else {
+        setEmotionalState('calm');
+      }
+    }
+  }, [activityLogs]);
 
-  const getAnxietyColor = (level) => {
-    if (level >= 7) return 'text-red-600 bg-red-100';
-    if (level >= 4) return 'text-amber-600 bg-amber-100';
-    return 'text-green-600 bg-green-100';
+  const getEmotionalColor = () => {
+    switch (emotionalState) {
+      case 'distressed':
+        return 'from-red-500 to-orange-500';
+      case 'anxious':
+        return 'from-orange-500 to-yellow-500';
+      case 'neutral':
+        return 'from-yellow-500 to-blue-500';
+      case 'calm':
+        return 'from-blue-500 to-green-500';
+      default:
+        return 'from-blue-500 to-green-500';
+    }
   };
 
-  const getAnxietyLabel = (level) => {
-    if (level >= 7) return 'High Anxiety';
-    if (level >= 4) return 'Moderate';
-    return 'Calm';
+  const getEmotionalLabel = () => {
+    switch (emotionalState) {
+      case 'distressed':
+        return '😔 Distressed';
+      case 'anxious':
+        return '😟 Anxious';
+      case 'neutral':
+        return '😐 Neutral';
+      case 'calm':
+        return '😊 Calm';
+      default:
+        return '😊 Calm';
+    }
+  };
+
+  const getAnxietyColor = (level) => {
+    if (level > 7) return 'from-red-500 to-red-400';
+    if (level > 5) return 'from-orange-500 to-orange-400';
+    if (level > 3) return 'from-yellow-500 to-yellow-400';
+    return 'from-green-500 to-green-400';
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-50 via-purple-50 to-blue-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-20">
-      <div className="max-w-5xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
+    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">
+      <div className="max-w-2xl mx-auto">
+        {/* Header */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 mb-6">
+          <button
             onClick={() => navigate(-1)}
-            className="min-h-[44px] min-w-[44px]"
+            className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]"
           >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div>
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
-              <Heart className="w-10 h-10 text-red-500" />
-              Health Monitor
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              Current emotional state and wellbeing overview
+            <ArrowLeft className="w-5 h-5" />
+            Back
+          </button>
+          <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100 mb-2">
+            Health Monitor
+          </h1>
+          <p className="text-slate-600 dark:text-slate-400">
+            Real-time emotional state and anxiety tracking
+          </p>
+        </div>
+
+        {/* Emotional State Card */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 mb-6">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+            Emotional State
+          </h2>
+          
+          <div className="flex flex-col items-center justify-center py-8">
+            <div className={`bg-gradient-to-br ${getEmotionalColor()} rounded-full p-1 mb-6 shadow-lg`}>
+              <div className="bg-white dark:bg-slate-900 rounded-full p-8">
+                <Heart className="w-24 h-24 text-slate-800 dark:text-slate-100" />
+              </div>
+            </div>
+            
+            <h3 className="text-4xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+              {getEmotionalLabel()}
+            </h3>
+            
+            <p className="text-lg text-slate-600 dark:text-slate-400 text-center max-w-md">
+              {emotionalState === 'calm' && 'Your loved one is feeling peaceful and relaxed.'}
+              {emotionalState === 'neutral' && 'Your loved one is stable and managing well.'}
+              {emotionalState === 'anxious' && 'Your loved one may benefit from extra support.'}
+              {emotionalState === 'distressed' && 'Your loved one needs immediate comfort and care.'}
             </p>
           </div>
         </div>
 
-        {/* Current Status Cards */}
-        <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <Card className="border-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                Current Anxiety Level
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-end gap-3">
-                <div className="text-5xl font-bold text-slate-900 dark:text-slate-100">
-                  {latestAnxiety?.anxiety_level || 0}
+        {/* Anxiety Level Gauge */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 mb-6">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">
+            Anxiety Level
+          </h2>
+          
+          <div className="space-y-4">
+            {/* Gauge Background */}
+            <div className="relative">
+              <div className="h-12 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
+                <div
+                  className={`h-full bg-gradient-to-r ${getAnxietyColor(anxietyLevel)} transition-all duration-500 flex items-center justify-center`}
+                  style={{ width: `${(anxietyLevel / 10) * 100}%` }}
+                >
+                  {anxietyLevel >= 4 && (
+                    <span className="text-white font-bold text-sm">
+                      {anxietyLevel}/10
+                    </span>
+                  )}
                 </div>
-                <div className="text-2xl text-slate-400 mb-1">/10</div>
               </div>
-              <Badge className={`mt-3 ${getAnxietyColor(latestAnxiety?.anxiety_level || 0)}`}>
-                {getAnxietyLabel(latestAnxiety?.anxiety_level || 0)}
-              </Badge>
-            </CardContent>
-          </Card>
+              {anxietyLevel < 4 && (
+                <div className="absolute right-4 top-1/2 transform -translate-y-1/2 font-bold text-slate-800 dark:text-slate-100">
+                  {anxietyLevel}/10
+                </div>
+              )}
+            </div>
 
-          <Card className="border-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                30-Day Average
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-end gap-3">
-                <div className="text-5xl font-bold text-blue-600 dark:text-blue-400">
-                  {averageAnxiety}
-                </div>
-                <div className="text-2xl text-slate-400 mb-1">/10</div>
-              </div>
-              <div className="mt-3 flex items-center gap-2 text-sm text-slate-600">
-                <TrendingUp className="w-4 h-4" />
-                <span>Based on {anxietyTrends.length} readings</span>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Level Labels */}
+            <div className="flex justify-between text-sm text-slate-600 dark:text-slate-400 mt-4">
+              <span>Low</span>
+              <span>Moderate</span>
+              <span>High</span>
+            </div>
 
-          <Card className="border-2">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-slate-600 dark:text-slate-400">
-                Cognitive Level
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-center gap-3">
-                <Brain className="w-10 h-10 text-purple-600 dark:text-purple-400" />
-                <div>
-                  <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">
-                    {latestAssessment?.cognitive_level || 'N/A'}
-                  </div>
-                  <p className="text-xs text-slate-500 mt-1">
-                    {latestAssessment?.assessment_type || 'No assessment yet'}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            {/* Status Message */}
+            <div className="mt-6 p-4 rounded-lg bg-slate-50 dark:bg-slate-800">
+              <p className="text-slate-700 dark:text-slate-300">
+                {anxietyLevel <= 2 && '✅ Excellent - minimal anxiety detected'}
+                {anxietyLevel > 2 && anxietyLevel <= 4 && '✅ Good - low anxiety levels'}
+                {anxietyLevel > 4 && anxietyLevel <= 6 && '⚠️ Caution - moderate anxiety. Consider engaging in calming activities'}
+                {anxietyLevel > 6 && anxietyLevel <= 8 && '⚠️ Warning - elevated anxiety. Recommend immediate comfort measures'}
+                {anxietyLevel > 8 && '🚨 Alert - high anxiety. Urgent support recommended'}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* User Profile Summary */}
-        {userProfile && (
-          <Card className="mb-6 bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950/30 dark:to-purple-950/30 border-2 border-blue-200 dark:border-blue-800">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <span className="text-2xl">👤</span>
-                {userProfile.loved_one_name || userProfile.preferred_name || 'User'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-3">
-              {userProfile.birth_year && (
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Age:</span>
-                  <span className="text-slate-600 dark:text-slate-400">
-                    {new Date().getFullYear() - userProfile.birth_year} years old
-                  </span>
-                </div>
-              )}
-              {userProfile.favorite_era && (
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Favorite Era:</span>
-                  <Badge variant="outline">{userProfile.favorite_era}</Badge>
-                </div>
-              )}
-              {userProfile.interests?.length > 0 && (
-                <div className="flex items-start gap-2 text-sm">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300 mt-1">Interests:</span>
-                  <div className="flex flex-wrap gap-2">
-                    {userProfile.interests.map((interest, idx) => (
-                      <Badge key={idx} variant="secondary">{interest}</Badge>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Recent Activity */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="w-6 h-6 text-blue-600" />
-              Recent Activity
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {activityLogs.length === 0 ? (
-              <p className="text-center text-slate-500 py-8">No recent activity</p>
-            ) : (
-              <div className="space-y-3">
-                {activityLogs.map((log) => (
-                  <div
-                    key={log.id}
-                    className="p-4 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700"
-                  >
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <p className="font-semibold text-slate-900 dark:text-slate-100 capitalize">
-                          {log.activity_type?.replace(/_/g, ' ')}
-                        </p>
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
-                          {log.details?.description || 'Activity logged'}
-                        </p>
-                      </div>
-                      <span className="text-xs text-slate-500">
-                        {new Date(log.created_date).toLocaleTimeString()}
-                      </span>
-                    </div>
+        {/* Recent Activity Summary */}
+        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8">
+          <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-4">
+            Recent Activity
+          </h2>
+          
+          {activityLogs.length === 0 ? (
+            <p className="text-slate-600 dark:text-slate-400 py-8 text-center">
+              No recent activity recorded. System will track emotional patterns as activity is logged.
+            </p>
+          ) : (
+            <div className="space-y-3">
+              {activityLogs.slice(0, 5).map((log) => (
+                <div
+                  key={log.id}
+                  className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg"
+                >
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-slate-800 dark:text-slate-100 capitalize">
+                      {log.activity_type?.replace(/_/g, ' ') || 'Activity'}
+                    </p>
                     {log.anxiety_level && (
-                      <div className="mt-2">
-                        <Badge className={getAnxietyColor(log.anxiety_level)}>
-                          Anxiety: {log.anxiety_level}/10
-                        </Badge>
-                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400">
+                        Anxiety: {log.anxiety_level}/10
+                      </p>
                     )}
                   </div>
-                ))}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Anxiety Trend Chart */}
-        {anxietyTrends.length > 0 && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <TrendingUp className="w-6 h-6 text-blue-600" />
-                Anxiety Trend (Last 30 Days)
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="h-48 flex items-end gap-1">
-                {anxietyTrends.slice(0, 30).reverse().map((trend, idx) => {
-                  const height = (trend.anxiety_level / 10) * 100;
-                  return (
-                    <div
-                      key={idx}
-                      className="flex-1 bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-lg transition-all hover:opacity-80"
-                      style={{ height: `${height}%`, minHeight: '4px' }}
-                      title={`${new Date(trend.created_date).toLocaleDateString()}: ${trend.anxiety_level}/10`}
-                    />
-                  );
-                })}
-              </div>
-              <div className="flex justify-between text-xs text-slate-500 mt-2">
-                <span>30 days ago</span>
-                <span>Today</span>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    {log.created_date && new Date(log.created_date).toLocaleDateString()}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
