@@ -1,5 +1,6 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
@@ -172,20 +173,45 @@ function CaregiverPortalHome() {
 
 export default function CaregiverPortalRouter() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [userProfile, setUserProfile] = React.useState(null);
   const [showOfflineOptions, setShowOfflineOptions] = React.useState(false);
+  const [isAuthenticated, setIsAuthenticated] = React.useState(null);
 
   React.useEffect(() => {
-    const loadProfile = async () => {
+    const checkAuth = async () => {
       try {
+        const authenticated = await base44.auth.isAuthenticated();
+        setIsAuthenticated(authenticated);
+        
+        if (!authenticated) {
+          // Redirect to login
+          base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
+          return;
+        }
+
+        // Load profile if authenticated
         const profiles = await base44.entities.UserProfile.list();
         if (profiles.length > 0) setUserProfile(profiles[0]);
       } catch (error) {
-        console.error('Failed to load profile:', error);
+        console.error('Auth check failed:', error);
+        setIsAuthenticated(false);
       }
     };
-    loadProfile();
+    checkAuth();
   }, []);
+
+  // Show loading while checking authentication
+  if (isAuthenticated === null) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">
