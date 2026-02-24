@@ -73,19 +73,7 @@ export default function ComplianceWrapper({ children }) {
             </ul>
           </div>
 
-          <div className="bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6 text-sm">
-            <p className="font-semibold mb-2">Data Processing Acknowledgment:</p>
-            <p className="text-slate-700 dark:text-slate-300">
-              By continuing, you acknowledge that your health and personal data will be:
-            </p>
-            <ul className="list-disc list-inside mt-2 text-slate-700 dark:text-slate-300">
-              <li>Encrypted during transmission and storage</li>
-              <li>Logged for audit and compliance purposes</li>
-              <li>Shared only with authorized care team members</li>
-              <li>Retained according to applicable privacy laws</li>
-              <li>Never sold or shared with third parties</li>
-            </ul>
-          </div>
+
 
           <div className="flex gap-3">
             <Button
