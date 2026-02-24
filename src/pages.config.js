@@ -129,6 +129,8 @@ import NightWatchIncidents from './pages/NightWatchIncidents';
 import VoiceAlwaysOnDashboard from './pages/VoiceAlwaysOnDashboard';
 import VoiceCommands from './pages/VoiceCommands';
 import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
+import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
+import ConversationAnalytics from './pages/ConversationAnalytics';
 import __Layout from './Layout.jsx';
 
 
@@ -215,6 +217,8 @@ export const PAGES = {
     "VoiceAlwaysOnDashboard": VoiceAlwaysOnDashboard,
     "VoiceCommands": VoiceCommands,
     "VoiceUsageAnalytics": VoiceUsageAnalytics,
+    "ChatCompanionDashboard": ChatCompanionDashboard,
+    "ConversationAnalytics": ConversationAnalytics,
 }
 
 export const pagesConfig = {
