@@ -67,14 +67,15 @@ export const translations = {
   },
   
   es: {
-    // Spanish
-    chat: 'Chat',
-    phone: 'Teléfono',
-    security: 'Seguridad',
-    nightWatch: 'Guardia Nocturna',
-    offline: 'Sin Conexión',
-    sync: 'Sincronizar',
-    settings: 'Ajustes',
+  // Spanish
+  chat: 'Chat',
+  phone: 'Teléfono',
+  security: 'Seguridad',
+  nightWatch: 'Guardia Nocturna',
+  offline: 'Sin Conexión',
+  sync: 'Sincronizar',
+  myBank: 'Banco',
+  settings: 'Ajustes',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'kit de cuidado de demencia para cuidadores y sus seres queridos',
@@ -127,14 +128,15 @@ export const translations = {
   },
   
   fr: {
-    // French
-    chat: 'Chat',
-    phone: 'Téléphone',
-    security: 'Sécurité',
-    nightWatch: 'Veille de Nuit',
-    offline: 'Hors Ligne',
-    sync: 'Synchroniser',
-    settings: 'Paramètres',
+  // French
+  chat: 'Chat',
+  phone: 'Téléphone',
+  security: 'Sécurité',
+  nightWatch: 'Veille de Nuit',
+  offline: 'Hors Ligne',
+  sync: 'Synchroniser',
+  myBank: 'Banque',
+  settings: 'Paramètres',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'kit de soins de démence pour les aidants et leurs proches',
@@ -187,14 +189,15 @@ export const translations = {
   },
   
   de: {
-    // German
-    chat: 'Chat',
-    phone: 'Telefon',
-    security: 'Sicherheit',
-    nightWatch: 'Nachtwache',
-    offline: 'Offline',
-    sync: 'Synchronisieren',
-    settings: 'Einstellungen',
+  // German
+  chat: 'Chat',
+  phone: 'Telefon',
+  security: 'Sicherheit',
+  nightWatch: 'Nachtwache',
+  offline: 'Offline',
+  sync: 'Synchronisieren',
+  myBank: 'Bank',
+  settings: 'Einstellungen',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'Demenzpflege-Kit für Betreuer und ihre Angehörigen',
@@ -247,14 +250,15 @@ export const translations = {
   },
   
   zh: {
-    // Chinese (Simplified)
-    chat: '聊天',
-    phone: '电话',
-    security: '安全',
-    nightWatch: '夜间看护',
-    offline: '离线',
-    sync: '同步',
-    settings: '设置',
+  // Chinese (Simplified)
+  chat: '聊天',
+  phone: '电话',
+  security: '安全',
+  nightWatch: '夜间看护',
+  offline: '离线',
+  sync: '同步',
+  myBank: '银行',
+  settings: '设置',
     
     memoryMirror: 'Memory Mirror',
     tagline: '为照护者及其所爱之人提供的痴呆症护理工具包',
@@ -307,14 +311,15 @@ export const translations = {
   },
   
   ja: {
-    // Japanese
-    chat: 'チャット',
-    phone: '電話',
-    security: 'セキュリティ',
-    nightWatch: 'ナイトウォッチ',
-    offline: 'オフライン',
-    sync: '同期',
-    settings: '設定',
+  // Japanese
+  chat: 'チャット',
+  phone: '電話',
+  security: 'セキュリティ',
+  nightWatch: 'ナイトウォッチ',
+  offline: 'オフライン',
+  sync: '同期',
+  myBank: '銀行',
+  settings: '設定',
     
     memoryMirror: 'Memory Mirror',
     tagline: '介護者とその大切な人のための認知症ケアキット',
@@ -367,14 +372,15 @@ export const translations = {
   },
   
   ar: {
-    // Arabic (RTL)
-    chat: 'دردشة',
-    phone: 'هاتف',
-    security: 'أمان',
-    nightWatch: 'المراقبة الليلية',
-    offline: 'غير متصل',
-    sync: 'مزامنة',
-    settings: 'الإعدادات',
+  // Arabic (RTL)
+  chat: 'دردشة',
+  phone: 'هاتف',
+  security: 'أمان',
+  nightWatch: 'المراقبة الليلية',
+  offline: 'غير متصل',
+  sync: 'مزامنة',
+  myBank: 'البنك',
+  settings: 'الإعدادات',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'مجموعة رعاية الخرف لمقدمي الرعاية وأحبائهم',
@@ -427,14 +433,15 @@ export const translations = {
   },
   
   pt: {
-    // Portuguese
-    chat: 'Chat',
-    phone: 'Telefone',
-    security: 'Segurança',
-    nightWatch: 'Vigilância Noturna',
-    offline: 'Offline',
-    sync: 'Sincronizar',
-    settings: 'Configurações',
+  // Portuguese
+  chat: 'Chat',
+  phone: 'Telefone',
+  security: 'Segurança',
+  nightWatch: 'Vigilância Noturna',
+  offline: 'Offline',
+  sync: 'Sincronizar',
+  myBank: 'Banco',
+  settings: 'Configurações',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'kit de cuidados com demência para cuidadores e seus entes queridos',
@@ -487,14 +494,15 @@ export const translations = {
   },
   
   ru: {
-    // Russian
-    chat: 'Чат',
-    phone: 'Телефон',
-    security: 'Безопасность',
-    nightWatch: 'Ночное наблюдение',
-    offline: 'Офлайн',
-    sync: 'Синхронизация',
-    settings: 'Настройки',
+  // Russian
+  chat: 'Чат',
+  phone: 'Телефон',
+  security: 'Безопасность',
+  nightWatch: 'Ночное наблюдение',
+  offline: 'Офлайн',
+  sync: 'Синхронизация',
+  myBank: 'Банк',
+  settings: 'Настройки',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'набор для ухода за пациентами с деменцией для опекунов и их близких',
@@ -547,14 +555,15 @@ export const translations = {
   },
   
   hi: {
-    // Hindi
-    chat: 'चैट',
-    phone: 'फोन',
-    security: 'सुरक्षा',
-    nightWatch: 'रात की निगरानी',
-    offline: 'ऑफलाइन',
-    sync: 'सिंक करें',
-    settings: 'सेटिंग्स',
+  // Hindi
+  chat: 'चैट',
+  phone: 'फोन',
+  security: 'सुरक्षा',
+  nightWatch: 'रात की निगरानी',
+  offline: 'ऑफलाइन',
+  sync: 'सिंक करें',
+  myBank: 'बैंक',
+  settings: 'सेटिंग्स',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'देखभाल करने वालों और उनके प्रियजनों के लिए मनोभ्रंश देखभाल किट',
@@ -607,14 +616,15 @@ export const translations = {
   },
   
   it: {
-    // Italian
-    chat: 'Chat',
-    phone: 'Telefono',
-    security: 'Sicurezza',
-    nightWatch: 'Sorveglianza Notturna',
-    offline: 'Offline',
-    sync: 'Sincronizza',
-    settings: 'Impostazioni',
+  // Italian
+  chat: 'Chat',
+  phone: 'Telefono',
+  security: 'Sicurezza',
+  nightWatch: 'Sorveglianza Notturna',
+  offline: 'Offline',
+  sync: 'Sincronizza',
+  myBank: 'Banca',
+  settings: 'Impostazioni',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'kit di assistenza per la demenza per caregiver e i loro cari',
@@ -667,14 +677,15 @@ export const translations = {
   },
   
   ko: {
-    // Korean
-    chat: '채팅',
-    phone: '전화',
-    security: '보안',
-    nightWatch: '야간 감시',
-    offline: '오프라인',
-    sync: '동기화',
-    settings: '설정',
+  // Korean
+  chat: '채팅',
+  phone: '전화',
+  security: '보안',
+  nightWatch: '야간 감시',
+  offline: '오프라인',
+  sync: '동기화',
+  myBank: '은행',
+  settings: '설정',
     
     memoryMirror: 'Memory Mirror',
     tagline: '간병인과 사랑하는 사람들을 위한 치매 케어 키트',
@@ -727,14 +738,15 @@ export const translations = {
   },
   
   nl: {
-    // Dutch
-    chat: 'Chat',
-    phone: 'Telefoon',
-    security: 'Beveiliging',
-    nightWatch: 'Nachtwacht',
-    offline: 'Offline',
-    sync: 'Synchroniseren',
-    settings: 'Instellingen',
+  // Dutch
+  chat: 'Chat',
+  phone: 'Telefoon',
+  security: 'Beveiliging',
+  nightWatch: 'Nachtwacht',
+  offline: 'Offline',
+  sync: 'Synchroniseren',
+  myBank: 'Bank',
+  settings: 'Instellingen',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'dementiezorg kit voor verzorgers en hun dierbaren',
@@ -787,14 +799,15 @@ export const translations = {
   },
   
   tr: {
-    // Turkish
-    chat: 'Sohbet',
-    phone: 'Telefon',
-    security: 'Güvenlik',
-    nightWatch: 'Gece Nöbeti',
-    offline: 'Çevrimdışı',
-    sync: 'Senkronize Et',
-    settings: 'Ayarlar',
+  // Turkish
+  chat: 'Sohbet',
+  phone: 'Telefon',
+  security: 'Güvenlik',
+  nightWatch: 'Gece Nöbeti',
+  offline: 'Çevrimdışı',
+  sync: 'Senkronize Et',
+  myBank: 'Banka',
+  settings: 'Ayarlar',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'bakıcılar ve sevdikleri için demans bakım kiti',
@@ -847,14 +860,15 @@ export const translations = {
   },
   
   pl: {
-    // Polish
-    chat: 'Czat',
-    phone: 'Telefon',
-    security: 'Bezpieczeństwo',
-    nightWatch: 'Nocna Straż',
-    offline: 'Offline',
-    sync: 'Synchronizuj',
-    settings: 'Ustawienia',
+  // Polish
+  chat: 'Czat',
+  phone: 'Telefon',
+  security: 'Bezpieczeństwo',
+  nightWatch: 'Nocna Straż',
+  offline: 'Offline',
+  sync: 'Synchronizuj',
+  myBank: 'Bank',
+  settings: 'Ustawienia',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'zestaw opieki nad demencją dla opiekunów i ich bliskich',
@@ -907,14 +921,15 @@ export const translations = {
   },
   
   vi: {
-    // Vietnamese
-    chat: 'Trò chuyện',
-    phone: 'Điện thoại',
-    security: 'An ninh',
-    nightWatch: 'Canh gác ban đêm',
-    offline: 'Ngoại tuyến',
-    sync: 'Đồng bộ',
-    settings: 'Cài đặt',
+  // Vietnamese
+  chat: 'Trò chuyện',
+  phone: 'Điện thoại',
+  security: 'An ninh',
+  nightWatch: 'Canh gác ban đêm',
+  offline: 'Ngoại tuyến',
+  sync: 'Đồng bộ',
+  myBank: 'Ngân hàng',
+  settings: 'Cài đặt',
     
     memoryMirror: 'Memory Mirror',
     tagline: 'bộ chăm sóc sa sút trí tuệ cho người chăm sóc và những người thân yêu của họ',
