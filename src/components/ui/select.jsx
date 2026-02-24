@@ -24,43 +24,10 @@ const useIsMobile = () => {
 };
 
 const Select = ({ children, value, onValueChange, ...props }) => {
-  const isMobile = useIsMobile();
-  const [open, setOpen] = React.useState(false);
-  
-  if (!isMobile) {
-    return (
-      <SelectPrimitive.Root value={value} onValueChange={onValueChange} {...props}>
-        {children}
-      </SelectPrimitive.Root>
-    );
-  }
-
-  // Mobile: Use Drawer
-  const trigger = React.Children.toArray(children).find(
-    child => child?.type?.displayName === 'SelectTrigger'
-  );
-  const content = React.Children.toArray(children).find(
-    child => child?.type?.displayName === 'SelectContent'
-  );
-
   return (
-    <Drawer open={open} onOpenChange={setOpen}>
-      <DrawerTrigger asChild>
-        {trigger}
-      </DrawerTrigger>
-      <DrawerContent>
-        <div className="p-4 max-h-[60vh] overflow-y-auto">
-          <SelectPrimitive.Root value={value} onValueChange={(val) => {
-            onValueChange?.(val);
-            setOpen(false);
-          }}>
-            <SelectPrimitive.Viewport>
-              {content?.props?.children}
-            </SelectPrimitive.Viewport>
-          </SelectPrimitive.Root>
-        </div>
-      </DrawerContent>
-    </Drawer>
+    <SelectPrimitive.Root value={value} onValueChange={onValueChange} {...props}>
+      {children}
+    </SelectPrimitive.Root>
   );
 };
 
