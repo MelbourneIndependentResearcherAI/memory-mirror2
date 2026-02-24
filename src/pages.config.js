@@ -124,6 +124,8 @@ import CaregiverDashboard from './pages/CaregiverDashboard';
 import TVDashboard from './pages/TVDashboard';
 import TVPhotoGallery from './pages/TVPhotoGallery';
 import TVMusicTherapy from './pages/TVMusicTherapy';
+import NightWatchDashboard from './pages/NightWatchDashboard';
+import NightWatchIncidents from './pages/NightWatchIncidents';
 import __Layout from './Layout.jsx';
 
 
@@ -205,6 +207,8 @@ export const PAGES = {
     "TVDashboard": TVDashboard,
     "TVPhotoGallery": TVPhotoGallery,
     "TVMusicTherapy": TVMusicTherapy,
+    "NightWatchDashboard": NightWatchDashboard,
+    "NightWatchIncidents": NightWatchIncidents,
 }
 
 export const pagesConfig = {
