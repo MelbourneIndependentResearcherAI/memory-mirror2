@@ -185,8 +185,8 @@ export default function CaregiverPortalRouter() {
         setIsAuthenticated(authenticated);
         
         if (!authenticated) {
-          // Redirect to login
-          base44.auth.redirectToLogin(createPageUrl('CaregiverPortal'));
+          // Redirect to landing page
+          navigate(createPageUrl('Landing'));
           return;
         }
 
@@ -196,10 +196,11 @@ export default function CaregiverPortalRouter() {
       } catch (error) {
         console.error('Auth check failed:', error);
         setIsAuthenticated(false);
+        navigate(createPageUrl('Landing'));
       }
     };
     checkAuth();
-  }, []);
+  }, [navigate]);
 
   // Show loading while checking authentication
   if (isAuthenticated === null) {
