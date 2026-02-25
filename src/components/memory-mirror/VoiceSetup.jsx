@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ChevronDown, Volume2, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
-import { getAvailableVoices, setUserVoicePreference, speakWithRealisticVoice } from './voiceUtils';
+import { getAvailableVoices, setUserVoicePreference } from './voiceUtils';
 
 export default function VoiceSetup() {
   const [isOpen, setIsOpen] = useState(false);
