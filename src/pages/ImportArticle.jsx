@@ -53,7 +53,7 @@ export default function ImportArticle() {
       const fileUrl = await uploadImageMutation.mutateAsync(file);
       setFormData({ ...formData, featured_image: fileUrl });
       toast.success('Image uploaded!');
-    } catch (_error) {
+    } catch {
       toast.error('Image upload failed');
     }
   };

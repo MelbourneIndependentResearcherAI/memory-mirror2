@@ -45,7 +45,7 @@ class AlwaysOnVoiceSystem {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       console.log('Microphone access granted');
       return stream;
-    } catch (_error) {
+    } catch {
       throw new Error('Microphone access required for voice features');
     }
   }

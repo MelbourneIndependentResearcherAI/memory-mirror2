@@ -73,7 +73,7 @@ export default function CallScreen({ phoneNumber, contactName, onEndCall }) {
         volume: 1.0
       });
 
-    } catch (_error) {
+    } catch {
       const fallback = "I'm right here with you. You're safe. Take a deep breath with me.";
       setMessages(prev => [...prev, { role: 'assistant', content: fallback }]);
       speakWithRealisticVoice(fallback);

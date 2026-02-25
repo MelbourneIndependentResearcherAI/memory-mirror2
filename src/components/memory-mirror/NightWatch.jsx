@@ -320,7 +320,7 @@ export default function NightWatch({ onClose }) {
           };
           window.addEventListener('devicemotion', motionListenerRef.current);
         }
-      } catch (_error) {
+      } catch {
         console.log('Motion detection permission denied or unavailable');
       }
     }
@@ -354,7 +354,7 @@ export default function NightWatch({ onClose }) {
           lastMotionTime = Date.now();
         }
       }, 500);
-    } catch (_error) {
+    } catch {
       console.log('Microphone access denied - using fallback detection');
     }
     

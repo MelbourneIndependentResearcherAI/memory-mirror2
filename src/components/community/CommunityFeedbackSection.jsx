@@ -42,7 +42,7 @@ export default function CommunityFeedbackSection() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         setIsAdmin(currentUser?.role === 'admin');
-      } catch (_error) {
+      } catch {
         setUser(null);
         setIsAdmin(false);
       }

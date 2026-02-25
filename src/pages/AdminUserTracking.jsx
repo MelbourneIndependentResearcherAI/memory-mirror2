@@ -29,7 +29,7 @@ export default function AdminUserTracking() {
         } else {
           setUser(currentUser);
         }
-      } catch (_error) {
+      } catch {
         toast.error('Authentication required');
         navigate(createPageUrl('Landing'));
       }

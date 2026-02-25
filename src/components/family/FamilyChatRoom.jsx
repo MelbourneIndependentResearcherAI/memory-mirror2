@@ -22,7 +22,7 @@ function DecryptedMessage({ content }) {
         const key = getEncryptionKey();
         const text = await decryptData(content, key);
         setDecrypted(text);
-      } catch (_error) {
+      } catch {
         setDecrypted('[Encrypted Message]');
       }
     };
@@ -167,7 +167,7 @@ export default function FamilyChatRoom() {
         consent_acknowledged: true,
         is_encrypted: true
       });
-    } catch (_error) {
+    } catch {
       toast.error('Photo upload failed');
     }
   };
@@ -188,7 +188,7 @@ export default function FamilyChatRoom() {
       mediaRecorder.current.start();
       setIsRecording(true);
       toast.info('Recording started...');
-    } catch (_error) {
+    } catch {
       toast.error('Microphone access denied');
     }
   };
@@ -226,7 +226,7 @@ export default function FamilyChatRoom() {
         consent_acknowledged: true,
         is_encrypted: true
       });
-    } catch (_error) {
+    } catch {
       toast.error('Voice note upload failed');
     }
   };

@@ -37,7 +37,7 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
       try {
         const stored = localStorage.getItem('offlineResponses');
         return stored ? JSON.parse(stored) : {};
-      } catch (_e) {
+      } catch {
         return {};
       }
     },

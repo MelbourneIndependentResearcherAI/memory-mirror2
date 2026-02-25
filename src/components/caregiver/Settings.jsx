@@ -35,7 +35,7 @@ export default function Settings() {
       setTimeout(() => {
         window.location.href = '/';
       }, 100);
-    } catch (_error) {
+    } catch {
       setDeleteError('Failed to delete account. Please try again or contact support.');
       setIsDeleting(false);
     }

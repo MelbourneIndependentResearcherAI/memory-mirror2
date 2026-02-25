@@ -168,7 +168,7 @@ export default function VideoCallInterface({ onClose, userName, userEmail }) {
         setIsScreenSharing(false);
         toast.info('Screen sharing stopped');
       }
-    } catch (_error) {
+    } catch {
       toast.error('Screen sharing failed');
     }
   };

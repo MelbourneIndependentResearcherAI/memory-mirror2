@@ -26,7 +26,7 @@ export default function ComplianceWrapper({ children }) {
       try {
         const user = await base44.auth.me();
         setUserRole(user?.role || 'patient');
-      } catch (_e) {
+      } catch {
         console.log('Consent wrapper: could not detect role');
       }
     };

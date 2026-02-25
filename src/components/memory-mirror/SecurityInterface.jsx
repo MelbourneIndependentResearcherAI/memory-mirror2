@@ -153,7 +153,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
           if (anxiety >= 6) {
             setShowAnxietyAlert(true);
           }
-        } catch (_e) {
+        } catch {
           // Ignore
         }
       }
@@ -169,7 +169,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
         setShowAnxietyAlert(true);
       }
 
-    } catch (_error) {
+    } catch {
       const fallback = "I've checked everything thoroughly. All systems show secure. No threats detected. You're safe.";
       alert('Security Guard: ' + fallback);
       speakResponse(fallback);

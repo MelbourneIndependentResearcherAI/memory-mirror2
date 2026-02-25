@@ -54,7 +54,7 @@ export default function MemoryTimelineBuilder() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setFormData({ ...formData, photo_url: file_url });
       toast.success('Photo uploaded!');
-    } catch (_error) {
+    } catch {
       toast.error('Failed to upload photo');
     }
   };

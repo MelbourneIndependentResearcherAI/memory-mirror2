@@ -84,7 +84,7 @@ export default function OfflineModeDashboard() {
       );
       toast.success('Cache cleared');
       loadStatus();
-    } catch (_error) {
+    } catch {
       toast.error('Failed to clear cache');
     }
   };

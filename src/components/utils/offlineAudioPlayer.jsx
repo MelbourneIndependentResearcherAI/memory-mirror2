@@ -132,7 +132,7 @@ class OfflineAudioPlayer {
       try {
         this.currentSource.stop();
         this.currentSource.disconnect();
-      } catch (_e) {
+      } catch {
         // Already stopped
       }
       this.currentSource = null;

@@ -152,7 +152,7 @@ export default function VoiceCloningManager() {
       setMediaRecorder(recorder);
       setIsRecording(true);
       setRecordedChunks([]);
-    } catch (_error) {
+    } catch {
       toast.error('Microphone access denied');
     }
   };
@@ -252,7 +252,7 @@ export default function VoiceCloningManager() {
 
       const audio = new Audio(URL.createObjectURL(new Blob([result.data])));
       audio.play();
-    } catch (_error) {
+    } catch {
       toast.error('Failed to test voice');
     }
   };

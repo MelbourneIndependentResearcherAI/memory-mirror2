@@ -728,7 +728,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           detectedAnxiety = meta.anxiety || detectedAnxiety;
           setDetectedEra(era);
           onEraChange(era);
-        } catch (_e) {
+        } catch {
           console.log('META parse skip (non-critical)');
         }
       }

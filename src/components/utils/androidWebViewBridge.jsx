@@ -140,7 +140,7 @@ class AndroidWebViewBridge {
         return navigator.storage.estimate();
       }
       return { usage: 0, quota: 0 };
-    } catch (_error) {
+    } catch {
       return { usage: 0, quota: 0 };
     }
   }
@@ -249,7 +249,7 @@ class AndroidWebViewBridge {
         const request = indexedDB.open('MemoryMirrorDB', 1);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => resolve(null);
-      } catch (_error) {
+      } catch {
         resolve(null);
       }
     });
@@ -271,7 +271,7 @@ class AndroidWebViewBridge {
         request.onsuccess = () => resolve(true);
         request.onerror = () => resolve(false);
       });
-    } catch (_error) {
+    } catch {
       return false;
     }
   }
@@ -292,7 +292,7 @@ class AndroidWebViewBridge {
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => resolve(null);
       });
-    } catch (_error) {
+    } catch {
       return null;
     }
   }
@@ -313,7 +313,7 @@ class AndroidWebViewBridge {
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => resolve([]);
       });
-    } catch (_error) {
+    } catch {
       return [];
     }
   }
