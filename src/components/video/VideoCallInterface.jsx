@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Video, VideoOff, Mic, MicOff, Monitor, MonitorOff, 
-  PhoneOff, Shield, Lock, Volume2, VolumeX, Maximize2, Info
+  PhoneOff, Shield, Lock, Maximize2, Info
 } from 'lucide-react';
 import { toast } from 'sonner';
 

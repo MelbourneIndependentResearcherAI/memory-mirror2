@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight, Play, Pause, Sparkles, Mic, Volume2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Sparkles, Mic, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from '../memory-mirror/voiceUtils';
 
 export default function MemorySession({ sessionData, onBack, onComplete }) {

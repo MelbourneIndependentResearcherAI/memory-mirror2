@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Music, Camera, Book, Wind, X } from 'lucide-react';
+import { Heart, Music, Camera, Book, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 
 export default function BadDayMode({ onClose, userProfile }) {

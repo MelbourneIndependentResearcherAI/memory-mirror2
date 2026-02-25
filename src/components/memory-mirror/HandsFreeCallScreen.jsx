@@ -4,7 +4,7 @@ import { Loader2, Mic, MicOff, Phone, Volume2, AlertTriangle } from 'lucide-reac
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
 import { useQuery } from '@tanstack/react-query';
-import { getOfflineResponse, isOnline, cacheOfflineResponse } from '../utils/offlineManager';
+import { getOfflineResponse, cacheOfflineResponse } from '../utils/offlineManager';
 
 const emergencyPrompt = `You are an empathetic emergency operator specially trained in dementia care. The person you're speaking with may be confused, scared, or disoriented.
 

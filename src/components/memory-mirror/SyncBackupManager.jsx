@@ -5,8 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   getSyncMetadata,
   syncToCloud,
-  setAutoSyncEnabled,
-  prepareOfflineDataForSync
+  setAutoSyncEnabled
 } from '../utils/syncManager';
 import { getOfflineStorageUsage } from '../utils/offlineManager';
 import { isOnline } from '../utils/offlineManager';

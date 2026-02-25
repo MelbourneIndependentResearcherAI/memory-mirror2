@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Users, Mail, Shield, AlertCircle, CheckCircle, ArrowLeft, Send } from 'lucide-react';
+import { Users, Mail, Shield, AlertCircle, ArrowLeft, Send } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdminUserTracking() {

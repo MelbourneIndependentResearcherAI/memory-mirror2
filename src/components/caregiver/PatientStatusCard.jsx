@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { User, Calendar, Heart, Users } from 'lucide-react';
-import { format } from 'date-fns';
 
 export default function PatientStatusCard({ patient, careTeamSize }) {
   if (!patient) {

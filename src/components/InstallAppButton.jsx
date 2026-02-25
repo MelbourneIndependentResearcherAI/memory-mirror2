@@ -1,7 +1,4 @@
-import React, { useState, useEffect } from 'react';
-import { Download, Smartphone, Check } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useEffect } from 'react';
 
 export default function InstallAppButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);

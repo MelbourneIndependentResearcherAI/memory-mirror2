@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft, Mic, TrendingUp, Clock, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function VoiceUsageAnalyticsPage() {
   const navigate = useNavigate();
