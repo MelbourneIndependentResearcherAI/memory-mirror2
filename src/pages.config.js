@@ -132,7 +132,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import security from './pages/security';
+import security from './pages/SecurityAlias';
 import __Layout from './Layout.jsx';
 
 

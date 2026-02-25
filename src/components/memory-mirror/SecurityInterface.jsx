@@ -55,7 +55,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
   const [showAnxietyAlert, setShowAnxietyAlert] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: safeZones = [] } = useQuery({
+  const { data: _safeZones = [] } = useQuery({
     queryKey: ['safeZones'],
     queryFn: () => base44.entities.SafeMemoryZone.list(),
   });
@@ -153,7 +153,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
           if (anxiety >= 6) {
             setShowAnxietyAlert(true);
           }
-        } catch (e) {
+        } catch (_e) {
           // Ignore
         }
       }
@@ -169,7 +169,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
         setShowAnxietyAlert(true);
       }
 
-    } catch (error) {
+    } catch (_error) {
       const fallback = "I've checked everything thoroughly. All systems show secure. No threats detected. You're safe.";
       alert('Security Guard: ' + fallback);
       speakResponse(fallback);

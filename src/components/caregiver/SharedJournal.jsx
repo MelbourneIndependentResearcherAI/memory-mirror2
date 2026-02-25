@@ -64,7 +64,7 @@ export default function SharedJournal({ patientProfileId }) {
         m.notification_preferences?.journal_entries
       );
 
-      for (const member of notifyTeam) {
+      for (const _member of notifyTeam) {
         await base44.entities.CaregiverNotification.create({
           patient_profile_id: patientProfileId,
           notification_type: 'new_journal_entry',

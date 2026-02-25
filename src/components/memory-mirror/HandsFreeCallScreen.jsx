@@ -28,16 +28,16 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
   const [detectionTimeout, setDetectionTimeout] = useState(null);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const recognitionRef = useRef(null);
-  const speechSynthesisRef = useRef(null);
+  const _speechSynthesisRef = useRef(null);
 
   // Check offline support data
-  const { data: offlineResponses = {} } = useQuery({
+  const { data: _offlineResponses = {} } = useQuery({
     queryKey: ['offlineResponses'],
     queryFn: async () => {
       try {
         const stored = localStorage.getItem('offlineResponses');
         return stored ? JSON.parse(stored) : {};
-      } catch (e) {
+      } catch (_e) {
         return {};
       }
     },

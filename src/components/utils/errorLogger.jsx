@@ -31,7 +31,7 @@ export class ErrorLogger {
     // Store in localStorage for debugging
     try {
       localStorage.setItem('memoryMirror_errorLogs', JSON.stringify(this.logs));
-    } catch (e) {
+    } catch (_e) {
       console.warn('Could not save error logs');
     }
 
@@ -46,7 +46,7 @@ export class ErrorLogger {
     this.logs = [];
     try {
       localStorage.removeItem('memoryMirror_errorLogs');
-    } catch (e) {
+    } catch (_e) {
       console.warn('Could not clear error logs');
     }
   }
