@@ -395,6 +395,7 @@ export default function CaregiverPortalRouter() {
           } />
           <Route path="chat-history" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <ChatHistoryViewer onBack={() => navigate('/CaregiverPortal')} />
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
