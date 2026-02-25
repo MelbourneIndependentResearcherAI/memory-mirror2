@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, AlertTriangle, Phone, X, Volume2, Pause, Loader2, Zap, Lightbulb, Thermometer, Video } from 'lucide-react';
+import { Moon, AlertTriangle, Phone, X, Volume2, Loader2, Zap, Lightbulb, Thermometer, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -320,7 +320,7 @@ export default function NightWatch({ onClose }) {
           };
           window.addEventListener('devicemotion', motionListenerRef.current);
         }
-      } catch (error) {
+      } catch {
         console.log('Motion detection permission denied or unavailable');
       }
     }
@@ -354,7 +354,7 @@ export default function NightWatch({ onClose }) {
           lastMotionTime = Date.now();
         }
       }, 500);
-    } catch (error) {
+    } catch {
       console.log('Microphone access denied - using fallback detection');
     }
     

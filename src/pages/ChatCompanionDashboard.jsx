@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, MessageCircle, Heart, Music, BookOpen, Gamepad2, Languages, BarChart3 } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Heart } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function ChatCompanionDashboardPage() {

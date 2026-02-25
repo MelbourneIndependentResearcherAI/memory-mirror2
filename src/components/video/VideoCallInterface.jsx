@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   Video, VideoOff, Mic, MicOff, Monitor, MonitorOff, 
-  PhoneOff, Shield, Lock, Volume2, VolumeX, Maximize2, Info
+  PhoneOff, Shield, Lock, Maximize2, Info
 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function VideoCallInterface({ onClose, userName, userEmail }) {
   const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
+  const [_remoteStream, _setRemoteStream] = useState(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -23,7 +22,7 @@ export default function VideoCallInterface({ onClose, userName, userEmail }) {
   
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const peerConnectionRef = useRef(null);
+  const _peerConnectionRef = useRef(null);
   const sessionIdRef = useRef(`session-${Date.now()}`);
   const startTimeRef = useRef(null);
   const queryClient = useQueryClient();
@@ -169,7 +168,7 @@ export default function VideoCallInterface({ onClose, userName, userEmail }) {
         setIsScreenSharing(false);
         toast.info('Screen sharing stopped');
       }
-    } catch (error) {
+    } catch {
       toast.error('Screen sharing failed');
     }
   };

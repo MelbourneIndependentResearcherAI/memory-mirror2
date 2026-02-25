@@ -28,8 +28,8 @@ import { Play, Pause, SkipBack, SkipForward, Volume2, Music } from 'lucide-react
 export default function RoyaltyFreeMusicLibrary() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
+  const [_currentTime, _setCurrentTime] = useState(0);
+  const [_duration, _setDuration] = useState(0);
   const [volume, setVolume] = useState(80);
   const [category, setCategory] = useState('classical');
   const audioRef = useRef(null);
@@ -120,7 +120,7 @@ export default function RoyaltyFreeMusicLibrary() {
     setIsPlaying(true);
   };
 
-  const formatTime = (seconds) => {
+  const _formatTime = (seconds) => {
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;

@@ -1,24 +1,7 @@
 import React from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Routes, Route, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Users, Heart, Bell, Music, BookOpen, Calendar, Image, MessageSquare, Send, Clock, Phone, GitBranch, ListMusic, Brain, MessagesSquare, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import WellbeingOverview from '../components/family/WellbeingOverview';
-import MessageManager from '../components/family/MessageManager';
-import MusicLibrary from '../components/family/MusicLibrary';
-import StoryLibrary from '../components/family/StoryLibrary';
-import CalendarManager from '../components/family/CalendarManager';
-import MediaAlbum from '../components/family/MediaAlbum';
-import NotificationCenter from '../components/family/NotificationCenter';
-import EmergencyContactsManager from '../components/caregiver/EmergencyContactsManager';
-import SharedPhotoAlbum from '../components/family/SharedPhotoAlbum';
-import MemoryTimelineBuilder from '../components/family/MemoryTimelineBuilder';
-import RemoteTriggerPanel from '../components/family/RemoteTriggerPanel';
-import FamilyTreeBuilder from '../components/family/FamilyTreeBuilder';
-import PlaylistManager from '../components/music/PlaylistManager';
-import SmartAlertSystem from '../components/family/SmartAlertSystem';
-import FamilyChatRoom from '../components/family/FamilyChatRoom';
-import VideoCallLauncher from '../components/video/VideoCallLauncher';
 
 function FamilyConnectMain() {
   const navigate = useNavigate();
