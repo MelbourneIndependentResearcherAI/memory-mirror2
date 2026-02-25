@@ -60,6 +60,24 @@ export default function MusicTherapy() {
     }
   };
 
+  const handleSkipBack = () => {
+    if (!songs.length) return;
+    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
+    const prevIndex = currentIndex <= 0 ? songs.length - 1 : currentIndex - 1;
+    setCurrentlyPlaying(songs[prevIndex]);
+    setIsPlaying(true);
+    toast.success(`Now playing: ${songs[prevIndex].title}`);
+  };
+
+  const handleSkipForward = () => {
+    if (!songs.length) return;
+    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
+    const nextIndex = currentIndex >= songs.length - 1 ? 0 : currentIndex + 1;
+    setCurrentlyPlaying(songs[nextIndex]);
+    setIsPlaying(true);
+    toast.success(`Now playing: ${songs[nextIndex].title}`);
+  };
+
   const eras = ['all', '1940s', '1960s', '1980s', 'present'];
   const moods = ['all', 'uplifting', 'calm', 'nostalgic', 'energetic', 'romantic'];
 
@@ -129,6 +147,7 @@ export default function MusicTherapy() {
                 <Button
                   variant="outline"
                   size="lg"
+                  onClick={handleSkipBack}
                   className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
                 >
                   <SkipBack className="w-6 h-6" />
@@ -143,6 +162,7 @@ export default function MusicTherapy() {
                 <Button
                   variant="outline"
                   size="lg"
+                  onClick={handleSkipForward}
                   className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
                 >
                   <SkipForward className="w-6 h-6" />

@@ -815,6 +815,16 @@ If appropriate, gently reference their memories or suggest looking at photos tog
         }).catch(() => {});
       }
 
+      // Persist conversation snapshot every 10 messages (offline-aware)
+      if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
+        offlineEntities.create('Conversation', {
+          mode: 'chat',
+          detected_era: detectedEra || selectedEra,
+          messages: conversationHistory.slice(-20),
+          message_count: conversationHistory.length
+        }).catch(() => {});
+      }
+
       // Periodic cognitive assessment (every 10 messages) - offline-aware
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
         offlineFunction('assessCognitiveLevel', {
