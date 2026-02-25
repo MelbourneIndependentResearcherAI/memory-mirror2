@@ -8,7 +8,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
-import FeatureTutorial from '@/components/landing/FeatureTutorial';
+
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
@@ -162,6 +162,15 @@ export default function Landing() {
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
           <button onClick={() => navigateTo('Home')} className="w-full group">
+              <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
+                <div className="flex items-start gap-5">
+                  <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
+                    <MessageCircle className="w-9 h-9 md:w-11 md:h-11 text-white" />
+                  </div>
+                </div>
+              </div>
+          </button>
+          </div>
             <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
               <div className="flex items-start gap-5">
                 <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">

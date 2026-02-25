@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, Save, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
 import { User, Heart, Music, Users, Book, Edit2, Save, X, ArrowLeft, Calendar, Star, Clock, Check } from 'lucide-react';
 import { useState, useEffect } from 'react';
@@ -535,17 +537,6 @@ export default function UserProfile() {
                   </CardContent>
                 </Card>
 
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Music className="w-5 h-5 text-indigo-500" />
-                      Favourite Music
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <InfoChips items={profile.favorite_music} />
-                  </CardContent>
-                </Card>
 
                 <Card>
                   <CardHeader>
@@ -572,22 +563,15 @@ export default function UserProfile() {
                     ) : profile?.important_people?.length > 0 ? (
                       <div className="grid grid-cols-2 gap-2">
                         {profile.important_people.map((person, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg p-2"
-                          >
+                          <div key={i} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
                             <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
                               <span className="text-green-700 dark:text-green-300 text-xs font-bold">
                                 {person.name?.slice(0, 1).toUpperCase()}
                               </span>
                             </div>
                             <div>
-                              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
-                                {person.name}
-                              </p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
-                                {person.relationship}
-                              </p>
+                              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{person.name}</p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{person.relationship}</p>
                             </div>
                           </div>
                         ))}

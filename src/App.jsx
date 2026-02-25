@@ -54,6 +54,7 @@ const AuthenticatedApp = () => {
 
   // Render the main app
   return (
+    <Suspense fallback={<PageLoadingFallback />}>
     <Suspense fallback={<PageLoader />}>
     <Routes>
       <Route path="/" element={

@@ -1,3 +1,7 @@
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, X, Trash2, Loader2 } from 'lucide-react';
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -210,6 +214,21 @@ export default function YouthMirror() {
           <p className="text-slate-600 dark:text-slate-400">Preserve your memories and life stories while you can — your today becomes your tomorrow's comfort.</p>
         </div>
 
+        <div className="p-6 overflow-y-auto flex-1">
+          <div className="mb-6 space-y-3">
+            <input
+              type="text"
+              placeholder="Title (optional)..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2.5 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            />
+            <textarea
+              placeholder="Write about a memory, a moment, or something you're feeling today..."
+              value={entry}
+              onChange={(e) => setEntry(e.target.value)}
+              rows={4}
+              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
 
 const GRATEFUL_PROMPTS = [
@@ -1776,35 +1795,46 @@ function MusicFromYourLife({ onBack }) {
               className="flex-1"
             />
             <Button
-              onClick={getSuggestions}
-              disabled={isLoading}
-              className="bg-gradient-to-r from-indigo-500 to-purple-500 hover:opacity-90 min-h-[44px]"
+              onClick={handleSave}
+              disabled={createMutation.isPending}
+              className="bg-amber-500 hover:bg-amber-600 text-white min-h-[44px]"
             >
-              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Find Songs 🎵'}
+              {createMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+              Save Entry
             </Button>
           </div>
-        </CardContent>
-      </Card>
 
-      {suggestions?.songs?.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-3">Songs from {year}</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            {suggestions.songs.map((song, idx) => (
-              <Card key={idx} className="bg-white dark:bg-slate-800 hover:shadow-md transition-shadow">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
-                      {idx + 1}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">{song.title}</p>
-                      <p className="text-sm text-indigo-600 dark:text-indigo-400">{song.artist}</p>
-                      {song.why_memorable && (
-                        <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">{song.why_memorable}</p>
+          {isLoading ? (
+            <div className="flex justify-center py-4">
+              <Loader2 className="w-6 h-6 text-amber-500 animate-spin" />
+            </div>
+          ) : journalEntries.length === 0 ? (
+            <p className="text-slate-400 text-sm text-center py-4">No entries yet. Write your first memory!</p>
+          ) : (
+            <div className="space-y-3">
+              {journalEntries.map((je) => (
+                <div key={je.id} className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1">
+                      <p className="font-medium text-slate-700 dark:text-slate-300 text-sm">{je.title}</p>
+                      <p className="text-slate-600 dark:text-slate-400 text-sm mt-1">{je.content}</p>
+                      {je.created_date && (
+                        <p className="text-xs text-slate-400 mt-1">{format(new Date(je.created_date), 'MMM d, yyyy')}</p>
                       )}
                     </div>
+                    <button
+                      onClick={() => deleteMutation.mutate(je.id)}
+                      className="text-red-400 hover:text-red-600 min-w-[36px] min-h-[36px] flex items-center justify-center flex-shrink-0"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
                 </CardContent>
               </Card>
             ))}
@@ -1815,6 +1845,112 @@ function MusicFromYourLife({ onBack }) {
   );
 }
 
+// Grateful Moments mini-component
+function GratefulMoments({ onClose }) {
+  const [text, setText] = useState('');
+  const queryClient = useQueryClient();
+
+  const prompts = [
+    'What made you smile today?',
+    'Name one person you appreciate and why.',
+    'What is a memory that brings you joy?',
+    'What is something beautiful you noticed recently?',
+    'What skill or strength are you proud of?',
+  ];
+  const [prompt] = useState(() => prompts[Math.floor(Math.random() * prompts.length)]);
+
+  const { data: entries = [] } = useQuery({
+    queryKey: ['gratefulMoments'],
+    queryFn: () => base44.entities.CareJournal.list('-created_date', 20).catch(() => []),
+  });
+
+  const gratefulEntries = entries.filter(e => e.entry_type === 'grateful_moment');
+
+  const saveMutation = useMutation({
+    mutationFn: () => base44.entities.CareJournal.create({
+      title: `Grateful: ${text.substring(0, 60)}`,
+      content: text,
+      entry_type: 'grateful_moment',
+    }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['gratefulMoments'] });
+      setText('');
+      toast.success('Grateful moment saved! 💛');
+    },
+    onError: () => toast.error('Failed to save. Please try again.'),
+  });
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] flex flex-col">
+        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
+          <div className="flex items-center gap-3">
+            <Heart className="w-6 h-6 text-orange-500" />
+            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Grateful Moments</h2>
+          </div>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 min-h-[44px] min-w-[44px] flex items-center justify-center">
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        <div className="p-6 overflow-y-auto flex-1">
+          <p className="text-orange-600 dark:text-orange-400 italic mb-4">"{prompt}"</p>
+          <textarea
+            placeholder="Write your answer here..."
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            rows={4}
+            className="w-full border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none mb-4"
+          />
+          <Button
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending || !text.trim()}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 min-h-[44px]"
+          >
+            {saveMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            Save Moment
+          </Button>
+
+          {gratefulEntries.length > 0 && (
+            <div className="mt-6 space-y-2">
+              <h3 className="text-sm font-semibold text-slate-600 dark:text-slate-400">Past moments</h3>
+              {gratefulEntries.slice(0, 5).map((e) => (
+                <div key={e.id} className="p-3 bg-orange-50 dark:bg-orange-950/30 rounded-lg text-sm text-slate-700 dark:text-slate-300">
+                  {e.content}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default function YouthMirror() {
+  const navigate = useNavigate();
+  const [activeModal, setActiveModal] = useState(null);
+
+  const features = [
+    { id: 'selfie',   title: 'Memory Selfie',       description: 'Capture moments with photos from your favourite times', icon: Camera,        color: 'from-blue-500 to-cyan-500' },
+    { id: 'timeline', title: 'Life Timeline',        description: 'Build your personal history with photos, stories, and milestones', icon: Calendar,      color: 'from-purple-500 to-pink-500' },
+    { id: 'moments',  title: 'Grateful Moments',     description: "Daily prompts to capture what you're grateful for",    icon: Heart,         color: 'from-orange-500 to-red-500' },
+    { id: 'chat',     title: 'AI Chat Buddy',        description: 'Talk about your day, memories, or anything on your mind', icon: MessageCircle, color: 'from-green-500 to-emerald-500' },
+    { id: 'collage',  title: 'Memory Collages',      description: 'View your photo memories in a beautiful collage layout', icon: Image,         color: 'from-pink-500 to-rose-500' },
+    { id: 'music',    title: 'Music from Your Life', description: 'Discover songs from important years and create playlists', icon: Music,         color: 'from-indigo-500 to-purple-500' },
+    { id: 'journal',  title: 'Memory Journal',       description: 'Write down thoughts, feelings, and memories',          icon: BookOpen,      color: 'from-amber-500 to-yellow-500' },
+  ];
+
+  const handleFeatureClick = (feature) => {
+    if (feature.id === 'chat') {
+      navigate(createPageUrl('Home'));
+      return;
+    }
+    if (feature.id === 'journal' || feature.id === 'moments') {
+      setActiveModal(feature.id);
+      return;
+    }
+    toast.info(`${feature.title} — coming soon!`);
 const JOURNAL_KEY = 'youth_mirror_journal';
 const MOMENTS_KEY = 'youth_mirror_moments';
 
@@ -1945,6 +2081,7 @@ export default function YouthMirror() {
             return (
               <Card
                 key={feature.id}
+                className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
                 className="cursor-pointer hover:shadow-lg transition-all duration-200 hover:-translate-y-0.5"
                 onClick={() => handleFeatureClick(feature)}
               >
@@ -1965,6 +2102,7 @@ export default function YouthMirror() {
                   <CardTitle className="text-lg">{feature.title}</CardTitle>
                 </CardHeader>
                 <CardContent>
+                  <Button className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}>
                   <p className="text-sm text-slate-600 dark:text-slate-400">{feature.description}</p>
                   <Button className={`w-full mt-4 bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}>
                     {feature.id === 'chat' ? 'Start Chat' : 'Explore'}
@@ -1990,6 +2128,7 @@ export default function YouthMirror() {
             </h3>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
               Memory Mirror's creator built this after 25 years caring for family members with dementia.
+              Youth Mirror is the "prequel" - helping young people and adults actively preserve their
               Youth Mirror is the "prequel" — helping young people and adults actively preserve their
               Memory Mirror was built after years of caring for family members with dementia.
               Youth Mirror is the &ldquo;prequel&rdquo; — helping young people and adults actively preserve their
