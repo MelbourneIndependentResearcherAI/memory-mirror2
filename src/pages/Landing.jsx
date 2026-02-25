@@ -5,6 +5,8 @@ import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
+import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
+import FeatureTutorial from '@/components/landing/FeatureTutorial';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
@@ -129,7 +131,6 @@ export default function Landing() {
                     <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
                     <span>Configure AI behavior</span>
                   </div>
-<<<<<<< copilot/continue-task-progress
                 </div>
               </button>
 
@@ -223,13 +224,11 @@ export default function Landing() {
                 <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-2">
                   Families facing severe financial hardship can <a href="mailto:support@memorymirror.app" className="text-blue-600 dark:text-blue-400 hover:underline font-semibold">contact support</a> to discuss assistance options. We're here to help — compassionate care shouldn't depend on your ability to pay.
                 </p>
-=======
                   <div className="flex items-center gap-2">
                     <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
                     <span>Get smart notifications</span>
                   </div>
                 </div>
->>>>>>> main
               </div>
             </div>
           </button>
@@ -273,16 +272,13 @@ export default function Landing() {
 
       <div style={{ height: '40px' }}></div>
 
-<<<<<<< copilot/continue-task-progress
         {/* Spacing */}
         <div style={{ height: '60px' }}></div>
       </div>
       
-=======
       {showDonationModal && (
         <DonationModal onClose={() => setShowDonationModal(false)} />
       )}
->>>>>>> main
     </div>
   );
 }
