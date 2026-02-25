@@ -39,7 +39,7 @@ export default function AgentSupport() {
         // Only show AI assistants to admin/caregiver users
         const userIsAdmin = user && user.role === 'admin';
         setIsAdmin(userIsAdmin);
-      } catch (error) {
+      } catch {
         // Not authenticated = not an admin
         setIsAdmin(false);
       } finally {
