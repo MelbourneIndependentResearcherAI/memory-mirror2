@@ -6,8 +6,8 @@ import { offlineEntities } from '@/components/utils/offlineAPI';
 
 export default function BadDayMode({ onClose, userProfile }) {
   const [stage, setStage] = useState('greeting'); // greeting, breathing, memory, music, story
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [breathCount, setBreathCount] = useState(0);
+  const [_isPlaying, setIsPlaying] = useState(false);
+  const [breathCount, _setBreathCount] = useState(0);
 
   useEffect(() => {
     // Log bad day mode activation
