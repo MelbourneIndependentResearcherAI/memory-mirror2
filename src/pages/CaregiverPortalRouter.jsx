@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
-import { createPageUrl } from '../utils';
 import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
@@ -36,13 +35,14 @@ import CaregiverTeamManager from '@/components/caregiver/CaregiverTeamManager';
 import CaregiverNotificationCenter from '@/components/caregiver/CaregiverNotificationCenter';
 import SharedJournal from '@/components/caregiver/SharedJournal';
 import AgentMonitor from '@/components/admin/AgentMonitor';
+import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const featureCards = [
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
   { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/PhotoLibrary', background: '#FAF5FF' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: null, background: '#F0FDF4' },
+  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/CaregiverPortal/chat-history', background: '#F0FDF4' },
   { id: 6, title: 'Music Player', icon: '🎵', description: 'Era-specific songs and playlists', path: '/MusicPlayer', background: '#FFF7ED' },
   { id: 7, title: 'Care Journal', icon: '📖', description: 'Document observations and changes', path: '/CareJournalPage', background: '#F0FDFA' },
   { id: 8, title: 'Night Watch Log', icon: '🌙', description: 'Review nighttime incidents and patterns', path: '/NightWatchPage', background: '#1E1B4B' },
@@ -75,11 +75,6 @@ function CaregiverPortalHome() {
   const [badDayActivated, setBadDayActivated] = React.useState(false);
 
   const handleCardClick = async (card) => {
-    // Prevent navigation for card 5 (Chat History - coming soon)
-    if (card.id === 5) {
-      return;
-    }
-
     if (card.id === 12) {
       setBadDayActivated(true);
       try {
@@ -395,6 +390,14 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <AgentMonitor />
+            </div>
+          } />
+          <Route path="chat-history" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <ChatHistoryViewer />
             </div>
           } />
         </Routes>

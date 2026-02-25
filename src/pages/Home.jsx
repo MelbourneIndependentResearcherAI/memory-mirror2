@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Phone, Shield, Settings, HeartCrack, CreditCard } from 'lucide-react';
+import { MessageCircle, Settings, HeartCrack } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';

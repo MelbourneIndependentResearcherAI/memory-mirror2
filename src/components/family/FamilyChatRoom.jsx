@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
-import { Send, Image, Mic, X, Camera, ShieldCheck, Lock, CheckCircle2, Volume2, Info, Key } from 'lucide-react';
+import { Send, Mic, X, Camera, ShieldCheck, Lock, CheckCircle2, Volume2, Info, Key } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { encryptData, decryptData, getEncryptionKey } from '@/components/utils/encryption';
