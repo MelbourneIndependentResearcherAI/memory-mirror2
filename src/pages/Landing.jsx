@@ -17,6 +17,7 @@ export default function Landing() {
   const handleGetStarted = () => navigate(createPageUrl('Home'));
 
   const featureCards = [
+    { icon: '🔴', title: 'Big Button Mode', desc: 'Extra-large buttons for easy access - inspired by "Be My Eyes"', page: 'BigButtonMode', color: 'from-red-500 to-rose-600' },
     { icon: '🧠', title: 'AI Chat Companion', desc: 'Warm, empathetic conversation that adapts to each person\'s era and memories', page: 'Home', color: 'from-blue-500 to-cyan-500' },
     { icon: '❤️', title: 'Health Monitor', desc: 'Track emotional state, anxiety levels and wellbeing patterns over time', page: 'HealthMonitor', color: 'from-red-500 to-pink-500' },
     { icon: '🎵', title: 'Music Therapy', desc: 'Era-specific songs and playlists to comfort and stimulate memory', page: 'MusicTherapy', color: 'from-purple-500 to-indigo-500' },
