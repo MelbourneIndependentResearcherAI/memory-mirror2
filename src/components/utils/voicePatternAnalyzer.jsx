@@ -30,7 +30,7 @@ class VoicePatternAnalyzer {
   }
 
   // Analyze incoming voice data for patterns
-  analyzeVoiceInput(transcriptText, audioData = null) {
+  analyzeVoiceInput(transcriptText, _audioData = null) {
     const analysis = {
       timestamp: Date.now(),
       transcript: transcriptText,
@@ -119,7 +119,7 @@ class VoicePatternAnalyzer {
 
   // Predict overall emotional state
   predictEmotionalState(text) {
-    const recentTones = this.patterns.voiceTone.slice(-5);
+    const _recentTones = this.patterns.voiceTone.slice(-5);
     const currentTone = this.detectEmotionalTone(text);
     const stressIndicators = this.detectStressIndicators(text);
     

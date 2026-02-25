@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
 
-export default function SmartHomeControls({ mode = 'compact' }) {
+export default function SmartHomeControls({ mode: _mode = 'compact' }) {
   const [devices, setDevices] = useState([]);
   const [routines, setRoutines] = useState([]);
   const [executing, setExecuting] = useState(null);

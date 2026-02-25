@@ -85,13 +85,12 @@ class OfflineSyncManager {
 
   async syncJournal(item) {
     if (item.action === 'create') {
-      const { id, sync_status, cached_at, created_locally, ...journalData } = item.data;
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, created_locally: _created_locally, ...journalData } = item.data;
       const created = await base44.entities.CareJournal.create(journalData);
       await offlineDataCache.markAsSynced('care_journal', item.local_id, created.id);
       return created;
     } else if (item.action === 'update') {
-      const { id, sync_status, cached_at, ...journalData } = item.data;
-      const updated = await base44.entities.CareJournal.update(item.remote_id, journalData);
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, ..._journalData } = item.data;
       await offlineDataCache.markAsSynced('care_journal', item.local_id, item.remote_id);
       return updated;
     }
@@ -99,12 +98,12 @@ class OfflineSyncManager {
 
   async syncMemory(item) {
     if (item.action === 'create') {
-      const { id, sync_status, cached_at, created_locally, ...memoryData } = item.data;
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, created_locally: _created_locally, ...memoryData } = item.data;
       const created = await base44.entities.Memory.create(memoryData);
       await offlineDataCache.markAsSynced('memory', item.local_id, created.id);
       return created;
     } else if (item.action === 'update') {
-      const { id, sync_status, cached_at, ...memoryData } = item.data;
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, ...memoryData } = item.data;
       const updated = await base44.entities.Memory.update(item.remote_id, memoryData);
       await offlineDataCache.markAsSynced('memory', item.local_id, item.remote_id);
       return updated;
@@ -113,12 +112,12 @@ class OfflineSyncManager {
 
   async syncMedia(item) {
     if (item.action === 'create') {
-      const { id, sync_status, cached_at, created_locally, ...mediaData } = item.data;
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, created_locally: _created_locally, ...mediaData } = item.data;
       const created = await base44.entities.FamilyMedia.create(mediaData);
       await offlineDataCache.markAsSynced('media', item.local_id, created.id);
       return created;
     } else if (item.action === 'update') {
-      const { id, sync_status, cached_at, ...mediaData } = item.data;
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, ...mediaData } = item.data;
       const updated = await base44.entities.FamilyMedia.update(item.remote_id, mediaData);
       await offlineDataCache.markAsSynced('media', item.local_id, item.remote_id);
       return updated;

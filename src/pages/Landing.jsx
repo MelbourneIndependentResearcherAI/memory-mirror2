@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Phone, Shield, Heart, Brain, Volume2, Moon, CreditCard } from 'lucide-react';
+import { MessageCircle, Brain, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -26,40 +26,9 @@ export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();
 
+  const navigateTo = (page) => navigate(createPageUrl(page));
   const handleGetStarted = () => {
     navigate(createPageUrl('Home'));
-  };
-
-  const handleBankingClick = () => {
-    navigate(createPageUrl('MyBank'));
-  };
-
-  const handlePhoneModeClick = () => {
-    navigate(createPageUrl('PhoneMode'));
-  };
-
-  const handleSecurityClick = () => {
-    navigate(createPageUrl('Security'));
-  };
-
-  const handleNightWatchClick = () => {
-    navigate(createPageUrl('NightWatch'));
-  };
-
-  const handleVoiceSetupClick = () => {
-    navigate(createPageUrl('VoiceSetup'));
-  };
-
-  const handleFamilyPortalClick = () => {
-    navigate(createPageUrl('FamilyConnect'));
-  };
-
-  const handleCaregiverDashboardClick = () => {
-    navigate(createPageUrl('CaregiverDashboard'));
-  };
-
-  const handleTVModeClick = () => {
-    navigate(createPageUrl('TVMode'));
   };
 
   return (
@@ -74,7 +43,7 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigateTo('CaregiverPortal')}
               className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
             >
               👨‍⚕️ Caregiver Portal
@@ -84,32 +53,29 @@ export default function Landing() {
       </div>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16 md:py-24 max-w-7xl">
-        <div className="text-center max-w-5xl mx-auto">
-          <div className="inline-flex items-center gap-2.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-5 md:px-7 py-2.5 md:py-3 rounded-full shadow-sm mb-6 md:mb-8 border border-blue-200/50 dark:border-blue-700/50">
-            <Heart className="w-4.5 h-4.5 text-blue-500 animate-pulse" />
-            <span className="text-sm md:text-base font-medium text-slate-700 dark:text-slate-300">Compassionate Care at Home</span>
+      <div className="container mx-auto px-4 py-16 md:py-24 max-w-5xl">
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <div className="inline-flex items-center gap-2.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-5 py-2.5 rounded-full shadow-sm mb-6 border border-blue-200/50 dark:border-blue-700/50">
+            <Heart className="w-4 h-4 text-blue-500 animate-pulse" />
+            <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Compassionate Care at Home</span>
           </div>
-          
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold text-slate-950 dark:text-white mb-4 md:mb-6 leading-tight px-4">
+
+          <h1 className="text-5xl md:text-7xl font-bold text-slate-950 dark:text-white mb-4 leading-tight">
             Memory Mirror
           </h1>
-          <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 mb-3 md:mb-4 px-4 tracking-wide uppercase font-medium">
+          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 tracking-wide uppercase font-medium">
             AI Companion for Dementia Care
           </p>
-          
-          <p className="text-xl md:text-2xl lg:text-3xl text-slate-800 dark:text-slate-200 mb-3 md:mb-4 leading-relaxed font-medium px-4">
-            Meeting your loved one where they are—
+          <p className="text-xl md:text-2xl text-slate-700 dark:text-slate-300 leading-relaxed font-light">
+            Meeting your loved one where they are — with dignity, warmth, and genuine understanding
           </p>
-          <p className="text-lg md:text-xl lg:text-2xl text-blue-600 dark:text-blue-400 mb-8 md:mb-12 font-light px-4">
-            with dignity, warmth, and genuine understanding
-          </p>
+        </div>
 
           {/* Dual Access Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
             {/* Patient Access */}
             <button
-              onClick={() => navigate(createPageUrl('PatientAccess'))}
+              onClick={() => navigateTo('PatientAccess')}
               className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
@@ -143,7 +109,7 @@ export default function Landing() {
 
             {/* Caregiver Access */}
             <button
-              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigateTo('CaregiverPortal')}
               className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
@@ -178,19 +144,41 @@ export default function Landing() {
 
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
-          <button onClick={handleGetStarted} className="w-full group">
+          <button onClick={() => navigateTo('Home')} className="w-full group">
               <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
                 <div className="flex items-start gap-5">
                   <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
                     <MessageCircle className="w-9 h-9 md:w-11 md:h-11 text-white" />
+        {/* Dual Access Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8 px-4">
+          {/* Patient Access */}
+          <button
+            onClick={() => navigate(createPageUrl('PatientAccess'))}
+            className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+          >
+            <div className="flex flex-col items-start gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                <MessageCircle className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-3">
+                  Start Companion
+                </h3>
+                <p className="text-lg text-white/90 leading-relaxed mb-4">
+                  For patients — Quick access, no login required
+                </p>
+                <div className="flex flex-col gap-2 text-sm text-white/80">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Instant AI companion</span>
                   </div>
-                  <div className="flex-1 text-left">
-                    <h3 className="text-2xl md:text-3xl font-semibold text-white mb-2">
-                      AI Chat Companion
-                    </h3>
-                    <p className="text-base md:text-lg text-white/85 leading-relaxed">
-                      Voice-activated conversation that adapts to any era, detects anxiety, and recalls cherished memories
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Optional PIN protection</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Hands-free voice access</span>
                   </div>
                 </div>
               </div>
@@ -198,7 +186,7 @@ export default function Landing() {
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <button onClick={handlePhoneModeClick} className="w-full group">
+              <button onClick={() => navigateTo('PhoneMode')} className="w-full group">
                 <div className="bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -214,7 +202,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleSecurityClick} className="w-full group" type="button">
+              <button onClick={() => navigateTo('Security')} className="w-full group" type="button">
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -230,7 +218,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleNightWatchClick} className="w-full group">
+              <button onClick={() => navigateTo('NightWatch')} className="w-full group">
                 <div className="bg-gradient-to-br from-slate-800 to-slate-950 hover:from-slate-900 hover:to-black rounded-2xl shadow-lg border border-white/10 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -248,7 +236,7 @@ export default function Landing() {
             </div>
 
             {/* Voice Setup Card */}
-            <button onClick={handleVoiceSetupClick} className="w-full group">
+            <button onClick={() => navigateTo('VoiceSetup')} className="w-full group">
               <div className="bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -267,7 +255,7 @@ export default function Landing() {
             </button>
 
             {/* Fake Banking Card */}
-            <button onClick={handleBankingClick} className="w-full group">
+            <button onClick={() => navigateTo('MyBank')} className="w-full group">
               <div className="bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -287,7 +275,7 @@ export default function Landing() {
 
             {/* Portal Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <button onClick={handleFamilyPortalClick} className="w-full group">
+              <button onClick={() => navigateTo('FamilyConnect')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-blue-200/60 dark:border-blue-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">👨‍👩‍👧‍👦</div>
@@ -303,7 +291,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleCaregiverDashboardClick} className="w-full group">
+              <button onClick={() => navigateTo('CaregiverDashboard')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-purple-200/60 dark:border-purple-700/40 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">🧠</div>
@@ -319,7 +307,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleTVModeClick} className="w-full group">
+              <button onClick={() => navigateTo('TVMode')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-indigo-200/60 dark:border-indigo-700/40 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">📺</div>
@@ -331,11 +319,38 @@ export default function Landing() {
                         Connect and use Memory Mirror on your large screen TV
                       </p>
                     </div>
+            </div>
+          </button>
+
+          {/* Caregiver Access */}
+          <button
+            onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+            className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+          >
+            <div className="flex flex-col items-start gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                <Brain className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-3">
+                  Caregiver Portal
+                </h3>
+                <p className="text-lg text-white/90 leading-relaxed mb-4">
+                  For caregivers — Full dashboard & controls
+                </p>
+                <div className="flex flex-col gap-2 text-sm text-white/80">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Monitor activity & wellbeing</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Configure AI behavior</span>
                   </div>
                 </div>
               </button>
 
-              <button onClick={handleBankingClick} className="w-full group">
+              <button onClick={() => navigateTo('MyBank')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-green-200/60 dark:border-green-700/40 hover:border-green-300 dark:hover:border-green-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">💳</div>
@@ -358,7 +373,7 @@ export default function Landing() {
               <Button 
                 size="lg" 
                 className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
-                onClick={handleGetStarted}
+                onClick={() => navigateTo('Home')}
               >
                 Go to Memory Mirror →
               </Button>
@@ -370,7 +385,7 @@ export default function Landing() {
         <FeatureTutorial />
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Main Content Section - SEO */}
         <div className="max-w-4xl mx-auto px-4">
@@ -457,7 +472,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* How It Works */}
         <div id="how-it-works" className="mx-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl py-16 md:py-20 px-6">
@@ -515,7 +530,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Testimonials */}
         <div className="max-w-4xl mx-auto px-4 bg-white dark:bg-slate-900 rounded-2xl py-16 md:py-20">
@@ -557,7 +572,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Built by Someone Who Understands */}
         <div className="max-w-4xl mx-auto px-4 mb-20">
@@ -578,95 +593,59 @@ export default function Landing() {
                 </div>
                 <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">🏥 Aged Care Volunteer</span>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Get smart notifications</span>
+                  </div>
                 </div>
               </div>
             </div>
-
-            <div className="space-y-5 text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              <p>
-                Memory Mirror was created by a Melbourne caregiver who spent 25 years caring for family members with dementia. After countless sleepless nights, endless worry, and watching other families struggle globally, he taught himself to code and built the solution he wished existed.
-              </p>
-              
-              <p>
-                With qualifications in Mental Health and Community Psychology, and years volunteering in dementia care, every feature in Memory Mirror comes from real experience—not corporate research.
-              </p>
-              
-              <p className="font-medium text-amber-900 dark:text-amber-400">
-                Self-funded, built through trial and error, and created with love. Because everyone deserves support at 3am.
-              </p>
-              
-              <p className="text-center text-slate-600 dark:text-slate-400 italic pt-4 border-t border-amber-200 dark:border-amber-700">
-                — Built by caregivers, for caregivers
-              </p>
-            </div>
-          </div>
+          </button>
         </div>
 
-        {/* Donate Section */}
-        <div className="max-w-3xl mx-auto px-4 mb-20">
-          <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-blue-600 rounded-2xl p-8 md:p-12 shadow-2xl text-center border-2 border-blue-400/30">
-            <div className="inline-block mb-4">
-              <div className="text-6xl md:text-7xl">💙</div>
-            </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-              Support Memory Mirror
-            </h2>
-            <p className="text-base md:text-lg text-white/95 leading-relaxed mb-8 max-w-xl mx-auto">
-              Memory Mirror is free for everyone. Your donations keep the servers running, AI services active, and development ongoing. 100% of funds go toward operational costs—never personal use.
-            </p>
-            
-            <Button
-              size="lg"
-              className="bg-white text-blue-600 hover:bg-blue-50 px-10 py-7 text-xl font-bold shadow-xl hover:shadow-2xl transition-all hover:scale-105 rounded-xl"
-              onClick={() => setShowDonationModal(true)}
-            >
-              💝 Donate Now
-            </Button>
-            
-            <p className="text-sm text-white/80 mt-6 font-medium">
-              Every contribution helps us serve more families around the world
-            </p>
-          </div>
+        {/* CTA Buttons */}
+        <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">
+          <InstallAppButton />
+          <Button
+            size="lg"
+            className="px-8 py-5 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+            onClick={handleGetStarted}
+          >
+            Go to Memory Mirror →
+          </Button>
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            💙 Support this project
+          </button>
         </div>
-        
-        {showDonationModal && (
-          <DonationModal onClose={() => setShowDonationModal(false)} />
-        )}
 
         {/* Community Feedback Section */}
         <CommunityFeedbackSection />
+      </div>
 
-        {/* Bottom Text Section */}
-        <div 
-          className="text-center relative px-4 z-10 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-16 md:py-20"
-        >
-          <p className="text-slate-200 text-sm md:text-base font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
-          <p className="mt-2 text-slate-400 text-xs md:text-sm">Designed with input from caregivers and dementia care specialists</p>
-          <div className="mt-6 flex justify-center gap-4 flex-wrap text-xs md:text-sm">
-            <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">
-              FAQ
-            </Link>
-            <span className="text-slate-600">•</span>
-            <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">
-              Terms of Service
-            </Link>
-            <span className="text-slate-600">•</span>
-            <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">
-              Privacy Policy
-            </Link>
-            <span className="text-slate-600">•</span>
-            <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">
-              Support
-            </a>
-            <span className="text-slate-600">•</span>
-            <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">
-              Feedback
-            </Link>
-          </div>
+      {/* Footer */}
+      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
+        <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
+        <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
+        <div className="mt-6 flex justify-center gap-4 flex-wrap text-xs">
+          <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">Terms of Service</Link>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">Privacy Policy</Link>
+          <span className="text-slate-600">•</span>
+          <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">Support</a>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">Feedback</Link>
         </div>
+      </div>
+
+      <div style={{ height: '40px' }}></div>
 
         {/* Spacing */}
-        <div style={{ height: '60px' }}></div>
+        <div className="h-16"></div>
       </div>
       
       {showDonationModal && (
