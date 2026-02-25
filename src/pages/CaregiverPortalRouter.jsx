@@ -44,6 +44,7 @@ const featureCards = [
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
   { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/PhotoLibrary', background: '#FAF5FF' },
+  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
@@ -82,6 +83,7 @@ function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
 
+  const handleCardClick = async (card) => {    if (card.id === 12) {
   const handleCardClick = async (card) => {
     if (card.id === 12) {
       setBadDayActivated(true);

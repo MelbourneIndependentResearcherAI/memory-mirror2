@@ -315,7 +315,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "security": security,
 }
 
 export const pagesConfig = {
