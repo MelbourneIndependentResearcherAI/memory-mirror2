@@ -7,11 +7,29 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { useLanguage } from './utils/LanguageContext';
-import { languageNames } from './utils/translations';
+import { useLanguage } from './i18n/LanguageContext';
 
 export default function LanguageSwitcher() {
-  const { currentLanguage, setCurrentLanguage } = useLanguage();
+  const { language, setLanguage } = useLanguage();
+  
+  const languageNames = {
+    en: 'English',
+    es: 'Español',
+    fr: 'Français',
+    de: 'Deutsch',
+    zh: '中文',
+    ja: '日本語',
+    ar: 'العربية',
+    pt: 'Português',
+    ru: 'Русский',
+    hi: 'हिन्दी',
+    it: 'Italiano',
+    ko: '한국어',
+    nl: 'Nederlands',
+    tr: 'Türkçe',
+    pl: 'Polski',
+    vi: 'Tiếng Việt'
+  };
 
   return (
     <DropdownMenu>
@@ -24,10 +42,10 @@ export default function LanguageSwitcher() {
         {Object.entries(languageNames).map(([code, name]) => (
           <DropdownMenuItem
             key={code}
-            onClick={() => setCurrentLanguage(code)}
-            className={currentLanguage === code ? 'bg-blue-50 dark:bg-blue-950' : ''}
+            onClick={() => setLanguage(code)}
+            className={language === code ? 'bg-blue-50 dark:bg-blue-950' : ''}
           >
-            <span className="mr-2">{code === currentLanguage ? '✓' : ' '}</span>
+            <span className="mr-2">{code === language ? '✓' : ' '}</span>
             {name}
           </DropdownMenuItem>
         ))}
