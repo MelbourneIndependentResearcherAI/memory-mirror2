@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Phone, AlertTriangle } from 'lucide-react';
+import { Phone } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'react-hot-toast';
 

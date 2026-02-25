@@ -4,7 +4,7 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Plus, Calendar, MapPin, Users, Upload } from 'lucide-react';
+import { Plus, Calendar, Upload } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MemoryTimelineBuilder() {

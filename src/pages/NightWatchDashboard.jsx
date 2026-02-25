@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Moon, AlertCircle, Activity, BarChart3, Settings } from 'lucide-react';
+import { ArrowLeft, Moon, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function NightWatchDashboardPage() {

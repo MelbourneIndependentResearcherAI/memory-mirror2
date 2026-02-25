@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, Play } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 export default function VisualResponse({ suggestions, onClose }) {
   const [currentIndex, setCurrentIndex] = useState(0);

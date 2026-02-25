@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Cloud, CloudOff, Loader2, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
-import { offlineDataCache } from '@/components/utils/offlineDataCache';
 
 export default function OfflineSyncIndicator() {
   const [syncStatus, setSyncStatus] = useState('idle');

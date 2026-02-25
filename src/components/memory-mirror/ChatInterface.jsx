@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, AlertCircle, Headphones, Heart } from 'lucide-react';
+import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, Headphones, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';

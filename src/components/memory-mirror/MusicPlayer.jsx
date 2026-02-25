@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Music, Play, Pause, SkipForward, Volume2, X, Download, Check, Sparkles } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
