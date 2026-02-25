@@ -133,9 +133,11 @@ const VoiceCloning = lazy(() => import('./pages/VoiceCloning'));
 const VoiceCommands = lazy(() => import('./pages/VoiceCommands'));
 const VoiceSetup = lazy(() => import('./pages/VoiceSetup'));
 const VoiceUsageAnalytics = lazy(() => import('./pages/VoiceUsageAnalytics'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
 const YouthMirror = lazy(() => import('./pages/YouthMirror'));
 const chat = lazy(() => import('./pages/chat'));
 const phone = lazy(() => import('./pages/phone'));
+const security = lazy(() => import('./pages/security'));
 
 
 export const PAGES = {

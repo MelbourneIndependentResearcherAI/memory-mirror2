@@ -72,6 +72,7 @@ const featureCards = [
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
   { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' },
+  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
 ];
 
 function CaregiverPortalHome() {
