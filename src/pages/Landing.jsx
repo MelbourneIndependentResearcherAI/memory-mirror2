@@ -26,41 +26,7 @@ export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();
 
-  const handleGetStarted = () => {
-    navigate(createPageUrl('Home'));
-  };
-
-  const handleBankingClick = () => {
-    navigate(createPageUrl('MyBank'));
-  };
-
-  const handlePhoneModeClick = () => {
-    navigate(createPageUrl('PhoneMode'));
-  };
-
-  const handleSecurityClick = () => {
-    navigate(createPageUrl('Security'));
-  };
-
-  const handleNightWatchClick = () => {
-    navigate(createPageUrl('NightWatch'));
-  };
-
-  const handleVoiceSetupClick = () => {
-    navigate(createPageUrl('VoiceSetup'));
-  };
-
-  const handleFamilyPortalClick = () => {
-    navigate(createPageUrl('FamilyConnect'));
-  };
-
-  const handleCaregiverDashboardClick = () => {
-    navigate(createPageUrl('CaregiverDashboard'));
-  };
-
-  const handleTVModeClick = () => {
-    navigate(createPageUrl('TVMode'));
-  };
+  const navigateTo = (page) => navigate(createPageUrl(page));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
@@ -74,7 +40,7 @@ export default function Landing() {
           <div className="flex items-center gap-3">
             <Button
               variant="ghost"
-              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigateTo('CaregiverPortal')}
               className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
             >
               👨‍⚕️ Caregiver Portal
@@ -109,7 +75,7 @@ export default function Landing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
             {/* Patient Access */}
             <button
-              onClick={() => navigate(createPageUrl('PatientAccess'))}
+              onClick={() => navigateTo('PatientAccess')}
               className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
@@ -143,7 +109,7 @@ export default function Landing() {
 
             {/* Caregiver Access */}
             <button
-              onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+              onClick={() => navigateTo('CaregiverPortal')}
               className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
             >
               <div className="flex flex-col items-start gap-4">
@@ -178,7 +144,7 @@ export default function Landing() {
 
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
-          <button onClick={handleGetStarted} className="w-full group">
+          <button onClick={() => navigateTo('Home')} className="w-full group">
               <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
                 <div className="flex items-start gap-5">
                   <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -198,7 +164,7 @@ export default function Landing() {
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <button onClick={handlePhoneModeClick} className="w-full group">
+              <button onClick={() => navigateTo('PhoneMode')} className="w-full group">
                 <div className="bg-gradient-to-br from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -214,7 +180,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleSecurityClick} className="w-full group" type="button">
+              <button onClick={() => navigateTo('Security')} className="w-full group" type="button">
                 <div className="bg-gradient-to-br from-indigo-600 to-purple-700 hover:from-indigo-700 hover:to-purple-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -230,7 +196,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleNightWatchClick} className="w-full group">
+              <button onClick={() => navigateTo('NightWatch')} className="w-full group">
                 <div className="bg-gradient-to-br from-slate-800 to-slate-950 hover:from-slate-900 hover:to-black rounded-2xl shadow-lg border border-white/10 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer h-full">
                   <div className="flex flex-col h-full">
                     <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl w-fit mb-4 group-hover:bg-white/25 transition-colors">
@@ -248,7 +214,7 @@ export default function Landing() {
             </div>
 
             {/* Voice Setup Card */}
-            <button onClick={handleVoiceSetupClick} className="w-full group">
+            <button onClick={() => navigateTo('VoiceSetup')} className="w-full group">
               <div className="bg-gradient-to-br from-cyan-600 to-blue-700 hover:from-cyan-700 hover:to-blue-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -267,7 +233,7 @@ export default function Landing() {
             </button>
 
             {/* Fake Banking Card */}
-            <button onClick={handleBankingClick} className="w-full group">
+            <button onClick={() => navigateTo('MyBank')} className="w-full group">
               <div className="bg-gradient-to-br from-green-600 to-emerald-700 hover:from-green-700 hover:to-emerald-800 rounded-2xl shadow-lg border border-white/20 hover:shadow-xl transition-all duration-300 p-7 md:p-8 cursor-pointer">
                 <div className="flex items-start gap-4">
                   <div className="bg-white/15 backdrop-blur-sm p-3 rounded-xl group-hover:bg-white/25 transition-colors">
@@ -287,7 +253,7 @@ export default function Landing() {
 
             {/* Portal Access Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
-              <button onClick={handleFamilyPortalClick} className="w-full group">
+              <button onClick={() => navigateTo('FamilyConnect')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-blue-200/60 dark:border-blue-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">👨‍👩‍👧‍👦</div>
@@ -303,7 +269,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleCaregiverDashboardClick} className="w-full group">
+              <button onClick={() => navigateTo('CaregiverDashboard')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-purple-200/60 dark:border-purple-700/40 hover:border-purple-300 dark:hover:border-purple-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">🧠</div>
@@ -319,7 +285,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleTVModeClick} className="w-full group">
+              <button onClick={() => navigateTo('TVMode')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-indigo-200/60 dark:border-indigo-700/40 hover:border-indigo-300 dark:hover:border-indigo-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">📺</div>
@@ -335,7 +301,7 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleBankingClick} className="w-full group">
+              <button onClick={() => navigateTo('MyBank')} className="w-full group">
                 <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-green-200/60 dark:border-green-700/40 hover:border-green-300 dark:hover:border-green-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
                   <div className="flex items-start gap-4">
                     <div className="text-4xl md:text-5xl">💳</div>
@@ -358,7 +324,7 @@ export default function Landing() {
               <Button 
                 size="lg" 
                 className="px-8 md:px-10 py-5 md:py-6 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
-                onClick={handleGetStarted}
+                onClick={() => navigateTo('Home')}
               >
                 Go to Memory Mirror →
               </Button>
@@ -370,7 +336,7 @@ export default function Landing() {
         <FeatureTutorial />
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Main Content Section - SEO */}
         <div className="max-w-4xl mx-auto px-4">
@@ -457,7 +423,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* How It Works */}
         <div id="how-it-works" className="mx-4 bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl py-16 md:py-20 px-6">
@@ -515,7 +481,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Testimonials */}
         <div className="max-w-4xl mx-auto px-4 bg-white dark:bg-slate-900 rounded-2xl py-16 md:py-20">
@@ -557,7 +523,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '80px' }}></div>
+        <div className="h-20"></div>
 
         {/* Built by Someone Who Understands */}
         <div className="max-w-4xl mx-auto px-4 mb-20">
@@ -628,10 +594,6 @@ export default function Landing() {
             </p>
           </div>
         </div>
-        
-        {showDonationModal && (
-          <DonationModal onClose={() => setShowDonationModal(false)} />
-        )}
 
         {/* Community Feedback Section */}
         <CommunityFeedbackSection />
@@ -666,7 +628,7 @@ export default function Landing() {
         </div>
 
         {/* Spacing */}
-        <div style={{ height: '60px' }}></div>
+        <div className="h-16"></div>
       </div>
       
       {showDonationModal && (
