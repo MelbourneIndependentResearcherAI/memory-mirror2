@@ -61,6 +61,7 @@ import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
+import ChatHistory from './pages/ChatHistory';
 import ChatMode from './pages/ChatMode';
 import ContentLibrary from './pages/ContentLibrary';
 import ConversationAnalytics from './pages/ConversationAnalytics';
@@ -151,6 +152,7 @@ export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
     "CaregiverPortalRouter": CaregiverPortalRouter,
     "ChatCompanionDashboard": ChatCompanionDashboard,
+    "ChatHistory": ChatHistory,
     "ChatMode": ChatMode,
     "ContentLibrary": ContentLibrary,
     "ConversationAnalytics": ConversationAnalytics,
