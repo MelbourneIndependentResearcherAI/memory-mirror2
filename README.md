@@ -49,6 +49,10 @@ npm run test:e2e
 npm run test:e2e:ui
 ```
 
+**API Reference**
+
+The serverless functions in the `functions/` directory are documented in [docs/api.md](docs/api.md).  Each entry covers the HTTP request body, response shape, and authentication requirements.
+
 **Docs & Support**
 
 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)

@@ -86,7 +86,7 @@ export default function CaregiverTeamManager({ patientProfileId }) {
   });
 
   // Update notification preferences
-  const updatePreferencesMutation = useMutation({
+  const _updatePreferencesMutation = useMutation({
     mutationFn: async ({ id, preferences }) => {
       return await base44.entities.CaregiverTeam.update(id, {
         notification_preferences: preferences

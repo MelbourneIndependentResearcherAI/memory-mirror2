@@ -104,7 +104,7 @@ export default function HandsFreeMode({
         });
         console.log('✅ Mic permission granted');
         stream.getTracks().forEach(track => track.stop());
-      } catch (permError) {
+      } catch {
         console.error('❌ Mic permission denied');
         toast.error('Please allow microphone access', { duration: 5000 });
         setIsActive(false);

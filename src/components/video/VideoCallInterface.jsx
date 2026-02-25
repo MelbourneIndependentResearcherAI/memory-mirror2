@@ -12,7 +12,7 @@ import { toast } from 'sonner';
 
 export default function VideoCallInterface({ onClose, userName, userEmail }) {
   const [localStream, setLocalStream] = useState(null);
-  const [remoteStream, setRemoteStream] = useState(null);
+  const [_remoteStream, _setRemoteStream] = useState(null);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isScreenSharing, setIsScreenSharing] = useState(false);
@@ -22,7 +22,7 @@ export default function VideoCallInterface({ onClose, userName, userEmail }) {
   
   const localVideoRef = useRef(null);
   const remoteVideoRef = useRef(null);
-  const peerConnectionRef = useRef(null);
+  const _peerConnectionRef = useRef(null);
   const sessionIdRef = useRef(`session-${Date.now()}`);
   const startTimeRef = useRef(null);
   const queryClient = useQueryClient();
@@ -168,7 +168,7 @@ export default function VideoCallInterface({ onClose, userName, userEmail }) {
         setIsScreenSharing(false);
         toast.info('Screen sharing stopped');
       }
-    } catch (error) {
+    } catch {
       toast.error('Screen sharing failed');
     }
   };
