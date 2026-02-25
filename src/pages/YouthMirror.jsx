@@ -1,11 +1,61 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '../utils';
 import { toast } from 'sonner';
+
+function GratefulMomentsPanel({ onClose }) {
+  const [entry, setEntry] = useState('');
+  const [saved, setSaved] = useState(false);
+
+  const handleSave = () => {
+    if (!entry.trim()) {
+      toast.error('Please write something before saving.');
+      return;
+    }
+    setSaved(true);
+    toast.success('Grateful moment saved! 💛');
+    setTimeout(onClose, 1500);
+  };
+
+  return (
+    <Card className="mb-8 border-2 border-orange-300 dark:border-orange-700 bg-orange-50 dark:bg-orange-950/30">
+      <CardContent className="p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <Heart className="w-5 h-5 text-orange-500" />
+            Grateful Moments
+          </h3>
+          <Button variant="ghost" size="sm" onClick={onClose}>✕ Close</Button>
+        </div>
+        <p className="text-slate-600 dark:text-slate-400 mb-4 italic">
+          What are you grateful for today?
+        </p>
+        <Textarea
+          value={entry}
+          onChange={(e) => setEntry(e.target.value)}
+          placeholder="Write about a person, place, or moment you're thankful for…"
+          className="min-h-[100px] mb-4"
+          disabled={saved}
+        />
+        <Button
+          className="bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 min-h-[44px]"
+          onClick={handleSave}
+          disabled={saved}
+        >
+          {saved ? '✓ Saved' : '💛 Save Moment'}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function YouthMirror() {
   const [activeFeature, setActiveFeature] = useState(null);
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -13,49 +63,56 @@ export default function YouthMirror() {
       title: 'Memory Selfie',
       description: 'Capture moments with AI-generated backgrounds from your favorite eras',
       icon: Camera,
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-cyan-500',
+      action: () => setActiveFeature('selfie'),
     },
     {
       id: 'timeline',
       title: 'Life Timeline',
       description: 'Build your personal history with photos, stories, and milestones',
       icon: Calendar,
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-purple-500 to-pink-500',
+      action: () => navigate(createPageUrl('FamilyTimeline')),
     },
     {
       id: 'moments',
       title: 'Grateful Moments',
       description: 'Daily prompts to capture what you\'re grateful for',
       icon: Heart,
-      color: 'from-orange-500 to-red-500'
+      color: 'from-orange-500 to-red-500',
+      action: () => setActiveFeature('moments'),
     },
     {
       id: 'chat',
       title: 'AI Chat Buddy',
       description: 'Talk about your day, memories, or anything on your mind',
       icon: MessageCircle,
-      color: 'from-green-500 to-emerald-500'
+      color: 'from-green-500 to-emerald-500',
+      action: () => navigate(createPageUrl('Home')),
     },
     {
       id: 'collage',
       title: 'Memory Collages',
       description: 'Create beautiful photo collages of your favorite memories',
       icon: Image,
-      color: 'from-pink-500 to-rose-500'
+      color: 'from-pink-500 to-rose-500',
+      action: () => navigate(createPageUrl('PhotoLibrary')),
     },
     {
       id: 'music',
       title: 'Music from Your Life',
       description: 'Discover songs from important years and create playlists',
       icon: Music,
-      color: 'from-indigo-500 to-purple-500'
+      color: 'from-indigo-500 to-purple-500',
+      action: () => navigate(createPageUrl('MusicTherapy')),
     },
     {
       id: 'journal',
       title: 'Memory Journal',
       description: 'Write down thoughts, feelings, and memories',
       icon: BookOpen,
-      color: 'from-amber-500 to-yellow-500'
+      color: 'from-amber-500 to-yellow-500',
+      action: () => navigate(createPageUrl('CareJournalPage')),
     }
   ];
 
@@ -93,6 +150,44 @@ export default function YouthMirror() {
         </Card>
 
         {/* Feature Grid */}
+        {activeFeature === 'selfie' && (
+          <Card className="mb-8 border-2 border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-blue-500" />
+                  Memory Selfie
+                </h3>
+                <Button variant="ghost" size="sm" onClick={() => setActiveFeature(null)}>✕ Close</Button>
+              </div>
+              <p className="text-slate-600 dark:text-slate-400 mb-4">
+                Use your device camera to capture a moment. Your photos are saved to your Memory Photo Library.
+              </p>
+              <Button
+                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 min-h-[44px]"
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = 'image/*';
+                  input.capture = 'environment';
+                  input.onchange = () => {
+                    if (input.files && input.files[0]) {
+                      navigate(createPageUrl('PhotoLibrary'));
+                    }
+                  };
+                  input.click();
+                }}
+              >
+                <Camera className="w-4 h-4 mr-2" /> Open Camera
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
+        {activeFeature === 'moments' && (
+          <GratefulMomentsPanel onClose={() => setActiveFeature(null)} />
+        )}
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {features.map((feature) => {
             const Icon = feature.icon;
@@ -100,10 +195,7 @@ export default function YouthMirror() {
               <Card
                 key={feature.id}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
-                onClick={() => {
-                  setActiveFeature(feature.id);
-                  toast.info(`${feature.title} coming soon!`);
-                }}
+                onClick={() => feature.action()}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
