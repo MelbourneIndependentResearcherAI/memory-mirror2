@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useAppState } from '@/components/AppStateManager';
 
 // Custom hook for managing chat state with persistence

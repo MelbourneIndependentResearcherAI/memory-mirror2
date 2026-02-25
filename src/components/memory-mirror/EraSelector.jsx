@@ -1,7 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, Radio, Music, Smartphone } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 const eras = [
   { 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Tv, Image, Music, Zap, Settings } from 'lucide-react';
+import { ArrowLeft, Tv } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function TVDashboardPage() {
