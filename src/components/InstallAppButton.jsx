@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 
 export default function InstallAppButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [isInstalled, setIsInstalled] = useState(false);
-  const [showPrompt, setShowPrompt] = useState(false);
+  const [_isInstalled, setIsInstalled] = useState(false);
+  const [_showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
     // Check if already installed
@@ -33,7 +33,7 @@ export default function InstallAppButton() {
     };
   }, []);
 
-  const handleInstallClick = async () => {
+  const _handleInstallClick = async () => {
     if (!deferredPrompt) {
       // Fallback instructions for iOS or if prompt not available
       alert('To install:\n\niPhone/iPad: Tap Share button → "Add to Home Screen"\n\nAndroid: Tap menu (⋮) → "Install app" or "Add to Home screen"');

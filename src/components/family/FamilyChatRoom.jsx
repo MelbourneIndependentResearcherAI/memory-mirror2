@@ -22,7 +22,7 @@ function DecryptedMessage({ content }) {
         const key = getEncryptionKey();
         const text = await decryptData(content, key);
         setDecrypted(text);
-      } catch (error) {
+      } catch {
         setDecrypted('[Encrypted Message]');
       }
     };
@@ -53,7 +53,7 @@ export default function FamilyChatRoom() {
   };
 
   // Real-time message fetching with subscriptions
-  const { data: messages = [], isLoading } = useQuery({
+  const { data: messages = [] } = useQuery({
     queryKey: ['familyChat'],
     queryFn: () => base44.entities.FamilyChat.list('-created_date', 100),
     refetchInterval: 3000, // Poll every 3 seconds for real-time feel
@@ -61,7 +61,7 @@ export default function FamilyChatRoom() {
 
   // Real-time subscription for instant updates
   useEffect(() => {
-    const unsubscribe = base44.entities.FamilyChat.subscribe((event) => {
+    const unsubscribe = base44.entities.FamilyChat.subscribe((_event) => {
       queryClient.invalidateQueries({ queryKey: ['familyChat'] });
       scrollToBottom();
     });
@@ -167,7 +167,7 @@ export default function FamilyChatRoom() {
         consent_acknowledged: true,
         is_encrypted: true
       });
-    } catch (error) {
+    } catch {
       toast.error('Photo upload failed');
     }
   };
@@ -188,7 +188,7 @@ export default function FamilyChatRoom() {
       mediaRecorder.current.start();
       setIsRecording(true);
       toast.info('Recording started...');
-    } catch (error) {
+    } catch {
       toast.error('Microphone access denied');
     }
   };
@@ -226,7 +226,7 @@ export default function FamilyChatRoom() {
         consent_acknowledged: true,
         is_encrypted: true
       });
-    } catch (error) {
+    } catch {
       toast.error('Voice note upload failed');
     }
   };

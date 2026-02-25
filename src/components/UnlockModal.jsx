@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from '@/components/ui/button';
 import { Lock, Shield, AlertCircle } from 'lucide-react';
 
-export default function UnlockModal({ isOpen, onUnlock, onCancel, modeName }) {
+export default function UnlockModal({ isOpen, onUnlock, onCancel: _onCancel, modeName }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 

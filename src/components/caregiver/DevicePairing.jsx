@@ -21,7 +21,7 @@ export default function DevicePairing() {
   const [generatedCode] = useState(generatePairingCode());
 
   const pairDeviceMutation = useMutation({
-    mutationFn: async (code) => {
+    mutationFn: async (_code) => {
       // In production, verify code and link device to caregiver account
       return { success: true, deviceId: `device-${Date.now()}` };
     },
