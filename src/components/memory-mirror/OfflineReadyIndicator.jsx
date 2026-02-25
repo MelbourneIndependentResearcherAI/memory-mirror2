@@ -82,7 +82,7 @@ export default function OfflineReadyIndicator() {
   if (offlineReady && online) {
     // Already prepared and online - show subtle indicator
     return (
-      <div className="fixed top-4 right-4 z-40 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm">
+      <div className="fixed top-20 right-4 z-30 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm">
         <CheckCircle className="w-4 h-4" />
         <span className="font-medium">Offline Ready</span>
       </div>
@@ -92,7 +92,7 @@ export default function OfflineReadyIndicator() {
   if (offlineReady && !online) {
     // Offline and prepared
     return (
-      <div className="fixed top-4 right-4 z-40 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm">
+      <div className="fixed top-20 right-4 z-30 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 text-sm">
         <WifiOff className="w-4 h-4" />
         <span className="font-medium">Offline Mode Active</span>
       </div>
@@ -103,7 +103,7 @@ export default function OfflineReadyIndicator() {
     // Online but not prepared — show banner unless dismissed
     if (dismissed) return null;
     return (
-      <div className="fixed top-4 right-4 z-40 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 p-4 rounded-lg shadow-xl max-w-sm">
+      <div className="fixed top-20 right-4 z-30 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 p-4 rounded-lg shadow-xl max-w-sm">
         <div className="flex items-start gap-3">
           <Download className="w-5 h-5 mt-0.5 shrink-0" />
           <div className="flex-1">
@@ -144,7 +144,7 @@ export default function OfflineReadyIndicator() {
 
   // Offline and not prepared - critical warning
   return (
-    <div className="fixed top-4 right-4 z-40 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100 p-4 rounded-lg shadow-xl max-w-sm">
+    <div className="fixed top-20 right-4 z-30 bg-red-100 dark:bg-red-900 text-red-800 dark:text-red-100 p-4 rounded-lg shadow-xl max-w-sm">
       <div className="flex items-start gap-3">
         <WifiOff className="w-5 h-5 mt-0.5 shrink-0" />
         <div className="flex-1">
