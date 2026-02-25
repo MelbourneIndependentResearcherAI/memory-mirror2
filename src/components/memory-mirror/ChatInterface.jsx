@@ -902,6 +902,9 @@ If appropriate, gently reference their memories or suggest looking at photos tog
               setTimeout(() => startVoiceInput(), 800); // Short delay for natural flow
             }
           };
+          utterance.onerror = () => {
+            console.error('Utterance error, but continuing...');
+          };
           
           window.speechSynthesis.cancel(); // Clear any previous speech
           window.speechSynthesis.speak(utterance);
@@ -1000,17 +1003,14 @@ If appropriate, gently reference their memories or suggest looking at photos tog
 
   const requestMicrophonePermission = useCallback(async () => {
     try {
-      // CRITICAL FIX #3: Request microphone with MAXIMUM sensitivity for soft/quiet voices
+      // CRITICAL FIX #3: Request microphone with proper settings
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
-          noiseSuppression: false,    // DISABLED to capture soft voices better
-          autoGainControl: true,       // CRITICAL: Boosts quiet speech significantly
+          noiseSuppression: false,     // Disabled to preserve soft speech
+          autoGainControl: true,       // Boosts quiet voices
           channelCount: 1,
-          sampleRate: 48000,           // High sample rate for quality
-          sampleSize: 16,
-          volume: 1.0,
-          latency: 0                   // Minimize delay for responsiveness
+          sampleRate: 16000            // Standard for speech recognition
         }
       });
       
