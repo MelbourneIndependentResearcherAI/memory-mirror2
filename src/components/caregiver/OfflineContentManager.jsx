@@ -2,20 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Progress } from '@/components/ui/progress';
 import { 
-  Download, Upload, HardDrive, RefreshCw, Trash2, CheckCircle2, 
-  AlertCircle, Music, Image, BookOpen, Brain, ArrowUp, ArrowDown
+  Download, HardDrive, RefreshCw, Trash2, CheckCircle2, 
+  AlertCircle, Music, Image, BookOpen, Brain
 } from 'lucide-react';
 import {
-  downloadPhotoForOffline,
-  downloadMusicForOffline,
-  downloadStoryForOffline,
-  downloadMemoryForOffline,
   getOfflineContentSize
 } from '@/components/utils/offlineContentSync';
 
@@ -99,7 +95,7 @@ export default function OfflineContentManager({ onBack }) {
     onSuccess: () => queryClient.invalidateQueries(['offlineContentPriority'])
   });
 
-  const toggleSyncMutation = useMutation({
+  const _toggleSyncMutation = useMutation({
     mutationFn: ({ id, enabled }) => 
       base44.entities.OfflineContentPriority.update(id, { sync_enabled: enabled }),
     onSuccess: () => queryClient.invalidateQueries(['offlineContentPriority'])

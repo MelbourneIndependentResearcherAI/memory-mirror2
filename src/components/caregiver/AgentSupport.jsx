@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Bot, Send, Loader2, X, Sparkles } from 'lucide-react';
+import { MessageCircle, Send, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 
 export default function AgentSupport() {
@@ -40,7 +39,7 @@ export default function AgentSupport() {
         // Only show AI assistants to admin/caregiver users
         const userIsAdmin = user && user.role === 'admin';
         setIsAdmin(userIsAdmin);
-      } catch (error) {
+      } catch {
         // Not authenticated = not an admin
         setIsAdmin(false);
       } finally {

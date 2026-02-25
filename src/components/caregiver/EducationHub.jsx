@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Book, Brain, Heart, Shield, Lightbulb, ChevronRight, Loader2, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import ReactMarkdown from 'react-markdown';
 

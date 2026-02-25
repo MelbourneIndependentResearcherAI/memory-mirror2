@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Calendar, AlertCircle, Plus, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PatientStatusCard from './PatientStatusCard';
 import UpcomingTasksList from './UpcomingTasksList';
@@ -15,7 +15,7 @@ export default function CaregiverDashboard({ patientProfileId }) {
   const [refreshKey, setRefreshKey] = useState(0);
 
   // Fetch patient profile
-  const { data: patient, isLoading: patientLoading } = useQuery({
+  const { data: patient } = useQuery({
     queryKey: ['patient', patientProfileId],
     queryFn: () => base44.entities.PatientProfile.filter({ id: patientProfileId }),
   });

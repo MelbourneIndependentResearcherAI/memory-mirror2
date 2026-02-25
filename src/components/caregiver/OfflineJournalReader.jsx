@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, User, Lightbulb } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { ArrowLeft, Calendar, Lightbulb } from 'lucide-react';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 
-export default function OfflineJournalReader({ onBack }) {
+export default function OfflineJournalReader({ onBack: _onBack }) {
   const [journals, setJournals] = useState([]);
   const [filteredJournals, setFilteredJournals] = useState([]);
   const [selectedJournal, setSelectedJournal] = useState(null);

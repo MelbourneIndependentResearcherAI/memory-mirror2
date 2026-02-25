@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, RefreshCw, CheckCircle2, AlertCircle, Lightbulb, Thermometer, Lock, Camera } from 'lucide-react';
+import { Plus, Trash2, Lightbulb, Thermometer, Lock, Camera } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { motion, AnimatePresence } from 'framer-motion';
