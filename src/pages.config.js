@@ -132,6 +132,7 @@ import VoiceCloning from './pages/VoiceCloning';
 import VoiceCommands from './pages/VoiceCommands';
 import VoiceSetup from './pages/VoiceSetup';
 import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
+import UserProfile from './pages/UserProfile';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
@@ -310,6 +311,7 @@ export const PAGES = {
     "VoiceCommands": VoiceCommands,
     "VoiceSetup": VoiceSetup,
     "VoiceUsageAnalytics": VoiceUsageAnalytics,
+    "UserProfile": UserProfile,
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
