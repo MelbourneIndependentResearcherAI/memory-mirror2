@@ -54,7 +54,7 @@ export default function MemoryTimelineBuilder() {
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
       setFormData({ ...formData, photo_url: file_url });
       toast.success('Photo uploaded!');
-    } catch (error) {
+    } catch (_error) {
       toast.error('Failed to upload photo');
     }
   };
@@ -209,7 +209,7 @@ export default function MemoryTimelineBuilder() {
         </div>
       ) : (
         <div className="space-y-4">
-          {timeline.map((event, index) => (
+          {timeline.map((event, _index) => (
             <div
               key={event.id}
               className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-md border-l-4 border-purple-500"
