@@ -94,11 +94,11 @@ const faqs = [
       },
       {
         q: 'What if I can\'t afford the subscription?',
-        a: 'Families facing financial hardship can contact support@memorymirror.app to discuss assistance options. No family gets turned away.'
+        a: 'Families facing financial hardship can contact support@memorymirror.com.au to discuss assistance options. No family gets turned away.'
       },
       {
         q: 'How do I get technical support?',
-        a: 'Email support@memorymirror.app or use the AI Support Assistant in the Caregiver Portal for 24/7 help with features and troubleshooting.'
+        a: 'Email support@memorymirror.com.au or use the AI Support Assistant in the Caregiver Portal for 24/7 help with features and troubleshooting.'
       }
     ]
   }
@@ -188,7 +188,7 @@ export default function FAQ() {
               We're here to help! Reach out anytime.
             </p>
             <Button
-              onClick={() => window.location.href = 'mailto:support@memorymirror.app'}
+              onClick={() => window.location.href = 'mailto:support@memorymirror.com.au'}
               className="bg-blue-600 hover:bg-blue-700"
             >
               Contact Support
