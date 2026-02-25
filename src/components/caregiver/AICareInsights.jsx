@@ -24,7 +24,7 @@ export default function AICareInsights() {
     try {
       await refetch();
       toast.success('Insights updated!');
-    } catch (error) {
+    } catch {
       toast.error('Failed to refresh insights');
     } finally {
       setIsRefreshing(false);

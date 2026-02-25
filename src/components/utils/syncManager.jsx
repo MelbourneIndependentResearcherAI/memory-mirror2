@@ -97,7 +97,7 @@ export const syncToCloud = async (onProgress) => {
     const result = response.data;
 
     if (result.success) {
-      const metadata = updateSyncMetadata({
+      const _metadata = updateSyncMetadata({
         sync_status: 'synced',
         last_sync: new Date().toISOString(),
         last_sync_time: Date.now(),
