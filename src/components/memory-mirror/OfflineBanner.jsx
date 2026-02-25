@@ -39,7 +39,7 @@ export default function OfflineBanner() {
     try {
       await syncPendingOperations();
       toast.success('All data synced successfully!');
-    } catch (error) {
+    } catch {
       toast.error('Sync failed. Will retry automatically.');
     } finally {
       setSyncing(false);

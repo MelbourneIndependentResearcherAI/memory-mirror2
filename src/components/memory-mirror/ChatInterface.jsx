@@ -68,7 +68,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     return new Promise(resolve => setTimeout(resolve, 500));
   };
 
-  const { data: safeZones = [], error: safeZonesError } = useQuery({
+  const { data: safeZones = [], error: _safeZonesError } = useQuery({
     queryKey: ['safeZones'],
     queryFn: async () => {
       try {
@@ -82,7 +82,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: memories = [], error: memoriesError } = useQuery({
+  const { data: memories = [], error: _memoriesError } = useQuery({
     queryKey: ['memories'],
     queryFn: async () => {
       try {
@@ -96,7 +96,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: userProfile, error: profileError } = useQuery({
+  const { data: userProfile, error: _profileError } = useQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
       try {
@@ -111,7 +111,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 10,
   });
 
-  const { data: cognitiveAssessments = [], error: assessmentsError } = useQuery({
+  const { data: cognitiveAssessments = [], error: _assessmentsError } = useQuery({
     queryKey: ['cognitiveAssessments'],
     queryFn: async () => {
       try {
@@ -765,7 +765,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           detectedAnxiety = meta.anxiety || detectedAnxiety;
           setDetectedEra(era);
           onEraChange(era);
-        } catch (e) {
+        } catch {
           console.log('META parse skip (non-critical)');
         }
       }
@@ -1042,7 +1042,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
       
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
-      const speechEndTimeoutRef = { current: null };
+      const _speechEndTimeoutRef = { current: null };
 
       recognitionRef.current.onstart = () => {
         console.log('Speech recognition started - CAPTURING FULL SENTENCES');
