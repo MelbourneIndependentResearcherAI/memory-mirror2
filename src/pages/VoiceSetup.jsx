@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
 import AlwaysOnVoice from '@/components/memory-mirror/AlwaysOnVoice';
 
 export default function VoiceSetupPage() {

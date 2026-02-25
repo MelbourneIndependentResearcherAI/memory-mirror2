@@ -27,7 +27,7 @@ export default function CarePlans() {
     enabled: !!user?.email
   });
 
-  const handleCreateNew = (patient) => {
+  const _handleCreateNew = (patient) => {
     setSelectedPatient(patient);
     setView('create');
     setSelectedPlan(null);

@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { 
   Wifi, WifiOff, Database, Download, CheckCircle, XCircle, 
-  MessageCircle, Music, BookOpen, Image, Phone, Shield, 
   RefreshCw, Trash2, AlertTriangle
 } from 'lucide-react';
 import { 
@@ -85,7 +84,7 @@ export default function OfflineModeDashboard() {
       );
       toast.success('Cache cleared');
       loadStatus();
-    } catch (error) {
+    } catch {
       toast.error('Failed to clear cache');
     }
   };

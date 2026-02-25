@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Music, Play, Pause, SkipForward, SkipBack, Heart, Clock, Volume2 } from 'lucide-react';
+import { Music, Play, Pause, SkipForward, SkipBack, Clock, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 const eraColors = {
@@ -58,6 +58,24 @@ export default function MusicTherapy() {
       setIsPlaying(true);
       toast.success(`Now playing: ${song.title}`);
     }
+  };
+
+  const handleSkipBack = () => {
+    if (!songs.length) return;
+    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
+    const prevIndex = currentIndex <= 0 ? songs.length - 1 : currentIndex - 1;
+    setCurrentlyPlaying(songs[prevIndex]);
+    setIsPlaying(true);
+    toast.success(`Now playing: ${songs[prevIndex].title}`);
+  };
+
+  const handleSkipForward = () => {
+    if (!songs.length) return;
+    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
+    const nextIndex = currentIndex >= songs.length - 1 ? 0 : currentIndex + 1;
+    setCurrentlyPlaying(songs[nextIndex]);
+    setIsPlaying(true);
+    toast.success(`Now playing: ${songs[nextIndex].title}`);
   };
 
   const eras = ['all', '1940s', '1960s', '1980s', 'present'];
@@ -129,6 +147,7 @@ export default function MusicTherapy() {
                 <Button
                   variant="outline"
                   size="lg"
+                  onClick={handleSkipBack}
                   className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
                 >
                   <SkipBack className="w-6 h-6" />
@@ -143,6 +162,7 @@ export default function MusicTherapy() {
                 <Button
                   variant="outline"
                   size="lg"
+                  onClick={handleSkipForward}
                   className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
                 >
                   <SkipForward className="w-6 h-6" />

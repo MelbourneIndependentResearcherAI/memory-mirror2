@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, User, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 
-export default function OfflineMemoryViewer({ onBack }) {
+export default function OfflineMemoryViewer({ onBack: _onBack }) {
   const [memories, setMemories] = useState([]);
   const [filteredMemories, setFilteredMemories] = useState([]);
   const [selectedMemory, setSelectedMemory] = useState(null);

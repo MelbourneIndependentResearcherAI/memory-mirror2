@@ -7,7 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { BookOpen, Plus, User, Calendar, Tag, MessageSquare, Sparkles, Loader2 } from 'lucide-react';
+import { BookOpen, Plus, User, Calendar, Tag, MessageSquare, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
 import { motion, AnimatePresence } from 'framer-motion';
 import AIJournalAssistant from '@/components/family/AIJournalAssistant';
@@ -64,7 +64,7 @@ export default function SharedJournal({ patientProfileId }) {
         m.notification_preferences?.journal_entries
       );
 
-      for (const member of notifyTeam) {
+      for (const _member of notifyTeam) {
         await base44.entities.CaregiverNotification.create({
           patient_profile_id: patientProfileId,
           notification_type: 'new_journal_entry',

@@ -5,13 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Search, Filter, Shield } from 'lucide-react';
+import { Search, Filter, Shield } from 'lucide-react';
 
 export default function AuditLogViewer() {
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
 
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logs = [] } = useQuery({
     queryKey: ['auditLogs'],
     queryFn: () => base44.entities.AuditLog.list('-created_date', 200)
   });

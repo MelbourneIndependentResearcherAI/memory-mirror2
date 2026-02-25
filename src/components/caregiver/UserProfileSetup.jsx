@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Heart, Calendar, Music, Users, Book, ArrowLeft } from 'lucide-react';
+import { User, Heart, Music, Users, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
 
 export default function UserProfileSetup({ onBack }) {
   const queryClient = useQueryClient();
@@ -76,7 +77,7 @@ export default function UserProfileSetup({ onBack }) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['userProfiles'] });
-      alert('Profile saved successfully! The AI will now personalize conversations.');
+      toast.success('Profile saved successfully! The AI will now personalize conversations.');
     },
   });
 
@@ -98,93 +99,97 @@ export default function UserProfileSetup({ onBack }) {
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <User className="w-5 h-5" />
-              Basic Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Their Name *</label>
-              <Input
-                required
-                placeholder="e.g., Margaret"
-                value={formData.loved_one_name}
-                onChange={(e) => setFormData({...formData, loved_one_name: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Preferred Name</label>
-              <Input
-                placeholder="e.g., Maggie, Grandma"
-                value={formData.preferred_name}
-                onChange={(e) => setFormData({...formData, preferred_name: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Birth Year</label>
-              <Input
-                type="number"
-                placeholder="e.g., 1945"
-                value={formData.birth_year}
-                onChange={(e) => setFormData({...formData, birth_year: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <User className="w-5 h-5" />
+                Basic Information
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Their Name *</label>
+                <Input
+                  required
+                  placeholder="e.g., Margaret"
+                  value={formData.loved_one_name}
+                  onChange={(e) => setFormData({...formData, loved_one_name: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Preferred Name</label>
+                <Input
+                  placeholder="e.g., Maggie, Grandma"
+                  value={formData.preferred_name}
+                  onChange={(e) => setFormData({...formData, preferred_name: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Birth Year</label>
+                <Input
+                  type="number"
+                  placeholder="e.g., 1945"
+                  value={formData.birth_year}
+                  onChange={(e) => setFormData({...formData, birth_year: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Heart className="w-5 h-5" />
-              Personality & Preferences
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Favorite Era</label>
-              <Select value={formData.favorite_era} onValueChange={(value) => setFormData({...formData, favorite_era: value})}>
-                <SelectTrigger className="min-h-[44px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="1940s">1940s</SelectItem>
-                  <SelectItem value="1960s">1960s</SelectItem>
-                  <SelectItem value="1980s">1980s</SelectItem>
-                  <SelectItem value="present">Present</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Communication Style</label>
-              <Select value={formData.communication_style} onValueChange={(value) => setFormData({...formData, communication_style: value})}>
-                <SelectTrigger className="min-h-[44px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="formal">Formal & Respectful</SelectItem>
-                  <SelectItem value="casual">Casual & Friendly</SelectItem>
-                  <SelectItem value="warm">Warm & Affectionate</SelectItem>
-                  <SelectItem value="gentle">Gentle & Soothing</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <label className="text-sm font-medium mb-2 block">Interests & Hobbies</label>
-              <Input
-                placeholder="e.g., gardening, knitting, reading, cooking (comma separated)"
-                value={formData.interests}
-                onChange={(e) => setFormData({...formData, interests: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Heart className="w-5 h-5" />
+                Personality & Preferences
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Favorite Era</label>
+                <Select value={formData.favorite_era} onValueChange={(value) => setFormData({...formData, favorite_era: value})}>
+                  <SelectTrigger className="min-h-[44px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="1940s">1940s</SelectItem>
+                    <SelectItem value="1950s">1950s</SelectItem>
+                    <SelectItem value="1960s">1960s</SelectItem>
+                    <SelectItem value="1970s">1970s</SelectItem>
+                    <SelectItem value="1980s">1980s</SelectItem>
+                    <SelectItem value="present">Present</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Communication Style</label>
+                <Select value={formData.communication_style} onValueChange={(value) => setFormData({...formData, communication_style: value})}>
+                  <SelectTrigger className="min-h-[44px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="formal">Formal & Respectful</SelectItem>
+                    <SelectItem value="casual">Casual & Friendly</SelectItem>
+                    <SelectItem value="warm">Warm & Affectionate</SelectItem>
+                    <SelectItem value="gentle">Gentle & Soothing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Interests & Hobbies</label>
+                <Input
+                  placeholder="e.g., gardening, knitting, reading, cooking (comma separated)"
+                  value={formData.interests}
+                  onChange={(e) => setFormData({...formData, interests: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         <Card>
           <CardHeader>
@@ -206,45 +211,47 @@ export default function UserProfileSetup({ onBack }) {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Music className="w-5 h-5" />
-              Favorite Music
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Songs & Artists</label>
-              <Input
-                placeholder="e.g., Frank Sinatra, Bing Crosby, Moon River (comma separated)"
-                value={formData.favorite_music}
-                onChange={(e) => setFormData({...formData, favorite_music: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-          </CardContent>
-        </Card>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Music className="w-5 h-5" />
+                Favorite Music
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Songs & Artists</label>
+                <Input
+                  placeholder="e.g., Frank Sinatra, Bing Crosby, Moon River (comma separated)"
+                  value={formData.favorite_music}
+                  onChange={(e) => setFormData({...formData, favorite_music: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+            </CardContent>
+          </Card>
 
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Important People
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="text-sm font-medium mb-2 block">Family & Friends</label>
-              <Input
-                placeholder="e.g., John (husband), Sarah (daughter), Tom (son)"
-                value={formData.important_people}
-                onChange={(e) => setFormData({...formData, important_people: e.target.value})}
-                className="min-h-[44px]"
-              />
-            </div>
-          </CardContent>
-        </Card>
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Important People
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <label className="text-sm font-medium mb-2 block">Family & Friends</label>
+                <Input
+                  placeholder="e.g., John (husband), Sarah (daughter), Tom (son)"
+                  value={formData.important_people}
+                  onChange={(e) => setFormData({...formData, important_people: e.target.value})}
+                  className="min-h-[44px]"
+                />
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
         <Button type="submit" className="w-full min-h-[48px] bg-blue-500 hover:bg-blue-600">
           Save Profile

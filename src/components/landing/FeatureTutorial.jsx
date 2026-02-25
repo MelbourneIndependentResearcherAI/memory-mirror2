@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
-import { ChevronRight, MessageCircle, Phone, Shield, Moon, Volume2, CreditCard, Users, Brain, Tv } from 'lucide-react';
+import { ChevronRight, MessageCircle, Phone, Shield, Moon, Volume2, CreditCard, Users, Brain, Tv, ArrowRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export default function FeatureTutorial() {
   const [expandedFeature, setExpandedFeature] = useState(null);
   const [isDismissed, setIsDismissed] = useState(() => {
     return localStorage.getItem('feature_tutorial_dismissed') === 'true';
   });
+  const navigate = useNavigate();
 
   if (isDismissed) {
     return null;
@@ -18,7 +20,8 @@ export default function FeatureTutorial() {
       icon: MessageCircle,
       color: 'from-blue-600 to-cyan-600',
       description: 'Voice-activated conversation that adapts to any era',
-      details: 'Have natural conversations with an AI that detects anxiety, recalls memories, and speaks with a warm, human-like voice. The AI adapts language and cultural references based on which era your loved one is experiencing.'
+      details: 'Have natural conversations with an AI that detects anxiety, recalls memories, and speaks with a warm, human-like voice. The AI adapts language and cultural references based on which era your loved one is experiencing.',
+      route: '/Home'
     },
     {
       id: 'phone',
@@ -26,7 +29,8 @@ export default function FeatureTutorial() {
       icon: Phone,
       color: 'from-emerald-600 to-teal-700',
       description: 'Realistic dial pad connected to AI companion',
-      details: 'Prevents costly nighttime 911 calls by providing a familiar phone interface that connects to the AI instead of emergency services. Gives caregivers peace of mind to sleep knowing calls go to the companion.'
+      details: 'Prevents costly nighttime 911 calls by providing a familiar phone interface that connects to the AI instead of emergency services. Gives caregivers peace of mind to sleep knowing calls go to the companion.',
+      route: '/PhoneMode'
     },
     {
       id: 'security',
@@ -34,7 +38,8 @@ export default function FeatureTutorial() {
       icon: Shield,
       color: 'from-indigo-600 to-purple-700',
       description: 'AI-controlled security check for anxiety relief',
-      details: 'Realistic security interface that never makes real alerts or calls. Purely reassuring visuals to reduce anxiety about locks and safety, helping users feel calm and secure.'
+      details: 'Realistic security interface that never makes real alerts or calls. Purely reassuring visuals to reduce anxiety about locks and safety, helping users feel calm and secure.',
+      route: '/Security'
     },
     {
       id: 'night',
@@ -42,7 +47,8 @@ export default function FeatureTutorial() {
       icon: Moon,
       color: 'from-slate-800 to-slate-950',
       description: 'Gentle nighttime companion',
-      details: 'Prevents wandering and provides comfort during nighttime hours. Monitors for distress and offers calming responses and redirects.'
+      details: 'Prevents wandering and provides comfort during nighttime hours. Monitors for distress and offers calming responses and redirects.',
+      route: '/NightWatch'
     },
     {
       id: 'voice',
@@ -50,7 +56,8 @@ export default function FeatureTutorial() {
       icon: Volume2,
       color: 'from-cyan-600 to-blue-700',
       description: 'Hands-free voice control',
-      details: 'Say "Hey Mirror" anytime, anywhere to activate. The system listens with a realistic human voice and responds with warmth and emotional connection.'
+      details: 'Say "Hey Mirror" anytime, anywhere to activate. The system listens with a realistic human voice and responds with warmth and emotional connection.',
+      route: '/VoiceSetup'
     },
     {
       id: 'banking',
@@ -58,7 +65,8 @@ export default function FeatureTutorial() {
       icon: CreditCard,
       color: 'from-green-600 to-emerald-700',
       description: 'Realistic banking interface',
-      details: 'Safe, simulated banking experience that never makes real transactions. View account balance, transaction history, and perform fake transfers—perfect for users who want familiar financial interactions without risk.'
+      details: 'Safe, simulated banking experience that never makes real transactions. View account balance, transaction history, and perform fake transfers—perfect for users who want familiar financial interactions without risk.',
+      route: '/MyBank'
     },
     {
       id: 'family',
@@ -66,7 +74,8 @@ export default function FeatureTutorial() {
       icon: Users,
       color: 'from-pink-600 to-rose-600',
       description: 'Share memories and connect',
-      details: 'Family members can upload photos, messages, events, and music to share with their loved one. Creates a shared experience and deepens emotional connection.'
+      details: 'Family members can upload photos, messages, events, and music to share with their loved one. Creates a shared experience and deepens emotional connection.',
+      route: '/FamilyConnect'
     },
     {
       id: 'dashboard',
@@ -74,7 +83,8 @@ export default function FeatureTutorial() {
       icon: Brain,
       color: 'from-purple-600 to-pink-600',
       description: 'Monitor wellbeing and insights',
-      details: 'Track journal entries, cognitive trends, mood patterns, and anxiety levels. Get alerts for behavioral changes and receive AI-generated insights to improve care.'
+      details: 'Track journal entries, cognitive trends, mood patterns, and anxiety levels. Get alerts for behavioral changes and receive AI-generated insights to improve care.',
+      route: '/CaregiverDashboard'
     },
     {
       id: 'tv',
@@ -82,7 +92,8 @@ export default function FeatureTutorial() {
       icon: Tv,
       color: 'from-indigo-600 to-blue-700',
       description: 'Large screen experience',
-      details: 'Use Memory Mirror on your television for a more immersive experience. Perfect for family gatherings and shared moments.'
+      details: 'Use Memory Mirror on your television for a more immersive experience. Perfect for family gatherings and shared moments.',
+      route: '/TVMode'
     }
   ];
 
@@ -141,9 +152,16 @@ export default function FeatureTutorial() {
 
                 {isExpanded && (
                   <div className="mt-6 pt-6 border-t border-white/20">
-                    <p className="text-white/90 text-base leading-relaxed">
+                    <p className="text-white/90 text-base leading-relaxed mb-4">
                       {feature.details}
                     </p>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); navigate(feature.route); }}
+                      className="inline-flex items-center gap-2 bg-white/20 hover:bg-white/30 text-white text-sm font-semibold px-4 py-2 rounded-lg transition-colors"
+                    >
+                      Open {feature.title}
+                      <ArrowRight className="w-4 h-4" />
+                    </button>
                   </div>
                 )}
               </div>

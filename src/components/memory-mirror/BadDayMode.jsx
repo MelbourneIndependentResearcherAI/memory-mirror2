@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Music, Camera, Book, Wind, X } from 'lucide-react';
+import { Heart, Music, Camera, Book, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { base44 } from '@/api/base44Client';
 import { offlineEntities } from '@/components/utils/offlineAPI';
 
 export default function BadDayMode({ onClose, userProfile }) {
   const [stage, setStage] = useState('greeting'); // greeting, breathing, memory, music, story
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [breathCount, setBreathCount] = useState(0);
+  const [_isPlaying, setIsPlaying] = useState(false);
+  const [breathCount, _setBreathCount] = useState(0);
 
   useEffect(() => {
     // Log bad day mode activation

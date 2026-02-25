@@ -184,7 +184,7 @@ export async function isContentCached(contentType, contentId) {
   try {
     const cached = await getCachedContent(contentType);
     return cached.some(item => item.id === contentId);
-  } catch (error) {
+  } catch {
     return false;
   }
 }
