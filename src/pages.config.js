@@ -47,6 +47,8 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import { lazy } from 'react';
+
 import AIAgentTeam from './pages/AIAgentTeam';
 import AICareInsights from './pages/AICareInsights';
 import AccessibilityStatement from './pages/AccessibilityStatement';
@@ -130,10 +132,98 @@ import VoiceCloning from './pages/VoiceCloning';
 import VoiceCommands from './pages/VoiceCommands';
 import VoiceSetup from './pages/VoiceSetup';
 import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
+import UserProfile from './pages/UserProfile';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import security from './pages/security';
+import { lazy } from 'react';
+const AIAgentTeam = lazy(() => import('./pages/AIAgentTeam'));
+const AICareInsights = lazy(() => import('./pages/AICareInsights'));
+const AccessibilityStatement = lazy(() => import('./pages/AccessibilityStatement'));
+const ActivityReminders = lazy(() => import('./pages/ActivityReminders'));
+const ActivityReports = lazy(() => import('./pages/ActivityReports'));
+const AdminUserTracking = lazy(() => import('./pages/AdminUserTracking'));
+const AuditTrail = lazy(() => import('./pages/AuditTrail'));
+const CareJournalPage = lazy(() => import('./pages/CareJournalPage'));
+const CarePlans = lazy(() => import('./pages/CarePlans'));
+const CareTeam = lazy(() => import('./pages/CareTeam'));
+const CaregiverDashboard = lazy(() => import('./pages/CaregiverDashboard'));
+const CaregiverPortal = lazy(() => import('./pages/CaregiverPortal'));
+const CaregiverPortalRouter = lazy(() => import('./pages/CaregiverPortalRouter'));
+const ChatCompanionDashboard = lazy(() => import('./pages/ChatCompanionDashboard'));
+const ChatMode = lazy(() => import('./pages/ChatMode'));
+const ContentLibrary = lazy(() => import('./pages/ContentLibrary'));
+const ConversationAnalytics = lazy(() => import('./pages/ConversationAnalytics'));
+const EmergencyAlerts = lazy(() => import('./pages/EmergencyAlerts'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const FakeBankSettings = lazy(() => import('./pages/FakeBankSettings'));
+const FamilyAIInsights = lazy(() => import('./pages/FamilyAIInsights'));
+const FamilyCalendar = lazy(() => import('./pages/FamilyCalendar'));
+const FamilyChatRoom = lazy(() => import('./pages/FamilyChatRoom'));
+const FamilyConnect = lazy(() => import('./pages/FamilyConnect'));
+const FamilyContacts = lazy(() => import('./pages/FamilyContacts'));
+const FamilyMediaAlbum = lazy(() => import('./pages/FamilyMediaAlbum'));
+const FamilyMessages = lazy(() => import('./pages/FamilyMessages'));
+const FamilyMusic = lazy(() => import('./pages/FamilyMusic'));
+const FamilyNotifications = lazy(() => import('./pages/FamilyNotifications'));
+const FamilyOverview = lazy(() => import('./pages/FamilyOverview'));
+const FamilyPhotoAlbum = lazy(() => import('./pages/FamilyPhotoAlbum'));
+const FamilyPlaylists = lazy(() => import('./pages/FamilyPlaylists'));
+const FamilyRemoteTrigger = lazy(() => import('./pages/FamilyRemoteTrigger'));
+const FamilyStories = lazy(() => import('./pages/FamilyStories'));
+const FamilyTimeline = lazy(() => import('./pages/FamilyTimeline'));
+const FamilyTree = lazy(() => import('./pages/FamilyTree'));
+const FamilyTreePage = lazy(() => import('./pages/FamilyTreePage'));
+const FamilyVideoCall = lazy(() => import('./pages/FamilyVideoCall'));
+const Feedback = lazy(() => import('./pages/Feedback'));
+const HealthMonitor = lazy(() => import('./pages/HealthMonitor'));
+const Home = lazy(() => import('./pages/Home'));
+const ImportArticle = lazy(() => import('./pages/ImportArticle'));
+const InsightsAnalytics = lazy(() => import('./pages/InsightsAnalytics'));
+const Landing = lazy(() => import('./pages/Landing'));
+const MemoryGames = lazy(() => import('./pages/MemoryGames'));
+const MemorySessions = lazy(() => import('./pages/MemorySessions'));
+const MoodAutomations = lazy(() => import('./pages/MoodAutomations'));
+const MusicPlayer = lazy(() => import('./pages/MusicPlayer'));
+const MusicTherapy = lazy(() => import('./pages/MusicTherapy'));
+const MyBank = lazy(() => import('./pages/MyBank'));
+const NewsArticle = lazy(() => import('./pages/NewsArticle'));
+const NightWatch = lazy(() => import('./pages/NightWatch'));
+const NightWatchDashboard = lazy(() => import('./pages/NightWatchDashboard'));
+const NightWatchIncidents = lazy(() => import('./pages/NightWatchIncidents'));
+const NightWatchPage = lazy(() => import('./pages/NightWatchPage'));
+const OfflineAudio = lazy(() => import('./pages/OfflineAudio'));
+const OfflineCapabilities = lazy(() => import('./pages/OfflineCapabilities'));
+const OfflineContent = lazy(() => import('./pages/OfflineContent'));
+const OfflineModeDashboard = lazy(() => import('./pages/OfflineModeDashboard'));
+const OfflineTest = lazy(() => import('./pages/OfflineTest'));
+const PatientAccess = lazy(() => import('./pages/PatientAccess'));
+const PatientRegistration = lazy(() => import('./pages/PatientRegistration'));
+const PhoneMode = lazy(() => import('./pages/PhoneMode'));
+const PhotoLibrary = lazy(() => import('./pages/PhotoLibrary'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const Security = lazy(() => import('./pages/Security'));
+const SecurityMode = lazy(() => import('./pages/SecurityMode'));
+const SharedJournal = lazy(() => import('./pages/SharedJournal'));
+const SmartHome = lazy(() => import('./pages/SmartHome'));
+const SyncBackup = lazy(() => import('./pages/SyncBackup'));
+const TVDashboard = lazy(() => import('./pages/TVDashboard'));
+const TVMode = lazy(() => import('./pages/TVMode'));
+const TVMusicTherapy = lazy(() => import('./pages/TVMusicTherapy'));
+const TVPairing = lazy(() => import('./pages/TVPairing'));
+const TVPhotoGallery = lazy(() => import('./pages/TVPhotoGallery'));
+const TeamNotifications = lazy(() => import('./pages/TeamNotifications'));
+const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const VoiceAlwaysOnDashboard = lazy(() => import('./pages/VoiceAlwaysOnDashboard'));
+const VoiceCloning = lazy(() => import('./pages/VoiceCloning'));
+const VoiceCommands = lazy(() => import('./pages/VoiceCommands'));
+const VoiceSetup = lazy(() => import('./pages/VoiceSetup'));
+const VoiceUsageAnalytics = lazy(() => import('./pages/VoiceUsageAnalytics'));
+const YouthMirror = lazy(() => import('./pages/YouthMirror'));
+const chat = lazy(() => import('./pages/chat'));
+const phone = lazy(() => import('./pages/phone'));
+const security = lazy(() => import('./pages/security'));
 import __Layout from './Layout.jsx';
 
 
@@ -221,6 +311,7 @@ export const PAGES = {
     "VoiceCommands": VoiceCommands,
     "VoiceSetup": VoiceSetup,
     "VoiceUsageAnalytics": VoiceUsageAnalytics,
+    "UserProfile": UserProfile,
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,

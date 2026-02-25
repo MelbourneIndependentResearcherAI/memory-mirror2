@@ -113,7 +113,7 @@ export async function runOfflineHealthCheck() {
       try {
         const items = await getAllFromStore(storeName);
         storeChecks.push(`${key}: ${items.length}`);
-      } catch (error) {
+      } catch {
         storeChecks.push(`${key}: ERROR`);
         results.warnings.push(`Store ${key} may have issues`);
       }
