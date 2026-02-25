@@ -3,7 +3,10 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Gamepad2, Trophy, Brain, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import GameInterface from '../components/games/GameInterface';
+import NameThatFace from '../components/games/NameThatFace';
+import WordMemory from '../components/games/WordMemory';
+import SequenceMemory from '../components/games/SequenceMemory';
+import WhatDayIsIt from '../components/games/WhatDayIsIt';
 
 const games = [
   {
@@ -40,11 +43,19 @@ const games = [
   }
 ];
 
+const GAME_COMPONENTS = {
+  'name-that-face': NameThatFace,
+  'word-memory': WordMemory,
+  'sequence-memory': SequenceMemory,
+  'what-day-is-it': WhatDayIsIt,
+};
+
 export default function MemoryGames() {
   const [selectedGame, setSelectedGame] = useState(null);
   const navigate = useNavigate();
 
   if (selectedGame) {
+    const GameComponent = GAME_COMPONENTS[selectedGame];
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-orange-50 dark:from-slate-950 dark:via-purple-950 dark:to-pink-950 p-4">
         <Button
@@ -55,7 +66,7 @@ export default function MemoryGames() {
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Games
         </Button>
-        <GameInterface gameId={selectedGame} onComplete={() => setSelectedGame(null)} />
+        {GameComponent ? <GameComponent /> : null}
       </div>
     );
   }

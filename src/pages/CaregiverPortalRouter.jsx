@@ -39,10 +39,13 @@ import ChatHistory from '@/components/caregiver/ChatHistory';
 import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const featureCards = [
+  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalization profile for your loved one', path: '/UserProfile', background: '#F0F9FF' },
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
   { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/PhotoLibrary', background: '#FAF5FF' },
+  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
+  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/CaregiverPortal/chat-history', background: '#F0FDF4' },
@@ -70,7 +73,9 @@ const featureCards = [
   { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CareTeam', background: '#EFF6FF' },
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
-  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' }
+  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
+  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
+  { id: 31, title: 'Profile Setup', icon: '👤', description: 'Personalize AI interactions for your loved one', path: '/CaregiverPortal/profile', background: '#EFF6FF' }
 ];
 
 function CaregiverPortalHome() {
@@ -387,6 +392,15 @@ export default function CaregiverPortalRouter() {
               <CaregiverNotificationCenter patientProfileId={userProfile?.id} />
             </div>
           } />
+          <Route path="chat-history" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <ChatHistoryViewer />
+              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
+            </div>
+          } />
           <Route path="agents" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
@@ -397,6 +411,13 @@ export default function CaregiverPortalRouter() {
           } />
           <Route path="chat-history" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Chat History</h2>
+              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
+              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
+              <ChatHistoryViewer onBack={() => navigate('/CaregiverPortal')} />
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
