@@ -20,7 +20,7 @@ export default function HealthMonitor() {
       const recentLogs = activityLogs.slice(0, 10);
       
       // Calculate anxiety level from recent activities
-      const anxietyDetected = recentLogs.filter(log => 
+      const _anxietyDetected = recentLogs.filter(log => 
         log.activity_type?.includes('anxiety') || 
         log.details?.anxiety_level !== undefined
       ).length;

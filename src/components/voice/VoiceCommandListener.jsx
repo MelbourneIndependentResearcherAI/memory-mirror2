@@ -4,7 +4,7 @@ import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../../utils';
 
-export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode }) {
+export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode: _currentMode }) {
   const [isListening, setIsListening] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const recognitionRef = useRef(null);
@@ -29,7 +29,7 @@ export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode 
       navigate('/phone');
       speakFeedback('Switching to phone mode');
     } else if (lowerCommand.includes('security') || lowerCommand.includes('safe') || lowerCommand.includes('check')) {
-      navigate('/security');
+      navigate('/SecurityMode');
       speakFeedback('Switching to security mode');
     } else if (lowerCommand.includes('memor') || lowerCommand.includes('happy') || lowerCommand.includes('photos')) {
       if (onMemoryGalleryOpen) {

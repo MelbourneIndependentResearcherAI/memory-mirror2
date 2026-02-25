@@ -61,7 +61,7 @@ export default function OfflineStatusBar() {
       if (info) {
         setStorageInfo(info);
       }
-    } catch (error) {
+    } catch {
       console.log('Storage info unavailable');
     }
   };
@@ -70,7 +70,7 @@ export default function OfflineStatusBar() {
     try {
       const count = await offlineSyncManager.getPendingSyncCount();
       setPendingCount(count);
-    } catch (error) {
+    } catch {
       console.log('Pending count unavailable');
     }
   };
