@@ -6,7 +6,6 @@ import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 import FeedbackCard from '@/components/feedback/FeedbackCard';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
-import { toast } from 'sonner';
 
 export default function Feedback() {
   const navigate = useNavigate();

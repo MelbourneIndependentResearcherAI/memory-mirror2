@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Camera, Plus, Trash2, ArrowLeft, Save, X } from 'lucide-react';
+import { Camera, Plus, Trash2, ArrowLeft, Save } from 'lucide-react';
 import { toast } from 'sonner';
 
 const generationLabels = {

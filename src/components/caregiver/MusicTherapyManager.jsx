@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import React from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Music, Upload, ListMusic, Clock } from 'lucide-react';
+import { Upload, ListMusic, Clock } from 'lucide-react';
 import CustomMusicUploader from './CustomMusicUploader';
 import PlaylistBuilder from './PlaylistBuilder';
 import PlaylistScheduler from './PlaylistScheduler';

@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Wifi, WifiOff, HardDrive, Download, RefreshCw, BarChart3, Shield } from 'lucide-react';
+import { ArrowLeft, Wifi, WifiOff, HardDrive, Download, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OfflineModeDashboardPage() {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BookOpen, Sparkles, Play, Pause, RotateCw, X, Wand2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { useQuery, useMutation } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
 import PersonalizedStoryGenerator from './PersonalizedStoryGenerator';
