@@ -22,6 +22,13 @@ export default function Landing() {
     { icon: '🌙', title: 'Night Watch', desc: 'AI-powered overnight monitoring with emergency alert detection', page: 'NightWatch', color: 'from-slate-600 to-indigo-700' },
     { icon: '📸', title: 'Photo Library', desc: 'Cherished photos and memories with voice-activated recall', page: 'PhotoLibrary', color: 'from-amber-500 to-orange-500' },
     { icon: '👨\u200d⚕️', title: 'Caregiver Portal', desc: 'Full dashboard with insights, care journal and activity reports', page: 'CaregiverPortal', color: 'from-teal-500 to-emerald-500' },
+    { icon: '📱', title: 'Phone Mode', desc: 'Simplified large-button phone interface for easy calling', page: 'PhoneMode', color: 'from-green-500 to-teal-500' },
+    { icon: '🛡️', title: 'Security Scanner', desc: 'Scam detection and online safety tools to protect your loved one', page: 'Security', color: 'from-blue-600 to-indigo-600' },
+    { icon: '🎤', title: 'Always-On Voice', desc: 'Hands-free wake word detection for voice-activated assistance', page: 'VoiceSetup', color: 'from-violet-500 to-purple-600' },
+    { icon: '🏦', title: 'Fake Banking', desc: 'A reassuring fake bank balance view to reduce financial anxiety', page: 'MyBank', color: 'from-emerald-500 to-green-600' },
+    { icon: '👨\u200d👩\u200d👧', title: 'Family Portal', desc: 'Family members can share messages, photos and stay connected', page: 'FamilyConnect', color: 'from-pink-500 to-rose-500' },
+    { icon: '📊', title: 'Caregiver Dashboard', desc: 'At-a-glance overview of patient status, tasks and care metrics', page: 'CaregiverDashboard', color: 'from-cyan-500 to-blue-500' },
+    { icon: '📺', title: 'Smart TV Mode', desc: 'Large-screen TV interface for comfortable viewing and interaction', page: 'TVMode', color: 'from-slate-500 to-slate-700' },
   ];
 
   return (
