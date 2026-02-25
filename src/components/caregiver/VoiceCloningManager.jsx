@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { Upload, Mic, Play, Check, AlertCircle, Trash2, Volume2, Sparkles, Loader2 } from 'lucide-react';
+import { Upload, Mic, Play, Check, Trash2, Volume2, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Alert, AlertDescription } from '@/components/ui/alert';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
@@ -153,7 +152,7 @@ export default function VoiceCloningManager() {
       setMediaRecorder(recorder);
       setIsRecording(true);
       setRecordedChunks([]);
-    } catch (error) {
+    } catch {
       toast.error('Microphone access denied');
     }
   };
@@ -253,7 +252,7 @@ export default function VoiceCloningManager() {
 
       const audio = new Audio(URL.createObjectURL(new Blob([result.data])));
       audio.play();
-    } catch (error) {
+    } catch {
       toast.error('Failed to test voice');
     }
   };

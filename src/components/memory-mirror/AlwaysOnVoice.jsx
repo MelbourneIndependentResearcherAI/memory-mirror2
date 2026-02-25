@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Mic, MicOff, Volume2, Bluetooth, Battery, Power } from 'lucide-react';
+import { Mic, MicOff, Volume2, Battery } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -45,7 +45,7 @@ class AlwaysOnVoiceSystem {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       console.log('Microphone access granted');
       return stream;
-    } catch (error) {
+    } catch {
       throw new Error('Microphone access required for voice features');
     }
   }

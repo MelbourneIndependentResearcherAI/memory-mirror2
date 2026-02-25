@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Smartphone, QrCode, Key, CheckCircle, Wifi, WifiOff } from 'lucide-react';
+import { Smartphone, QrCode, Key, CheckCircle, Wifi } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function DevicePairing() {
@@ -22,7 +21,7 @@ export default function DevicePairing() {
   const [generatedCode] = useState(generatePairingCode());
 
   const pairDeviceMutation = useMutation({
-    mutationFn: async (code) => {
+    mutationFn: async (_code) => {
       // In production, verify code and link device to caregiver account
       return { success: true, deviceId: `device-${Date.now()}` };
     },

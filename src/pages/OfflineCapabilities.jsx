@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Check, X, Download, Music, MessageCircle, Image, HardDrive } from 'lucide-react';
+import { ArrowLeft, Check, X, Download, HardDrive } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function OfflineCapabilitiesPage() {

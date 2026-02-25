@@ -4,12 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { 
   PlayCircle, CheckCircle2, XCircle, Loader2, 
-  Database, Wifi, WifiOff, FileText, Music, Image, Brain, HardDrive, AlertCircle
+  Database, Wifi, WifiOff, FileText, Music, Brain, HardDrive, AlertCircle
 } from 'lucide-react';
 import { 
   initOfflineStorage, 
-  getAllFromStore, 
-  saveToStore,
+  getAllFromStore,
   STORES 
 } from '@/components/utils/offlineStorage';
 import { 
@@ -174,7 +173,7 @@ export default function OfflineContentTester() {
             try {
               const items = await getAllFromStore(storeName);
               storeTests.push(`${key}: ${items.length} items`);
-            } catch (error) {
+            } catch {
               storeTests.push(`${key}: ERROR`);
             }
           }

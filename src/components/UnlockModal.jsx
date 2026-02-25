@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Lock, Shield, AlertCircle } from 'lucide-react';
 
-export default function UnlockModal({ isOpen, onUnlock, onCancel, modeName }) {
+export default function UnlockModal({ isOpen, onUnlock, onCancel: _onCancel, modeName }) {
   const [pin, setPin] = useState('');
   const [error, setError] = useState(false);
 

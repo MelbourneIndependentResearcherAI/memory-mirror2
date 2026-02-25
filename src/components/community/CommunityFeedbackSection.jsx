@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { MessageSquare, ThumbsUp, Trash2, Send, Users, Lightbulb, Heart, AlertCircle } from 'lucide-react';
+import { MessageSquare, ThumbsUp, Trash2, Send, Users, Lightbulb, Heart } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const categoryIcons = {
@@ -25,7 +25,7 @@ const categoryColors = {
 
 export default function CommunityFeedbackSection() {
   const queryClient = useQueryClient();
-  const [user, setUser] = useState(null);
+  const [_user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ export default function CommunityFeedbackSection() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         setIsAdmin(currentUser?.role === 'admin');
-      } catch (error) {
+      } catch {
         setUser(null);
         setIsAdmin(false);
       }

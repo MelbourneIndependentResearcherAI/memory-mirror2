@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Brain, Trophy, Play, X } from 'lucide-react';
+import { Brain, Play, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { base44 } from '@/api/base44Client';
@@ -44,7 +44,7 @@ export default function GameInterface({ onClose }) {
         details: { game: gameId, started: new Date().toISOString() }
       }).catch(() => {});
 
-    } catch (error) {
+    } catch {
       setGameState({ messages: [{ role: 'assistant', content: "Let's have some fun together!" }], gameId });
     }
 
