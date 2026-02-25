@@ -230,7 +230,7 @@ export const PAGES = {
 }
 
 export const pagesConfig = {
-    mainPage: "InsightsAnalytics",
+    mainPage: "Landing",
     Pages: PAGES,
     Layout: __Layout,
 };
