@@ -47,6 +47,8 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import { lazy } from 'react';
+
 import AIAgentTeam from './pages/AIAgentTeam';
 import AICareInsights from './pages/AICareInsights';
 import AccessibilityStatement from './pages/AccessibilityStatement';
