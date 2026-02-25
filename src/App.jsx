@@ -50,7 +50,7 @@ const AuthenticatedApp = () => {
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
-          path={`/${path}`}
+          path={path === 'CaregiverPortal' ? `/${path}/*` : `/${path}`}
           element={
             <LayoutWrapper currentPageName={path}>
               <Page />
@@ -58,6 +58,16 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/privacy" element={
+        <LayoutWrapper currentPageName="PrivacyPolicy">
+          <Pages.PrivacyPolicy />
+        </LayoutWrapper>
+      } />
+      <Route path="/support" element={
+        <LayoutWrapper currentPageName="FAQ">
+          <Pages.FAQ />
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );
