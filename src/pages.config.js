@@ -70,7 +70,6 @@ const ContentLibrary = lazy(() => import('./pages/ContentLibrary'));
 const ConversationAnalytics = lazy(() => import('./pages/ConversationAnalytics'));
 const EmergencyAlerts = lazy(() => import('./pages/EmergencyAlerts'));
 const FAQ = lazy(() => import('./pages/FAQ'));
-const FakeBankSettings = lazy(() => import('./pages/FakeBankSettings'));
 const FamilyAIInsights = lazy(() => import('./pages/FamilyAIInsights'));
 const FamilyCalendar = lazy(() => import('./pages/FamilyCalendar'));
 const FamilyChatRoom = lazy(() => import('./pages/FamilyChatRoom'));
@@ -160,7 +159,6 @@ export const PAGES = {
     "ConversationAnalytics": ConversationAnalytics,
     "EmergencyAlerts": EmergencyAlerts,
     "FAQ": FAQ,
-    "FakeBankSettings": FakeBankSettings,
     "FamilyAIInsights": FamilyAIInsights,
     "FamilyCalendar": FamilyCalendar,
     "FamilyChatRoom": FamilyChatRoom,

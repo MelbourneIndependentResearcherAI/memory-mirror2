@@ -71,6 +71,20 @@ export default function Landing() {
           </p>
         </div>
 
+        {/* Mirror Button — large one-tap access for dementia patients */}
+        <div className="flex justify-center mb-10 px-4">
+          <button
+            onClick={() => navigateTo('PatientAccess')}
+            className="w-full max-w-sm bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold rounded-full shadow-2xl transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-3"
+            style={{ minHeight: '160px', fontSize: '2rem' }}
+            aria-label="Mirror — tap to start"
+          >
+            <span style={{ fontSize: '3.5rem' }}>🪞</span>
+            <span>Mirror</span>
+            <span className="text-lg font-normal opacity-90">Tap to start</span>
+          </button>
+        </div>
+
           {/* Dual Access Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
             {/* Patient Access */}
