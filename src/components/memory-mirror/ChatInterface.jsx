@@ -380,6 +380,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         } catch {}
       }
 
+      // Persist completed session to Chat History (Conversation entity)
+      const history = conversationHistoryRef.current;
+      const userMessages = history.filter(m => m.role === 'user');
+      if (userMessages.length > 0) {
+        const durationMs = Date.now() - sessionStartTimeRef.current;
+        const durationMinutes = durationMs / 60000;
+        base44.entities.Conversation.create({
+          started_at: new Date(sessionStartTimeRef.current).toISOString(),
+          message_count: history.length,
+          messages: JSON.stringify(history),
+          era: detectedEraRef.current || 'present',
+          topics: conversationTopicsRef.current.slice(0, 10),
+          duration_minutes: Math.round(durationMinutes * 10) / 10,
       // Save conversation session if there were meaningful messages
       const finalMessages = messagesRef.current;
       const userMsgCount = finalMessages.filter(m => m.role === 'user').length;

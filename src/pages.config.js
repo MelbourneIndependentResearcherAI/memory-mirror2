@@ -136,6 +136,7 @@ const UserProfile = lazy(() => import('./pages/UserProfile'));
 const YouthMirror = lazy(() => import('./pages/YouthMirror'));
 const chat = lazy(() => import('./pages/chat'));
 const phone = lazy(() => import('./pages/phone'));
+const security = lazy(() => import('./pages/security'));
 
 
 export const PAGES = {

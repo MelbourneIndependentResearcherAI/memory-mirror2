@@ -134,6 +134,186 @@ export default function UserProfileSetup({ onBack }) {
         </div>
       </div>
 
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <Tabs defaultValue="basic" className="w-full">
+          <TabsList className="w-full grid grid-cols-4 mb-4 h-auto">
+            <TabsTrigger value="basic" className="flex flex-col gap-1 py-2 min-h-[56px]">
+              <User className="w-4 h-4" />
+              <span className="text-xs">Basic Info</span>
+            </TabsTrigger>
+            <TabsTrigger value="preferences" className="flex flex-col gap-1 py-2 min-h-[56px]">
+              <Heart className="w-4 h-4" />
+              <span className="text-xs">Preferences</span>
+            </TabsTrigger>
+            <TabsTrigger value="life" className="flex flex-col gap-1 py-2 min-h-[56px]">
+              <Book className="w-4 h-4" />
+              <span className="text-xs">Life Story</span>
+            </TabsTrigger>
+            <TabsTrigger value="social" className="flex flex-col gap-1 py-2 min-h-[56px]">
+              <Music className="w-4 h-4" />
+              <span className="text-xs">Music &amp; People</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="basic">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <User className="w-5 h-5" />
+                  Basic Information
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Their Name *</label>
+                  <Input
+                    required
+                    placeholder="e.g., Margaret"
+                    value={formData.loved_one_name}
+                    onChange={(e) => setFormData({...formData, loved_one_name: e.target.value})}
+                    className="min-h-[44px]"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Preferred Name</label>
+                  <Input
+                    placeholder="e.g., Maggie, Grandma"
+                    value={formData.preferred_name}
+                    onChange={(e) => setFormData({...formData, preferred_name: e.target.value})}
+                    className="min-h-[44px]"
+                  />
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Birth Year</label>
+                  <Input
+                    type="number"
+                    placeholder="e.g., 1945"
+                    value={formData.birth_year}
+                    onChange={(e) => setFormData({...formData, birth_year: e.target.value})}
+                    className="min-h-[44px]"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="preferences">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Heart className="w-5 h-5" />
+                  Personality &amp; Preferences
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Favorite Era</label>
+                  <Select value={formData.favorite_era} onValueChange={(value) => setFormData({...formData, favorite_era: value})}>
+                    <SelectTrigger className="min-h-[44px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1940s">1940s</SelectItem>
+                      <SelectItem value="1960s">1960s</SelectItem>
+                      <SelectItem value="1980s">1980s</SelectItem>
+                      <SelectItem value="present">Present</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Communication Style</label>
+                  <Select value={formData.communication_style} onValueChange={(value) => setFormData({...formData, communication_style: value})}>
+                    <SelectTrigger className="min-h-[44px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="formal">Formal &amp; Respectful</SelectItem>
+                      <SelectItem value="casual">Casual &amp; Friendly</SelectItem>
+                      <SelectItem value="warm">Warm &amp; Affectionate</SelectItem>
+                      <SelectItem value="gentle">Gentle &amp; Soothing</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Interests &amp; Hobbies</label>
+                  <Input
+                    placeholder="e.g., gardening, knitting, reading, cooking (comma separated)"
+                    value={formData.interests}
+                    onChange={(e) => setFormData({...formData, interests: e.target.value})}
+                    className="min-h-[44px]"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="life">
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Book className="w-5 h-5" />
+                  Life Experiences
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div>
+                  <label className="text-sm font-medium mb-2 block">Key Life Stories</label>
+                  <Textarea
+                    placeholder="One per line, format: Title: Description&#10;e.g., Navy Service: Served in the Navy 1963-1967&#10;Wedding Day: Married John in a small church ceremony"
+                    value={formData.life_experiences}
+                    onChange={(e) => setFormData({...formData, life_experiences: e.target.value})}
+                    rows={6}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          <TabsContent value="social">
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Music className="w-5 h-5" />
+                    Favorite Music
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Songs &amp; Artists</label>
+                    <Input
+                      placeholder="e.g., Frank Sinatra, Bing Crosby, Moon River (comma separated)"
+                      value={formData.favorite_music}
+                      onChange={(e) => setFormData({...formData, favorite_music: e.target.value})}
+                      className="min-h-[44px]"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-5 h-5" />
+                    Important People
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium mb-2 block">Family &amp; Friends</label>
+                    <Input
+                      placeholder="e.g., John (husband), Sarah (daughter), Tom (son)"
+                      value={formData.important_people}
+                      onChange={(e) => setFormData({...formData, important_people: e.target.value})}
+                      className="min-h-[44px]"
+                    />
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+        </Tabs>
+      </form>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <Card>
