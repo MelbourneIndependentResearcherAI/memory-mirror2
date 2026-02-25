@@ -224,7 +224,7 @@ class OfflineDataCache {
   // ============ SYNC HELPERS ============
   async markAsSynced(entityType, localId, remoteId) {
     await this.init();
-    let store, entry;
+    let _store, entry;
 
     switch (entityType) {
       case 'care_journal':

@@ -5,7 +5,7 @@ import { base44 } from '@/api/base44Client';
 
 export default function MemorySessions() {
   const navigate = useNavigate();
-  const [selectedSession, setSelectedSession] = useState(null);
+  const [_selectedSession, setSelectedSession] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [sessionContent, setSessionContent] = useState(null);
 

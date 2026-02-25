@@ -72,7 +72,7 @@ const featureCards = [
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
-  const [badDayActivated, setBadDayActivated] = React.useState(false);
+  const [_badDayActivated, setBadDayActivated] = React.useState(false);
 
   const handleCardClick = async (card) => {
     if (card.id === 12) {
@@ -168,7 +168,7 @@ function CaregiverPortalHome() {
 
 export default function CaregiverPortalRouter() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const _location = useLocation();
   const [userProfile, setUserProfile] = React.useState(null);
   const [showOfflineOptions, setShowOfflineOptions] = React.useState(false);
 

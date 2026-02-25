@@ -7,6 +7,7 @@ import { createPageUrl } from '@/utils';
 import MemorySelfie from '@/components/memory-mirror/YouthMirror';
 
 export default function YouthMirror() {
+  const [_activeFeature, setActiveFeature] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
   const navigate = useNavigate();
 
