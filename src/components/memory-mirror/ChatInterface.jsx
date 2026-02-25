@@ -62,6 +62,10 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const conversationHistoryRef = useRef([]);
   const detectedEraRef = useRef('present');
   const conversationTopicsRef = useRef([]);
+  const sessionStartRef = useRef(Date.now());
+  const messagesRef = useRef([]);
+  const peakAnxietyRef = useRef(0);
+  const sessionEraRef = useRef('present');
 
   const handleRefresh = async () => {
     await queryClient.refetchQueries({ queryKey: ['safeZones'] });
@@ -69,7 +73,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     return new Promise(resolve => setTimeout(resolve, 500));
   };
 
-  const { data: safeZones = [], error: safeZonesError } = useQuery({
+  const { data: safeZones = [], error: _safeZonesError } = useQuery({
     queryKey: ['safeZones'],
     queryFn: async () => {
       try {
@@ -83,7 +87,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: memories = [], error: memoriesError } = useQuery({
+  const { data: memories = [], error: _memoriesError } = useQuery({
     queryKey: ['memories'],
     queryFn: async () => {
       try {
@@ -97,7 +101,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 5,
   });
 
-  const { data: userProfile, error: profileError } = useQuery({
+  const { data: userProfile, error: _profileError } = useQuery({
     queryKey: ['userProfile'],
     queryFn: async () => {
       try {
@@ -112,7 +116,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 10,
   });
 
-  const { data: cognitiveAssessments = [], error: assessmentsError } = useQuery({
+  const { data: cognitiveAssessments = [], error: _assessmentsError } = useQuery({
     queryKey: ['cognitiveAssessments'],
     queryFn: async () => {
       try {
@@ -389,6 +393,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           era: detectedEraRef.current || 'present',
           topics: conversationTopicsRef.current.slice(0, 10),
           duration_minutes: Math.round(durationMinutes * 10) / 10,
+      // Save conversation session if there were meaningful messages
+      const finalMessages = messagesRef.current;
+      const userMsgCount = finalMessages.filter(m => m.role === 'user').length;
+      if (userMsgCount >= 1) {
+        const durationMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000);
+        base44.entities.Conversation.create({
+          mode: 'chat',
+          detected_era: sessionEraRef.current,
+          messages: finalMessages.map(m => ({ role: m.role, content: m.content })),
+          message_count: finalMessages.length,
+          duration_minutes: durationMinutes,
+          peak_anxiety_level: peakAnxietyRef.current,
+          session_date: new Date().toISOString()
         }).catch(() => {});
       }
     };
@@ -405,6 +422,23 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       setLastAssessment(cognitiveAssessments[0]);
     }
   }, [cognitiveAssessments]);
+
+  // Keep messagesRef in sync so it can be read inside the cleanup function
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
+
+  // Track peak anxiety level
+  useEffect(() => {
+    if (anxietyState.level > peakAnxietyRef.current) {
+      peakAnxietyRef.current = anxietyState.level;
+    }
+  }, [anxietyState.level]);
+
+  // Track current era
+  useEffect(() => {
+    sessionEraRef.current = selectedEra === 'auto' ? detectedEra : selectedEra;
+  }, [selectedEra, detectedEra]);
 
   const getSystemPrompt = () => {
     const profileContext = userProfile 
@@ -754,7 +788,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           detectedAnxiety = meta.anxiety || detectedAnxiety;
           setDetectedEra(era);
           onEraChange(era);
-        } catch (e) {
+        } catch {
           console.log('META parse skip (non-critical)');
         }
       }
@@ -1031,7 +1065,7 @@ If appropriate, gently reference their memories or suggest looking at photos tog
       
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
-      const speechEndTimeoutRef = { current: null };
+      const _speechEndTimeoutRef = { current: null };
 
       recognitionRef.current.onstart = () => {
         console.log('Speech recognition started - CAPTURING FULL SENTENCES');
