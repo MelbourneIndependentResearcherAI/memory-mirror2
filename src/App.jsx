@@ -3,7 +3,7 @@ import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import NavigationTracker from '@/lib/NavigationTracker'
 import { pagesConfig } from './pages.config'
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { HashRouter as Router, Route, Routes } from 'react-router-dom';
 import PageNotFound from './lib/PageNotFound';
 import { AuthProvider, useAuth } from '@/lib/AuthContext';
 import UserNotRegisteredError from '@/components/UserNotRegisteredError';
@@ -50,7 +50,7 @@ const AuthenticatedApp = () => {
       {Object.entries(Pages).map(([path, Page]) => (
         <Route
           key={path}
-          path={`/${path}`}
+          path={path === 'CaregiverPortal' ? `/${path}/*` : `/${path}`}
           element={
             <LayoutWrapper currentPageName={path}>
               <Page />
@@ -58,6 +58,16 @@ const AuthenticatedApp = () => {
           }
         />
       ))}
+      <Route path="/privacy" element={
+        <LayoutWrapper currentPageName="PrivacyPolicy">
+          <Pages.PrivacyPolicy />
+        </LayoutWrapper>
+      } />
+      <Route path="/support" element={
+        <LayoutWrapper currentPageName="FAQ">
+          <Pages.FAQ />
+        </LayoutWrapper>
+      } />
       <Route path="*" element={<PageNotFound />} />
     </Routes>
   );

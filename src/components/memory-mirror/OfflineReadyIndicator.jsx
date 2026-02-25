@@ -1,15 +1,24 @@
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Download, Loader2, Wifi, WifiOff } from 'lucide-react';
+import { CheckCircle, Download, Loader2, WifiOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { getFromStore, saveToStore } from '../utils/offlineStorage';
+import { getFromStore } from '../utils/offlineStorage';
 import { preloadEssentialData } from '../utils/offlinePreloader';
 import { isOnline } from '../utils/offlineManager';
 import { toast } from 'sonner';
+
+const DISMISS_KEY = 'offline_banner_dismissed';
 
 export default function OfflineReadyIndicator() {
   const [offlineReady, setOfflineReady] = useState(null);
   const [isDownloading, setIsDownloading] = useState(false);
   const [online, setOnline] = useState(true);
+  const [dismissed, setDismissed] = useState(() => {
+    try {
+      return localStorage.getItem(DISMISS_KEY) === 'true';
+    } catch {
+      return false;
+    }
+  });
 
   useEffect(() => {
     checkOfflineStatus();
@@ -38,6 +47,15 @@ export default function OfflineReadyIndicator() {
     } catch (error) {
       console.error('Failed to check offline status:', error);
     }
+  };
+
+  const handleDismiss = () => {
+    try {
+      localStorage.setItem(DISMISS_KEY, 'true');
+    } catch {
+      // localStorage unavailable; dismiss for session only
+    }
+    setDismissed(true);
   };
 
   const downloadOfflineData = async () => {
@@ -82,7 +100,8 @@ export default function OfflineReadyIndicator() {
   }
 
   if (!offlineReady && online) {
-    // Online but not prepared
+    // Online but not prepared — show banner unless dismissed
+    if (dismissed) return null;
     return (
       <div className="fixed top-4 right-4 z-40 bg-amber-100 dark:bg-amber-900 text-amber-800 dark:text-amber-100 p-4 rounded-lg shadow-xl max-w-sm">
         <div className="flex items-start gap-3">
@@ -111,6 +130,13 @@ export default function OfflineReadyIndicator() {
               )}
             </Button>
           </div>
+          <button
+            onClick={handleDismiss}
+            aria-label="Dismiss"
+            className="ml-1 p-1 rounded hover:bg-amber-200 dark:hover:bg-amber-800 transition-colors shrink-0"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       </div>
     );
