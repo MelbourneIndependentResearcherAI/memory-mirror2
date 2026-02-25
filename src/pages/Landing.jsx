@@ -620,6 +620,7 @@ export default function Landing() {
             💙 Support this project
           </button>
         </div>
+        
 
         {/* Community Feedback Section */}
         <CommunityFeedbackSection />
