@@ -32,6 +32,23 @@ Run the app: `npm run dev`
 
 Open [Base44.com](http://Base44.com) and click on Publish.
 
+**Running E2E Tests**
+
+Automated end-to-end smoke tests use [Playwright](https://playwright.dev/) to verify that the Landing page feature cards navigate to the correct routes.
+
+Prerequisites: ensure your `.env.local` is configured (see above) and dependencies are installed.
+
+```
+# Install Playwright browsers (first time only)
+npx playwright install chromium
+
+# Run E2E tests (headless)
+npm run test:e2e
+
+# Run E2E tests with the Playwright UI
+npm run test:e2e:ui
+```
+
 **Docs & Support**
 
 Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
