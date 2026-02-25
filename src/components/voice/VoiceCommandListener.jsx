@@ -4,7 +4,7 @@ import { Mic, MicOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../../utils';
 
-export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode }) {
+export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode: _currentMode }) {
   const [isListening, setIsListening] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const recognitionRef = useRef(null);

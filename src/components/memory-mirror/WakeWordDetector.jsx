@@ -25,7 +25,7 @@ export default function WakeWordDetector({ onWake, enabled = true }) {
         setTimeout(() => {
           try {
             recognitionRef.current?.start();
-          } catch (e) {
+          } catch {
             // Already started
           }
         }, 1000);
@@ -56,7 +56,7 @@ export default function WakeWordDetector({ onWake, enabled = true }) {
     // Start listening
     try {
       recognitionRef.current.start();
-    } catch (e) {
+    } catch {
       console.log('Wake word detection not available');
     }
 
