@@ -11,7 +11,7 @@ export default function AuditLogViewer() {
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
 
-  const { data: logs = [], isLoading } = useQuery({
+  const { data: logs = [], isLoading: _isLoading } = useQuery({
     queryKey: ['auditLogs'],
     queryFn: () => base44.entities.AuditLog.list('-created_date', 200)
   });

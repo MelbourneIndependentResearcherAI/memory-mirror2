@@ -5,7 +5,7 @@ import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpe
 import { toast } from 'sonner';
 
 export default function YouthMirror() {
-  const [activeFeature, setActiveFeature] = useState(null);
+  const [_activeFeature, setActiveFeature] = useState(null);
 
   const features = [
     {
