@@ -11,7 +11,6 @@ export default function AuditLogViewer() {
   const [searchTerm, setSearchTerm] = useState('');
   const [actionFilter, setActionFilter] = useState('all');
 
-  const { data: logs = [], isLoading: _isLoading } = useQuery({
   const { data: logs = [] } = useQuery({
     queryKey: ['auditLogs'],
     queryFn: () => base44.entities.AuditLog.list('-created_date', 200)
@@ -76,8 +75,8 @@ export default function AuditLogViewer() {
                         <Badge className={getActionColor(log.action_type)}>
                           {log.action_type.replace(/_/g, ' ')}
                         </Badge>
-                        {log.compliance_flags?.map(flag => (
-                          <Badge key={flag} variant="outline" className="text-xs">
+                        {log.compliance_flags?.map((flag, idx) => (
+                          <Badge key={idx} variant="outline" className="text-xs">
                             {flag}
                           </Badge>
                         ))}
