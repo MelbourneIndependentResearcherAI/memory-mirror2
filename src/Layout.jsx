@@ -1,6 +1,5 @@
 import React from 'react';
 import { ThemeProvider } from 'next-themes';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
@@ -77,23 +76,6 @@ if (typeof window !== 'undefined') {
   }
 }
 
-// Optimized query configuration for fast, reliable data fetching
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60 * 2,
-      cacheTime: 1000 * 60 * 10,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: true,
-      retry: 2,
-      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 5000),
-    },
-    mutations: {
-      retry: 1,
-    },
-  },
-});
-
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
@@ -104,8 +86,7 @@ export default function Layout({ children, currentPageName }) {
   const isMainPage = mainPages.includes(currentPageName);
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
         <AccessibilityWrapper>
           <LanguageProvider>
               <AppStateProvider>
@@ -152,6 +133,5 @@ export default function Layout({ children, currentPageName }) {
             </LanguageProvider>
           </AccessibilityWrapper>
         </ThemeProvider>
-      </QueryClientProvider>
-          );
-          }
+  );
+}
