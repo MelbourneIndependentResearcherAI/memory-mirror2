@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Brain, Heart } from 'lucide-react';
+import { MessageCircle, Brain, Heart, Phone, Shield, Moon, Volume2, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -145,44 +145,20 @@ export default function Landing() {
           <div className="flex flex-col gap-5 md:gap-6 justify-center items-stretch px-4 max-w-5xl mx-auto mb-8">
           {/* Main AI Chat Card */}
           <button onClick={() => navigateTo('Home')} className="w-full group">
-              <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
-                <div className="flex items-start gap-5">
-                  <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
-                    <MessageCircle className="w-9 h-9 md:w-11 md:h-11 text-white" />
-        {/* Dual Access Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8 px-4">
-          {/* Patient Access */}
-          <button
-            onClick={() => navigate(createPageUrl('PatientAccess'))}
-            className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
-          >
-            <div className="flex flex-col items-start gap-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
-                <MessageCircle className="w-12 h-12 text-white" />
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-3">
-                  Start Companion
-                </h3>
-                <p className="text-lg text-white/90 leading-relaxed mb-4">
-                  For patients — Quick access, no login required
-                </p>
-                <div className="flex flex-col gap-2 text-sm text-white/80">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Instant AI companion</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Optional PIN protection</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Hands-free voice access</span>
-                  </div>
+            <div className="bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-2xl shadow-xl border border-white/20 hover:shadow-2xl transition-all duration-300 p-8 md:p-10 cursor-pointer">
+              <div className="flex items-start gap-5">
+                <div className="bg-white/15 backdrop-blur-sm p-3.5 rounded-xl group-hover:bg-white/25 transition-colors">
+                  <MessageCircle className="w-9 h-9 md:w-11 md:h-11 text-white" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-xl md:text-2xl font-bold text-white mb-2">Start AI Companion</h3>
+                  <p className="text-sm md:text-base text-white/85 leading-relaxed">
+                    Begin a compassionate conversation — meets your loved one where they are
+                  </p>
                 </div>
               </div>
-            </button>
+            </div>
+          </button>
 
             {/* Secondary Mode Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
@@ -319,53 +295,10 @@ export default function Landing() {
                         Connect and use Memory Mirror on your large screen TV
                       </p>
                     </div>
+                  </div>
+                </div>
+              </button>
             </div>
-          </button>
-
-          {/* Caregiver Access */}
-          <button
-            onClick={() => navigate(createPageUrl('CaregiverPortal'))}
-            className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
-          >
-            <div className="flex flex-col items-start gap-4">
-              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
-                <Brain className="w-12 h-12 text-white" />
-              </div>
-              <div>
-                <h3 className="text-3xl font-bold text-white mb-3">
-                  Caregiver Portal
-                </h3>
-                <p className="text-lg text-white/90 leading-relaxed mb-4">
-                  For caregivers — Full dashboard & controls
-                </p>
-                <div className="flex flex-col gap-2 text-sm text-white/80">
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Monitor activity & wellbeing</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Configure AI behavior</span>
-                  </div>
-                </div>
-              </button>
-
-              <button onClick={() => navigateTo('MyBank')} className="w-full group">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-green-200/60 dark:border-green-700/40 hover:border-green-300 dark:hover:border-green-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
-                  <div className="flex items-start gap-4">
-                    <div className="text-4xl md:text-5xl">💳</div>
-                    <div className="flex-1">
-                      <h3 className="text-xl md:text-2xl font-semibold text-green-700 dark:text-green-400 mb-2">
-                        Fake Banking
-                      </h3>
-                      <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Safe simulated banking with no real transactions
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
-              </div>
 
             <div className="flex flex-col gap-4 items-center">
               <InstallAppButton />
@@ -593,14 +526,10 @@ export default function Landing() {
                 </div>
                 <div className="bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-amber-200 dark:border-amber-700">
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">🏥 Aged Care Volunteer</span>
-                  <div className="flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
-                    <span>Get smart notifications</span>
-                  </div>
                 </div>
               </div>
             </div>
-          </button>
+          </div>
         </div>
 
         {/* CTA Buttons */}
@@ -624,7 +553,6 @@ export default function Landing() {
 
         {/* Community Feedback Section */}
         <CommunityFeedbackSection />
-      </div>
 
       {/* Footer */}
       <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
@@ -647,7 +575,6 @@ export default function Landing() {
 
         {/* Spacing */}
         <div className="h-16"></div>
-      </div>
       
       {showDonationModal && (
         <DonationModal onClose={() => setShowDonationModal(false)} />

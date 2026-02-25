@@ -393,6 +393,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           era: detectedEraRef.current || 'present',
           topics: conversationTopicsRef.current.slice(0, 10),
           duration_minutes: Math.round(durationMinutes * 10) / 10,
+        }).catch(() => {});
+      }
       // Save conversation session if there were meaningful messages
       const finalMessages = messagesRef.current;
       const userMsgCount = finalMessages.filter(m => m.role === 'user').length;

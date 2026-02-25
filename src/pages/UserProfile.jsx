@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, Heart, Music, Users, Book, Edit2, Save, X, ArrowLeft, Calendar, Star, Clock } from 'lucide-react';
-import React, { useState } from 'react';
-import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, X } from 'lucide-react';
+import { User, Heart, Music, Users, Book, Edit2, Save, X, ArrowLeft, Calendar, Star, Clock, Check } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,7 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 
 const ERA_LABELS = {
   '1940s': '1940s Era',
@@ -28,13 +25,6 @@ const ERA_COLORS = {
 };
 
 
-const ERA_LABELS = {
-  '1940s': '1940s',
-  '1960s': '1960s',
-  '1980s': '1980s',
-  'present': 'Present Day',
-};
-
 const STYLE_LABELS = {
   formal: 'Formal & Respectful',
   casual: 'Casual & Friendly',
@@ -48,12 +38,6 @@ const TABS = [
   { id: 'life', label: 'Life Stories', icon: Book },
   { id: 'connections', label: 'Music & People', icon: Users },
 ];
-const ERA_COLORS = {
-  '1940s': 'from-amber-400 to-orange-400',
-  '1960s': 'from-orange-400 to-pink-400',
-  '1980s': 'from-purple-400 to-fuchsia-400',
-  'present': 'from-blue-400 to-cyan-400',
-};
 
 function ProfileAvatar({ name, era }) {
   const initials = name ? name.slice(0, 2).toUpperCase() : '??';
@@ -211,197 +195,6 @@ export default function UserProfile() {
     ? new Date().getFullYear() - profile.birth_year
     : null;
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-16">
-      {/* Header Banner */}
-      <div className={`bg-gradient-to-r ${eraGradient} text-white`}>
-        <div className="max-w-3xl mx-auto px-4 pt-4 pb-6">
-          <button
-            onClick={() => navigate(-1)}
-            className="flex items-center gap-2 text-white/80 hover:text-white mb-4 min-h-[44px] transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span className="text-sm font-medium">Back</span>
-          </button>
-
-          <div className="flex items-center gap-5">
-            {/* Avatar */}
-            <div className="w-20 h-20 rounded-full bg-white/25 backdrop-blur-sm flex items-center justify-center shadow-lg border-4 border-white/40 flex-shrink-0">
-              <User className="w-10 h-10 text-white" />
-            </div>
-
-            <div className="flex-1 min-w-0">
-              <h1 className="text-2xl md:text-3xl font-bold text-white truncate">
-                {displayName}
-              </h1>
-              {profile?.loved_one_name && profile?.preferred_name && profile.loved_one_name !== profile.preferred_name && (
-                <p className="text-white/80 text-sm mt-0.5">
-                  Full name: {profile.loved_one_name}
-                </p>
-              )}
-
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                {age && (
-                  <span className="flex items-center gap-1 bg-white/20 rounded-full px-3 py-1 text-sm">
-                    <Calendar className="w-3.5 h-3.5" />
-                    {age} years old
-                  </span>
-                )}
-                {profile?.favorite_era && (
-                  <span className="flex items-center gap-1 bg-white/20 rounded-full px-3 py-1 text-sm">
-                    <Clock className="w-3.5 h-3.5" />
-                    {ERA_LABELS[profile.favorite_era]}
-                  </span>
-                )}
-                {profile?.communication_style && (
-                  <span className="flex items-center gap-1 bg-white/20 rounded-full px-3 py-1 text-sm">
-                    <Star className="w-3.5 h-3.5" />
-                    {STYLE_LABELS[profile.communication_style]}
-                  </span>
-                )}
-              </div>
-            </div>
-
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setEditing(!editing)}
-              className="bg-white/20 hover:bg-white/30 text-white border-white/30 flex-shrink-0"
-            >
-              {editing ? (
-                <>
-                  <X className="w-4 h-4 mr-1" /> Cancel
-                </>
-              ) : (
-                <>
-                  <Edit2 className="w-4 h-4 mr-1" /> Edit
-                </>
-              )}
-            </Button>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-3xl mx-auto px-4 mt-4">
-        {isLoading ? (
-          <div className="text-center py-12 text-slate-500">Loading profile…</div>
-        ) : !profile && !editing ? (
-          <Card className="text-center py-10">
-            <CardContent>
-              <User className="w-16 h-16 mx-auto text-slate-300 mb-4" />
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
-                No profile has been created yet.
-              </p>
-              <Button onClick={() => setEditing(true)} className="bg-blue-500 hover:bg-blue-600">
-                Create Profile
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <>
-            {/* Tab Navigation */}
-            <div className="flex gap-1 bg-white dark:bg-slate-900 rounded-xl p-1 shadow-sm mb-4 overflow-x-auto">
-              {TABS.map((tab) => {
-                const Icon = tab.icon;
-                return (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-1 justify-center min-h-[44px] ${
-                      activeTab === tab.id
-                        ? 'bg-blue-500 text-white shadow-sm'
-                        : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span className="hidden sm:inline">{tab.label}</span>
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Tab Content */}
-            {activeTab === 'basic' && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-lg">
-                    <User className="w-5 h-5 text-blue-500" />
-                    Basic Information
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {editing ? (
-                    <>
-                      <div>
-                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
-                          Their Name *
-                        </label>
-                        <Input
-                          required
-                          placeholder="e.g., Margaret"
-                          value={formData.loved_one_name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, loved_one_name: e.target.value })
-                          }
-                          className="min-h-[44px]"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
-                          Preferred Name
-                        </label>
-                        <Input
-                          placeholder="e.g., Maggie, Grandma"
-                          value={formData.preferred_name}
-                          onChange={(e) =>
-                            setFormData({ ...formData, preferred_name: e.target.value })
-                          }
-                          className="min-h-[44px]"
-                        />
-                      </div>
-                      <div>
-                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
-                          Birth Year
-                        </label>
-                        <Input
-                          type="number"
-                          placeholder="e.g., 1945"
-                          value={formData.birth_year}
-                          onChange={(e) =>
-                            setFormData({ ...formData, birth_year: e.target.value })
-                          }
-                          className="min-h-[44px]"
-                        />
-                      </div>
-                    </>
-                  ) : (
-                    <div className="space-y-3">
-                      <ProfileField label="Full Name" value={profile?.loved_one_name} />
-                      <ProfileField label="Preferred Name" value={profile?.preferred_name} />
-                      <ProfileField label="Birth Year" value={profile?.birth_year} />
-                      <ProfileField
-                        label="Age"
-                        value={age ? `${age} years old` : null}
-                      />
-                    </div>
-                  )}
-        important_people: data.important_people.split(',').filter(Boolean).map((p) => {
-          const match = p.match(/(.+)\((.+)\)/);
-          if (match) return { name: match[1].trim(), relationship: match[2].trim() };
-          return { name: p.trim(), relationship: 'family' };
-        }),
-        birth_year: parseInt(data.birth_year) || null,
-      };
-      if (profiles.length > 0) {
-        return base44.entities.UserProfile.update(profiles[0].id, profileData);
-      }
-      return base44.entities.UserProfile.create(profileData);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['userProfiles'] });
-      setIsEditing(false);
-    },
-  });
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -697,6 +490,11 @@ export default function UserProfile() {
                         No favorite music recorded yet.
                       </p>
                     )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
             {profile && (
               <>
                 <Card>
@@ -750,8 +548,6 @@ export default function UserProfile() {
 
                 <Card>
                   <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Users className="w-5 h-5 text-blue-500" />
                     <CardTitle className="flex items-center gap-2 text-base">
                       <Users className="w-5 h-5 text-green-500" />
                       Important People
@@ -773,18 +569,6 @@ export default function UserProfile() {
                         />
                       </div>
                     ) : profile?.important_people?.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-3">
-                        {profile.important_people.map((person, i) => (
-                          <div
-                            key={i}
-                            className="p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 flex items-center gap-2"
-                          >
-                            <div className="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900 flex items-center justify-center flex-shrink-0">
-                              <User className="w-4 h-4 text-blue-500" />
-                            </div>
-                            <div className="min-w-0">
-                              <p className="font-medium text-slate-800 dark:text-slate-200 text-sm truncate">
-                    {profile.important_people?.length > 0 ? (
                       <div className="grid grid-cols-2 gap-2">
                         {profile.important_people.map((person, i) => (
                           <div
@@ -814,7 +598,7 @@ export default function UserProfile() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
+              </>
             )}
 
             {/* Save Button (edit mode only) */}
@@ -829,13 +613,6 @@ export default function UserProfile() {
                   {saveProfileMutation.isPending ? 'Saving…' : 'Save Profile'}
                 </Button>
               </div>
-            )}
-          </>
-                      <p className="text-slate-400 italic text-sm">Not set</p>
-                    )}
-                  </CardContent>
-                </Card>
-              </>
             )}
           </>
         ) : (
