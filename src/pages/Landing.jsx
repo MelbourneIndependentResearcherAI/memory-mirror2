@@ -336,21 +336,6 @@ export default function Landing() {
                 </div>
               </button>
 
-              <button onClick={handleBankingClick} className="w-full group">
-                <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-md hover:shadow-lg border border-green-200/60 dark:border-green-700/40 hover:border-green-300 dark:hover:border-green-600 transition-all duration-300 p-7 md:p-8 cursor-pointer">
-                  <div className="flex items-start gap-4">
-                    <div className="text-4xl md:text-5xl">💳</div>
-                    <div className="flex-1">
-                      <h3 className="text-xl md:text-2xl font-semibold text-green-700 dark:text-green-400 mb-2">
-                        Fake Banking
-                      </h3>
-                      <p className="text-sm md:text-base text-slate-600 dark:text-slate-400 leading-relaxed">
-                        Safe simulated banking with no real transactions
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </button>
               </div>
 
             <div className="flex flex-col gap-4 items-center">
@@ -670,9 +655,6 @@ export default function Landing() {
         <div style={{ height: '60px' }}></div>
       </div>
       
-      {showDonationModal && (
-        <DonationModal onClose={() => setShowDonationModal(false)} />
-      )}
     </div>
   );
 }
