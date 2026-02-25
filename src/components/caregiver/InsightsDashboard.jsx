@@ -413,7 +413,7 @@ export default function InsightsDashboard() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {assessments.slice(0, 5).map((assessment, idx) => (
+              {assessments.slice(0, 5).map((assessment, _idx) => (
                 <div key={assessment.id} className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-800 rounded-lg">
                   <div>
                     <p className="font-medium text-slate-900 dark:text-slate-100">
