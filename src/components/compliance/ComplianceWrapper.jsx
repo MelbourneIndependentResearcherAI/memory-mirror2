@@ -10,7 +10,7 @@ import { base44 } from '@/api/base44Client';
  */
 export default function ComplianceWrapper({ children }) {
   const [consentAccepted, setConsentAccepted] = useState(false);
-  const [userRole, setUserRole] = useState(null);
+  const [_userRole, setUserRole] = useState(null);
 
   useEffect(() => {
     // Check for existing consent
@@ -26,7 +26,7 @@ export default function ComplianceWrapper({ children }) {
       try {
         const user = await base44.auth.me();
         setUserRole(user?.role || 'patient');
-      } catch (e) {
+      } catch {
         console.log('Consent wrapper: could not detect role');
       }
     };

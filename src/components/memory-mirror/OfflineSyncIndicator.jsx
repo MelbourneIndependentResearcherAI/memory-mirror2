@@ -6,7 +6,7 @@ export default function OfflineSyncIndicator() {
   const [syncStatus, setSyncStatus] = useState('idle');
   const [pendingCount, setPendingCount] = useState(0);
   const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [lastSyncTime, setLastSyncTime] = useState(null);
+  const [_lastSyncTime, setLastSyncTime] = useState(null);
 
   useEffect(() => {
     const unsubscribe = offlineSyncManager.onSyncStatusChange(async (status) => {
