@@ -17,7 +17,7 @@ export default function Home() {
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
-  const navigate = useNavigate();
+  const _navigate = useNavigate();
   const { t } = useLanguage();
 
   const { data: userProfiles = [] } = useQuery({

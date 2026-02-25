@@ -7,6 +7,12 @@ import YouthMirrorCamera from '@/components/memory-mirror/YouthMirror';
 
 export default function YouthMirror() {
   const [showCamera, setShowCamera] = useState(false);
+import { createPageUrl } from '@/utils';
+import MemorySelfie from '@/components/memory-mirror/YouthMirror';
+
+export default function YouthMirror() {
+  const [_activeFeature, setActiveFeature] = useState(null);
+  const [activeFeature, setActiveFeature] = useState(null);
   const navigate = useNavigate();
 
   const features = [
@@ -79,6 +85,36 @@ export default function YouthMirror() {
           Back to Youth Mirror
         </button>
         <YouthMirrorCamera />
+  const featureRoutes = {
+    timeline: createPageUrl('FamilyTimeline'),
+    moments: createPageUrl('SharedJournal'),
+    chat: createPageUrl('ChatMode'),
+    collage: createPageUrl('FamilyMediaAlbum'),
+    music: createPageUrl('FamilyMusic'),
+    journal: createPageUrl('FamilyStories'),
+  };
+
+  const handleFeatureClick = (feature) => {
+    if (feature.id === 'selfie') {
+      setActiveFeature('selfie');
+    } else {
+      navigate(featureRoutes[feature.id]);
+    }
+  };
+
+  if (activeFeature === 'selfie') {
+    return (
+      <div className="min-h-screen">
+        <div className="p-4">
+          <button
+            onClick={() => setActiveFeature(null)}
+            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-4 min-h-[44px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Youth Mirror
+          </button>
+        </div>
+        <MemorySelfie />
       </div>
     );
   }
@@ -125,6 +161,7 @@ export default function YouthMirror() {
                 key={feature.id}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
                 onClick={feature.action}
+                onClick={() => handleFeatureClick(feature)}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
@@ -168,6 +205,12 @@ export default function YouthMirror() {
             </p>
           </CardContent>
         </Card>
+
+        <div className="mt-8 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Youth Mirror — Preserving your memories for the future 💜
+          </p>
+        </div>
       </div>
     </div>
   );
