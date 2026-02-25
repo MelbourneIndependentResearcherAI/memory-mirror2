@@ -76,15 +76,13 @@ const featureCards = [
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
-  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
-  { id: 31, title: 'Profile Setup', icon: '👤', description: 'Personalize AI interactions for your loved one', path: '/CaregiverPortal/profile', background: '#EFF6FF' }
+  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' },
 ];
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
 
-  const handleCardClick = async (card) => {    if (card.id === 12) {
   const handleCardClick = async (card) => {
     if (card.id === 12) {
       setBadDayActivated(true);
@@ -412,34 +410,12 @@ export default function CaregiverPortalRouter() {
               <AgentMonitor />
             </div>
           } />
-          <Route path="chat-history" element={
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
-            </div>
-          } />
           <Route path="patient-dashboard" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <CaregiverDashboardComponent patientProfileId={userProfile?.id} />
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <ChatHistory />
-              <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Chat History</h2>
-              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
-              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
-              <ChatHistoryViewer onBack={() => navigate('/CaregiverPortal')} />
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
-              <ChatHistoryViewer onBack={() => navigate('/CaregiverPortal')} />
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <ChatHistoryViewer />
             </div>
           } />
         </Routes>
