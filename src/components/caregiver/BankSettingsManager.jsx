@@ -30,6 +30,7 @@ export default function BankSettingsManager({ onBack }) {
 
   const queryClient = useQueryClient();
 
+  const { data: settings = [], isLoading: _isLoading } = useQuery({
   const { data: settings = [] } = useQuery({
     queryKey: ['bankSettings'],
     queryFn: () => base44.entities.BankAccountSettings.list()

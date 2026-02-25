@@ -24,6 +24,7 @@ export default function FamilyTreeBuilder({ onBack }) {
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const queryClient = useQueryClient();
 
+  const { data: members = [], isLoading: _isLoading } = useQuery({
   const { data: members = [] } = useQuery({
     queryKey: ['familyTree'],
     queryFn: () => base44.entities.FamilyTreeMember.list(),

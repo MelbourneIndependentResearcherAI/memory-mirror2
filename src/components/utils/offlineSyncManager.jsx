@@ -90,6 +90,8 @@ class OfflineSyncManager {
       await offlineDataCache.markAsSynced('care_journal', item.local_id, created.id);
       return created;
     } else if (item.action === 'update') {
+      const { id: _id, sync_status: _sync_status, cached_at: _cached_at, ...journalData } = item.data;
+      const updated = await base44.entities.CareJournal.update(item.remote_id, journalData);
       const { id: _id, sync_status: _sync_status, cached_at: _cached_at, ..._journalData } = item.data;
       await offlineDataCache.markAsSynced('care_journal', item.local_id, item.remote_id);
       return updated;

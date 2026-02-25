@@ -1393,6 +1393,7 @@ function GratefulMoments({ onClose }) {
 }
 
 export default function YouthMirror() {
+  const [_activeFeature, setActiveFeature] = useState(null);
   const [showCamera, setShowCamera] = useState(false);
 import { createPageUrl } from '@/utils';
 import MemorySelfie from '@/components/memory-mirror/YouthMirror';
