@@ -15,7 +15,7 @@ export default function CaregiverDashboard({ patientProfileId }) {
   const [refreshKey, setRefreshKey] = useState(0);
 
   // Fetch patient profile
-  const { data: patient, isLoading: patientLoading } = useQuery({
+  const { data: patient } = useQuery({
     queryKey: ['patient', patientProfileId],
     queryFn: () => base44.entities.PatientProfile.filter({ id: patientProfileId }),
   });

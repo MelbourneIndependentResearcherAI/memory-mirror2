@@ -1,63 +1,123 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import YouthMirrorCamera from '@/components/memory-mirror/YouthMirror';
 
 export default function YouthMirror() {
+  const [showCamera, setShowCamera] = useState(false);
+import { createPageUrl } from '@/utils';
+import MemorySelfie from '@/components/memory-mirror/YouthMirror';
+
+export default function YouthMirror() {
+  const [_activeFeature, setActiveFeature] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
+  const navigate = useNavigate();
 
   const features = [
     {
       id: 'selfie',
       title: 'Memory Selfie',
-      description: 'Capture moments with AI-generated backgrounds from your favorite eras',
+      description: 'See a gentle reflection of your younger self with era-based vintage filters',
       icon: Camera,
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-cyan-500',
+      action: () => setShowCamera(true)
     },
     {
       id: 'timeline',
       title: 'Life Timeline',
       description: 'Build your personal history with photos, stories, and milestones',
       icon: Calendar,
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-purple-500 to-pink-500',
+      action: () => navigate('/FamilyTimeline')
     },
     {
       id: 'moments',
       title: 'Grateful Moments',
       description: 'Daily prompts to capture what you\'re grateful for',
       icon: Heart,
-      color: 'from-orange-500 to-red-500'
+      color: 'from-orange-500 to-red-500',
+      action: () => navigate('/CareJournalPage')
     },
     {
       id: 'chat',
       title: 'AI Chat Buddy',
       description: 'Talk about your day, memories, or anything on your mind',
       icon: MessageCircle,
-      color: 'from-green-500 to-emerald-500'
+      color: 'from-green-500 to-emerald-500',
+      action: () => navigate('/Home')
     },
     {
       id: 'collage',
       title: 'Memory Collages',
-      description: 'Create beautiful photo collages of your favorite memories',
+      description: 'Browse and share photos of your favorite memories',
       icon: Image,
-      color: 'from-pink-500 to-rose-500'
+      color: 'from-pink-500 to-rose-500',
+      action: () => navigate('/FamilyPhotoAlbum')
     },
     {
       id: 'music',
       title: 'Music from Your Life',
       description: 'Discover songs from important years and create playlists',
       icon: Music,
-      color: 'from-indigo-500 to-purple-500'
+      color: 'from-indigo-500 to-purple-500',
+      action: () => navigate('/MusicTherapy')
     },
     {
       id: 'journal',
       title: 'Memory Journal',
       description: 'Write down thoughts, feelings, and memories',
       icon: BookOpen,
-      color: 'from-amber-500 to-yellow-500'
+      color: 'from-amber-500 to-yellow-500',
+      action: () => navigate('/SharedJournal')
     }
   ];
+
+  if (showCamera) {
+    return (
+      <div className="min-h-screen">
+        <button
+          onClick={() => setShowCamera(false)}
+          className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-white/30 transition-colors min-h-[44px]"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Youth Mirror
+        </button>
+        <YouthMirrorCamera />
+  const featureRoutes = {
+    timeline: createPageUrl('FamilyTimeline'),
+    moments: createPageUrl('SharedJournal'),
+    chat: createPageUrl('ChatMode'),
+    collage: createPageUrl('FamilyMediaAlbum'),
+    music: createPageUrl('FamilyMusic'),
+    journal: createPageUrl('FamilyStories'),
+  };
+
+  const handleFeatureClick = (feature) => {
+    if (feature.id === 'selfie') {
+      setActiveFeature('selfie');
+    } else {
+      navigate(featureRoutes[feature.id]);
+    }
+  };
+
+  if (activeFeature === 'selfie') {
+    return (
+      <div className="min-h-screen">
+        <div className="p-4">
+          <button
+            onClick={() => setActiveFeature(null)}
+            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-4 min-h-[44px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Youth Mirror
+          </button>
+        </div>
+        <MemorySelfie />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
@@ -100,10 +160,8 @@ export default function YouthMirror() {
               <Card
                 key={feature.id}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
-                onClick={() => {
-                  setActiveFeature(feature.id);
-                  toast.info(`${feature.title} coming soon!`);
-                }}
+                onClick={feature.action}
+                onClick={() => handleFeatureClick(feature)}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
@@ -120,6 +178,7 @@ export default function YouthMirror() {
                 <CardContent>
                   <Button
                     className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}
+                    onClick={feature.action}
                   >
                     Explore
                   </Button>
@@ -149,7 +208,7 @@ export default function YouthMirror() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Youth Mirror features are currently in development. Stay tuned for updates!
+            Youth Mirror — Preserving your memories for the future 💜
           </p>
         </div>
       </div>
