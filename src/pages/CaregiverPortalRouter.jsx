@@ -416,6 +416,7 @@ export default function CaregiverPortalRouter() {
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
+              <ChatHistory />
               <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-6">Chat History</h2>
               <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
               <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
