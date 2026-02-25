@@ -25,7 +25,7 @@ const categoryColors = {
 
 export default function CommunityFeedbackSection() {
   const queryClient = useQueryClient();
-  const [user, setUser] = useState(null);
+  const [_user, setUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
@@ -42,7 +42,7 @@ export default function CommunityFeedbackSection() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         setIsAdmin(currentUser?.role === 'admin');
-      } catch (error) {
+      } catch (_error) {
         setUser(null);
         setIsAdmin(false);
       }

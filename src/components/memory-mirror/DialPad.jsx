@@ -46,7 +46,7 @@ export default function DialPad({ onPress }) {
       
       oscillator.start(context.currentTime);
       oscillator.stop(context.currentTime + 0.1);
-    } catch (e) {
+    } catch (_e) {
       // Fallback if AudioContext not supported
     }
     

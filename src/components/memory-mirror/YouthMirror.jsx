@@ -48,7 +48,7 @@ export default function YouthMirror() {
         await videoRef.current.play();
       }
       setActive(true);
-    } catch (err) {
+    } catch (_err) {
       setCameraError("Camera access denied. Please allow camera permissions and try again.");
     }
   }, []);
