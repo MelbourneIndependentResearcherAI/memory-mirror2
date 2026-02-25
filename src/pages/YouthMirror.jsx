@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import MemorySelfie from '@/components/memory-mirror/YouthMirror';
 
 export default function YouthMirror() {
   const [activeFeature, setActiveFeature] = useState(null);
+  const navigate = useNavigate();
 
   const features = [
     {
@@ -59,6 +62,40 @@ export default function YouthMirror() {
     }
   ];
 
+  const featureRoutes = {
+    timeline: createPageUrl('FamilyTimeline'),
+    moments: createPageUrl('SharedJournal'),
+    chat: createPageUrl('ChatMode'),
+    collage: createPageUrl('FamilyMediaAlbum'),
+    music: createPageUrl('FamilyMusic'),
+    journal: createPageUrl('FamilyStories'),
+  };
+
+  const handleFeatureClick = (feature) => {
+    if (feature.id === 'selfie') {
+      setActiveFeature('selfie');
+    } else {
+      navigate(featureRoutes[feature.id]);
+    }
+  };
+
+  if (activeFeature === 'selfie') {
+    return (
+      <div className="min-h-screen">
+        <div className="p-4">
+          <button
+            onClick={() => setActiveFeature(null)}
+            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-4 min-h-[44px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Youth Mirror
+          </button>
+        </div>
+        <MemorySelfie />
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
@@ -100,10 +137,7 @@ export default function YouthMirror() {
               <Card
                 key={feature.id}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
-                onClick={() => {
-                  setActiveFeature(feature.id);
-                  toast.info(`${feature.title} coming soon!`);
-                }}
+                onClick={() => handleFeatureClick(feature)}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
@@ -149,7 +183,7 @@ export default function YouthMirror() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Youth Mirror features are currently in development. Stay tuned for updates!
+            Youth Mirror — Preserving your memories for the future 💜
           </p>
         </div>
       </div>
