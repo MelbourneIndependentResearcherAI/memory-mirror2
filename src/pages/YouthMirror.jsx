@@ -1,8 +1,240 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft, Plus, X } from 'lucide-react';
 import { toast } from 'sonner';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { format, parseISO, isValid } from 'date-fns';
+
+const GRATEFUL_PROMPTS = [
+  'What made you smile today?',
+  'Who are you most grateful for right now?',
+  'What simple pleasure did you enjoy today?',
+  'What is something beautiful you noticed recently?',
+  'What moment from this week do you want to remember forever?',
+  'What are you looking forward to?',
+  'What is something you love about your life right now?',
+];
+
+function MemoryJournal({ onBack }) {
+  const queryClient = useQueryClient();
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [showForm, setShowForm] = useState(false);
+
+  const { data: memories = [], isLoading } = useQuery({
+    queryKey: ['youthJournalMemories'],
+    queryFn: () => base44.entities.Memory.list('-created_date', 50),
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Memory.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['youthJournalMemories'] });
+      setTitle('');
+      setDescription('');
+      setShowForm(false);
+      toast.success('Memory saved!');
+    },
+    onError: () => toast.error('Failed to save memory'),
+  });
+
+  const handleSave = () => {
+    if (!title.trim()) { toast.error('Please add a title'); return; }
+    if (!description.trim()) { toast.error('Please write something'); return; }
+    createMutation.mutate({
+      title: title.trim(),
+      description: description.trim(),
+      era: 'present',
+      emotional_tone: 'joyful',
+      tags: ['youth-mirror', 'journal'],
+    });
+  };
+
+  const formatDate = (raw) => {
+    try {
+      const d = raw ? parseISO(raw) : null;
+      return d && isValid(d) ? format(d, 'MMM d, yyyy') : '';
+    } catch { return ''; }
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <button onClick={onBack} className="flex items-center gap-2 text-violet-600 hover:text-violet-700 min-h-[44px]">
+          <ArrowLeft className="w-5 h-5" /> Back
+        </button>
+        <Button
+          onClick={() => setShowForm(!showForm)}
+          className="bg-gradient-to-r from-amber-500 to-yellow-500 hover:opacity-90 gap-2 min-h-[44px]"
+        >
+          {showForm ? <X className="w-4 h-4" /> : <Plus className="w-4 h-4" />}
+          {showForm ? 'Cancel' : 'New Entry'}
+        </Button>
+      </div>
+
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <BookOpen className="w-6 h-6 text-amber-500" /> Memory Journal
+      </h2>
+
+      {showForm && (
+        <Card className="border-2 border-amber-200 dark:border-amber-800">
+          <CardContent className="p-6 space-y-4">
+            <Input
+              placeholder="Give this memory a title..."
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="text-lg font-medium"
+              maxLength={120}
+            />
+            <Textarea
+              placeholder="Write your memory or thoughts here..."
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              rows={5}
+              maxLength={2000}
+            />
+            <Button
+              onClick={handleSave}
+              disabled={createMutation.isPending}
+              className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:opacity-90 min-h-[44px]"
+            >
+              {createMutation.isPending ? 'Saving...' : 'Save Memory'}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
+      {isLoading && <p className="text-slate-500 text-center py-8">Loading memories...</p>}
+
+      {!isLoading && memories.length === 0 && !showForm && (
+        <Card>
+          <CardContent className="py-12 text-center">
+            <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-4" />
+            <p className="text-slate-500">No journal entries yet</p>
+            <p className="text-sm text-slate-400 mt-2">Tap "New Entry" to write your first memory</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {memories.map((memory) => (
+        <Card key={memory.id} className="hover:shadow-md transition-shadow">
+          <CardContent className="p-5">
+            <div className="flex items-start justify-between gap-2 mb-2">
+              <h3 className="font-semibold text-slate-900 dark:text-white">{memory.title}</h3>
+              {memory.created_date && (
+                <span className="text-xs text-slate-400 shrink-0">{formatDate(memory.created_date)}</span>
+              )}
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed line-clamp-3">
+              {memory.description}
+            </p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function GratefulMoments({ onBack }) {
+  const queryClient = useQueryClient();
+  const [entry, setEntry] = useState('');
+  const prompt = GRATEFUL_PROMPTS[new Date().getDay() % GRATEFUL_PROMPTS.length];
+
+  const { data: moments = [], isLoading } = useQuery({
+    queryKey: ['youthGratefulMoments'],
+    queryFn: async () => {
+      const all = await base44.entities.Memory.list('-created_date', 50);
+      return all.filter(m => Array.isArray(m.tags) && m.tags.includes('grateful-moment'));
+    },
+  });
+
+  const createMutation = useMutation({
+    mutationFn: (data) => base44.entities.Memory.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['youthGratefulMoments'] });
+      setEntry('');
+      toast.success('Grateful moment saved! 💚');
+    },
+    onError: () => toast.error('Failed to save'),
+  });
+
+  const handleSave = () => {
+    if (!entry.trim()) { toast.error('Please write something'); return; }
+    createMutation.mutate({
+      title: `Grateful: ${new Date().toLocaleDateString()}`,
+      description: entry.trim(),
+      era: 'present',
+      emotional_tone: 'grateful',
+      tags: ['youth-mirror', 'grateful-moment'],
+    });
+  };
+
+  const formatDate = (raw) => {
+    try {
+      const d = raw ? parseISO(raw) : null;
+      return d && isValid(d) ? format(d, 'MMM d, yyyy') : '';
+    } catch { return ''; }
+  };
+
+  return (
+    <div className="space-y-4">
+      <button onClick={onBack} className="flex items-center gap-2 text-violet-600 hover:text-violet-700 min-h-[44px]">
+        <ArrowLeft className="w-5 h-5" /> Back
+      </button>
+
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
+        <Heart className="w-6 h-6 text-orange-500" /> Grateful Moments
+      </h2>
+
+      <Card className="border-2 border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950/20">
+        <CardContent className="p-6 space-y-4">
+          <p className="text-orange-700 dark:text-orange-300 font-medium text-lg">{prompt}</p>
+          <Textarea
+            placeholder="Write what you're grateful for..."
+            value={entry}
+            onChange={(e) => setEntry(e.target.value)}
+            rows={4}
+            maxLength={1000}
+          />
+          <Button
+            onClick={handleSave}
+            disabled={createMutation.isPending}
+            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 min-h-[44px]"
+          >
+            {createMutation.isPending ? 'Saving...' : 'Save Grateful Moment 💚'}
+          </Button>
+        </CardContent>
+      </Card>
+
+      {isLoading && <p className="text-slate-500 text-center py-4">Loading moments...</p>}
+
+      {!isLoading && moments.length > 0 && (
+        <div>
+          <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-3">Your Grateful Moments</h3>
+          <div className="space-y-3">
+            {moments.map((m) => (
+              <Card key={m.id}>
+                <CardContent className="p-4">
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <span className="text-orange-500">💚</span>
+                    {m.created_date && (
+                      <span className="text-xs text-slate-400">{formatDate(m.created_date)}</span>
+                    )}
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{m.description}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function YouthMirror() {
   const [activeFeature, setActiveFeature] = useState(null);
@@ -13,51 +245,78 @@ export default function YouthMirror() {
       title: 'Memory Selfie',
       description: 'Capture moments with AI-generated backgrounds from your favorite eras',
       icon: Camera,
-      color: 'from-blue-500 to-cyan-500'
+      color: 'from-blue-500 to-cyan-500',
+      available: false,
     },
     {
       id: 'timeline',
       title: 'Life Timeline',
       description: 'Build your personal history with photos, stories, and milestones',
       icon: Calendar,
-      color: 'from-purple-500 to-pink-500'
+      color: 'from-purple-500 to-pink-500',
+      available: false,
     },
     {
       id: 'moments',
       title: 'Grateful Moments',
       description: 'Daily prompts to capture what you\'re grateful for',
       icon: Heart,
-      color: 'from-orange-500 to-red-500'
+      color: 'from-orange-500 to-red-500',
+      available: true,
     },
     {
       id: 'chat',
       title: 'AI Chat Buddy',
       description: 'Talk about your day, memories, or anything on your mind',
       icon: MessageCircle,
-      color: 'from-green-500 to-emerald-500'
+      color: 'from-green-500 to-emerald-500',
+      available: false,
     },
     {
       id: 'collage',
       title: 'Memory Collages',
       description: 'Create beautiful photo collages of your favorite memories',
       icon: Image,
-      color: 'from-pink-500 to-rose-500'
+      color: 'from-pink-500 to-rose-500',
+      available: false,
     },
     {
       id: 'music',
       title: 'Music from Your Life',
       description: 'Discover songs from important years and create playlists',
       icon: Music,
-      color: 'from-indigo-500 to-purple-500'
+      color: 'from-indigo-500 to-purple-500',
+      available: false,
     },
     {
       id: 'journal',
       title: 'Memory Journal',
       description: 'Write down thoughts, feelings, and memories',
       icon: BookOpen,
-      color: 'from-amber-500 to-yellow-500'
+      color: 'from-amber-500 to-yellow-500',
+      available: true,
     }
   ];
+
+  if (activeFeature === 'journal') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
+        <div className="max-w-3xl mx-auto">
+          <MemoryJournal onBack={() => setActiveFeature(null)} />
+        </div>
+      </div>
+    );
+  }
+
+  if (activeFeature === 'moments') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
+        <div className="max-w-3xl mx-auto">
+          <GratefulMoments onBack={() => setActiveFeature(null)} />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
@@ -101,8 +360,11 @@ export default function YouthMirror() {
                 key={feature.id}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
                 onClick={() => {
-                  setActiveFeature(feature.id);
-                  toast.info(`${feature.title} coming soon!`);
+                  if (feature.available) {
+                    setActiveFeature(feature.id);
+                  } else {
+                    toast.info(`${feature.title} coming soon!`);
+                  }
                 }}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
@@ -111,7 +373,12 @@ export default function YouthMirror() {
                     <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <CardTitle className="text-xl">{feature.title}</CardTitle>
+                    <div>
+                      <CardTitle className="text-xl">{feature.title}</CardTitle>
+                      {!feature.available && (
+                        <span className="text-xs text-slate-400">Coming soon</span>
+                      )}
+                    </div>
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     {feature.description}
@@ -121,7 +388,7 @@ export default function YouthMirror() {
                   <Button
                     className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}
                   >
-                    Explore
+                    {feature.available ? 'Open' : 'Explore'}
                   </Button>
                 </CardContent>
               </Card>
@@ -146,12 +413,6 @@ export default function YouthMirror() {
             </p>
           </CardContent>
         </Card>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Youth Mirror features are currently in development. Stay tuned for updates!
-          </p>
-        </div>
       </div>
     </div>
   );
