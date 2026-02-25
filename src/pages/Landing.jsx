@@ -5,7 +5,6 @@ import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
-import { base44 } from '@/api/base44Client';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
 

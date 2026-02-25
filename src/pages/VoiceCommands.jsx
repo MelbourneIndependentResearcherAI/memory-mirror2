@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Mic, Plus, Trash2, Edit } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 
 export default function VoiceCommandsPage() {
