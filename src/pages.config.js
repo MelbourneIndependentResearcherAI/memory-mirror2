@@ -47,6 +47,8 @@
  *
  * The mainPage value must match a key in the PAGES object exactly.
  */
+import { lazy } from 'react';
+
 import AIAgentTeam from './pages/AIAgentTeam';
 import AICareInsights from './pages/AICareInsights';
 import AccessibilityStatement from './pages/AccessibilityStatement';
@@ -130,6 +132,7 @@ import VoiceCloning from './pages/VoiceCloning';
 import VoiceCommands from './pages/VoiceCommands';
 import VoiceSetup from './pages/VoiceSetup';
 import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
+import UserProfile from './pages/UserProfile';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
@@ -308,10 +311,10 @@ export const PAGES = {
     "VoiceCommands": VoiceCommands,
     "VoiceSetup": VoiceSetup,
     "VoiceUsageAnalytics": VoiceUsageAnalytics,
+    "UserProfile": UserProfile,
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "security": security,
 }
 
 export const pagesConfig = {

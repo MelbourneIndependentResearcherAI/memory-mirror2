@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Brain, Sparkles, Play } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ArrowLeft, Brain, Sparkles, Play, ChevronRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 
@@ -8,6 +8,8 @@ export default function MemorySessions() {
   const [_selectedSession, setSelectedSession] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [sessionContent, setSessionContent] = useState(null);
+  const [messages, setMessages] = useState([]);
+  const messagesEndRef = useRef(null);
 
   const sessionTypes = [
     {
@@ -67,22 +69,54 @@ export default function MemorySessions() {
         prompt: session.prompt,
         add_context_from_internet: false
       });
+      const initialMessage = { role: 'assistant', content: response };
+      setMessages([initialMessage]);
       setSessionContent({
         title: session.title,
-        content: response,
+        prompt: session.prompt,
         timestamp: new Date().toLocaleTimeString()
       });
     } catch (error) {
       console.error('Failed to generate session:', error);
+      const errorMessage = { role: 'assistant', content: 'Unable to generate session. Please try again.' };
+      setMessages([errorMessage]);
       setSessionContent({
         title: session.title,
-        content: 'Unable to generate session. Please try again.',
+        prompt: session.prompt,
         timestamp: new Date().toLocaleTimeString()
       });
     } finally {
       setIsGenerating(false);
     }
   };
+
+  const continueSession = async () => {
+    setIsGenerating(true);
+    try {
+      const history = messages.map(m => `${m.role === 'assistant' ? 'AI' : 'User'}: ${m.content}`).join('\n\n');
+      const continuationPrompt = `You are continuing a memory session about "${sessionContent.title}". 
+Here is the conversation so far:
+${history}
+
+Please continue the session with the next thoughtful question or reflection, building naturally on what was just shared. Keep the tone warm, supportive, and engaging.`;
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: continuationPrompt,
+        add_context_from_internet: false
+      });
+      setMessages(prev => [...prev, { role: 'assistant', content: response }]);
+    } catch (error) {
+      console.error('Failed to continue session:', error);
+      setMessages(prev => [...prev, { role: 'assistant', content: 'Unable to continue session. Please try again.' }]);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  useEffect(() => {
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   if (sessionContent) {
     return (
@@ -91,7 +125,7 @@ export default function MemorySessions() {
           {/* Header */}
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 mb-6">
             <button
-              onClick={() => setSessionContent(null)}
+              onClick={() => { setSessionContent(null); setMessages([]); }}
               className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]"
             >
               <ArrowLeft className="w-5 h-5" />
@@ -105,29 +139,45 @@ export default function MemorySessions() {
             </p>
           </div>
 
-          {/* Session Content */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 mb-6">
-            <div className="prose prose-sm dark:prose-invert max-w-none">
-              <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
-                {sessionContent.content}
-              </p>
-            </div>
+          {/* Conversation Thread */}
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8 mb-6 space-y-6">
+            {messages.map((msg, index) => (
+              <div key={index} className="prose prose-sm dark:prose-invert max-w-none">
+                <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed whitespace-pre-wrap">
+                  {msg.content}
+                </p>
+                {index < messages.length - 1 && (
+                  <hr className="border-slate-200 dark:border-slate-700 mt-6" />
+                )}
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
           </div>
 
           {/* Action Buttons */}
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 flex gap-4">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 flex flex-col gap-3">
             <button
-              onClick={() => setSessionContent(null)}
-              className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all min-h-[44px]"
+              onClick={continueSession}
+              disabled={isGenerating}
+              className="flex items-center justify-center gap-2 w-full px-6 py-3 bg-purple-600 hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed text-white rounded-lg font-semibold transition-all min-h-[44px]"
             >
-              Start Another Session
+              <ChevronRight className="w-5 h-5" />
+              {isGenerating ? 'Continuing...' : 'Continue Session'}
             </button>
-            <button
-              onClick={() => navigate(-1)}
-              className="flex-1 px-6 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-lg font-semibold transition-all min-h-[44px]"
-            >
-              Back
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={() => { setSessionContent(null); setMessages([]); }}
+                className="flex-1 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-all min-h-[44px]"
+              >
+                Start Another Session
+              </button>
+              <button
+                onClick={() => navigate(-1)}
+                className="flex-1 px-6 py-3 bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 rounded-lg font-semibold transition-all min-h-[44px]"
+              >
+                Back
+              </button>
+            </div>
           </div>
         </div>
       </div>
