@@ -54,6 +54,7 @@ import ActivityReminders from './pages/ActivityReminders';
 import ActivityReports from './pages/ActivityReports';
 import AdminUserTracking from './pages/AdminUserTracking';
 import AuditTrail from './pages/AuditTrail';
+import BigButtonMode from './pages/BigButtonMode';
 import CareJournalPage from './pages/CareJournalPage';
 import CarePlans from './pages/CarePlans';
 import CareTeam from './pages/CareTeam';
@@ -134,7 +135,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import BigButtonMode from './pages/BigButtonMode';
 import __Layout from './Layout.jsx';
 
 
@@ -146,6 +146,7 @@ export const PAGES = {
     "ActivityReports": ActivityReports,
     "AdminUserTracking": AdminUserTracking,
     "AuditTrail": AuditTrail,
+    "BigButtonMode": BigButtonMode,
     "CareJournalPage": CareJournalPage,
     "CarePlans": CarePlans,
     "CareTeam": CareTeam,
@@ -226,11 +227,10 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "BigButtonMode": BigButtonMode,
 }
 
 export const pagesConfig = {
-    mainPage: "Landing",
+    mainPage: "Home",
     Pages: PAGES,
     Layout: __Layout,
 };
