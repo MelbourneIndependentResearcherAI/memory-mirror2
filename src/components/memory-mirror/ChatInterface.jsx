@@ -57,6 +57,11 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const isMountedRef = useRef(true);
   const proactiveIntervalRef = useRef(null);
   const lastProactiveCheckRef = useRef(Date.now());
+  const sessionStartTimeRef = useRef(Date.now());
+  // Refs to hold latest state for the unmount cleanup callback
+  const conversationHistoryRef = useRef([]);
+  const detectedEraRef = useRef('present');
+  const conversationTopicsRef = useRef([]);
   const sessionStartRef = useRef(Date.now());
   const messagesRef = useRef([]);
   const peakAnxietyRef = useRef(0);
@@ -375,6 +380,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         } catch {}
       }
 
+      // Persist completed session to Chat History (Conversation entity)
+      const history = conversationHistoryRef.current;
+      const userMessages = history.filter(m => m.role === 'user');
+      if (userMessages.length > 0) {
+        const durationMs = Date.now() - sessionStartTimeRef.current;
+        const durationMinutes = durationMs / 60000;
+        base44.entities.Conversation.create({
+          started_at: new Date(sessionStartTimeRef.current).toISOString(),
+          message_count: history.length,
+          messages: JSON.stringify(history),
+          era: detectedEraRef.current || 'present',
+          topics: conversationTopicsRef.current.slice(0, 10),
+          duration_minutes: Math.round(durationMinutes * 10) / 10,
       // Save conversation session if there were meaningful messages
       const finalMessages = messagesRef.current;
       const userMsgCount = finalMessages.filter(m => m.role === 'user').length;
@@ -392,6 +410,11 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       }
     };
   }, [sendProactiveMessage, startProactiveCheckIns]);
+
+  // Keep refs in sync with latest state so the unmount cleanup can read fresh values
+  useEffect(() => { conversationHistoryRef.current = conversationHistory; }, [conversationHistory]);
+  useEffect(() => { detectedEraRef.current = detectedEra; }, [detectedEra]);
+  useEffect(() => { conversationTopicsRef.current = conversationTopics; }, [conversationTopics]);
 
   useEffect(() => {
     if (cognitiveAssessments?.length > 0 && cognitiveAssessments[0]?.cognitive_level) {
