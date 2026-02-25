@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { MessageCircle, Clock, ChevronDown, ChevronUp, Search, ArrowLeft, Loader2, CalendarDays, Brain } from 'lucide-react';
-import { format, parseISO, isToday, isYesterday } from 'date-fns';
+import { MessageCircle, Clock, Search, Loader2, CalendarDays } from 'lucide-react';
+import { format, isToday, isYesterday } from 'date-fns';
 
 function formatRelativeDate(dateStr) {
   const date = new Date(dateStr);
@@ -30,14 +29,12 @@ export default function ChatHistoryViewer() {
 
   const isLoading = loadingActivity || loadingConversations;
 
-  // Filter activity logs to only chat-related ones
   const chatLogs = activityLogs.filter(log =>
     log.activity_type === 'chat' ||
     log.activity_type === 'anxiety_detected' ||
     log.activity_type === 'bad_day_mode'
   );
 
-  // Merge and de-duplicate by date proximity, grouping into sessions
   const allEvents = [
     ...chatLogs.map(log => ({
       id: `log-${log.id}`,
@@ -205,25 +202,4 @@ export default function ChatHistoryViewer() {
       )}
     </div>
   );
-}
-
-function getEraLabel(era) {
-  const labels = {
-    '1940s': '1940s Era',
-    '1960s': '1960s Era',
-    '1980s': '1980s Era',
-    'present': 'Present Day',
-    'auto': 'Auto-detected',
-  };
-  return labels[era] || era || 'Unknown';
-}
-
-function EraLabel({ era }) {
-  const labels = {
-    '1940s': '1940s Era',
-    '1960s': '1960s Era',
-    '1980s': '1980s Era',
-    'present': 'Present Day',
-  };
-  return labels[era] || era || 'Unknown';
 }
