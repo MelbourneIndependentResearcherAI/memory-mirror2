@@ -77,8 +77,8 @@ export default function HandsFreeMode({
   }, []);
 
   const startRecognition = useCallback(async () => {
-    if (!isMountedRef.current || !isActive || isRestartingRef.current) {
-      console.log('⏹️ Cannot start - mounted:', isMountedRef.current, 'active:', isActive, 'restarting:', isRestartingRef.current);
+    if (!isMountedRef.current || isRestartingRef.current) {
+      console.log('⏹️ Cannot start - mounted:', isMountedRef.current, 'restarting:', isRestartingRef.current);
       return;
     }
 
@@ -429,16 +429,16 @@ export default function HandsFreeMode({
 
   const startHandsFreeMode = async () => {
     console.log('🚀 START HANDS-FREE MODE');
-    setIsActive(true);
     setErrorCount(0);
     setStatusMessage('Activating...');
     lastTranscriptRef.current = '';
-    
+
     toast.success('🎤 Hands-free activated!', { duration: 2000 });
-    
+
     // CRITICAL: Set speaking BEFORE TTS starts
     setIsSpeaking(true);
-    
+    setIsActive(true);
+
     const greeting = "Hands-free mode activated. I'm ready to listen.";
     speakWithRealisticVoice(greeting, {
       rate: 1.0,
