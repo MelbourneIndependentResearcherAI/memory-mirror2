@@ -135,6 +135,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
+import DiagnosticTest from './pages/DiagnosticTest';
 import __Layout from './Layout.jsx';
 
 
@@ -227,6 +228,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
+    "DiagnosticTest": DiagnosticTest,
 }
 
 export const pagesConfig = {
