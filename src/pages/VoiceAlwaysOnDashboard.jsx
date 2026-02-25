@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeft, Mic, Headphones, Settings, BarChart3, Zap, Shield } from 'lucide-react';
+import { ArrowLeft, Mic, Headphones, BarChart3, Zap, Shield } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 export default function VoiceAlwaysOnDashboardPage() {

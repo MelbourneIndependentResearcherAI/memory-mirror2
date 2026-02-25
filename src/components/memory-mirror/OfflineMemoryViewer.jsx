@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Calendar, User, Tag } from 'lucide-react';
+import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import { offlineDataCache } from '@/components/utils/offlineDataCache';
 import { offlineSyncManager } from '@/components/utils/offlineSyncManager';
 
