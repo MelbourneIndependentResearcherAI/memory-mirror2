@@ -10,6 +10,7 @@ const FEATURE_CARDS = [
   { label: 'Security Scanner',     expectedPath: '/Security' },
   { label: 'Night Watch',          expectedPath: '/NightWatch' },
   { label: 'Always-On Voice',      expectedPath: '/VoiceSetup' },
+  { label: 'Fake Banking',         expectedPath: '/MyBank' },
   { label: 'Family Portal',        expectedPath: '/FamilyConnect' },
   { label: 'Caregiver Dashboard',  expectedPath: '/CaregiverDashboard' },
   { label: 'Smart TV Mode',        expectedPath: '/TVMode' },
