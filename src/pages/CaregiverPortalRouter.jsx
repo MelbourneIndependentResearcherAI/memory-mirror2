@@ -45,12 +45,7 @@ const featureCards = [
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
   { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/PhotoLibrary', background: '#FAF5FF' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
   { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ConversationAnalytics', background: '#F0FDF4' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/CaregiverPortal/chat-history', background: '#F0FDF4' },
   { id: 6, title: 'Music Player', icon: '🎵', description: 'Era-specific songs and playlists', path: '/MusicPlayer', background: '#FFF7ED' },
   { id: 7, title: 'Care Journal', icon: '📖', description: 'Document observations and changes', path: '/CareJournalPage', background: '#F0FDFA' },
   { id: 8, title: 'Night Watch Log', icon: '🌙', description: 'Review nighttime incidents and patterns', path: '/NightWatchPage', background: '#1E1B4B' },
@@ -76,15 +71,12 @@ const featureCards = [
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
-  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
-  { id: 31, title: 'Profile Setup', icon: '👤', description: 'Personalize AI interactions for your loved one', path: '/CaregiverPortal/profile', background: '#EFF6FF' }
 ];
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
 
-  const handleCardClick = async (card) => {    if (card.id === 12) {
   const handleCardClick = async (card) => {
     if (card.id === 12) {
       setBadDayActivated(true);
