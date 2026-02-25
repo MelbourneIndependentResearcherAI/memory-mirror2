@@ -39,6 +39,7 @@ import ChatHistory from '@/components/caregiver/ChatHistory';
 import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const featureCards = [
+  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalization profile for your loved one', path: '/UserProfile', background: '#F0F9FF' },
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
