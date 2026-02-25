@@ -36,6 +36,7 @@ import CaregiverNotificationCenter from '@/components/caregiver/CaregiverNotific
 import SharedJournal from '@/components/caregiver/SharedJournal';
 import AgentMonitor from '@/components/admin/AgentMonitor';
 import ChatHistory from '@/components/caregiver/ChatHistory';
+import CaregiverDashboardComponent from '@/components/caregiver/CaregiverDashboard';
 import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const featureCards = [
@@ -413,6 +414,15 @@ export default function CaregiverPortalRouter() {
           } />
           <Route path="chat-history" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
+            </div>
+          } />
+          <Route path="patient-dashboard" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <CaregiverDashboardComponent patientProfileId={userProfile?.id} />
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
