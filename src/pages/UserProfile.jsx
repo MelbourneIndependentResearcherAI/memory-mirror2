@@ -1,9 +1,5 @@
-import { useState, useEffect } from 'react';
-import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, Save, X } from 'lucide-react';
 import React, { useState, useEffect } from 'react';
-import { User, Heart, Music, Users, Book, Edit2, Save, X, ArrowLeft, Calendar, Star, Clock, Check } from 'lucide-react';
-import { useState, useEffect } from 'react';
-import { User, Heart, Music, Users, Book, Edit2, Check, X, ArrowLeft, Calendar, Star, Clock } from 'lucide-react';
+import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, Save, X, Calendar, Star, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,11 +20,6 @@ const ERA_LABELS = {
 const ERA_COLORS = {
   '1940s': 'from-amber-400 to-orange-400',
   '1960s': 'from-orange-400 to-pink-400',
-  '1980s': 'from-purple-400 to-pink-400',
-  'present': 'from-blue-400 to-cyan-400',
-};
-
-
   '1980s': 'from-purple-400 to-fuchsia-400',
   present: 'from-blue-400 to-cyan-400',
 };
@@ -161,33 +152,8 @@ export default function UserProfile() {
   });
 
   const eraGradient = ERA_COLORS[profile?.favorite_era || 'present'];
-
-  const displayName = profile?.preferred_name || profile?.loved_one_name || 'No Profile';
-  const age = profile?.birth_year
-    ? new Date().getFullYear() - profile.birth_year
-    : null;
-
-  const handleSave = (e) => {
-    e.preventDefault();
-    saveProfileMutation.mutate(formData);
-  };
-
-  const field = (key) => ({
-    value: formData[key],
-    onChange: (e) => setFormData({ ...formData, [key]: e.target.value }),
-  });
-
-  const eraGradient = ERA_COLORS[profile?.favorite_era || 'present'];
   const displayName = profile?.preferred_name || profile?.loved_one_name || 'No Profile';
   const age = profile?.birth_year ? new Date().getFullYear() - profile.birth_year : null;
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-slate-500">Loading profile...</p>
-      </div>
-    );
-  }
 
   const handleSave = (e) => {
     e.preventDefault();
@@ -207,56 +173,6 @@ export default function UserProfile() {
     );
   }
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-20">
-      {/* Header bar */}
-      <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-4 py-3 flex items-center justify-between">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 min-h-[44px]"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back
-        </button>
-        <h1 className="text-lg font-semibold text-slate-800 dark:text-slate-100">User Profile</h1>
-        {!isEditing ? (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleStartEdit}
-            className="gap-2 min-h-[44px]"
-          >
-            <Edit2 className="w-4 h-4" />
-            Edit
-          </Button>
-        ) : (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleCancelEdit}
-            className="gap-2 min-h-[44px] text-slate-500"
-          >
-            <X className="w-4 h-4" />
-            Cancel
-          </Button>
-        )}
-      </div>
-
-      <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
-        {/* Hero card */}
-        <div
-          className={`rounded-2xl bg-gradient-to-br ${ERA_COLORS[profile?.favorite_era || 'present']} p-6 shadow-xl flex items-center gap-6`}
-        >
-          <ProfileAvatar
-            name={profile?.loved_one_name || '?'}
-            era={profile?.favorite_era || 'present'}
-          />
-          <div className="flex-1 text-white">
-            <h2 className="text-3xl font-bold leading-tight">
-              {profile?.loved_one_name || 'No profile yet'}
-            </h2>
-            {profile?.preferred_name && (
-              <p className="text-white/80 text-lg">"{profile.preferred_name}"</p>
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-20">
       {/* Header Banner */}
@@ -382,7 +298,7 @@ export default function UserProfile() {
                     <CardHeader>
                       <CardTitle className="flex items-center gap-2 text-lg">
                         <Heart className="w-5 h-5 text-pink-500" />
-                        Personality &amp; Preferences
+                        Personality & Preferences
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-4">
@@ -397,7 +313,7 @@ export default function UserProfile() {
                       {profile.interests?.length > 0 && (
                         <div>
                           <p className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">
-                            Interests &amp; Hobbies
+                            Interests & Hobbies
                           </p>
                           <div className="flex flex-wrap gap-2">
                             {profile.interests.map((interest, i) => (
@@ -431,72 +347,6 @@ export default function UserProfile() {
                             </div>
                           ))}
                         </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-slate-500 dark:text-slate-400 text-sm italic">
-                      No life experiences recorded yet.
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            )}
-
-            {activeTab === 'connections' && (
-              <div className="space-y-4">
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-lg">
-                      <Music className="w-5 h-5 text-orange-500" />
-                      Favorite Music
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {editing ? (
-                      <div>
-                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
-                          Songs & Artists
-                        </label>
-                        <Input
-                          placeholder="e.g., Frank Sinatra, Bing Crosby, Moon River (comma separated)"
-                          value={formData.favorite_music}
-                          onChange={(e) =>
-                            setFormData({ ...formData, favorite_music: e.target.value })
-                          }
-                          className="min-h-[44px]"
-                        />
-                      </div>
-                    ) : profile?.favorite_music?.length > 0 ? (
-                      <div className="flex flex-wrap gap-2">
-                        {profile.favorite_music.map((item, i) => (
-                          <Badge key={i} variant="secondary" className="text-sm">
-                            🎵 {item}
-                          </Badge>
-                        ))}
-                      </div>
-                    ) : (
-                      <p className="text-slate-500 dark:text-slate-400 text-sm italic">
-                        No favorite music recorded yet.
-                      </p>
-                    )}
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-
-            {profile && (
-              <>
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Heart className="w-5 h-5 text-rose-500" />
-                      Interests &amp; Hobbies
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <InfoChips items={profile.interests} />
-                  </CardContent>
-                </Card>
                       ) : (
                         <p className="text-slate-500 dark:text-slate-400 text-sm italic">
                           No life experiences recorded yet.
@@ -529,99 +379,6 @@ export default function UserProfile() {
                           <p className="text-slate-500 dark:text-slate-400 text-sm italic">
                             No favourite music recorded yet.
                           </p>
-                        </div>
-                      ))
-                    ) : (
-                      <p className="text-slate-400 italic text-sm">Not set</p>
-                    )}
-                  </CardContent>
-                </Card>
-
-
-                <Card>
-                  <CardHeader>
-                    <CardTitle className="flex items-center gap-2 text-base">
-                      <Users className="w-5 h-5 text-green-500" />
-                      Important People
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    {editing ? (
-                      <div>
-                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
-                          Family & Friends
-                        </label>
-                        <Input
-                          placeholder="e.g., John (husband), Sarah (daughter), Tom (son)"
-                          value={formData.important_people}
-                          onChange={(e) =>
-                            setFormData({ ...formData, important_people: e.target.value })
-                          }
-                          className="min-h-[44px]"
-                        />
-                      </div>
-                    ) : profile?.important_people?.length > 0 ? (
-                      <div className="grid grid-cols-2 gap-2">
-                        {profile.important_people.map((person, i) => (
-                          <div key={i} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
-                            <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
-                              <span className="text-green-700 dark:text-green-300 text-xs font-bold">
-                                {person.name?.slice(0, 1).toUpperCase()}
-                              </span>
-                            </div>
-                            <div>
-                              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{person.name}</p>
-                              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{person.relationship}</p>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    ) : (
-                      {profile && profile.important_people && profile.important_people.length > 0 ? (
-                        <div className="grid grid-cols-2 gap-2">
-                          {profile.important_people.map((person, i) => (
-                            <div key={i} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg p-2">
-                              <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
-                                <span className="text-green-700 dark:text-green-300 text-xs font-bold">
-                                  {(person.name || '').slice(0, 1).toUpperCase()}
-                                </span>
-                              </div>
-                              <div>
-                                <p className="text-sm font-medium text-slate-800 dark:text-slate-100">{person.name}</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">{person.relationship}</p>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-slate-500 dark:text-slate-400 text-sm italic">
-                          No important people recorded yet.
-                        </p>
-                      )}
-                    )}
-                  </CardContent>
-                </Card>
-              </>
-            )}
-
-            {/* Save Button (edit mode only) */}
-            {editing && (
-              <div className="mt-4">
-                <Button
-                  onClick={() => saveProfileMutation.mutate(formData)}
-                  disabled={saveProfileMutation.isPending}
-                  className="w-full min-h-[48px] bg-blue-500 hover:bg-blue-600"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {saveProfileMutation.isPending ? 'Saving…' : 'Save Profile'}
-                </Button>
-              </div>
-            )}
-          </>
-                      <p className="text-slate-400 italic text-sm">Not set</p>
-                    )}
-                  </CardContent>
-                </Card>
                         )}
                       </CardContent>
                     </Card>
@@ -692,7 +449,7 @@ export default function UserProfile() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                   <Heart className="w-5 h-5" />
-                  Personality &amp; Preferences
+                  Personality & Preferences
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -713,15 +470,15 @@ export default function UserProfile() {
                   <Select value={formData.communication_style} onValueChange={(v) => setFormData({ ...formData, communication_style: v })}>
                     <SelectTrigger className="min-h-[44px]"><SelectValue /></SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="formal">Formal &amp; Respectful</SelectItem>
-                      <SelectItem value="casual">Casual &amp; Friendly</SelectItem>
-                      <SelectItem value="warm">Warm &amp; Affectionate</SelectItem>
-                      <SelectItem value="gentle">Gentle &amp; Soothing</SelectItem>
+                      <SelectItem value="formal">Formal & Respectful</SelectItem>
+                      <SelectItem value="casual">Casual & Friendly</SelectItem>
+                      <SelectItem value="warm">Warm & Affectionate</SelectItem>
+                      <SelectItem value="gentle">Gentle & Soothing</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Interests &amp; Hobbies</label>
+                  <label className="text-sm font-medium mb-2 block">Interests & Hobbies</label>
                   <Input placeholder="e.g., gardening, knitting, reading (comma separated)" className="min-h-[44px]" {...field('interests')} />
                 </div>
               </CardContent>
