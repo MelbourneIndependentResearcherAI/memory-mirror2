@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard } from 'lucide-react';
-import { createPageUrl } from '../utils';
+import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { useLockMode } from '@/components/LockModeManager';
 

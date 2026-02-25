@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageCircle, Brain, Heart, Phone, Shield, Moon, Volume2, CreditCard, Music, Wifi } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { createPageUrl } from '../utils';
+import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
