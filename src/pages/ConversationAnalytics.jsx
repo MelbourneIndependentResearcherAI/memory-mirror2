@@ -1,6 +1,8 @@
 import { useMemo } from 'react';
 import { ArrowLeft, MessageCircle, TrendingUp, BarChart3 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { useQuery } from '@tanstack/react-query';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { offlineEntities } from '@/components/utils/offlineAPI';
@@ -95,6 +97,25 @@ export default function ConversationAnalyticsPage() {
       color: ERA_COLORS[idx % ERA_COLORS.length],
     }));
   }, [chatLogs]);
+
+  const sentimentMetrics = useMemo(() => {
+    const buckets = { Morning: [], Afternoon: [], Evening: [] };
+    anxietyLogs.forEach(l => {
+      if (!l.created_date) return;
+      const hour = parseISO(l.created_date).getHours();
+      const level = l.anxiety_level || 0;
+      if (hour >= 5 && hour < 12) buckets.Morning.push(level);
+      else if (hour >= 12 && hour < 18) buckets.Afternoon.push(level);
+      else buckets.Evening.push(level);
+    });
+    return ['Morning', 'Afternoon', 'Evening'].map(time => {
+      const levels = buckets[time];
+      const avgAnxiety = levels.length > 0 ? levels.reduce((s, v) => s + v, 0) / levels.length : 0;
+      const positive = Math.round(Math.max(0, 70 - avgAnxiety * 5));
+      const negative = Math.round(Math.min(30, avgAnxiety * 3));
+      return { time, positive, neutral: 100 - positive - negative, negative };
+    });
+  }, [anxietyLogs]);
 
   const totalConversations = chatLogs.length;
   const avgSentiment =
@@ -219,28 +240,20 @@ export default function ConversationAnalyticsPage() {
                     <Legend />
                     <Line
                       type="monotone"
-                      dataKey="sessions"
+                      dataKey="messages"
                       stroke="#3B82F6"
                       strokeWidth={2}
                       dot={{ fill: '#3B82F6', r: 4 }}
-                      name="Sessions"
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="messages"
-                      stroke="#8B5CF6"
-                      strokeWidth={2}
-                      dot={{ fill: '#8B5CF6', r: 4 }}
                       name="Messages"
-                      dataKey="messages"
-                      stroke="#3B82F6"
-                      strokeWidth={2}
-                      dot={{ fill: '#3B82F6', r: 4 }}
                     />
                   </LineChart>
                 </ResponsiveContainer>
               </div>
 
+              {eraDistribution.length > 0 && (
+                <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
+                  <h2 className="text-xl font-bold text-white mb-4">Mental Era Distribution</h2>
+                  <ResponsiveContainer width="100%" height={300}>
               <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
                 <h2 className="text-xl font-bold text-white mb-4">Mental Era Distribution</h2>
               {eraDistribution.length > 0 ? (
@@ -266,6 +279,12 @@ export default function ConversationAnalyticsPage() {
                       />
                     </PieChart>
                   </ResponsiveContainer>
+                </div>
+              )}
+            </div>
+
+            <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6 mb-8">
+              <h2 className="text-xl font-bold text-white mb-4">Sentiment by Time of Day</h2>
                 ) : (
                   <p className="text-center text-slate-400 py-12">No era data available</p>
                 )}

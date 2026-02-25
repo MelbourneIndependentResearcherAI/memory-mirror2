@@ -158,6 +158,13 @@ export default function UserProfile() {
     },
   });
 
+  const eraGradient = ERA_COLORS[profile?.favorite_era || 'present'];
+
+  const displayName = profile?.preferred_name || profile?.loved_one_name || 'No Profile';
+  const age = profile?.birth_year
+    ? new Date().getFullYear() - profile.birth_year
+    : null;
+
   const handleSave = (e) => {
     e.preventDefault();
     saveProfileMutation.mutate(formData);
@@ -422,6 +429,72 @@ export default function UserProfile() {
                             </div>
                           ))}
                         </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-slate-500 dark:text-slate-400 text-sm italic">
+                      No life experiences recorded yet.
+                    </p>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {activeTab === 'connections' && (
+              <div className="space-y-4">
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-lg">
+                      <Music className="w-5 h-5 text-orange-500" />
+                      Favorite Music
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    {editing ? (
+                      <div>
+                        <label className="text-sm font-medium mb-1.5 block text-slate-700 dark:text-slate-300">
+                          Songs & Artists
+                        </label>
+                        <Input
+                          placeholder="e.g., Frank Sinatra, Bing Crosby, Moon River (comma separated)"
+                          value={formData.favorite_music}
+                          onChange={(e) =>
+                            setFormData({ ...formData, favorite_music: e.target.value })
+                          }
+                          className="min-h-[44px]"
+                        />
+                      </div>
+                    ) : profile?.favorite_music?.length > 0 ? (
+                      <div className="flex flex-wrap gap-2">
+                        {profile.favorite_music.map((item, i) => (
+                          <Badge key={i} variant="secondary" className="text-sm">
+                            🎵 {item}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-slate-500 dark:text-slate-400 text-sm italic">
+                        No favorite music recorded yet.
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              </div>
+            )}
+
+            {profile && (
+              <>
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2 text-base">
+                      <Heart className="w-5 h-5 text-rose-500" />
+                      Interests &amp; Hobbies
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <InfoChips items={profile.interests} />
+                  </CardContent>
+                </Card>
                       ) : (
                         <p className="text-slate-500 dark:text-slate-400 text-sm italic">
                           No life experiences recorded yet.
@@ -496,6 +569,29 @@ export default function UserProfile() {
                           className="min-h-[44px]"
                         />
                       </div>
+                    ) : profile?.important_people?.length > 0 ? (
+                      <div className="grid grid-cols-2 gap-2">
+                        {profile.important_people.map((person, i) => (
+                          <div
+                            key={i}
+                            className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-lg p-2"
+                          >
+                            <div className="w-8 h-8 rounded-full bg-green-100 dark:bg-green-900 flex items-center justify-center flex-shrink-0">
+                              <span className="text-green-700 dark:text-green-300 text-xs font-bold">
+                                {person.name?.slice(0, 1).toUpperCase()}
+                              </span>
+                            </div>
+                            <div>
+                              <p className="text-sm font-medium text-slate-800 dark:text-slate-100">
+                                {person.name}
+                              </p>
+                              <p className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                                {person.relationship}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     ) : (
                       {profile && profile.important_people && profile.important_people.length > 0 ? (
                         <div className="grid grid-cols-2 gap-2">
@@ -521,7 +617,7 @@ export default function UserProfile() {
                     )}
                   </CardContent>
                 </Card>
-              </div>
+              </>
             )}
 
             {/* Save Button (edit mode only) */}

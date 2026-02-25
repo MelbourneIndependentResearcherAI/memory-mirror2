@@ -49,6 +49,7 @@
  */
 import { lazy } from 'react';
 import __Layout from './Layout.jsx';
+
 const AIAgentTeam = lazy(() => import('./pages/AIAgentTeam'));
 const AICareInsights = lazy(() => import('./pages/AICareInsights'));
 const AccessibilityStatement = lazy(() => import('./pages/AccessibilityStatement'));
@@ -69,7 +70,6 @@ const ContentLibrary = lazy(() => import('./pages/ContentLibrary'));
 const ConversationAnalytics = lazy(() => import('./pages/ConversationAnalytics'));
 const EmergencyAlerts = lazy(() => import('./pages/EmergencyAlerts'));
 const FAQ = lazy(() => import('./pages/FAQ'));
-const FakeBankSettings = lazy(() => import('./pages/FakeBankSettings'));
 const FamilyAIInsights = lazy(() => import('./pages/FamilyAIInsights'));
 const FamilyCalendar = lazy(() => import('./pages/FamilyCalendar'));
 const FamilyChatRoom = lazy(() => import('./pages/FamilyChatRoom'));
@@ -127,6 +127,7 @@ const TVPairing = lazy(() => import('./pages/TVPairing'));
 const TVPhotoGallery = lazy(() => import('./pages/TVPhotoGallery'));
 const TeamNotifications = lazy(() => import('./pages/TeamNotifications'));
 const TermsOfService = lazy(() => import('./pages/TermsOfService'));
+const UserProfile = lazy(() => import('./pages/UserProfile'));
 const VoiceAlwaysOnDashboard = lazy(() => import('./pages/VoiceAlwaysOnDashboard'));
 const VoiceCloning = lazy(() => import('./pages/VoiceCloning'));
 const VoiceCommands = lazy(() => import('./pages/VoiceCommands'));
@@ -160,7 +161,6 @@ export const PAGES = {
     "ConversationAnalytics": ConversationAnalytics,
     "EmergencyAlerts": EmergencyAlerts,
     "FAQ": FAQ,
-    "FakeBankSettings": FakeBankSettings,
     "FamilyAIInsights": FamilyAIInsights,
     "FamilyCalendar": FamilyCalendar,
     "FamilyChatRoom": FamilyChatRoom,
