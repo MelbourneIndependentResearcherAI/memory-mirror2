@@ -54,6 +54,7 @@ export default function FamilyChatRoom() {
 
   // Real-time message fetching with subscriptions
   const { data: messages = [], isLoading: _isLoading } = useQuery({
+  const { data: messages = [] } = useQuery({
     queryKey: ['familyChat'],
     queryFn: () => base44.entities.FamilyChat.list('-created_date', 100),
     refetchInterval: 3000, // Poll every 3 seconds for real-time feel

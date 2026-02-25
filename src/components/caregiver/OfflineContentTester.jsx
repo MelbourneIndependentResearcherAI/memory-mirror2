@@ -174,6 +174,7 @@ export default function OfflineContentTester() {
               const items = await getAllFromStore(storeName);
               storeTests.push(`${key}: ${items.length} items`);
             } catch {
+              storeTests.push(`${key}: ERROR`);
             }
           }
           result = { 
