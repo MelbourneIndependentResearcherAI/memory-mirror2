@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { MessageCircle, Brain, Heart } from 'lucide-react';
+import { useState } from 'react';
+import { MessageCircle, Brain, Heart, Shield, Music, Moon, Wifi } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '../utils';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,28 +8,28 @@ import InstallAppButton from '@/components/InstallAppButton';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
 
-/**
- * Memory Mirror - AI Companion for Dementia Care
- * 
- * Copyright © 2026 Memory Mirror. All Rights Reserved.
- * 
- * This application and its components are proprietary software.
- * Unauthorized copying, distribution, or modification is strictly prohibited.
- * 
- * Music Library: Uses only royalty-free and public domain sources
- * AI Technology: Powered by licensed third-party AI services
- * 
- * For licensing inquiries, contact: support@memorymirror.app
- */
-
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();
 
   const navigateTo = (page) => navigate(createPageUrl(page));
-  const handleGetStarted = () => {
-    navigate(createPageUrl('Home'));
-  };
+  const handleGetStarted = () => navigate(createPageUrl('Home'));
+
+  const featureCards = [
+    { icon: '🧠', title: 'AI Chat Companion', desc: 'Warm, empathetic conversation that adapts to each person\'s era and memories', page: 'Home', color: 'from-blue-500 to-cyan-500' },
+    { icon: '❤️', title: 'Health Monitor', desc: 'Track emotional state, anxiety levels and wellbeing patterns over time', page: 'HealthMonitor', color: 'from-red-500 to-pink-500' },
+    { icon: '🎵', title: 'Music Therapy', desc: 'Era-specific songs and playlists to comfort and stimulate memory', page: 'MusicTherapy', color: 'from-purple-500 to-indigo-500' },
+    { icon: '🌙', title: 'Night Watch', desc: 'AI-powered overnight monitoring with emergency alert detection', page: 'NightWatch', color: 'from-slate-600 to-indigo-700' },
+    { icon: '📸', title: 'Photo Library', desc: 'Cherished photos and memories with voice-activated recall', page: 'PhotoLibrary', color: 'from-amber-500 to-orange-500' },
+    { icon: '👨\u200d⚕️', title: 'Caregiver Portal', desc: 'Full dashboard with insights, care journal and activity reports', page: 'CaregiverPortal', color: 'from-teal-500 to-emerald-500' },
+    { icon: '📱', title: 'Phone Mode', desc: 'Simplified large-button phone interface for easy calling', page: 'PhoneMode', color: 'from-green-500 to-teal-500' },
+    { icon: '🛡️', title: 'Security Scanner', desc: 'Scam detection and online safety tools to protect your loved one', page: 'Security', color: 'from-blue-600 to-indigo-600' },
+    { icon: '🎤', title: 'Always-On Voice', desc: 'Hands-free wake word detection for voice-activated assistance', page: 'VoiceSetup', color: 'from-violet-500 to-purple-600' },
+    { icon: '🏦', title: 'Fake Banking', desc: 'A reassuring fake bank balance view to reduce financial anxiety', page: 'MyBank', color: 'from-emerald-500 to-green-600' },
+    { icon: '👨\u200d👩\u200d👧', title: 'Family Portal', desc: 'Family members can share messages, photos and stay connected', page: 'FamilyConnect', color: 'from-pink-500 to-rose-500' },
+    { icon: '📊', title: 'Caregiver Dashboard', desc: 'At-a-glance overview of patient status, tasks and care metrics', page: 'CaregiverDashboard', color: 'from-cyan-500 to-blue-500' },
+    { icon: '📺', title: 'Smart TV Mode', desc: 'Large-screen TV interface for comfortable viewing and interaction', page: 'TVMode', color: 'from-slate-500 to-slate-700' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
@@ -228,6 +228,162 @@ export default function Landing() {
           <p className="text-sm font-bold text-slate-600 dark:text-slate-400">
             &mdash; Maria L., Family Caregiver
           </p>
+        {/* Dual Access Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
+          {/* Patient Access */}
+          <button
+            onClick={() => navigateTo('PatientAccess')}
+            className="group bg-gradient-to-br from-blue-600 via-cyan-600 to-sky-600 hover:from-blue-700 hover:via-cyan-700 hover:to-sky-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+          >
+            <div className="flex flex-col items-start gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                <MessageCircle className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-3">Start Companion</h3>
+                <p className="text-lg text-white/90 leading-relaxed mb-4">
+                  For patients — Quick access, no login required
+                </p>
+                <div className="flex flex-col gap-2 text-sm text-white/80">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Instant AI companion</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Optional PIN protection</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Hands-free voice access</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+
+          {/* Caregiver Access */}
+          <button
+            onClick={() => navigateTo('CaregiverPortal')}
+            className="group bg-gradient-to-br from-purple-600 via-pink-600 to-rose-600 hover:from-purple-700 hover:via-pink-700 hover:to-rose-700 rounded-3xl shadow-2xl border-4 border-white/20 hover:shadow-3xl transition-all duration-300 p-10 text-left"
+          >
+            <div className="flex flex-col items-start gap-4">
+              <div className="bg-white/20 backdrop-blur-sm p-4 rounded-2xl group-hover:bg-white/30 transition-colors">
+                <Brain className="w-12 h-12 text-white" />
+              </div>
+              <div>
+                <h3 className="text-3xl font-bold text-white mb-3">Caregiver Portal</h3>
+                <p className="text-lg text-white/90 leading-relaxed mb-4">
+                  For caregivers — Full dashboard &amp; controls
+                </p>
+                <div className="flex flex-col gap-2 text-sm text-white/80">
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Monitor activity &amp; wellbeing</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Configure AI behaviour</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-white/80 rounded-full"></div>
+                    <span>Get smart notifications</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto mb-12 px-4">
+          {featureCards.map((card) => (
+            <button
+              key={card.title}
+              onClick={() => navigateTo(card.page)}
+              className="group text-left bg-white dark:bg-slate-900 rounded-2xl shadow-md hover:shadow-xl border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-6"
+            >
+              <div className="text-4xl mb-3">{card.icon}</div>
+              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">{card.title}</h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{card.desc}</p>
+            </button>
+          ))}
+        </div>
+
+        {/* Feature Tutorial */}
+        <FeatureTutorial />
+
+        {/* CTA Buttons */}
+        <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto my-8">
+          <InstallAppButton />
+          <Button
+            size="lg"
+            className="px-8 py-5 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+            onClick={handleGetStarted}
+          >
+            Go to Memory Mirror →
+          </Button>
+          <button
+            onClick={() => setShowDonationModal(true)}
+            className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+          >
+            💙 Support this project
+          </button>
+        </div>
+
+        {/* Info Section */}
+        <div className="max-w-4xl mx-auto px-4 mb-12">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 shadow-lg border border-slate-200/60 dark:border-slate-700/50">
+            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+              Memory Mirror — AI Companion for Dementia Care
+            </h2>
+            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
+              Memory Mirror is a compassionate AI assistant designed specifically for individuals living with dementia and their caregivers. Using advanced artificial intelligence, Memory Mirror provides comfort, dignity, and emotional support through natural conversation and voice interaction.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
+                <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Safe &amp; Private</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">All data stays private and secure on your device and encrypted servers.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl">
+                <Music className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Music Therapy</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Era-specific music with proven therapeutic benefits for dementia patients.</p>
+                </div>
+              </div>
+              <div className="flex items-start gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
+                <Wifi className="w-6 h-6 text-slate-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Works Offline</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">250+ pre-loaded responses, stories and songs available without internet.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Community Feedback */}
+        <CommunityFeedbackSection />
+      </div>
+
+      {/* Footer */}
+      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
+        <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
+        <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
+        <div className="mt-6 flex justify-center gap-4 flex-wrap text-xs">
+          <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">Terms of Service</Link>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">Privacy Policy</Link>
+          <span className="text-slate-600">•</span>
+          <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">Support</a>
+          <span className="text-slate-600">•</span>
+          <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">Feedback</Link>
         </div>
       </div>
     </div>
@@ -268,6 +424,9 @@ export default function Landing() {
         <span className="text-slate-600">&bull;</span>
         <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">Feedback</Link>
       </div>
+      {showDonationModal && (
+        <DonationModal onClose={() => setShowDonationModal(false)} />
+      )}
     </div>
 
     <div style={{ height: '40px' }}></div>

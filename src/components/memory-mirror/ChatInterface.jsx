@@ -393,6 +393,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           era: detectedEraRef.current || 'present',
           topics: conversationTopicsRef.current.slice(0, 10),
           duration_minutes: Math.round(durationMinutes * 10) / 10,
+      // Save conversation session if there were meaningful messages
+      const finalMessages = messagesRef.current;
+      const userMsgCount = finalMessages.filter(m => m.role === 'user').length;
+      if (userMsgCount >= 1) {
+        const durationMinutes = Math.round((Date.now() - sessionStartRef.current) / 60000);
+        base44.entities.Conversation.create({
+          mode: 'chat',
+          detected_era: sessionEraRef.current,
+          messages: finalMessages.map(m => ({ role: m.role, content: m.content })),
+          message_count: finalMessages.length,
+          duration_minutes: durationMinutes,
+          peak_anxiety_level: peakAnxietyRef.current,
+          session_date: new Date().toISOString()
         }).catch(() => {});
       }
     };

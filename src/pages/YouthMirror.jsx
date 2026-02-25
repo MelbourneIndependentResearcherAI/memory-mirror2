@@ -1,8 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, X, Plus, Trash2, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useState } from 'react';
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '../utils';
 import { base44 } from '@/api/base44Client';
@@ -1626,677 +1623,88 @@ const GRATITUDE_PROMPTS = [
   "What's something beautiful you noticed today?",
   "What opportunity are you looking forward to?",
   "What's a lesson life has taught you that you're grateful for?",
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { createPageUrl } from '../utils';
+
+const features = [
+  {
+    id: 'journal',
+    title: 'Memory Journal',
+    description: 'Write down thoughts, feelings, and memories to preserve them for the future.',
+    icon: BookOpen,
+    color: 'from-amber-500 to-yellow-500',
+    page: 'FamilyStories',
+  },
+  {
+    id: 'moments',
+    title: 'Grateful Moments',
+    description: "Daily prompts to capture what you're grateful for and cherish.",
+    icon: Heart,
+    color: 'from-orange-500 to-red-500',
+    page: 'SharedJournal',
+  },
+  {
+    id: 'timeline',
+    title: 'Life Timeline',
+    description: 'Build your personal history with photos, stories, and milestones.',
+    icon: Calendar,
+    color: 'from-purple-500 to-pink-500',
+    page: 'FamilyTimeline',
+  },
+  {
+    id: 'chat',
+    title: 'AI Chat Buddy',
+    description: 'Talk about your day, memories, or anything on your mind.',
+    icon: MessageCircle,
+    color: 'from-green-500 to-emerald-500',
+    page: 'ChatMode',
+  },
+  {
+    id: 'collage',
+    title: 'Memory Collages',
+    description: 'View your photo memories in a beautiful collage layout.',
+    icon: Image,
+    color: 'from-pink-500 to-rose-500',
+    page: 'FamilyMediaAlbum',
+  },
+  {
+    id: 'music',
+    title: 'Music from Your Life',
+    description: 'Discover songs from important years and create playlists.',
+    icon: Music,
+    color: 'from-indigo-500 to-purple-500',
+    page: 'FamilyMusic',
+  },
+  {
+    id: 'photos',
+    title: 'Photo Library',
+    description: 'Upload and organise your cherished memory photos.',
+    icon: Camera,
+    color: 'from-blue-500 to-cyan-500',
+    page: 'FamilyPhotoAlbum',
+  },
 ];
 
-function MemoryJournal({ onClose }) {
-  const [entries, setEntries] = useState([]);
-  const [title, setTitle] = useState('');
-  const [content, setContent] = useState('');
-  const [expandedId, setExpandedId] = useState(null);
-
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]');
-      setEntries(saved);
-    } catch {
-      setEntries([]);
-    }
-  }, []);
-
-  const saveEntry = () => {
-    if (!content.trim()) {
-      toast.error('Please write something before saving.');
-      return;
-    }
-    const entry = {
-      id: Date.now(),
-      title: title.trim() || 'Untitled Entry',
-      content: content.trim(),
-      date: new Date().toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-    };
-    const updated = [entry, ...entries];
-    setEntries(updated);
-    localStorage.setItem(JOURNAL_KEY, JSON.stringify(updated));
-    setTitle('');
-    setContent('');
-    toast.success('Journal entry saved!');
-  };
-
-  const deleteEntry = (id) => {
-    const updated = entries.filter((e) => e.id !== id);
-    setEntries(updated);
-    localStorage.setItem(JOURNAL_KEY, JSON.stringify(updated));
-    toast.success('Entry deleted.');
-  };
-
-  return (
-    <div className="mt-6 space-y-4">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <BookOpen className="w-6 h-6 text-amber-500" />
-          Memory Journal
-        </h3>
-        <Button variant="ghost" size="icon" onClick={onClose} className="min-h-[44px] min-w-[44px]">
-          <X className="w-5 h-5" />
-        </Button>
-      </div>
-
-      <Card className="border-2 border-amber-200 dark:border-amber-800">
-        <CardContent className="p-4 space-y-3">
-          <Input
-            placeholder="Entry title (optional)"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="text-base"
-          />
-          <Textarea
-            placeholder="Write your thoughts, feelings, or memories here…"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={5}
-            className="text-base resize-none"
-          />
-          <Button
-            onClick={saveEntry}
-            className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:opacity-90 min-h-[44px]"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Save Entry
-          </Button>
-        </CardContent>
-      </Card>
-
-      {entries.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="font-semibold text-slate-700 dark:text-slate-300 text-sm uppercase tracking-wide">
-            Previous Entries ({entries.length})
-          </h4>
-          {entries.map((entry) => (
-            <Card key={entry.id} className="border border-slate-200 dark:border-slate-700">
-              <CardContent className="p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <button
-                    onClick={() => setExpandedId(expandedId === entry.id ? null : entry.id)}
-                    className="flex-1 text-left min-h-[44px] flex items-start gap-2"
-                  >
-                    <div className="flex-1">
-                      <p className="font-semibold text-slate-800 dark:text-slate-200">{entry.title}</p>
-                      <p className="text-xs text-slate-500 dark:text-slate-400">{entry.date}</p>
-                    </div>
-                    {expandedId === entry.id
-                      ? <ChevronUp className="w-4 h-4 text-slate-400 mt-1 flex-shrink-0" />
-                      : <ChevronDown className="w-4 h-4 text-slate-400 mt-1 flex-shrink-0" />}
-                  </button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteEntry(entry.id)}
-                    className="min-h-[44px] min-w-[44px] text-red-400 hover:text-red-600"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-                {expandedId === entry.id && (
-                  <p className="mt-2 text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap border-t border-slate-100 dark:border-slate-700 pt-2">
-                    {entry.content}
-                  </p>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {entries.length === 0 && (
-        <p className="text-center text-sm text-slate-500 dark:text-slate-400 py-4">
-          No entries yet. Write your first memory above!
-        </p>
-      )}
-    </div>
-  );
-}
-
-function GratefulMoments({ onClose }) {
-  const [entries, setEntries] = useState([]);
-  const [content, setContent] = useState('');
-  const [prompt] = useState(() => GRATITUDE_PROMPTS[new Date().getDay() % GRATITUDE_PROMPTS.length]);
-
-  useEffect(() => {
-    try {
-      const saved = JSON.parse(localStorage.getItem(MOMENTS_KEY) || '[]');
-      setEntries(saved);
-    } catch {
-      setEntries([]);
-    }
-  }, []);
-
-  const saveEntry = () => {
-    if (!content.trim()) {
-      toast.error('Please write something before saving.');
-      return;
-    }
-    const entry = {
-      id: Date.now(),
-      prompt,
-      content: content.trim(),
-      date: new Date().toLocaleDateString('en-AU', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }),
-    };
-    const updated = [entry, ...entries];
-    setEntries(updated);
-    localStorage.setItem(MOMENTS_KEY, JSON.stringify(updated));
-    setContent('');
-    toast.success('Grateful moment saved! 🌟');
-  };
-
-  const deleteEntry = (id) => {
-    const updated = entries.filter((e) => e.id !== id);
-    setEntries(updated);
-    localStorage.setItem(MOMENTS_KEY, JSON.stringify(updated));
-  };
-
-  return (
-    <div className="mt-6 space-y-4">
-      <div className="flex items-center justify-between mb-2">
-        <h3 className="text-xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Heart className="w-6 h-6 text-orange-500" />
-          Grateful Moments
-        </h3>
-        <Button variant="ghost" size="icon" onClick={onClose} className="min-h-[44px] min-w-[44px]">
-          <X className="w-5 h-5" />
-        </Button>
-      </div>
-
-      <Card className="border-2 border-orange-200 dark:border-orange-800 bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30">
-        <CardContent className="p-4 space-y-3">
-          <p className="text-base font-semibold text-orange-700 dark:text-orange-300 italic">
-            "{prompt}"
-          </p>
-          <Textarea
-            placeholder="Share what you're grateful for…"
-            value={content}
-            onChange={(e) => setContent(e.target.value)}
-            rows={4}
-            className="text-base resize-none"
-          />
-          <Button
-            onClick={saveEntry}
-            className="w-full bg-gradient-to-r from-orange-500 to-red-500 hover:opacity-90 min-h-[44px]"
-          >
-            <Heart className="w-4 h-4 mr-2" />
-            Save Moment
-          </Button>
-        </CardContent>
-      </Card>
-
-      {entries.length > 0 && (
-        <div className="space-y-2">
-          <h4 className="font-semibold text-slate-700 dark:text-slate-300 text-sm uppercase tracking-wide">
-            Your Gratitude ({entries.length})
-          </h4>
-          {entries.map((entry) => (
-            <Card key={entry.id} className="border border-slate-200 dark:border-slate-700">
-              <CardContent className="p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <div className="flex-1">
-                    <p className="text-xs text-slate-500 dark:text-slate-400 italic mb-1">"{entry.prompt}"</p>
-                    <p className="text-sm text-slate-800 dark:text-slate-200">{entry.content}</p>
-                    <p className="text-xs text-slate-400 mt-1">{entry.date}</p>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => deleteEntry(entry.id)}
-                    className="min-h-[44px] min-w-[44px] text-red-400 hover:text-red-600 flex-shrink-0"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {entries.length === 0 && (
-        <p className="text-center text-sm text-slate-500 dark:text-slate-400 py-4">
-          No moments saved yet. Capture your first grateful moment above!
-        </p>
-      )}
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   Main YouthMirror Component
-───────────────────────────────────────────── */
 export default function YouthMirror() {
   const navigate = useNavigate();
-  const [activeModal, setActiveModal] = useState(null);
-  const [_activeFeature, setActiveFeature] = useState(null);
-  const [activeFeature, setActiveFeature] = useState(null);
-  const navigate = useNavigate();
 
-  const features = [
-    {
-      id: 'selfie',
-      title: 'Memory Selfie',
-      description: 'See a gentle reflection of your younger self with era-based vintage filters',
-      icon: Camera,
-      color: 'from-blue-500 to-cyan-500',      action: () => navigate(createPageUrl('PhotoLibrary')),
-      action: () => setActiveFeature('selfie'),
-      comingSoon: true,
-      available: false,
-      action: () => setShowCamera(true)
-    },
-    {
-      id: 'timeline',
-      title: 'Life Timeline',
-      description: 'Build your personal history with photos, stories, and milestones',
-      icon: Calendar,
-      color: 'from-purple-500 to-pink-500',
-      action: () => navigate(createPageUrl('FamilyTimeline')),
-      comingSoon: true,
-      available: false,
-      action: () => navigate('/FamilyTimeline')
-    },
-    {
-      id: 'moments',
-      title: 'Grateful Moments',
-      description: "Daily prompts to capture what you're grateful for",
-      icon: Heart,
-      color: 'from-orange-500 to-red-500',
-      action: () => setActiveModal('moments'),
-      action: () => setActiveFeature('moments'),
-    },
-    {
-      id: 'journal',
-      title: 'Memory Journal',
-      description: 'Write down thoughts, feelings, and memories',
-      icon: BookOpen,
-      color: 'from-amber-500 to-yellow-500',
-      action: () => setActiveFeature('moments'),
-      comingSoon: false,
-      available: true,
-      action: () => navigate('/CareJournalPage')
-    },
-    {
-      id: 'chat',
-      title: 'AI Chat Buddy',
-      description: 'Talk about your day, memories, or anything on your mind',
-      icon: MessageCircle,
-      color: 'from-green-500 to-emerald-500',
-      action: () => navigate(createPageUrl('Home')),
-    },
-    {
-      id: 'timeline',
-      title: 'Life Timeline',
-      description: 'Build your personal history with photos, stories, and milestones',
-      icon: Calendar,
-      color: 'from-purple-500 to-pink-500',
-      action: () => navigate(createPageUrl('Home')),
-      comingSoon: false,
-      available: false,
-      action: () => navigate('/Home')
-    },
-    {
-      id: 'collage',
-      title: 'Memory Collages',
-      description: 'Browse and share photos of your favorite memories',
-      icon: Image,
-      color: 'from-pink-500 to-rose-500',
-      action: () => navigate(createPageUrl('FamilyPhotoAlbum')),
-      action: () => navigate(createPageUrl('PhotoLibrary')),
-      comingSoon: true,
-      available: false,
-      action: () => navigate('/FamilyPhotoAlbum')
-    },
-    {
-      id: 'music',
-      title: 'Music from Your Life',
-      description: 'Discover songs from important years and create playlists',
-      icon: Music,
-      color: 'from-indigo-500 to-purple-500',
-      action: () => navigate(createPageUrl('MusicPlayer')),
-      action: () => navigate(createPageUrl('MusicTherapy')),
-    },
-    {
-      id: 'selfie',
-      title: 'Memory Selfie',
-      description: 'Capture moments with your camera',
-      icon: Camera,
-      color: 'from-blue-500 to-cyan-500',
-    },
-  ];
-
-  if (activeFeature === 'moments') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-3xl mx-auto">
-        <GratefulMoments onBack={() => setActiveFeature(null)} />
-      </div>
-    </div>
-  );
-
-  if (activeFeature === 'journal') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-3xl mx-auto">
-        <MemoryJournal onBack={() => setActiveFeature(null)} />
-      </div>
-    </div>
-  );
-
-  if (activeFeature === 'chat') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-3xl mx-auto">
-        <AIChatBuddy onBack={() => setActiveFeature(null)} />
-      </div>
-    </div>
-  );
-
-  if (activeFeature === 'timeline') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-4xl mx-auto">
-        <Button variant="ghost" onClick={() => setActiveFeature(null)} className="gap-2 min-h-[44px] mb-4">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Button>
-        <MemoryTimelineBuilder />
-      </div>
-    </div>
-  );
-
-  if (activeFeature === 'music') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-3xl mx-auto">
-        <MusicFromYourLife onBack={() => setActiveFeature(null)} />
-      </div>
-    </div>
-  );
-
-  if (activeFeature === 'selfie') return (
-    <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-      <div className="max-w-3xl mx-auto space-y-4">
-        <Button variant="ghost" onClick={() => setActiveFeature(null)} className="gap-2 min-h-[44px]">
-          <ArrowLeft className="w-4 h-4" /> Back
-        </Button>
-        <h2 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-          <Camera className="w-6 h-6 text-blue-500" /> Memory Selfie
-        </h2>
-        <p className="text-slate-600 dark:text-slate-400">Use your device camera to capture a memory moment.</p>
-        <Card className="border-2 border-blue-200 dark:border-blue-800">
-          <CardContent className="p-6 text-center">
-            <Camera className="w-16 h-16 text-blue-300 mx-auto mb-4" />
-            <p className="text-slate-600 dark:text-slate-400 mb-4">Take a photo to preserve this moment in your memory bank.</p>
-            <Button
-              onClick={() => {
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.capture = 'user';
-                input.onchange = (e) => {
-                  const file = e.target.files?.[0];
-                  if (file) {
-                    toast.success(`Photo "${file.name}" captured! Add it to your memories in the Photo Library.`);
-                  }
-                };
-                input.click();
-              }}
-              className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 min-h-[44px]"
-            >
-              <Camera className="w-4 h-4 mr-2" /> Open Camera
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    </div>
-  );
-      action: () => navigate(createPageUrl('MusicTherapy')),
-      comingSoon: true,
-      available: false,
-      action: () => navigate('/MusicTherapy')
-    },
-    {
-      id: 'journal',
-      title: 'Memory Journal',
-      description: 'Write down thoughts, feelings, and memories',
-      icon: BookOpen,
-      color: 'from-amber-500 to-yellow-500',
-      action: () => setActiveModal('journal'),
-      action: () => navigate(createPageUrl('CareJournalPage')),
-    },
-      comingSoon: false,
-      available: true,
-    }
-  ];
-
-  const handleFeatureClick = (id) => {
-    if (id === 'journal' || id === 'moments') {
-      setActiveFeature(activeFeature === id ? null : id);
-    } else {
-      toast.info(`${features.find(f => f.id === id)?.title} coming soon!`);
-    }
+  const handleFeatureClick = (page) => {
+    navigate(createPageUrl(page));
   };
-
-  if (activeFeature === 'journal') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-        <div className="max-w-3xl mx-auto">
-          <MemoryJournal onBack={() => setActiveFeature(null)} />
-        </div>
-      </div>
-    );
-  }
-
-  if (activeFeature === 'moments') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-        <div className="max-w-3xl mx-auto">
-          <GratefulMoments onBack={() => setActiveFeature(null)} />
-        </div>
-      action: () => navigate('/SharedJournal')
-    }
-  };
-
-  return (
-    <div className="space-y-6">
-      <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border-blue-200 dark:border-blue-800">
-        <CardContent className="p-6">
-          <div
-            className="border-2 border-dashed border-blue-300 dark:border-blue-700 rounded-xl p-8 text-center cursor-pointer hover:border-blue-500 transition-colors mb-4"
-            onClick={() => fileRef.current?.click()}
-          >
-            {previewUrl ? (
-              <img src={previewUrl} alt="Preview" className="max-h-48 mx-auto rounded-lg object-cover" />
-            ) : (
-              <>
-                <Camera className="w-12 h-12 text-blue-400 mx-auto mb-3" />
-                <p className="text-blue-600 dark:text-blue-400 font-medium">Tap to choose a photo</p>
-                <p className="text-xs text-slate-500 mt-1">Supports JPG, PNG, WEBP</p>
-              </>
-            )}
-          </div>
-          <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={handleFileChange} />
-          <Input value={caption} onChange={(e) => setCaption(e.target.value)} placeholder="Add a caption or memory note..." className="mb-4" />
-          <Button onClick={handleSave} disabled={isUploading || !selectedFile} className="bg-blue-500 hover:bg-blue-600 min-h-[44px]">
-            {isUploading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Upload className="w-4 h-4 mr-2" />}
-            Save Memory Selfie
-          </Button>
-        </CardContent>
-      </Card>
-
-      {isLoading ? <p className="text-center text-slate-500">Loading your selfies...</p> : selfies.length > 0 && (
-        <div>
-          <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-3">Your Memory Selfies</h3>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-            {selfies.map(m => (
-              <Card key={m.id} className="overflow-hidden">
-                {m.image_url ? (
-                  <img src={m.image_url} alt={m.title} className="w-full h-32 object-cover" />
-                ) : (
-                  <div className="w-full h-32 bg-slate-100 dark:bg-slate-800 flex items-center justify-center text-3xl">📸</div>
-                )}
-                <CardContent className="p-2">
-                  <p className="text-xs text-slate-600 dark:text-slate-400 truncate">{m.title}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Memory Collages Panel ──────────────────────────────────────────────────────
-function MemoryCollagesPanel() {
-  const { data: memories = [], isLoading } = useQuery({
-    queryKey: ['memories-with-images'],
-    queryFn: () => base44.entities.Memory.list('-created_date', 50),
-    select: (data) => data.filter(m => m.image_url),
-  });
-
-  if (isLoading) return <p className="text-center text-slate-500 py-8">Loading your photo memories...</p>;
-
-  if (memories.length === 0) {
-    return (
-      <Card className="bg-gradient-to-br from-pink-50 to-rose-50 dark:from-pink-950/30 dark:to-rose-950/30 border-pink-200 dark:border-pink-800">
-        <CardContent className="p-8 text-center">
-          <Image className="w-16 h-16 text-pink-300 mx-auto mb-4" />
-          <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-2">No photos yet</h3>
-          <p className="text-slate-500">Add photos using the Memory Selfie feature and they'll appear here in your collage.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
-  return (
-    <div className="space-y-4">
-      <p className="text-sm text-slate-500">{memories.length} photo memor{memories.length === 1 ? 'y' : 'ies'} in your collection</p>
-      <div className="columns-2 md:columns-3 gap-3 space-y-3">
-        {memories.map(m => (
-          <div key={m.id} className="break-inside-avoid">
-            <Card className="overflow-hidden">
-              <img src={m.image_url} alt={m.title} className="w-full object-cover" />
-              <CardContent className="p-2">
-                <p className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate">{m.title}</p>
-                {m.created_date && <p className="text-xs text-slate-400">{format(new Date(m.created_date), 'MMM d, yyyy')}</p>}
-              </CardContent>
-            </Card>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-// ── Main YouthMirror Page ──────────────────────────────────────────────────────
-export default function YouthMirror() {
-  const [activeFeature, setActiveFeature] = useState(null);
-
-  const features = [
-    { id: 'selfie',   title: 'Memory Selfie',       description: 'Capture moments with photos from your favourite times', icon: Camera,        color: 'from-blue-500 to-cyan-500' },
-    { id: 'timeline', title: 'Life Timeline',        description: 'Build your personal history with photos, stories, and milestones', icon: Calendar,      color: 'from-purple-500 to-pink-500' },
-    { id: 'moments',  title: 'Grateful Moments',     description: "Daily prompts to capture what you're grateful for",    icon: Heart,         color: 'from-orange-500 to-red-500' },
-    { id: 'chat',     title: 'AI Chat Buddy',        description: 'Talk about your day, memories, or anything on your mind', icon: MessageCircle, color: 'from-green-500 to-emerald-500' },
-    { id: 'collage',  title: 'Memory Collages',      description: 'View your photo memories in a beautiful collage layout', icon: Image,         color: 'from-pink-500 to-rose-500' },
-    { id: 'music',    title: 'Music from Your Life', description: 'Discover songs from important years and create playlists', icon: Music,         color: 'from-indigo-500 to-purple-500' },
-    { id: 'journal',  title: 'Memory Journal',       description: 'Write down thoughts, feelings, and memories',          icon: BookOpen,      color: 'from-amber-500 to-yellow-500' },
-  ];
-
-  const handleFeatureClick = (feature) => {
-    if (feature.id === 'chat') {
-      navigate(createPageUrl('Home'));
-      return;
-    }
-    if (feature.comingSoon) {
-      toast.info(`${feature.title} — coming soon!`);
-      return;
-    }
-    setActiveFeature(feature.id);
-  };
-
-  if (activeFeature === 'journal') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-        <div className="max-w-2xl mx-auto">
-          <MemoryJournalView onBack={() => setActiveFeature(null)} />
-        </div>
-      </div>
-    );
-  }
-
-  if (activeFeature === 'moments') {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
-        <div className="max-w-2xl mx-auto">
-          <GratefulMomentsView onBack={() => setActiveFeature(null)} />
-        </div>
-  const FEATURE_PANELS = {
-    moments:  <GratefulMomentsPanel />,
-    journal:  <MemoryJournalPanel />,
-    timeline: <LifeTimelinePanel />,
-    chat:     <AIChatBuddyPanel />,
-    music:    <MusicFromYourLifePanel />,
-    selfie:   <MemorySelfiePanel />,
-    collage:  <MemoryCollagesPanel />,
-  };
-
-  const activeFeatureData = features.find(f => f.id === activeFeature);
-  if (showCamera) {
-    return (
-      <div className="min-h-screen">
-        <button
-          onClick={() => setShowCamera(false)}
-          className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-white/30 transition-colors min-h-[44px]"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          Back to Youth Mirror
-        </button>
-        <YouthMirrorCamera />
-  const featureRoutes = {
-    timeline: createPageUrl('FamilyTimeline'),
-    moments: createPageUrl('SharedJournal'),
-    chat: createPageUrl('ChatMode'),
-    collage: createPageUrl('FamilyMediaAlbum'),
-    music: createPageUrl('FamilyMusic'),
-    journal: createPageUrl('FamilyStories'),
-  };
-
-  const handleFeatureClick = (feature) => {
-    if (feature.id === 'selfie') {
-      setActiveFeature('selfie');
-    } else {
-      navigate(featureRoutes[feature.id]);
-    }
-  };
-
-  if (activeFeature === 'selfie') {
-    return (
-      <div className="min-h-screen">
-        <div className="p-4">
-          <button
-            onClick={() => setActiveFeature(null)}
-            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-4 min-h-[44px]"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to Youth Mirror
-          </button>
-        </div>
-        <MemorySelfie />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-violet-50 via-fuchsia-50 to-pink-50 dark:from-slate-950 dark:via-violet-950 dark:to-fuchsia-950 p-4 md:p-6">
       <div className="max-w-6xl mx-auto">
         {/* Header */}
         <div className="text-center mb-8">
-          {activeFeature && (
-            <div className="flex justify-start mb-4">
-              <Button variant="ghost" onClick={() => setActiveFeature(null)} className="gap-2 min-h-[44px] text-violet-700 dark:text-violet-300 hover:text-violet-900">
-                <ArrowLeft className="w-5 h-5" /> Back to features
-              </Button>
-            </div>
-          )}
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-6 min-h-[44px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back
+          </button>
           <div className="flex justify-center mb-4">
             <div className="w-20 h-20 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-full flex items-center justify-center shadow-2xl">
               <Sparkles className="w-10 h-10 text-white" />
@@ -2305,174 +1713,34 @@ export default function YouthMirror() {
           <h1 className="text-4xl md:text-6xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent mb-4">
             Youth Mirror
           </h1>
-          {!activeFeature && (
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-              Capture your memories today, so you can treasure them tomorrow
-            </p>
-          )}
+          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            Capture your memories today, so you can treasure them tomorrow
+          </p>
         </div>
 
-        {/* Active feature panel */}
-        {activeFeature ? (
-          <div>
-            {activeFeatureData && (
-              <div className="flex items-center gap-3 mb-6">
-                <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${activeFeatureData.color} flex items-center justify-center shadow-lg`}>
-                  <activeFeatureData.icon className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-200">{activeFeatureData.title}</h2>
-                  <p className="text-sm text-slate-500">{activeFeatureData.description}</p>
-                </div>
-              </div>
-            )}
-            {FEATURE_PANELS[activeFeature]}
-          </div>
-        ) : (
-          <>
-            {/* Vision Statement */}
-            <Card className="mb-8 bg-gradient-to-br from-violet-100 to-fuchsia-100 dark:from-violet-950/30 dark:to-fuchsia-950/30 border-2 border-violet-200 dark:border-violet-800">
-              <CardContent className="p-8 text-center">
-                <Sparkles className="w-12 h-12 text-violet-600 mx-auto mb-4" />
-                <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
-                  Building Memories for the Future
-                </h2>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
-                  Youth Mirror helps you actively document your life—your stories, photos, music, and moments—so 
-                  if you ever face memory challenges in the future, these treasured memories are preserved and 
-                  ready to bring you comfort and connection.
-                </p>
-              </CardContent>
-            </Card>
+        {/* Vision Card */}
+        <Card className="mb-8 bg-gradient-to-br from-violet-100 to-fuchsia-100 dark:from-violet-950/30 dark:to-fuchsia-950/30 border-2 border-violet-200 dark:border-violet-800">
+          <CardContent className="p-8 text-center">
+            <Sparkles className="w-12 h-12 text-violet-600 mx-auto mb-4" />
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-3">
+              Building Memories for the Future
+            </h2>
+            <p className="text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto">
+              Youth Mirror helps you actively document your life — your stories, photos, music, and moments —
+              so these treasured memories are preserved and ready to bring you comfort and connection.
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Inline Feature Panels */}
-        {activeFeature && (
-          <Card className="mb-8 border-2 border-violet-300 dark:border-violet-700 shadow-xl">
-            <CardContent className="p-6 md:p-8">
-              {activeFeature === 'selfie' && <MemorySelfie onClose={() => setActiveFeature(null)} />}
-              {activeFeature === 'moments' && <GratefulMoments onClose={() => setActiveFeature(null)} />}
-            </CardContent>
-          </Card>
-        )}
-
-            {/* Feature Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              {features.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <Card
-                    key={feature.id}
-                    className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
-                    onClick={() => setActiveFeature(feature.id)}
-                  >
-                    <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
-                    <CardHeader>
-                      <div className="flex items-center gap-4 mb-2">
-                        <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}>
-                          <Icon className="w-7 h-7 text-white" />
-                        </div>
-                        <CardTitle className="text-xl">{feature.title}</CardTitle>
-                      </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-400">
-                        {feature.description}
-                      </p>
-                    </CardHeader>
-                    <CardContent>
-                      <Button className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}>
-                        Explore
-                      </Button>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-
-            {/* Why This Matters */}
-            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30">
-              <CardContent className="p-8">
-                <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                  <Heart className="w-7 h-7 text-red-500" />
-                  Why This Matters
-                </h3>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-                  Memory Mirror's creator built this after 25 years caring for family members with dementia. 
-                  Youth Mirror is the "prequel" - helping young people and adults actively preserve their 
-                  memories, relationships, and life stories while they can.
-                </p>
-                <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-semibold">
-                  Your today becomes your tomorrow's comfort. Start building your memory bank now.
-                </p>
-              </CardContent>
-            </Card>
-          </>
-        )}
         {/* Feature Grid */}
-        {activeFeature === 'selfie' && (
-          <Card className="mb-8 border-2 border-blue-300 dark:border-blue-700 bg-blue-50 dark:bg-blue-950/30">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
-                  <Camera className="w-5 h-5 text-blue-500" />
-                  Memory Selfie
-                </h3>
-                <Button variant="ghost" size="sm" onClick={() => setActiveFeature(null)}>✕ Close</Button>
-              </div>
-              <p className="text-slate-600 dark:text-slate-400 mb-4">
-                Use your device camera to capture a moment. Your photos are saved to your Memory Photo Library.
-              </p>
-              <Button
-                className="bg-gradient-to-r from-blue-500 to-cyan-500 hover:opacity-90 min-h-[44px]"
-                onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = 'image/*';
-                  input.capture = 'environment';
-                  input.onchange = () => {
-                    if (input.files && input.files[0]) {
-                      navigate(createPageUrl('PhotoLibrary'));
-                    }
-                  };
-                  input.click();
-                }}
-              >
-                <Camera className="w-4 h-4 mr-2" /> Open Camera
-              </Button>
-            </CardContent>
-          </Card>
-        )}
-
-        {activeFeature === 'moments' && (
-          <GratefulMomentsPanel onClose={() => setActiveFeature(null)} />
-        )}
-
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {features.map((feature) => {
             const Icon = feature.icon;
-            const isActive = activeFeature === feature.id;
-            const isImplemented = feature.id === 'journal' || feature.id === 'moments';
             return (
               <Card
                 key={feature.id}
-                className={`hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 ${isActive ? 'border-violet-400 dark:border-violet-600 shadow-lg' : 'hover:border-violet-300 dark:hover:border-violet-700'}`}
-                onClick={() => handleFeatureClick(feature.id)}
-            return (
-              <Card
-                key={feature.id}
-                className={`hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 ${isActive ? 'border-violet-400 dark:border-violet-600' : 'hover:border-violet-300 dark:hover:border-violet-700'}`}
-                onClick={feature.action}
                 className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-violet-300 dark:hover:border-violet-700"
-                onClick={feature.action}
-                onClick={() => setActiveFeature(feature.id)}
-                onClick={() => feature.action()}
-                onClick={() => {
-                  if (feature.available) {
-                    setActiveFeature(feature.id);
-                  } else {
-                    toast.info(`${feature.title} coming soon!`);
-                  }
-                }}
-                onClick={feature.action}
-                onClick={() => handleFeatureClick(feature)}
+                onClick={() => handleFeatureClick(feature.page)}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
@@ -2480,18 +1748,7 @@ export default function YouthMirror() {
                     <div className={`w-14 h-14 rounded-lg bg-gradient-to-br ${feature.color} flex items-center justify-center shadow-lg`}>
                       <Icon className="w-7 h-7 text-white" />
                     </div>
-                    <div className="flex-1">
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                      {isImplemented && (
-                        <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">✓ Available</span>
-                    <div>
-                      <CardTitle className="text-xl">{feature.title}</CardTitle>
-                      {feature.comingSoon && (
-                        <span className="text-xs text-slate-400 font-normal">Coming soon</span>
-                      {!feature.available && (
-                        <span className="text-xs text-slate-400">Coming soon</span>
-                      )}
-                    </div>
+                    <CardTitle className="text-xl">{feature.title}</CardTitle>
                   </div>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     {feature.description}
@@ -2500,12 +1757,9 @@ export default function YouthMirror() {
                 <CardContent>
                   <Button
                     className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}
-                    onClick={(e) => { e.stopPropagation(); feature.action(); }}
-                    onClick={feature.action}
+                    onClick={(e) => { e.stopPropagation(); handleFeatureClick(feature.page); }}
                   >
-                    {isActive ? 'Close' : 'Explore'}
-                    {feature.comingSoon ? 'Coming Soon' : feature.id === 'chat' ? 'Start Chat' : 'Explore'}
-                    {feature.available ? 'Open' : 'Explore'}
+                    Explore
                   </Button>
                 </CardContent>
               </Card>
@@ -2513,24 +1767,7 @@ export default function YouthMirror() {
           })}
         </div>
 
-        {/* Active Feature Panel */}
-        {activeFeature === 'journal' && (
-          <Card className="mb-8 border-2 border-amber-300 dark:border-amber-700">
-            <CardContent className="p-4 md:p-6">
-              <MemoryJournal onClose={() => setActiveFeature(null)} />
-            </CardContent>
-          </Card>
-        )}
-
-        {activeFeature === 'moments' && (
-          <Card className="mb-8 border-2 border-orange-300 dark:border-orange-700">
-            <CardContent className="p-4 md:p-6">
-              <GratefulMoments onClose={() => setActiveFeature(null)} />
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Future Vision */}
+        {/* Why This Matters */}
         <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30">
           <CardContent className="p-8">
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
@@ -2538,26 +1775,16 @@ export default function YouthMirror() {
               Why This Matters
             </h3>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed mb-4">
-              Memory Mirror's creator built this after 25 years caring for family members with dementia. 
-              Youth Mirror is the "prequel" - helping young people and adults actively preserve their 
+              Memory Mirror was built after years of caring for family members with dementia.
+              Youth Mirror is the &ldquo;prequel&rdquo; — helping young people and adults actively preserve their
               memories, relationships, and life stories while they can.
             </p>
             <p className="text-slate-700 dark:text-slate-300 leading-relaxed font-semibold">
-              Your today becomes your tomorrow's comfort. Start building your memory bank now.
+              Your today becomes your tomorrow&rsquo;s comfort. Start building your memory bank now.
             </p>
           </CardContent>
         </Card>
-
-        <div className="mt-8 text-center">
-          <p className="text-sm text-slate-500 dark:text-slate-400">
-            Youth Mirror — Preserving your memories for the future 💜
-          </p>
-        </div>
       </div>
-
-      {/* Modals */}
-      {activeModal === 'journal' && <MemoryJournal onClose={() => setActiveModal(null)} />}
-      {activeModal === 'moments' && <GratefulMoments onClose={() => setActiveModal(null)} />}
     </div>
   );
 }
