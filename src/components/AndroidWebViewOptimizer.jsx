@@ -74,7 +74,7 @@ export default function AndroidWebViewOptimizer() {
       window.addEventListener('resize', applyOffsets);
 
       // 9. Prevent accidental navigation back
-      window.addEventListener('popstate', (e) => {
+      window.addEventListener('popstate', (_e) => {
         androidBridge.trackEvent('back_pressed');
         // Let app handle back button via Bridge
       });

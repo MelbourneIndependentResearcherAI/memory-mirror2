@@ -393,7 +393,7 @@ export default function ContentUploader() {
     }
   };
 
-  const handleGeneratePrompts = async () => {
+  const _handleGeneratePrompts = async () => {
     if (!userProfile) {
       toast.error('User profile not found');
       return;

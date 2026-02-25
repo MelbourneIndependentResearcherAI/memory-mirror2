@@ -44,7 +44,7 @@ export const speakWithClonedVoice = async (text, options = {}) => {
               if (options.onEnd) options.onEnd();
               resolve();
             };
-            audio.onerror = (err) => {
+            audio.onerror = (_err) => {
               console.log('Audio playback error, falling back to system voice');
               URL.revokeObjectURL(audioUrl);
               speakWithRealisticVoice(text, options);
@@ -517,7 +517,7 @@ export const detectAnxiety = (text) => {
 };
 
 // Get calming redirect based on trigger
-export const getCalmingRedirect = (trigger) => {
+export const getCalmingRedirect = (_trigger) => {
   const calmingResponses = [
     "I'm right here with you. Let's take a deep breath together. You're safe and everything is being taken care of. What's something that always makes you smile?",
     "I can hear that you're feeling worried. That's completely okay. I want you to know you're safe right now. Can you tell me about a happy memory that brings you comfort?",

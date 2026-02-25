@@ -5,10 +5,10 @@ import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import MemoryGallery from '@/components/memory-mirror/MemoryGallery';
 import { toast } from 'sonner';
 
-export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated }) {
+export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated: _onBadDayActivated }) {
   const [showMemoryGallery, setShowMemoryGallery] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
-  const [wakeWordActive, setWakeWordActive] = useState(true);
+  const [wakeWordActive, _setWakeWordActive] = useState(true);
 
   const handleEraChange = (era) => {
     setDetectedEra(era);
