@@ -29,7 +29,7 @@ export default function VoiceCommandListener({ onMemoryGalleryOpen, currentMode 
       navigate('/phone');
       speakFeedback('Switching to phone mode');
     } else if (lowerCommand.includes('security') || lowerCommand.includes('safe') || lowerCommand.includes('check')) {
-      navigate('/security');
+      navigate('/SecurityMode');
       speakFeedback('Switching to security mode');
     } else if (lowerCommand.includes('memor') || lowerCommand.includes('happy') || lowerCommand.includes('photos')) {
       if (onMemoryGalleryOpen) {
