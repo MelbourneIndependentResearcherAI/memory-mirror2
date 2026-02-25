@@ -13,7 +13,7 @@ import { DragDropContext, Droppable, Draggable } from '@hello-pangea/dnd';
 export default function PlaylistBuilder() {
   const queryClient = useQueryClient();
   const [isCreating, setIsCreating] = useState(false);
-  const [editingPlaylist, setEditingPlaylist] = useState(null);
+  const [_editingPlaylist, _setEditingPlaylist] = useState(null);
   
   const [newPlaylist, setNewPlaylist] = useState({
     name: '',
