@@ -8,7 +8,7 @@ import ChatInterface from '@/components/memory-mirror/ChatInterface';
 export default function TVMode() {
   const [isMuted, setIsMuted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [_isFullscreen, setIsFullscreen] = useState(false);
 
   const { data: photos = [] } = useQuery({
     queryKey: ['familyMedia'],
