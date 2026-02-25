@@ -630,10 +630,6 @@ export default function Landing() {
           </div>
         </div>
         
-        {showDonationModal && (
-          <DonationModal onClose={() => setShowDonationModal(false)} />
-        )}
-
         {/* Community Feedback Section */}
         <CommunityFeedbackSection />
 

@@ -16,7 +16,6 @@ import { useLocation } from 'react-router-dom';
  */
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
-import OfflineIndicator from '@/components/memory-mirror/OfflineIndicator';
 import OfflineSyncIndicator from '@/components/memory-mirror/OfflineSyncIndicator';
 import ReminderNotification from '@/components/memory-mirror/ReminderNotification';
 import OfflineStatusBar from '@/components/memory-mirror/OfflineStatusBar';
