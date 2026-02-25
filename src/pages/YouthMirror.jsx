@@ -235,18 +235,29 @@ function GratefulMoments({ onBack }) {
     </div>
   );
 }
+import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import YouthMirrorCamera from '@/components/memory-mirror/YouthMirror';
 
 export default function YouthMirror() {
+  const [showCamera, setShowCamera] = useState(false);
+import { createPageUrl } from '@/utils';
+import MemorySelfie from '@/components/memory-mirror/YouthMirror';
+
+export default function YouthMirror() {
+  const [_activeFeature, setActiveFeature] = useState(null);
   const [activeFeature, setActiveFeature] = useState(null);
+  const navigate = useNavigate();
 
   const features = [
     {
       id: 'selfie',
       title: 'Memory Selfie',
-      description: 'Capture moments with AI-generated backgrounds from your favorite eras',
+      description: 'See a gentle reflection of your younger self with era-based vintage filters',
       icon: Camera,
       color: 'from-blue-500 to-cyan-500',
       available: false,
+      action: () => setShowCamera(true)
     },
     {
       id: 'timeline',
@@ -255,6 +266,7 @@ export default function YouthMirror() {
       icon: Calendar,
       color: 'from-purple-500 to-pink-500',
       available: false,
+      action: () => navigate('/FamilyTimeline')
     },
     {
       id: 'moments',
@@ -263,6 +275,7 @@ export default function YouthMirror() {
       icon: Heart,
       color: 'from-orange-500 to-red-500',
       available: true,
+      action: () => navigate('/CareJournalPage')
     },
     {
       id: 'chat',
@@ -271,14 +284,16 @@ export default function YouthMirror() {
       icon: MessageCircle,
       color: 'from-green-500 to-emerald-500',
       available: false,
+      action: () => navigate('/Home')
     },
     {
       id: 'collage',
       title: 'Memory Collages',
-      description: 'Create beautiful photo collages of your favorite memories',
+      description: 'Browse and share photos of your favorite memories',
       icon: Image,
       color: 'from-pink-500 to-rose-500',
       available: false,
+      action: () => navigate('/FamilyPhotoAlbum')
     },
     {
       id: 'music',
@@ -287,6 +302,7 @@ export default function YouthMirror() {
       icon: Music,
       color: 'from-indigo-500 to-purple-500',
       available: false,
+      action: () => navigate('/MusicTherapy')
     },
     {
       id: 'journal',
@@ -314,6 +330,51 @@ export default function YouthMirror() {
         <div className="max-w-3xl mx-auto">
           <GratefulMoments onBack={() => setActiveFeature(null)} />
         </div>
+      action: () => navigate('/SharedJournal')
+    }
+  ];
+
+  if (showCamera) {
+    return (
+      <div className="min-h-screen">
+        <button
+          onClick={() => setShowCamera(false)}
+          className="fixed top-4 left-4 z-50 flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full hover:bg-white/30 transition-colors min-h-[44px]"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          Back to Youth Mirror
+        </button>
+        <YouthMirrorCamera />
+  const featureRoutes = {
+    timeline: createPageUrl('FamilyTimeline'),
+    moments: createPageUrl('SharedJournal'),
+    chat: createPageUrl('ChatMode'),
+    collage: createPageUrl('FamilyMediaAlbum'),
+    music: createPageUrl('FamilyMusic'),
+    journal: createPageUrl('FamilyStories'),
+  };
+
+  const handleFeatureClick = (feature) => {
+    if (feature.id === 'selfie') {
+      setActiveFeature('selfie');
+    } else {
+      navigate(featureRoutes[feature.id]);
+    }
+  };
+
+  if (activeFeature === 'selfie') {
+    return (
+      <div className="min-h-screen">
+        <div className="p-4">
+          <button
+            onClick={() => setActiveFeature(null)}
+            className="flex items-center gap-2 text-violet-600 dark:text-violet-400 hover:text-violet-700 mb-4 min-h-[44px]"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            Back to Youth Mirror
+          </button>
+        </div>
+        <MemorySelfie />
       </div>
     );
   }
@@ -366,6 +427,8 @@ export default function YouthMirror() {
                     toast.info(`${feature.title} coming soon!`);
                   }
                 }}
+                onClick={feature.action}
+                onClick={() => handleFeatureClick(feature)}
               >
                 <div className={`h-3 bg-gradient-to-r ${feature.color}`} />
                 <CardHeader>
@@ -387,6 +450,7 @@ export default function YouthMirror() {
                 <CardContent>
                   <Button
                     className={`w-full bg-gradient-to-r ${feature.color} hover:opacity-90 min-h-[44px]`}
+                    onClick={feature.action}
                   >
                     {feature.available ? 'Open' : 'Explore'}
                   </Button>
@@ -413,6 +477,12 @@ export default function YouthMirror() {
             </p>
           </CardContent>
         </Card>
+
+        <div className="mt-8 text-center">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
+            Youth Mirror — Preserving your memories for the future 💜
+          </p>
+        </div>
       </div>
     </div>
   );

@@ -44,7 +44,7 @@ export default function GameInterface({ onClose }) {
         details: { game: gameId, started: new Date().toISOString() }
       }).catch(() => {});
 
-    } catch (error) {
+    } catch {
       setGameState({ messages: [{ role: 'assistant', content: "Let's have some fun together!" }], gameId });
     }
 

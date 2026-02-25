@@ -95,7 +95,7 @@ export default function OfflineContentManager({ onBack }) {
     onSuccess: () => queryClient.invalidateQueries(['offlineContentPriority'])
   });
 
-  const toggleSyncMutation = useMutation({
+  const _toggleSyncMutation = useMutation({
     mutationFn: ({ id, enabled }) => 
       base44.entities.OfflineContentPriority.update(id, { sync_enabled: enabled }),
     onSuccess: () => queryClient.invalidateQueries(['offlineContentPriority'])
