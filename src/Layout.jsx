@@ -28,51 +28,65 @@ import { initGlobalErrorHandler } from '@/components/utils/errorLogger';
 import AccessibilityWrapper from '@/components/accessibility/AccessibilityWrapper';
 import AndroidWebViewOptimizer from '@/components/AndroidWebViewOptimizer';
 
-// Initialize app capabilities on load
+// Initialize app capabilities on load - wrapped in try/catch to prevent blocking
 if (typeof window !== 'undefined') {
-  // Bug fixes
-  import('@/components/utils/bugFixes').then(module => {
-    module.initAllBugFixes();
-  }).catch(e => console.log('Bug fixes init:', e.message));
+  // Bug fixes - non-blocking
+  setTimeout(() => {
+    import('@/components/utils/bugFixes').then(module => {
+      module.initAllBugFixes();
+    }).catch(() => {});
+  }, 0);
   
-  // Error logging
-  initGlobalErrorHandler();
+  // Error logging - non-blocking
+  setTimeout(() => {
+    try {
+      initGlobalErrorHandler();
+    } catch {}
+  }, 0);
   
-  // Initialize offline storage immediately
-  initOfflineDB().catch(e => console.log('Offline DB init (optional):', e.message));
-  initOfflineStorage().catch(e => console.log('Offline storage init:', e.message));
-  offlineDataCache.init().catch(e => console.log('Offline data cache init:', e.message));
+  // Initialize offline storage - non-blocking
+  setTimeout(() => {
+    Promise.all([
+      initOfflineDB().catch(() => {}),
+      initOfflineStorage().catch(() => {}),
+      offlineDataCache.init().catch(() => {})
+    ]).catch(() => {});
+  }, 100);
   
-  // Register service worker for offline support
-  registerServiceWorker();
+  // Service worker - non-blocking
+  setTimeout(() => {
+    try {
+      registerServiceWorker();
+      requestPersistentStorage();
+    } catch {}
+  }, 200);
   
-  // Request persistent storage for offline data
-  requestPersistentStorage();
+  // Cache remote data - non-blocking
+  setTimeout(() => {
+    const CACHE_KEY = 'last_cache_time';
+    const lastCache = localStorage.getItem(CACHE_KEY);
+    const CACHE_INTERVAL = 10 * 60 * 1000;
+    
+    if (navigator.onLine && (!lastCache || Date.now() - parseInt(lastCache) > CACHE_INTERVAL)) {
+      offlineSyncManager.cacheRemoteData().then(() => {
+        localStorage.setItem(CACHE_KEY, Date.now().toString());
+      }).catch(() => {});
+    }
+  }, 500);
   
-  // Cache remote data only if not recently done
-  const CACHE_KEY = 'last_cache_time';
-  const lastCache = localStorage.getItem(CACHE_KEY);
-  const CACHE_INTERVAL = 10 * 60 * 1000; // 10 minutes
-  
-  if (navigator.onLine && (!lastCache || Date.now() - parseInt(lastCache) > CACHE_INTERVAL)) {
-    offlineSyncManager.cacheRemoteData().then(() => {
-      localStorage.setItem(CACHE_KEY, Date.now().toString());
-    }).catch(e => console.log('Cache preload:', e.message));
-  }
-  
-  // Preload essential data only once per session
-  const PRELOAD_KEY = 'offline_preload_session';
-  const lastPreload = sessionStorage.getItem(PRELOAD_KEY);
-  const ONE_HOUR = 60 * 60 * 1000;
-  
-  if (!lastPreload || Date.now() - parseInt(lastPreload) > ONE_HOUR) {
-    import('@/components/utils/offlinePreloader').then(module => {
-      module.default().catch(e => 
-        console.log('Preload warning:', e.message || 'Offline preload skipped')
-      );
-      sessionStorage.setItem(PRELOAD_KEY, Date.now().toString());
-    });
-  }
+  // Preload data - non-blocking
+  setTimeout(() => {
+    const PRELOAD_KEY = 'offline_preload_session';
+    const lastPreload = sessionStorage.getItem(PRELOAD_KEY);
+    const ONE_HOUR = 60 * 60 * 1000;
+    
+    if (!lastPreload || Date.now() - parseInt(lastPreload) > ONE_HOUR) {
+      import('@/components/utils/offlinePreloader').then(module => {
+        module.default().catch(() => {});
+        sessionStorage.setItem(PRELOAD_KEY, Date.now().toString());
+      }).catch(() => {});
+    }
+  }, 1000);
 }
 
 export default function Layout({ children, currentPageName }) {
