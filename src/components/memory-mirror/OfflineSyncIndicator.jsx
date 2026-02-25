@@ -43,7 +43,7 @@ export default function OfflineSyncIndicator() {
 
   if (!isOnline) {
     return (
-      <div className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 animate-pulse">
+      <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 animate-pulse">
         <CloudOff className="w-5 h-5" />
         <span className="text-sm font-medium hidden sm:inline">Offline Mode</span>
       </div>
@@ -52,7 +52,7 @@ export default function OfflineSyncIndicator() {
 
   if (syncStatus === 'syncing') {
     return (
-      <div className="fixed bottom-6 right-6 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
+      <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
         <Loader2 className="w-5 h-5 animate-spin" />
         <span className="text-sm font-medium hidden sm:inline">Syncing...</span>
       </div>
@@ -61,7 +61,7 @@ export default function OfflineSyncIndicator() {
 
   if (syncStatus === 'success') {
     return (
-      <div className="fixed bottom-6 right-6 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 animate-bounce">
+      <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 animate-bounce">
         <CheckCircle2 className="w-5 h-5" />
         <span className="text-sm font-medium hidden sm:inline">Synced!</span>
       </div>
@@ -70,7 +70,7 @@ export default function OfflineSyncIndicator() {
 
   if (syncStatus === 'error') {
     return (
-      <div className="fixed bottom-6 right-6 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
+      <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
         <AlertCircle className="w-5 h-5" />
         <span className="text-sm font-medium hidden sm:inline">Sync Error</span>
       </div>
@@ -79,7 +79,7 @@ export default function OfflineSyncIndicator() {
 
   if (pendingCount > 0) {
     return (
-      <div className="fixed bottom-6 right-6 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
+      <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-amber-500 to-orange-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2">
         <Cloud className="w-5 h-5" />
         <span className="text-sm font-medium hidden sm:inline">
           {pendingCount} pending
@@ -89,7 +89,7 @@ export default function OfflineSyncIndicator() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 opacity-70">
+    <div className="fixed bottom-6 right-6 z-30 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-full p-3 shadow-lg flex items-center gap-2 opacity-70">
       <Cloud className="w-5 h-5" />
       <span className="text-sm font-medium hidden sm:inline">Synced</span>
     </div>

@@ -7,6 +7,7 @@ import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
+import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
@@ -33,6 +34,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
+      <GlobalLanguageSelector />
       {/* Top Navigation Bar */}
       <div className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-7xl">

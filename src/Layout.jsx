@@ -2,7 +2,6 @@ import React from 'react';
 import { ThemeProvider } from 'next-themes';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
-import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
@@ -107,7 +106,6 @@ export default function Layout({ children, currentPageName }) {
                   <ErrorBoundary>
                     <AndroidWebViewOptimizer />
                     <ScrollToTop />
-                    <GlobalLanguageSelector />
                     <OfflineStatusBar />
                     <OfflineSyncIndicator />
                     <ReminderNotification />
