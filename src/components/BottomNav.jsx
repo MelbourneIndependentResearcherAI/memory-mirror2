@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard } from 'lucide-react';
+import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard, CircleDot } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { useLockMode } from '@/components/LockModeManager';
@@ -13,6 +13,12 @@ export default function BottomNav() {
   const isActive = (path) => location.pathname === path;
 
   const navItems = React.useMemo(() => [
+    {
+      path: createPageUrl('BigButtonMode'),
+      icon: CircleDot,
+      label: 'Easy',
+      color: 'text-red-500'
+    },
     {
       path: createPageUrl('ChatMode'),
       icon: MessageCircle,
