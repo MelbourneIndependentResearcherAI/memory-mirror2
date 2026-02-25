@@ -7,17 +7,6 @@ import { offlineEntities } from '@/components/utils/offlineAPI';
 import { format, subDays, isAfter } from 'date-fns';
 
 const ERA_COLORS = ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#F59E0B', '#06B6D4'];
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
-import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { format, subDays, parseISO } from 'date-fns';
-
-const ERA_COLORS = {
-  '1940s': '#3B82F6',
-  '1960s': '#8B5CF6',
-  '1980s': '#EC4899',
-  'present': '#10B981',
-};
 
 export default function ConversationAnalyticsPage() {
   const navigate = useNavigate();
@@ -50,17 +39,6 @@ export default function ConversationAnalyticsPage() {
 
   const hasRealData = conversations.length > 0;
 
-  // Era distribution from real data
-  const eraCountMap = {};
-  conversations.forEach(c => {
-    const era = c.detected_era || 'Unknown';
-    eraCountMap[era] = (eraCountMap[era] || 0) + 1;
-  });
-  const eraDistribution = Object.entries(eraCountMap).map(([name, value], idx) => ({
-    name,
-    value,
-    color: ERA_COLORS[idx % ERA_COLORS.length]
-  }));
 
   const totalMessages = conversations.reduce((sum, c) => sum + (c.messages?.length || 0), 0);
   const thisWeekSessions = recentConvos.length;
@@ -193,11 +171,6 @@ export default function ConversationAnalyticsPage() {
               <TrendingUp className="w-8 h-8 text-purple-400 opacity-30" />
             </div>
           </div>
-          <div className="bg-slate-800 border border-slate-700 rounded-xl p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-slate-400 text-sm mb-1">This Week</p>
-                <p className="text-3xl font-bold text-white">{hasRealData ? thisWeekSessions : '—'}</p>
         {isLoading ? (
           <div className="text-center py-20 text-slate-400 text-xl">Loading conversation data…</div>
         ) : totalConversations === 0 ? (
@@ -237,7 +210,8 @@ export default function ConversationAnalyticsPage() {
                 </div>
               </div>
             </div>
-          </div>
+          </>
+        )}
         </div>
 
         {!hasRealData ? (
@@ -295,11 +269,8 @@ export default function ConversationAnalyticsPage() {
 
               <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
                 <h2 className="text-xl font-bold text-white mb-4">Mental Era Distribution</h2>
-                {eraDistribution.length > 0 ? (
-              {eraDistribution.length > 0 && (
-                <div className="bg-slate-800 border border-slate-700 rounded-2xl p-6">
-                  <h2 className="text-xl font-bold text-white mb-4">Mental Era Distribution</h2>
-                  <ResponsiveContainer width="100%" height={300}>
+              {eraDistribution.length > 0 ? (
+                <ResponsiveContainer width="100%" height={300}>
                     <PieChart>
                       <Pie
                         data={eraDistribution}

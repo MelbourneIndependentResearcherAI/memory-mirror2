@@ -77,14 +77,12 @@ const featureCards = [
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
   { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
-  { id: 31, title: 'Profile Setup', icon: '👤', description: 'Personalize AI interactions for your loved one', path: '/CaregiverPortal/profile', background: '#EFF6FF' }
 ];
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
 
-  const handleCardClick = async (card) => {    if (card.id === 12) {
   const handleCardClick = async (card) => {
     if (card.id === 12) {
       setBadDayActivated(true);

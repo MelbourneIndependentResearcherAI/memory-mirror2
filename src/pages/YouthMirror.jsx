@@ -9,106 +9,6 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { format } from 'date-fns';
 
-// Memory Journal mini-component
-function MemoryJournal({ onClose }) {
-  const [entry, setEntry] = useState('');
-  const [title, setTitle] = useState('');
-  const queryClient = useQueryClient();
-
-  const { data: journalEntries = [], isLoading } = useQuery({
-    queryKey: ['youthJournal'],
-    queryFn: () => base44.entities.CareJournal.list('-created_date', 20),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CareJournal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['youthJournal'] });
-      setEntry('');
-      setTitle('');
-      toast.success('Journal entry saved!');
-    },
-    onError: () => toast.error('Failed to save entry'),
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (id) => base44.entities.CareJournal.delete(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['youthJournal'] });
-      toast.success('Entry deleted');
-    },
-  });
-
-  const handleSave = () => {
-    if (!entry.trim()) {
-      toast.error('Please write something first');
-      return;
-    }
-    createMutation.mutate({
-      title: title.trim() || 'Memory Journal Entry',
-      content: entry.trim(),
-      mood: 'reflective',
-      entry_type: 'youth_mirror',
-    });
-  };
-
-  return (
-    <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between p-6 border-b border-slate-200 dark:border-slate-700">
-          <div className="flex items-center gap-3">
-            <BookOpen className="w-6 h-6 text-amber-500" />
-            <h2 className="text-xl font-bold text-slate-800 dark:text-slate-100">Memory Journal</h2>
-          </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 min-h-[44px] min-w-[44px] flex items-center justify-center">
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-
-        <div className="p-6 overflow-y-auto flex-1">
-          {/* New Entry */}
-          <div className="mb-6 space-y-3">
-            <input
-              type="text"
-              placeholder="Title (optional)..."
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-2.5 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400"
-            />
-            <textarea
-              placeholder="Write about a memory, a moment, or something you're feeling today..."
-              value={entry}
-              onChange={(e) => setEntry(e.target.value)}
-              rows={4}
-              className="w-full border border-slate-300 dark:border-slate-600 rounded-lg px-4 py-3 text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-amber-400 resize-none"
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, X, Save, Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import React, { useState, useRef } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, X, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '../utils';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Music, BookOpen, ArrowLeft, Send, Loader2, Mic, MicOff } from 'lucide-react';
-import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format, parseISO } from 'date-fns';
-import MemoryTimelineBuilder from '@/components/family/MemoryTimelineBuilder';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '../utils';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft, Send, Loader2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { useNavigate } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { format } from 'date-fns';
-import { createPageUrl } from '../utils';
-
 const GRATEFUL_PROMPTS = [
   "What made you smile today?",
   "Who are you grateful for right now?",
@@ -119,43 +19,6 @@ const GRATEFUL_PROMPTS = [
   "What small thing brought you joy this week?",
 ];
 
-function MemoryJournalView({ onBack }) {
-  const queryClient = useQueryClient();
-  const [entry, setEntry] = useState('');
-  const [title, setTitle] = useState('');
-
-  const { data: journals = [], isLoading } = useQuery({
-    queryKey: ['youthJournals'],
-    queryFn: () => base44.entities.CareJournal.list('-created_date', 30).catch(() => []),
-  });
-
-  const createMutation = useMutation({
-    mutationFn: (data) => base44.entities.CareJournal.create(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['youthJournals'] });
-      setEntry('');
-      setTitle('');
-      toast.success('Journal entry saved!');
-    },
-    onError: () => toast.error('Failed to save entry. Please try again.'),
-  });
-
-  const handleSave = () => {
-    if (!entry.trim()) {
-      toast.error('Please write something before saving.');
-      return;
-    }
-    createMutation.mutate({
-      title: title.trim() || `Memory — ${format(new Date(), 'PP')}`,
-      notes: entry.trim(),
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Badge } from '@/components/ui/badge';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft, Plus, Send, Loader2, Upload, Trash2 } from 'lucide-react';
-import { toast } from 'sonner';
-import { base44 } from '@/api/base44Client';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { format } from 'date-fns';
 
 // ── Grateful Moments Panel ─────────────────────────────────────────────────────
 const GRATITUDE_PROMPTS = [
@@ -203,37 +66,6 @@ function GratefulMomentsPanel() {
   };
 
   return (
-    <div>
-      <button onClick={onBack} className="flex items-center gap-2 text-violet-600 hover:text-violet-700 mb-6 min-h-[44px]">
-        <ArrowLeft className="w-5 h-5" /> Back
-      </button>
-      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 flex items-center gap-2">
-        <BookOpen className="w-7 h-7 text-amber-500" /> Memory Journal
-      </h2>
-      <p className="text-slate-500 dark:text-slate-400 mb-6">Write down your thoughts, feelings, and memories to preserve them for the future.</p>
-
-      <Card className="mb-6">
-        <CardContent className="p-4 space-y-3">
-          <input
-            type="text"
-            placeholder="Title (optional)"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-violet-400"
-          />
-          <Textarea
-            placeholder="What's on your mind? Describe a memory, a feeling, or anything you want to remember…"
-            value={entry}
-            onChange={(e) => setEntry(e.target.value)}
-            rows={5}
-            className="resize-none"
-          />
-          <Button
-            onClick={handleSave}
-            disabled={createMutation.isPending || !entry.trim()}
-            className="w-full bg-gradient-to-r from-amber-500 to-yellow-500 hover:opacity-90 min-h-[44px]"
-          >
-            {createMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Send className="w-4 h-4 mr-2" />}
     <div className="space-y-6">
       <Card className="bg-gradient-to-br from-orange-50 to-red-50 dark:from-orange-950/30 dark:to-red-950/30 border-orange-200 dark:border-orange-800">
         <CardContent className="p-6">
@@ -337,24 +169,6 @@ function MemoryJournalPanel() {
         </CardContent>
       </Card>
 
-      {isLoading ? (
-        <div className="flex justify-center py-8"><Loader2 className="w-8 h-8 animate-spin text-violet-500" /></div>
-      ) : journals.length === 0 ? (
-        <p className="text-center text-slate-400 py-8">No journal entries yet. Write your first one above!</p>
-      ) : (
-        <div className="space-y-3">
-          {journals.map((j, i) => (
-            <Card key={j.id ?? i} className="border border-slate-200 dark:border-slate-700">
-              <CardContent className="p-4">
-                <div className="flex items-start justify-between mb-1">
-                  <p className="font-semibold text-slate-800 dark:text-slate-200">{j.title}</p>
-                  <span className="text-xs text-slate-400 flex-shrink-0 ml-2">
-                    {j.created_date ? format(new Date(j.created_date), 'PP') : ''}
-                  </span>
-                </div>
-                {j.notes && <p className="text-slate-600 dark:text-slate-400 text-sm whitespace-pre-line">{j.notes}</p>}
-              </CardContent>
-            </Card>
       {isLoading ? <p className="text-center text-slate-500">Loading your journal...</p> : entries.length > 0 && (
         <div>
           <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-200 mb-3">Previous Entries</h3>
@@ -539,7 +353,13 @@ function GratefulMomentsView({ onBack }) {
           >
             {createMutation.isPending ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Heart className="w-4 h-4 mr-2" />}
             Save Moment
-// ── AI Chat Buddy Panel ────────────────────────────────────────────────────────
+          </Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
+}
+
 function AIChatBuddyPanel() {
   const [messages, setMessages] = useState([
     { role: 'assistant', content: "Hi! I'm your AI Chat Buddy. I'm here to listen, chat about your day, help you reflect on memories, or just keep you company. What's on your mind?" }
