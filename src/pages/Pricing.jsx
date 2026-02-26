@@ -68,12 +68,14 @@ export default function Pricing() {
       id: 'free',
       name: 'Free',
       price: 0,
+      billing: 'Forever Free',
       description: 'Essential features for getting started',
       features: [
-        'Basic AI conversations',
-        'Limited memory storage',
-        'Standard voice interactions',
-        'Community support'
+        '10 conversations per day',
+        '5 memory stories',
+        'Basic voice interactions',
+        'Community support',
+        'Standard AI companion'
       ],
       highlight: false
     },
@@ -81,18 +83,21 @@ export default function Pricing() {
       id: 'premium',
       name: 'Premium',
       price: 9.99,
+      billing: 'AUD $9.99/month',
       description: 'Full access to all Memory Mirror features',
       features: [
-        'Unlimited AI conversations',
+        'Unlimited conversations',
         'Unlimited memory storage',
         'Advanced voice cloning',
         'Family sharing (up to 5 members)',
         'Custom music & playlists',
-        'Priority support',
-        'Offline mode',
-        'Advanced analytics',
+        'Priority 24/7 support',
+        'Offline mode with sync',
+        'Advanced mood analytics',
         'Night watch monitoring',
-        'Smart home integration'
+        'Smart home integration',
+        'Personalized care plans',
+        'Early access to new features'
       ],
       highlight: true,
       popular: true
@@ -245,11 +250,16 @@ export default function Pricing() {
                   {plan.name}
                 </CardTitle>
                 <div className="mb-4">
-                  <span className="text-5xl font-bold text-purple-600 dark:text-purple-400">
-                    {formatCurrency(plan.price)}
-                  </span>
-                  <span className="text-slate-600 dark:text-slate-400 text-lg">/month</span>
-                </div>
+                   <span className="text-5xl font-bold text-purple-600 dark:text-purple-400">
+                     {formatCurrency(plan.price)}
+                   </span>
+                   <span className="text-slate-600 dark:text-slate-400 text-lg">
+                     {plan.price === 0 ? 'Always' : '/month'}
+                   </span>
+                 </div>
+                 <p className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                   {plan.billing}
+                 </p>
                 <CardDescription className="text-base">
                   {plan.description}
                 </CardDescription>
