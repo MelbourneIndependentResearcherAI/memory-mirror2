@@ -9,7 +9,7 @@ import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSe
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
-import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);

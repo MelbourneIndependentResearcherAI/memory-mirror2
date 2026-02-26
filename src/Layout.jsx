@@ -9,7 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
-import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
+import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
