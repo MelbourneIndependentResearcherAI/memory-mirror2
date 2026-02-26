@@ -92,6 +92,7 @@ import FamilyTreePage from './pages/FamilyTreePage';
 import FamilyVideoCall from './pages/FamilyVideoCall';
 import Feedback from './pages/Feedback';
 import GeofenceTracking from './pages/GeofenceTracking';
+import HealthCheck from './pages/HealthCheck';
 import HealthMonitor from './pages/HealthMonitor';
 import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
@@ -128,6 +129,7 @@ import Resources from './pages/Resources';
 import SecureMessagingPage from './pages/SecureMessagingPage';
 import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
+import Settings from './pages/Settings';
 import SharedJournal from './pages/SharedJournal';
 import SingAlongStudio from './pages/SingAlongStudio';
 import SmartHome from './pages/SmartHome';
@@ -150,8 +152,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import HealthCheck from './pages/HealthCheck';
-import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -201,6 +201,7 @@ export const PAGES = {
     "FamilyVideoCall": FamilyVideoCall,
     "Feedback": Feedback,
     "GeofenceTracking": GeofenceTracking,
+    "HealthCheck": HealthCheck,
     "HealthMonitor": HealthMonitor,
     "Home": Home,
     "ImportArticle": ImportArticle,
@@ -237,6 +238,7 @@ export const PAGES = {
     "SecureMessagingPage": SecureMessagingPage,
     "Security": Security,
     "SecurityMode": SecurityMode,
+    "Settings": Settings,
     "SharedJournal": SharedJournal,
     "SingAlongStudio": SingAlongStudio,
     "SmartHome": SmartHome,
@@ -259,8 +261,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "HealthCheck": HealthCheck,
-    "Settings": Settings,
 }
 
 export const pagesConfig = {
