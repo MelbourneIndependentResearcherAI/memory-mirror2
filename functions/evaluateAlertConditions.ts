@@ -16,12 +16,12 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Get all enabled alert conditions for this patient
+    // Get all enabled alert conditions
     const alertConditions = await base44.asServiceRole.entities.AlertCondition.filter(
       { is_enabled: true },
       '-created_date',
       100
-    );
+    ) || [];
 
     const triggeredAlerts = [];
     const now = new Date();

@@ -640,7 +640,6 @@ Now respond like their best friend who genuinely cares and listened carefully to
 
   const evaluateAlertConditions = useCallback(async () => {
     try {
-      const userProfile = userProfile;
       const lastMsgTime = lastMessageTimeRef.current ? new Date(lastMessageTimeRef.current) : null;
       
       await base44.functions.invoke('evaluateAlertConditions', {
