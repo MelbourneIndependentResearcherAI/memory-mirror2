@@ -167,7 +167,7 @@ export default function Landing() {
             { icon: '👨‍⚕️', title: 'Caregiver Tools', page: 'CaregiverPortal' },
             { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
             { icon: '🎵', title: 'Music', page: 'MusicTherapy' },
-            { icon: '🛡️', title: 'Security', page: 'Security' },
+            { icon: '📞', title: 'Resources', page: 'Resources' },
             { icon: '🏦', title: 'Banking', page: 'MyBank' },
           ].map((card) => (
             <button
@@ -191,12 +191,21 @@ export default function Landing() {
           >
             Go to Memory Mirror →
           </Button>
-          <button
-            onClick={() => setShowDonationModal(true)}
-            className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-          >
-            💙 Support this project
-          </button>
+          <div className="flex gap-4 justify-center flex-wrap">
+            <button
+              onClick={() => navigateTo('Resources')}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
+            >
+              📞 Emergency Resources
+            </button>
+            <span className="text-slate-300">•</span>
+            <button
+              onClick={() => setShowDonationModal(true)}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+            >
+              💙 Support this project
+            </button>
+          </div>
         </div>
 
         {/* Quick Stats */}
