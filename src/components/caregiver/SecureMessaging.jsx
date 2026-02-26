@@ -4,9 +4,10 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Plus, Archive, X, Check, CheckCheck } from 'lucide-react';
+import { Send, Plus, Archive, X, Check, CheckCheck, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
+import SecureVideoCall from '@/components/video/SecureVideoCall';
 
 export default function SecureMessaging() {
   const [selectedConversation, setSelectedConversation] = useState(null);
@@ -14,6 +15,7 @@ export default function SecureMessaging() {
   const [showNewConversation, setShowNewConversation] = useState(false);
   const [newConvTitle, setNewConvTitle] = useState('');
   const [newConvParticipants, setNewConvParticipants] = useState('');
+  const [activeCall, setActiveCall] = useState(null);
   const messagesEndRef = useRef(null);
   const queryClient = useQueryClient();
 
@@ -75,6 +77,32 @@ export default function SecureMessaging() {
     },
     onError: () => {
       toast.error('Failed to send message');
+    },
+  });
+
+  // Initiate video call mutation
+  const initiateCallMutation = useMutation({
+    mutationFn: async () => {
+      const participants = selectedConversation.participants
+        .filter(p => p.email !== currentUser?.email)
+        .map(p => p.email);
+      
+      return await base44.functions.invoke('initiateVideoCall', {
+        conversation_id: selectedConversation.id,
+        participants,
+      });
+    },
+    onSuccess: (response) => {
+      setActiveCall({
+        id: response.data.callId,
+        roomId: response.data.roomId,
+        accessToken: response.data.accessToken,
+        participants: selectedConversation.participants.map(p => p.email),
+      });
+      toast.success('Video call initiated');
+    },
+    onError: () => {
+      toast.error('Failed to initiate video call');
     },
   });
 
@@ -187,13 +215,22 @@ export default function SecureMessaging() {
           className="lg:col-span-2 flex flex-col bg-slate-50 dark:bg-slate-800"
         >
           {/* Header */}
-          <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-            <h3 className="font-bold text-slate-900 dark:text-white text-lg">
-              {selectedConversation.title}
-            </h3>
-            <p className="text-sm text-slate-600 dark:text-slate-400">
-              {selectedConversation.participants.length} participant{selectedConversation.participants.length !== 1 ? 's' : ''}
-            </p>
+          <div className="p-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex justify-between items-center">
+            <div>
+              <h3 className="font-bold text-slate-900 dark:text-white text-lg">
+                {selectedConversation.title}
+              </h3>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                {selectedConversation.participants.length} participant{selectedConversation.participants.length !== 1 ? 's' : ''}
+              </p>
+            </div>
+            <Button
+              onClick={() => initiateCallMutation.mutate()}
+              disabled={initiateCallMutation.isPending}
+              className="gap-2 bg-green-600 hover:bg-green-700"
+            >
+              <Phone className="w-4 h-4" /> Start Video Call
+            </Button>
           </div>
 
           {/* Messages */}
@@ -274,6 +311,19 @@ export default function SecureMessaging() {
           </div>
         </div>
       )}
+
+      {/* Active Video Call */}
+      <AnimatePresence>
+        {activeCall && (
+          <SecureVideoCall
+            callId={activeCall.id}
+            roomId={activeCall.roomId}
+            accessToken={activeCall.accessToken}
+            participants={activeCall.participants}
+            onClose={() => setActiveCall(null)}
+          />
+        )}
+      </AnimatePresence>
 
       {/* New Conversation Modal */}
       <AnimatePresence>
