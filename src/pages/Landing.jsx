@@ -239,11 +239,11 @@ export default function Landing() {
         <div className="mt-6 flex justify-center gap-4 flex-wrap text-xs">
           <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
           <span className="text-slate-600">•</span>
-          <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">Terms of Service</Link>
+          <Link to={createPageUrl('Resources')} className="text-slate-400 hover:text-slate-300 transition-colors">Emergency Resources</Link>
           <span className="text-slate-600">•</span>
-          <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">Privacy Policy</Link>
+          <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">Terms</Link>
           <span className="text-slate-600">•</span>
-          <a href="mailto:support@memorymirror.app" className="text-slate-400 hover:text-slate-300 transition-colors">Support</a>
+          <Link to={createPageUrl('PrivacyPolicy')} className="text-slate-400 hover:text-slate-300 transition-colors">Privacy</Link>
           <span className="text-slate-600">•</span>
           <Link to={createPageUrl('Feedback')} className="text-slate-400 hover:text-slate-300 transition-colors">Feedback</Link>
         </div>
