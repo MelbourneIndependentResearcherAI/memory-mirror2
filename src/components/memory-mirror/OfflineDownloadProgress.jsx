@@ -35,72 +35,49 @@ export default function OfflineDownloadProgress({ onComplete, autoStart = false 
     setIsDownloading(true);
     setProgress(0);
     setIsComplete(false);
+    setTotalSize((250 * 200) + (20 * 1500) + (40 * 500) + (25 * 800)); // ~135KB
 
     try {
-      // Import the preloader
-      const { default: preloadEssentialData } = await import('../utils/offlinePreloader');
+      // Import the download manager for robust downloading
+      const { downloadManager } = await import('../utils/offlineDownloadManager');
       
-      // Override console.log temporarily to capture progress
-      const originalLog = console.log;
+      // Subscribe to download manager progress
       let itemsDone = 0;
-      const totalItems = 250 + 20 + 40 + 25; // AI responses + stories + music + exercises = 335 items
+      const totalItems = 335; // AI responses + stories + music + exercises
       
-      console.log = (...args) => {
-        originalLog(...args);
-        const message = args.join(' ');
+      const unsubscribe = downloadManager.subscribe((progressData) => {
+        setCurrentItem(progressData.currentItem);
+        setDownloadedSize(progressData.downloadedBytes);
         
-        // Parse progress from log messages
-        if (message.includes('Cached') && message.includes('AI responses')) {
-          const count = parseInt(message.match(/(\d+)/)?.[0] || 0);
-          setDownloadStats(prev => ({ ...prev, aiResponses: { current: count, total: 250 } }));
-          setCurrentItem('AI Response Library');
-          itemsDone += count;
-          setProgress((itemsDone / totalItems) * 100);
-          setDownloadedSize(prev => prev + (count * 200)); // ~200 bytes per response
-        } else if (message.includes('Cached') && message.includes('stories')) {
-          const count = parseInt(message.match(/(\d+)/)?.[0] || 0);
-          setDownloadStats(prev => ({ ...prev, stories: { current: count, total: 20 } }));
-          setCurrentItem('Story Library');
-          itemsDone += count;
-          setProgress((itemsDone / totalItems) * 100);
-          setDownloadedSize(prev => prev + (count * 1500)); // ~1.5KB per story
-        } else if (message.includes('Cached') && message.includes('songs')) {
-          const count = parseInt(message.match(/(\d+)/)?.[0] || 0);
-          setDownloadStats(prev => ({ ...prev, music: { current: count, total: 40 } }));
-          setCurrentItem('Music Library');
-          itemsDone += count;
-          setProgress((itemsDone / totalItems) * 100);
-          setDownloadedSize(prev => prev + (count * 500)); // ~500 bytes per song metadata
-        } else if (message.includes('Cached') && message.includes('interactive exercises')) {
-          const count = parseInt(message.match(/(\d+)/)?.[0] || 0);
-          setDownloadStats(prev => ({ ...prev, exercises: { current: count, total: 25 } }));
-          setCurrentItem('Memory Exercises');
-          itemsDone += count;
-          setProgress((itemsDone / totalItems) * 100);
-          setDownloadedSize(prev => prev + (count * 800)); // ~800 bytes per exercise
-        } else if (message.includes('Cached') && message.includes('records')) {
-          const match = message.match(/(\d+)\s+(\w+)\s+records/);
-          if (match) {
-            const count = parseInt(match[1]);
-            const entity = match[2];
-            setDownloadStats(prev => ({
-              ...prev,
-              entities: { current: (prev.entities.current || 0) + count, total: 100 }
-            }));
-            setCurrentItem(`${entity} Data`);
-            setDownloadedSize(prev => prev + (count * 1000)); // ~1KB per entity record
-          }
+        // Update category-specific progress
+        if (progressData.currentItem.includes('AI Response')) {
+          setDownloadStats(prev => ({ ...prev, aiResponses: { current: itemsDone, total: 250 } }));
+        } else if (progressData.currentItem.includes('Story')) {
+          setDownloadStats(prev => ({ ...prev, stories: { current: itemsDone, total: 20 } }));
+        } else if (progressData.currentItem.includes('Music')) {
+          setDownloadStats(prev => ({ ...prev, music: { current: itemsDone, total: 40 } }));
+        } else if (progressData.currentItem.includes('Exercise')) {
+          setDownloadStats(prev => ({ ...prev, exercises: { current: itemsDone, total: 25 } }));
         }
-      };
-
-      // Calculate total expected size
-      setTotalSize((250 * 200) + (20 * 1500) + (40 * 500) + (25 * 800)); // ~135KB
-
-      // Execute the preload
-      await preloadEssentialData();
-
-      // Restore console.log
-      console.log = originalLog;
+        
+        // Update overall progress
+        setProgress((progressData.current / progressData.total) * 100);
+      });
+      
+      // Start the download
+      const result = await downloadManager.startFullDownload();
+      
+      // Unsubscribe from updates
+      unsubscribe();
+      
+      // Update final stats
+      setDownloadStats({
+        aiResponses: { current: result.aiResponses || 0, total: 250 },
+        stories: { current: result.stories || 0, total: 20 },
+        music: { current: result.music || 0, total: 40 },
+        exercises: { current: result.exercises || 0, total: 25 },
+        entities: { current: 0, total: 0 }
+      });
 
       setProgress(100);
       setIsComplete(true);

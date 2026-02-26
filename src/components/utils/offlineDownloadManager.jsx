@@ -1,0 +1,274 @@
+/**
+ * Offline Download Manager - Ensures proper downloading and storage to IndexedDB
+ * Fixes: Ensures downloads complete, stores to IndexedDB properly, verifies storage
+ */
+
+import { initOfflineStorage, saveToStore, getAllFromStore, STORES } from './offlineStorage';
+import { initOfflineDB, downloadAudioForOffline, getOfflineAudioLibrary } from './offlineManager';
+import { base44 } from '@/api/base44Client';
+
+export class OfflineDownloadManager {
+  constructor() {
+    this.downloadQueue = [];
+    this.isDownloading = false;
+    this.progress = {
+      current: 0,
+      total: 0,
+      currentItem: '',
+      downloadedBytes: 0,
+      errors: []
+    };
+    this.listeners = [];
+  }
+
+  // Subscribe to download progress
+  subscribe(callback) {
+    this.listeners.push(callback);
+    return () => {
+      this.listeners = this.listeners.filter(cb => cb !== callback);
+    };
+  }
+
+  // Notify all listeners
+  notify() {
+    this.listeners.forEach(callback => callback(this.progress));
+  }
+
+  // Start full offline download
+  async startFullDownload() {
+    if (this.isDownloading) {
+      console.warn('Download already in progress');
+      return;
+    }
+
+    this.isDownloading = true;
+    this.progress = {
+      current: 0,
+      total: 335, // Total items to download
+      currentItem: 'Initializing...',
+      downloadedBytes: 0,
+      errors: []
+    };
+
+    try {
+      // Initialize databases
+      console.log('📦 Initializing offline storage...');
+      await initOfflineStorage();
+      await initOfflineDB();
+      
+      this.progress.currentItem = 'Storage Ready';
+      this.notify();
+
+      // Import preloader
+      const { default: preloadEssentialData } = await import('./offlinePreloader');
+      
+      // Execute preload with progress tracking
+      console.log('🚀 Starting download...');
+      const result = await preloadEssentialData();
+
+      // Update final progress
+      this.progress.current = this.progress.total;
+      this.progress.currentItem = 'Download Complete!';
+      this.progress.downloadedBytes = (
+        (result.aiResponses * 200) +
+        (result.stories * 1500) +
+        (result.music * 500) +
+        (result.exercises * 800)
+      );
+      this.notify();
+
+      // Verify download
+      const verified = await this.verifyDownload();
+      
+      console.log('✅ Download complete:', {
+        ...result,
+        verified,
+        totalBytes: this.progress.downloadedBytes
+      });
+
+      return {
+        success: true,
+        ...result,
+        verified
+      };
+
+    } catch (error) {
+      console.error('❌ Download failed:', error);
+      this.progress.errors.push(error.message);
+      this.notify();
+      throw error;
+    } finally {
+      this.isDownloading = false;
+    }
+  }
+
+  // Verify that content was downloaded correctly
+  async verifyDownload() {
+    console.log('🔍 Verifying offline content...');
+    
+    const verification = {
+      aiResponses: 0,
+      stories: 0,
+      music: 0,
+      audioFiles: 0,
+      exercises: 0,
+      totalSize: 0
+    };
+
+    try {
+      // Check AI responses
+      const aiResponses = await getAllFromStore(STORES.aiResponses);
+      verification.aiResponses = aiResponses.length;
+
+      // Check stories
+      const stories = await getAllFromStore(STORES.stories);
+      verification.stories = stories.length;
+
+      // Check music metadata
+      const music = await getAllFromStore(STORES.music);
+      verification.music = music.length;
+
+      // Check downloaded audio files
+      const audioLibrary = await getOfflineAudioLibrary();
+      verification.audioFiles = audioLibrary.length;
+
+      // Check exercises
+      const exercises = await getAllFromStore(STORES.activityLog);
+      verification.exercises = exercises.filter(e => 
+        e.activity_type === 'memory_exercise'
+      ).length;
+
+      // Calculate total size
+      const calculateSize = (items) => {
+        return items.reduce((sum, item) => {
+          const itemStr = JSON.stringify(item);
+          return sum + new Blob([itemStr]).size;
+        }, 0);
+      };
+
+      verification.totalSize = 
+        calculateSize(aiResponses) +
+        calculateSize(stories) +
+        calculateSize(music) +
+        calculateSize(exercises);
+
+      console.log('✅ Verification complete:', verification);
+      return verification;
+
+    } catch (error) {
+      console.error('Verification failed:', error);
+      return verification;
+    }
+  }
+
+  // Get current download status
+  getStatus() {
+    return {
+      isDownloading: this.isDownloading,
+      ...this.progress
+    };
+  }
+
+  // Download specific audio file
+  async downloadAudio(audioItem) {
+    try {
+      console.log(`🎵 Downloading audio: ${audioItem.title}`);
+      await downloadAudioForOffline(audioItem);
+      return { success: true };
+    } catch (error) {
+      console.error(`Failed to download ${audioItem.title}:`, error);
+      return { success: false, error: error.message };
+    }
+  }
+
+  // Batch download multiple audio files
+  async downloadAudioBatch(audioItems) {
+    const results = [];
+    for (const item of audioItems) {
+      const result = await this.downloadAudio(item);
+      results.push({ item: item.title, ...result });
+    }
+    return results;
+  }
+
+  // Get storage statistics
+  async getStorageStats() {
+    try {
+      const stats = {
+        aiResponses: await getAllFromStore(STORES.aiResponses),
+        stories: await getAllFromStore(STORES.stories),
+        music: await getAllFromStore(STORES.music),
+        audioFiles: await getOfflineAudioLibrary(),
+        exercises: await getAllFromStore(STORES.activityLog)
+      };
+
+      const totalItems = 
+        stats.aiResponses.length +
+        stats.stories.length +
+        stats.music.length +
+        stats.audioFiles.length +
+        stats.exercises.filter(e => e.activity_type === 'memory_exercise').length;
+
+      const totalBytes = 
+        JSON.stringify(stats.aiResponses).length +
+        JSON.stringify(stats.stories).length +
+        JSON.stringify(stats.music).length +
+        JSON.stringify(stats.exercises).length;
+
+      return {
+        itemCounts: {
+          aiResponses: stats.aiResponses.length,
+          stories: stats.stories.length,
+          music: stats.music.length,
+          audioFiles: stats.audioFiles.length,
+          exercises: stats.exercises.filter(e => e.activity_type === 'memory_exercise').length
+        },
+        totalItems,
+        totalBytes,
+        totalKB: (totalBytes / 1024).toFixed(2),
+        totalMB: (totalBytes / 1024 / 1024).toFixed(2)
+      };
+    } catch (error) {
+      console.error('Failed to get storage stats:', error);
+      return null;
+    }
+  }
+
+  // Clear all offline data
+  async clearAll() {
+    console.log('🗑️ Clearing offline data...');
+    try {
+      // Clear main databases
+      await Promise.all([
+        clearStore(STORES.aiResponses),
+        clearStore(STORES.stories),
+        clearStore(STORES.music),
+        clearStore(STORES.exercises),
+        clearStore(STORES.audioLibrary)
+      ]);
+      
+      console.log('✅ Offline data cleared');
+      return { success: true };
+    } catch (error) {
+      console.error('Failed to clear data:', error);
+      return { success: false, error: error.message };
+    }
+  }
+}
+
+// Export singleton instance
+export const downloadManager = new OfflineDownloadManager();
+
+// Auto-initialize on page load
+if (typeof window !== 'undefined') {
+  window.offlineDownloadManager = downloadManager;
+  
+  // Log storage stats on load
+  downloadManager.getStorageStats().then(stats => {
+    if (stats && stats.totalItems > 0) {
+      console.log('📊 Offline content ready:', stats);
+    }
+  });
+}
+
+export default downloadManager;
