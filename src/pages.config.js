@@ -142,6 +142,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
+import FamilyMemoryLibrary from './pages/FamilyMemoryLibrary';
 import __Layout from './Layout.jsx';
 
 
@@ -241,6 +242,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
+    "FamilyMemoryLibrary": FamilyMemoryLibrary,
 }
 
 export const pagesConfig = {

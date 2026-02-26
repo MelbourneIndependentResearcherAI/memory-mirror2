@@ -194,6 +194,17 @@ function FamilyConnectMain() {
             </div>
             <span className="text-sm font-semibold text-slate-700">Playlists</span>
           </button>
+
+          <button
+            onClick={() => navigate('/FamilyMemoryLibrary')}
+            className="flex flex-col items-center gap-3 p-6 h-auto rounded-2xl bg-gradient-to-br from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white shadow-md hover:shadow-lg transition-all min-h-[44px]"
+          >
+            <div className="w-14 h-14 rounded-full bg-white/20 flex items-center justify-center shadow-lg backdrop-blur-sm">
+              <Share2 className="w-7 h-7 text-white" />
+            </div>
+            <span className="text-sm font-semibold">Memory Library</span>
+            <span className="text-[10px] -mt-2 bg-white/20 px-2 py-0.5 rounded-full">NEW</span>
+          </button>
         </div>
       </div>
     </div>
