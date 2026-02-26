@@ -43,33 +43,39 @@ export default function Feedback() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-20">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-purple-950 dark:to-pink-950 pb-20">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center gap-4">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate(-1)}
-            >
-              <ArrowLeft className="w-6 h-6" />
-            </Button>
-            <div>
-              <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100">
-                Community Feedback
-              </h1>
-              <p className="text-slate-600 dark:text-slate-400">
-                Share your experience and read what others are saying
-              </p>
-            </div>
-          </div>
+        {/* Premium Header */}
+        <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl p-8 mb-8 shadow-premium-lg text-white">
           <Button
-            onClick={() => setShowForm(true)}
-            className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+            variant="ghost"
+            size="icon"
+            onClick={() => navigate(-1)}
+            className="hover:bg-white/20 text-white mb-4 min-h-[44px] min-w-[44px]"
           >
-            <Plus className="w-5 h-5 mr-2" />
-            Write Feedback
+            <ArrowLeft className="w-6 h-6" />
           </Button>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-4">
+              <MessageSquare className="w-12 h-12" />
+              <div>
+                <h1 className="text-4xl md:text-5xl font-extrabold mb-2 drop-shadow-lg">
+                  Community Feedback
+                </h1>
+                <p className="text-purple-100 text-lg">
+                  Share your experience and read what others are saying
+                </p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setShowForm(true)}
+              className="bg-white text-purple-600 hover:bg-purple-50 font-bold shadow-lg"
+              size="lg"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Write Feedback
+            </Button>
+          </div>
         </div>
 
         {showForm && (
@@ -85,10 +91,10 @@ export default function Feedback() {
         )}
 
         <div className="grid md:grid-cols-3 gap-6 mb-8">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+          <div className="bg-gradient-to-br from-white to-yellow-50 dark:from-slate-900 dark:to-yellow-950/20 rounded-2xl shadow-premium p-6 border-2 border-yellow-200 dark:border-yellow-800/50">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-                <Star className="w-6 h-6 text-white fill-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <Star className="w-7 h-7 text-white fill-white drop-shadow-md" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">
@@ -113,10 +119,10 @@ export default function Feedback() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
+          <div className="bg-gradient-to-br from-white to-blue-50 dark:from-slate-900 dark:to-blue-950/20 rounded-2xl shadow-premium p-6 border-2 border-blue-200 dark:border-blue-800/50">
             <div className="flex items-center gap-3 mb-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-full flex items-center justify-center">
-                <MessageSquare className="w-6 h-6 text-white" />
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-cyan-500 rounded-2xl flex items-center justify-center shadow-lg">
+                <MessageSquare className="w-7 h-7 text-white drop-shadow-md" />
               </div>
               <div>
                 <div className="text-3xl font-bold text-slate-900 dark:text-slate-100">
@@ -129,8 +135,8 @@ export default function Feedback() {
             </div>
           </div>
 
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 border border-slate-200 dark:border-slate-700">
-            <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-3">
+          <div className="bg-gradient-to-br from-white to-purple-50 dark:from-slate-900 dark:to-purple-950/20 rounded-2xl shadow-premium p-6 border-2 border-purple-200 dark:border-purple-800/50">
+            <h3 className="font-bold text-slate-900 dark:text-slate-100 mb-4 text-lg">
               Rating Distribution
             </h3>
             <div className="space-y-2">
@@ -154,15 +160,15 @@ export default function Feedback() {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 mb-6 border border-slate-200 dark:border-slate-700">
+        <div className="bg-gradient-to-r from-white to-slate-50 dark:from-slate-900 dark:to-slate-800 rounded-2xl shadow-premium p-6 mb-6 border-2 border-slate-200 dark:border-slate-700">
           <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-2">
-              <Filter className="w-5 h-5 text-slate-500" />
-              <span className="font-semibold text-slate-900 dark:text-slate-100">Filter:</span>
+              <Filter className="w-5 h-5 text-purple-500" />
+              <span className="font-bold text-slate-900 dark:text-slate-100">Filter:</span>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                className="px-5 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium shadow-sm hover:border-purple-400 transition-all"
               >
                 <option value="all">All Categories</option>
                 <option value="general">General</option>
@@ -174,12 +180,12 @@ export default function Feedback() {
             </div>
 
             <div className="flex items-center gap-2">
-              <TrendingUp className="w-5 h-5 text-slate-500" />
-              <span className="font-semibold text-slate-900 dark:text-slate-100">Sort:</span>
+              <TrendingUp className="w-5 h-5 text-purple-500" />
+              <span className="font-bold text-slate-900 dark:text-slate-100">Sort:</span>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
-                className="px-4 py-2 border border-slate-200 dark:border-slate-700 rounded-lg bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100"
+                className="px-5 py-3 border-2 border-purple-200 dark:border-purple-700 rounded-xl bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 font-medium shadow-sm hover:border-purple-400 transition-all"
               >
                 <option value="recent">Most Recent</option>
                 <option value="rating">Highest Rating</option>
@@ -195,18 +201,20 @@ export default function Feedback() {
             <p className="mt-4 text-slate-600 dark:text-slate-400">Loading feedback...</p>
           </div>
         ) : filteredFeedbacks.length === 0 ? (
-          <div className="text-center py-12 bg-white dark:bg-slate-900 rounded-2xl shadow-lg border border-slate-200 dark:border-slate-700">
-            <MessageSquare className="w-16 h-16 mx-auto mb-4 text-slate-300 dark:text-slate-600" />
-            <h3 className="text-xl font-bold text-slate-900 dark:text-slate-100 mb-2">
+          <div className="text-center py-16 bg-gradient-to-br from-white to-purple-50 dark:from-slate-900 dark:to-purple-950/20 rounded-3xl shadow-premium border-2 border-purple-200 dark:border-purple-700">
+            <MessageSquare className="w-20 h-20 mx-auto mb-6 text-purple-300 dark:text-purple-600" />
+            <h3 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-3">
               No feedback yet
             </h3>
-            <p className="text-slate-600 dark:text-slate-400 mb-4">
+            <p className="text-slate-600 dark:text-slate-400 mb-6 text-lg">
               Be the first to share your experience!
             </p>
             <Button
               onClick={() => setShowForm(true)}
-              className="bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700"
+              size="lg"
+              className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 hover:from-purple-700 hover:via-pink-700 hover:to-blue-700 shadow-premium font-bold"
             >
+              <Plus className="w-5 h-5 mr-2" />
               Write Feedback
             </Button>
           </div>
