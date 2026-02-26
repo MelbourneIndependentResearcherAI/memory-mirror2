@@ -1097,16 +1097,26 @@ RESPOND NOW:
       }
 
     } catch (error) {
-      if (!isMountedRef.current) {
-        console.log('Component unmounted, skipping error handling');
-        return;
-      }
-      
-      console.error('Chat error details:', {
-        error: error.message,
-        name: error.name,
-        stack: error.stack
-      });
+       if (!isMountedRef.current) {
+         console.log('Component unmounted, skipping error handling');
+         return;
+       }
+
+       // Log to offline storage if available
+       try {
+         offlineEntities.create('ActivityLog', {
+           activity_type: 'error',
+           details: { error: error.message, function: 'sendMessage' }
+         }).catch(() => {});
+       } catch (e) {
+         console.log('Error logging failed');
+       }
+
+       console.error('Chat error details:', {
+         error: error.message,
+         name: error.name,
+         stack: error.stack
+       });
       
       // Exponential backoff retry logic (but not for user input errors)
       if (retryCountRef.current < 3 && error.name !== 'AbortError' && error.message.indexOf('Empty') === -1) {
