@@ -1,13 +1,42 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Phone } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'react-hot-toast';
+import { Button } from '@/components/ui/button';
+import RegistrationModal from '@/components/RegistrationModal';
 
 export default function EnhancedEmergencyButton() {
   const [clicked, setClicked] = useState(false);
   const [confirmed, setConfirmed] = useState(false);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [userProfile, setUserProfile] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Check if user has completed registration
+  useEffect(() => {
+    const checkUserProfile = async () => {
+      try {
+        const user = await base44.auth.me();
+        if (user) {
+          const profiles = await base44.entities.UserProfile.filter({ created_by: user.email });
+          setUserProfile(profiles?.[0] || null);
+        }
+      } catch (error) {
+        console.error('Error checking user profile:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    
+    checkUserProfile();
+  }, []);
 
   const handleFirstClick = () => {
+    // Check if user is registered before allowing emergency button use
+    if (!userProfile) {
+      setShowRegistration(true);
+      return;
+    }
     setClicked(true);
     setTimeout(() => setClicked(false), 3000);
   };
