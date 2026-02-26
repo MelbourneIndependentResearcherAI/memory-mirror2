@@ -70,7 +70,7 @@ export default function Paywall() {
      }
    },
    onSuccess: () => {
-     queryClient.invalidateQueries(['subscription']);
+     queryClient.invalidateQueries({ queryKey: ['subscription'] });
      toast.success('Subscription initiated! Redirecting to checkout...');
      // Navigate to pricing/checkout page
      setTimeout(() => {
