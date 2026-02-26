@@ -678,18 +678,25 @@ Now respond like their best friend who genuinely cares and listened carefully to
       console.log('Empty message, listening again');
       return;
     }
-    
+
     if (isLoading) {
       // Let them know we're still thinking - never ignore them
       console.log('Still processing previous message');
       return;
     }
-    
+
     if (!isMountedRef.current) {
       console.log('Component unmounted, skipping message');
       return;
     }
-    
+
+    // Check rate limit
+    const rateCheckResult = checkRateLimit();
+    setRateLimitStatus(rateCheckResult);
+    if (rateCheckResult.limited) {
+      return;
+    }
+
     console.log('Processing message:', userMessage);
 
     // Rate limiting: prevent spam (max 1 message per 2 seconds)
