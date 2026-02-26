@@ -17,7 +17,8 @@ export default function Landing() {
   const handleGetStarted = () => navigate(createPageUrl('Home'));
 
   const featureCards = [
-    { icon: '🔴', title: 'Big Button Mode', desc: 'Extra-large buttons for easy access - inspired by "Be My Eyes"', page: 'BigButtonMode', color: 'from-red-500 to-rose-600' },
+    { icon: '🔴', title: 'Quick Access Button', desc: 'ONE BIG RED BUTTON for instant access - inspired by "Be My Eyes"', page: 'QuickAccess', color: 'from-red-500 to-rose-600' },
+    { icon: '🎯', title: 'Big Button Mode', desc: 'Extra-large buttons for all features', page: 'BigButtonMode', color: 'from-orange-500 to-red-600' },
     { icon: '🧠', title: 'AI Chat Companion', desc: 'Warm, empathetic conversation that adapts to each person\'s era and memories', page: 'Home', color: 'from-blue-500 to-cyan-500' },
     { icon: '❤️', title: 'Health Monitor', desc: 'Track emotional state, anxiety levels and wellbeing patterns over time', page: 'HealthMonitor', color: 'from-red-500 to-pink-500' },
     { icon: '🎵', title: 'Music Therapy', desc: 'Era-specific songs and playlists to comfort and stimulate memory', page: 'MusicTherapy', color: 'from-purple-500 to-indigo-500' },
@@ -73,17 +74,17 @@ export default function Landing() {
           </p>
         </div>
 
-        {/* Mirror Button — large one-tap access for dementia patients */}
+        {/* Quick Access - Big Red Button inspired by "Be My Eyes" */}
         <div className="flex justify-center mb-10 px-4">
           <button
-            onClick={() => navigateTo('PatientAccess')}
-            className="w-full max-w-sm bg-green-500 hover:bg-green-600 active:bg-green-700 text-white font-bold rounded-full shadow-2xl transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-3"
-            style={{ minHeight: '160px', fontSize: '2rem' }}
-            aria-label="Mirror — tap to start"
+            onClick={() => navigateTo('QuickAccess')}
+            className="w-full max-w-sm bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-bold rounded-full shadow-2xl transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-3 border-8 border-white"
+            style={{ minHeight: '200px', fontSize: '2rem' }}
+            aria-label="Quick Access — one tap to start"
           >
-            <span style={{ fontSize: '3.5rem' }}>🪞</span>
-            <span>Mirror</span>
-            <span className="text-lg font-normal opacity-90">Tap to start</span>
+            <span style={{ fontSize: '4rem' }}>🔴</span>
+            <span className="text-3xl">Quick Access</span>
+            <span className="text-lg font-normal opacity-90">ONE BIG BUTTON</span>
           </button>
         </div>
 
@@ -161,9 +162,9 @@ export default function Landing() {
         {/* Key Features - Simplified */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12 px-4">
           {[
+            { icon: '🔴', title: 'Quick Access', page: 'QuickAccess' },
             { icon: '🧠', title: 'AI Chat', page: 'Home' },
             { icon: '🌙', title: 'Night Watch', page: 'NightWatch' },
-            { icon: '📱', title: 'Phone Mode', page: 'PhoneMode' },
             { icon: '👨‍⚕️', title: 'Caregiver Tools', page: 'CaregiverPortal' },
             { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
             { icon: '🎵', title: 'Music', page: 'MusicTherapy' },
