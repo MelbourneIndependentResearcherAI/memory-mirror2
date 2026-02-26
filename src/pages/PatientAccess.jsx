@@ -1,57 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, User } from 'lucide-react';
+import { ArrowLeft, User, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
+import { createPageUrl } from '@/utils';
 
 export default function PatientAccess() {
   const navigate = useNavigate();
-  const [userEmail, setUserEmail] = useState('');
-  const [userName, setUserName] = useState('');
 
-  const handleInstantAccess = async () => {
-    // Check if user is authenticated
-    try {
-      const isAuth = await base44.auth.isAuthenticated();
-      
-      if (!isAuth) {
-        // Redirect to login, then back to Home after login
-        base44.auth.redirectToLogin(window.location.origin + '/Home');
-        return;
-      }
-
-      // Store user details if provided
-      if (userEmail || userName) {
-        try {
-          localStorage.setItem('memory_mirror_user', JSON.stringify({
-            email: userEmail,
-            name: userName,
-            registered_at: new Date().toISOString()
-          }));
-        } catch (error) {
-          console.log('Local storage not available');
-        }
-      }
-
-      // Track session
+  useEffect(() => {
+    // Check if already authenticated, redirect to Home
+    const checkAuth = async () => {
       try {
-        await base44.functions.invoke('trackPatientSession', {
-          access_method: 'instant',
-          patient_name: userName || 'Guest User',
-          user_email: userEmail
-        });
+        const isAuth = await base44.auth.isAuthenticated();
+        if (isAuth) {
+          navigate('/Home');
+        }
       } catch (error) {
-        console.log('Session tracking skipped:', error.message);
+        console.log('Auth check:', error.message);
       }
-      
-      navigate('/Home');
-    } catch (error) {
-      console.error('Authentication check failed:', error);
-      // Redirect to login on error
-      base44.auth.redirectToLogin(window.location.origin + '/Home');
-    }
+    };
+    checkAuth();
+  }, [navigate]);
+
+  const handleSignUp = () => {
+    // Redirect to sign up/login, then return to Home after successful auth
+    base44.auth.redirectToLogin('/Home');
   };
 
 
@@ -67,59 +42,55 @@ export default function PatientAccess() {
           >
             <ArrowLeft className="w-6 h-6" />
           </Button>
+          <div className="mb-6 flex justify-center">
+            <div className="w-20 h-20 rounded-full bg-blue-600 flex items-center justify-center">
+              <Lock className="w-10 h-10 text-white" />
+            </div>
+          </div>
           <h1 className="text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            Welcome
+            Caregiver Access Required
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400">
-            Sign up or log in to start using Memory Mirror
+          <p className="text-xl text-slate-600 dark:text-slate-400 mb-2">
+            Please register or log in to continue
+          </p>
+          <p className="text-sm text-slate-500 dark:text-slate-500">
+            This ensures secure access and personalized care for your loved one
           </p>
         </div>
 
         <div className="space-y-6">
-          <Card className="border-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
-            <CardContent className="p-6">
+          <Card className="border-2 border-blue-200 dark:border-blue-800 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
+            <CardContent className="p-8 text-center">
               <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-                    Your Name
-                  </label>
-                  <Input
-                    type="text"
-                    value={userName}
-                    onChange={(e) => setUserName(e.target.value)}
-                    placeholder="Enter your name"
-                    className="h-12 text-base"
-                  />
+                <div className="text-blue-600 dark:text-blue-400">
+                  <User className="w-16 h-16 mx-auto mb-4" />
                 </div>
-                <div>
-                  <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
-                    Email Address
-                  </label>
-                  <Input
-                    type="email"
-                    value={userEmail}
-                    onChange={(e) => setUserEmail(e.target.value)}
-                    placeholder="your.email@example.com"
-                    className="h-12 text-base"
-                  />
-                </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  This helps us personalize your experience. Not required for security.
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
+                  Secure Registration Required
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">
+                  To protect your loved one's privacy and provide personalized care, please create an account or sign in.
                 </p>
+                <div className="pt-4 space-y-2 text-xs text-slate-500 dark:text-slate-400 text-left">
+                  <p>✓ Secure data encryption</p>
+                  <p>✓ Personalized care settings</p>
+                  <p>✓ Family caregiver access</p>
+                  <p>✓ Care journal and insights</p>
+                </div>
               </div>
             </CardContent>
           </Card>
 
           <Button 
-            onClick={handleInstantAccess}
-            className="w-full h-16 text-lg bg-blue-600 hover:bg-blue-700"
+            onClick={handleSignUp}
+            className="w-full h-16 text-lg bg-blue-600 hover:bg-blue-700 shadow-lg"
           >
             <User className="w-6 h-6 mr-3" />
-            Continue to Memory Mirror
+            Sign Up / Log In
           </Button>
           
-          <p className="text-sm text-center text-slate-500 dark:text-slate-400 mt-4">
-            You'll be asked to sign up or log in on the next page
+          <p className="text-xs text-center text-slate-500 dark:text-slate-400 mt-4 px-4">
+            By continuing, you agree to our Terms of Service and Privacy Policy
           </p>
         </div>
       </div>
