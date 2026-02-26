@@ -130,32 +130,40 @@ export default function Pricing() {
   };
 
   const handleSubscribe = async () => {
-    if (!selectedPlan) return;
+   if (!selectedPlan) return;
 
-    const email = user?.email || userEmail;
-    if (!email) {
-      toast.error('Please enter your email address');
-      return;
-    }
+   const email = user?.email || userEmail;
+   if (!email) {
+     toast.error('Please enter your email address');
+     return;
+   }
 
-    setProcessing(true);
+   if (!email.includes('@')) {
+     toast.error('Please enter a valid email address');
+     return;
+   }
 
-    const nextBillingDate = new Date();
-    nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
+   setProcessing(true);
 
-    const subscriptionData = {
-      user_email: email,
-      plan_name: selectedPlan.id,
-      plan_price: selectedPlan.price,
-      status: 'pending',
-      payment_method: 'manual_bank_transfer',
-      start_date: new Date().toISOString(),
-      next_billing_date: nextBillingDate.toISOString(),
-      payment_reference: `SUB-${Date.now()}`,
-      notes: 'Awaiting first payment'
-    };
+   const nextBillingDate = new Date();
+   nextBillingDate.setMonth(nextBillingDate.getMonth() + 1);
 
-    createSubscriptionMutation.mutate(subscriptionData);
+   // Create unique payment reference - use email in reference for easy tracking
+   const paymentRef = `SUB-${email.split('@')[0].toUpperCase()}-${Date.now()}`;
+
+   const subscriptionData = {
+     user_email: email,
+     plan_name: selectedPlan.id,
+     plan_price: selectedPlan.price,
+     status: 'pending',
+     payment_method: 'manual_bank_transfer',
+     start_date: new Date().toISOString(),
+     next_billing_date: nextBillingDate.toISOString(),
+     payment_reference: paymentRef,
+     notes: 'Payment awaiting bank transfer verification. Include payment reference in transfer.'
+   };
+
+   createSubscriptionMutation.mutate(subscriptionData);
   };
 
   const copyToClipboard = (text, field) => {
@@ -299,10 +307,10 @@ export default function Pricing() {
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Building2 className="w-6 h-6 text-blue-600" />
-                Complete Your Subscription
+                Complete Your Payment
               </CardTitle>
               <CardDescription>
-                Transfer {formatCurrency(selectedPlan.price)} monthly to activate your {selectedPlan.name} plan
+                Make a bank transfer of {formatCurrency(selectedPlan.price)} to activate your {selectedPlan.name} subscription
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
@@ -368,9 +376,15 @@ export default function Pricing() {
 
               <div className="space-y-3">
                 <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                  <p className="text-sm text-amber-800 dark:text-amber-400">
-                    <strong>Important:</strong> Please include your email address in the payment reference so we can activate your subscription quickly.
+                  <p className="text-sm text-amber-800 dark:text-amber-400 font-medium mb-2">
+                    <strong>⚠️ Important Payment Instructions:</strong>
                   </p>
+                  <ul className="text-sm text-amber-800 dark:text-amber-400 space-y-1 list-disc list-inside">
+                    <li>Use your registered email as the payment reference</li>
+                    <li>Transfer the exact amount shown above</li>
+                    <li>Your subscription will activate within 24 hours of payment</li>
+                    <li>Keep your payment confirmation for records</li>
+                  </ul>
                 </div>
                 <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
                   <p className="text-xs text-slate-600 dark:text-slate-400">
