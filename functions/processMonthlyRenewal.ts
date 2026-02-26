@@ -37,18 +37,22 @@ Deno.serve(async (req) => {
           });
 
           // Log the renewal
-          await base44.asServiceRole.entities.AuditLog.create({
-            action: 'subscription_auto_renewed',
-            user_email: subscription.user_email,
-            details: {
-              subscription_id: subscription.id,
-              plan: subscription.plan_name,
-              amount: subscription.plan_price,
-              previous_billing_date: subscription.next_billing_date,
-              new_billing_date: newBillingDate.toISOString(),
+          try {
+            await base44.asServiceRole.entities.AuditLog.create({
+              action: 'subscription_auto_renewed',
+              user_email: subscription.user_email,
+              details: {
+                subscription_id: subscription.id,
+                plan: subscription.plan_name,
+                amount: subscription.plan_price,
+                previous_billing_date: subscription.next_billing_date,
+                new_billing_date: newBillingDate.toISOString()
+              },
               timestamp: today.toISOString()
-            }
-          });
+            });
+          } catch (logError) {
+            console.error('Failed to log renewal:', logError);
+          }
 
           renewed++;
         }

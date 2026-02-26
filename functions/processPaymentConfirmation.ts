@@ -52,16 +52,20 @@ Deno.serve(async (req) => {
     );
 
     // Log audit
-    await base44.asServiceRole.entities.AuditLog.create({
-      action: 'payment_confirmed',
-      user_email: subscription.user_email,
-      details: {
-        subscription_id: subscription.id,
-        payment_reference: payment_reference,
-        amount: subscription.plan_price,
+    try {
+      await base44.asServiceRole.entities.AuditLog.create({
+        action: 'payment_confirmed',
+        user_email: subscription.user_email,
+        details: {
+          subscription_id: subscription.id,
+          payment_reference: payment_reference,
+          amount: subscription.plan_price
+        },
         timestamp: new Date().toISOString()
-      }
-    });
+      });
+    } catch (logError) {
+      console.error('Failed to log payment confirmation:', logError);
+    }
 
     return Response.json({
       success: true,

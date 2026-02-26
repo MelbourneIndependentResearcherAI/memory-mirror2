@@ -31,16 +31,20 @@ Deno.serve(async (req) => {
           });
 
           // Log expiry
-          await base44.asServiceRole.entities.AuditLog.create({
-            action: 'subscription_expired',
-            user_email: subscription.user_email,
-            details: {
-              subscription_id: subscription.id,
-              reason: 'Payment not received within 30 days',
-              days_pending: daysOld,
+          try {
+            await base44.asServiceRole.entities.AuditLog.create({
+              action: 'subscription_expired',
+              user_email: subscription.user_email,
+              details: {
+                subscription_id: subscription.id,
+                reason: 'Payment not received within 30 days',
+                days_pending: daysOld
+              },
               timestamp: today.toISOString()
-            }
-          });
+            });
+          } catch (logError) {
+            console.error('Failed to log expiry:', logError);
+          }
 
           expired++;
         }
