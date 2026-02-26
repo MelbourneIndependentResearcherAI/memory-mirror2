@@ -66,6 +66,7 @@ import ChatHistory from './pages/ChatHistory';
 import ChatMode from './pages/ChatMode';
 import ContentLibrary from './pages/ContentLibrary';
 import ConversationAnalytics from './pages/ConversationAnalytics';
+import DailyRoutines from './pages/DailyRoutines';
 import DiagnosticTest from './pages/DiagnosticTest';
 import EmergencyAlerts from './pages/EmergencyAlerts';
 import FAQ from './pages/FAQ';
@@ -124,6 +125,7 @@ import Resources from './pages/Resources';
 import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
 import SharedJournal from './pages/SharedJournal';
+import SingAlongStudio from './pages/SingAlongStudio';
 import SmartHome from './pages/SmartHome';
 import SyncBackup from './pages/SyncBackup';
 import TVDashboard from './pages/TVDashboard';
@@ -143,8 +145,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import DailyRoutines from './pages/DailyRoutines';
-import SingAlongStudio from './pages/SingAlongStudio';
+import SecureMessagingPage from './pages/SecureMessagingPage';
 import __Layout from './Layout.jsx';
 
 
@@ -168,6 +169,7 @@ export const PAGES = {
     "ChatMode": ChatMode,
     "ContentLibrary": ContentLibrary,
     "ConversationAnalytics": ConversationAnalytics,
+    "DailyRoutines": DailyRoutines,
     "DiagnosticTest": DiagnosticTest,
     "EmergencyAlerts": EmergencyAlerts,
     "FAQ": FAQ,
@@ -226,6 +228,7 @@ export const PAGES = {
     "Security": Security,
     "SecurityMode": SecurityMode,
     "SharedJournal": SharedJournal,
+    "SingAlongStudio": SingAlongStudio,
     "SmartHome": SmartHome,
     "SyncBackup": SyncBackup,
     "TVDashboard": TVDashboard,
@@ -245,8 +248,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "DailyRoutines": DailyRoutines,
-    "SingAlongStudio": SingAlongStudio,
+    "SecureMessagingPage": SecureMessagingPage,
 }
 
 export const pagesConfig = {
