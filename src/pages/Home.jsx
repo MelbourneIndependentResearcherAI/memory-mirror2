@@ -120,7 +120,7 @@ export default function Home() {
               {getEraLabel()}
             </div>
           </div>
-        </div>
+        </header>
 
         {/* Language Selector */}
         <div className="p-4 mb-2">
@@ -178,29 +178,26 @@ export default function Home() {
         <p className="text-center text-slate-500 dark:text-slate-400 text-sm mt-6 px-4 mb-24">
           {t('memoryMirror')} — {t('aiCompanion')}
         </p>
-      </div>
+        </div>
 
-
-
-      <WakeWordListener 
-        onWakeWordDetected={handleWakeWord}
-        isActive={wakeWordActive}
-      />
-
-      {showBadDayMode && (
-        <BadDayMode 
-          onClose={() => setShowBadDayMode(false)}
-          userProfile={userProfiles[0]}
+        <WakeWordListener 
+          onWakeWordDetected={handleWakeWord}
+          isActive={wakeWordActive}
         />
-      )}
 
-      {showReflection && (
-        <MemoryReflectionSession onClose={() => setShowReflection(false)} />
-      )}
+        {showBadDayMode && (
+          <BadDayMode 
+            onClose={() => setShowBadDayMode(false)}
+            userProfile={userProfiles[0]}
+          />
+        )}
 
-      <PageLoadTip pageName="Home" />
+        {showReflection && (
+          <MemoryReflectionSession onClose={() => setShowReflection(false)} />
+        )}
+
+        <PageLoadTip pageName="Home" />
       </div>
-      </div>
-      </PullToRefresh>
-      );
-      }
+    </PullToRefresh>
+  );
+}
