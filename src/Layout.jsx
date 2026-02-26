@@ -139,15 +139,6 @@ export default function Layout({ children, currentPageName }) {
             <ErrorBoundary>
               <ScrollToTop />
               
-              {/* WCAG 2.1 Skip to Main Content Link */}
-              <a 
-                href="#main-content" 
-                className="skip-to-main"
-                aria-label="Skip to main content"
-              >
-                Skip to main content
-              </a>
-              
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
                 style={{
