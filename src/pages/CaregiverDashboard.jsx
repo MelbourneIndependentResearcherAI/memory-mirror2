@@ -4,9 +4,12 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
+import { useState } from 'react';
+
 export default function CaregiverDashboardPage() {
   const navigate = useNavigate();
   const [selectedPatient, setSelectedPatient] = useState(null);
+  const [showTour, setShowTour] = useState(false);
 
   const { data: user } = useQuery({
     queryKey: ['currentUser'],
@@ -33,7 +36,9 @@ export default function CaregiverDashboardPage() {
     { id: 7, title: 'Insights & Analytics', icon: '📊', description: 'View emotional trends and patterns', path: '/InsightsAnalytics', background: '#F0FDF4' },
     { id: 8, title: 'Emergency Alerts', icon: '🚨', description: 'Configure alert conditions', path: '/EmergencyAlerts', background: '#FEE2E2' },
     { id: 9, title: 'Activity Reports', icon: '📈', description: 'Generate care reports', path: '/ActivityReports', background: '#E0E7FF' },
-    { id: 10, title: 'Care Settings', icon: '⚙️', description: 'Configure care preferences', path: '/CaregiverPortal/settings', background: '#F3F4F6' }
+    { id: 10, title: 'Care Settings', icon: '⚙️', description: 'Configure care preferences', path: '/CaregiverPortal/settings', background: '#F3F4F6' },
+    { id: 11, title: 'Feature Tour', icon: '✨', description: 'Learn about app features and updates', path: '#', action: 'showTour', background: '#FECACA' },
+    { id: 12, title: 'Sing-Along Studio', icon: '🎤', description: 'Manage sing-along songs and sessions', path: '/SingAlongStudio', background: '#C7D2FE' }
   ];
 
   return (
@@ -81,13 +86,19 @@ export default function CaregiverDashboardPage() {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {dashboardOptions.map(option => (
-            <button
-              key={option.id}
-              onClick={() => navigate(option.path)}
-              className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-left hover:scale-105"
-              style={{ borderTop: `4px solid ${option.background}` }}
-            >
+           {dashboardOptions.map(option => (
+             <button
+               key={option.id}
+               onClick={() => {
+                 if (option.action === 'showTour') {
+                   setShowTour(true);
+                 } else {
+                   navigate(option.path);
+                 }
+               }}
+               className="group relative overflow-hidden rounded-2xl bg-white dark:bg-slate-900 shadow-lg hover:shadow-xl transition-all duration-300 p-6 text-left hover:scale-105"
+               style={{ borderTop: `4px solid ${option.background}` }}
+             >
               <div className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity bg-gradient-to-br from-blue-500 to-purple-500" />
               
               <div className="relative z-10">
@@ -104,6 +115,41 @@ export default function CaregiverDashboardPage() {
             </button>
           ))}
         </div>
+
+        {showTour && (
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+            <div className="bg-white dark:bg-slate-900 rounded-2xl max-w-2xl w-full max-h-96 overflow-y-auto p-8">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">App Features Tour</h2>
+                <button
+                  onClick={() => setShowTour(false)}
+                  className="text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white text-2xl"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="space-y-4 text-slate-700 dark:text-slate-300">
+                <div>
+                  <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">🎤 Sing-Along Studio</h3>
+                  <p>Manage and customize sing-along songs for the patient. Add nursery rhymes, classic songs, and hymns with timing and difficulty levels.</p>
+                </div>
+                <div>
+                  <h3 className="font-bold text-lg text-slate-900 dark:text-white mb-2">✨ Feature Tour</h3>
+                  <p>Get guided tours of app features to help you and your caregiving team understand how to use all available tools effectively.</p>
+                </div>
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-700">
+                  <p className="text-sm">These new features complement your existing care management, analytics, and emergency alert systems.</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowTour(false)}
+                className="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded-lg"
+              >
+                Got it!
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
