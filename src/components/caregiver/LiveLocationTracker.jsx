@@ -33,7 +33,15 @@ export default function LiveLocationTracker() {
 
   const sendAlertMutation = useMutation({
     mutationFn: async (data) => {
+      console.log('📧 Sending geofence alert:', data);
       return await base44.functions.invoke('sendGeofenceAlert', data);
+    },
+    onError: (error) => {
+      console.error('Alert sending failed:', error);
+      toast.error('Failed to send geofence alert');
+    },
+    onSuccess: () => {
+      console.log('✅ Geofence alert sent successfully');
     }
   });
 
@@ -77,80 +85,149 @@ export default function LiveLocationTracker() {
 
   const startTracking = () => {
     if (!navigator.geolocation) {
-      toast.error('Geolocation not supported');
-      return;
+      toast.error('Geolocation not supported on this device');
+      return () => {}; // Return empty cleanup function
     }
 
-    const watchId = navigator.geolocation.watchPosition(
-      async (position) => {
-        const { latitude, longitude, accuracy, speed, heading } = position.coords;
-        
-        // Check if outside safe zone
-        const geofenceCheck = checkGeofence(latitude, longitude);
-        
-        // Get battery level if available
-        let batteryLevel = null;
-        if ('getBattery' in navigator) {
-          const battery = await navigator.getBattery();
-          batteryLevel = battery.level * 100;
-        }
+    console.log('🌍 Starting GPS tracking...');
+    let watchId = null;
 
-        // Save location
-        const locationData = {
-          latitude,
-          longitude,
-          accuracy,
-          speed: speed || 0,
-          heading: heading || 0,
-          battery_level: batteryLevel,
-          is_outside_zone: geofenceCheck.isOutside,
-          alert_sent: false
-        };
-
-        createLocationMutation.mutate(locationData);
-
-        // Send alert if outside zone and not already alerted
-        if (geofenceCheck.isOutside && !latestLocation?.alert_sent) {
-          const zone = geofenceCheck.zone;
+    try {
+      watchId = navigator.geolocation.watchPosition(
+        async (position) => {
+          const { latitude, longitude, accuracy, speed, heading } = position.coords;
+          console.log('📍 Location update:', { latitude, longitude, accuracy });
           
-          // Update location to mark alert sent
-          locationData.alert_sent = true;
+          // Check if outside safe zone
+          const geofenceCheck = checkGeofence(latitude, longitude);
           
-          // Send notifications
-          sendAlertMutation.mutate({
-            zone_name: zone.zone_name,
+          // Get battery level if available
+          let batteryLevel = null;
+          try {
+            if ('getBattery' in navigator) {
+              const battery = await navigator.getBattery();
+              batteryLevel = battery.level * 100;
+            }
+          } catch (batteryError) {
+            console.log('Battery API not available');
+          }
+
+          // Prepare location data
+          const locationData = {
             latitude,
             longitude,
-            distance_from_zone: Math.round(geofenceCheck.distance),
-            alert_emails: zone.alert_contacts
-          });
+            accuracy,
+            speed: speed || 0,
+            heading: heading || 0,
+            battery_level: batteryLevel,
+            is_outside_zone: geofenceCheck.isOutside,
+            alert_sent: false
+          };
 
-          // Update zone breach count
-          await base44.entities.GeofenceZone.update(zone.id, {
-            last_breach_time: new Date().toISOString(),
-            breach_count: (zone.breach_count || 0) + 1
-          });
+          // CRITICAL: Handle geofence breach BEFORE saving
+          if (geofenceCheck.isOutside) {
+            const zone = geofenceCheck.zone;
+            
+            // Check if we recently sent an alert for this zone (prevent spam)
+            const recentAlerts = locations.filter(loc => 
+              loc.is_outside_zone && 
+              loc.alert_sent &&
+              Date.now() - new Date(loc.created_date).getTime() < 300000 // 5 min cooldown
+            );
 
-          toast.error(`ALERT: Patient left ${zone.zone_name} safe zone!`);
+            if (recentAlerts.length === 0) {
+              // Mark alert as sent
+              locationData.alert_sent = true;
+              
+              console.log('🚨 GEOFENCE BREACH - Sending alerts');
+              
+              // Send notifications immediately
+              try {
+                await sendAlertMutation.mutateAsync({
+                  zone_name: zone.zone_name,
+                  latitude,
+                  longitude,
+                  distance_from_zone: Math.round(geofenceCheck.distance),
+                  alert_emails: zone.alert_contacts || []
+                });
+
+                // Update zone breach count
+                await base44.entities.GeofenceZone.update(zone.id, {
+                  last_breach_time: new Date().toISOString(),
+                  breach_count: (zone.breach_count || 0) + 1
+                });
+
+                toast.error(`🚨 ALERT: Patient left ${zone.zone_name} safe zone! Distance: ${Math.round(geofenceCheck.distance)}m`);
+              } catch (alertError) {
+                console.error('Failed to send geofence alert:', alertError);
+                toast.error('Failed to send alert - check connection');
+              }
+            } else {
+              console.log('⏸️ Alert cooldown active - not sending duplicate alert');
+            }
+          }
+
+          // Save location to database
+          try {
+            createLocationMutation.mutate(locationData);
+          } catch (saveError) {
+            console.error('Failed to save location:', saveError);
+          }
+        },
+        (error) => {
+          console.error('Geolocation error:', error);
+          let errorMessage = 'Location tracking error';
+          
+          switch (error.code) {
+            case error.PERMISSION_DENIED:
+              errorMessage = 'Location permission denied - enable in browser settings';
+              break;
+            case error.POSITION_UNAVAILABLE:
+              errorMessage = 'Location unavailable - check GPS/network';
+              break;
+            case error.TIMEOUT:
+              errorMessage = 'Location request timed out';
+              break;
+          }
+          
+          toast.error(errorMessage);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 15000, // 15 seconds
+          maximumAge: 0
         }
-      },
-      (error) => {
-        toast.error('Location error: ' + error.message);
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0
-      }
-    );
+      );
 
-    return () => navigator.geolocation.clearWatch(watchId);
+      console.log('✅ GPS tracking started - Watch ID:', watchId);
+    } catch (error) {
+      console.error('Failed to start tracking:', error);
+      toast.error('Could not start location tracking');
+    }
+
+    // Return cleanup function
+    return () => {
+      if (watchId !== null) {
+        console.log('🛑 Stopping GPS tracking - Watch ID:', watchId);
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
   };
 
   useEffect(() => {
+    if (activeZones.length === 0) {
+      toast.info('Create a safe zone to start tracking');
+      return;
+    }
+
+    console.log('📡 Initializing location tracking for', activeZones.length, 'zones');
     const cleanup = startTracking();
-    return cleanup;
-  }, [activeZones]);
+    
+    return () => {
+      console.log('🧹 Cleaning up location tracking');
+      cleanup();
+    };
+  }, [activeZones.length]); // Only re-track when zone count changes
 
   const mapCenter = latestLocation 
     ? [latestLocation.latitude, latestLocation.longitude]
@@ -158,12 +235,15 @@ export default function LiveLocationTracker() {
 
   return (
     <div className="space-y-4">
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+      <Card className="border-2 border-green-200 dark:border-green-800 shadow-premium">
+        <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 dark:from-green-950 dark:to-emerald-950">
+          <CardTitle className="flex items-center gap-2 text-green-900 dark:text-green-100">
             <Navigation className="w-6 h-6 text-green-600" />
             Live Location Tracking
           </CardTitle>
+          <p className="text-sm text-green-700 dark:text-green-300 mt-2">
+            Real-time GPS tracking with automatic geofence breach alerts
+          </p>
         </CardHeader>
         <CardContent>
           {latestLocation && (
@@ -250,10 +330,17 @@ export default function LiveLocationTracker() {
             </MapContainer>
           </div>
 
-          <div className="mt-4 text-sm text-slate-600">
-            <p>📍 Tracking updates every 10 seconds</p>
-            <p>🔔 Alerts sent immediately when leaving safe zone</p>
-            <p>📊 Location history: {locations.length} points tracked</p>
+          <div className="mt-4 p-4 bg-blue-50 dark:bg-blue-950 rounded-lg border border-blue-200 dark:border-blue-800">
+            <div className="text-sm text-slate-700 dark:text-slate-300 space-y-2">
+              <p className="flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+                <strong>Live GPS tracking active</strong>
+              </p>
+              <p>📍 Updates continuously with high accuracy</p>
+              <p>🔔 Instant alerts when leaving safe zones (5-min cooldown)</p>
+              <p>📊 Location history: {locations.length} points tracked</p>
+              <p>🔋 Battery monitoring: {latestLocation?.battery_level ? `${Math.round(latestLocation.battery_level)}%` : 'Unavailable'}</p>
+            </div>
           </div>
         </CardContent>
       </Card>

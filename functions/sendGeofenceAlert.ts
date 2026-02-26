@@ -11,15 +11,21 @@ Deno.serve(async (req) => {
 
     const { zone_name, latitude, longitude, distance_from_zone, alert_emails } = await req.json();
 
-    if (!zone_name || !latitude || !longitude || !alert_emails) {
-      return Response.json({ error: 'Missing required fields' }, { status: 400 });
+    if (!zone_name || !latitude || !longitude) {
+      return Response.json({ error: 'Missing required fields: zone_name, latitude, longitude' }, { status: 400 });
+    }
+
+    // Handle empty or missing alert_emails gracefully
+    const emails = alert_emails && Array.isArray(alert_emails) ? alert_emails : [];
+    
+    if (emails.length === 0) {
+      console.warn('No alert emails configured - creating notification only');
     }
 
     const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
     
-    // Create notifications in the system instead of sending emails
-    const emailPromises = alert_emails.map(async email => {
-      // Send notification to caregiver notification center
+    // ALWAYS create a system notification (even if no emails)
+    try {
       await base44.asServiceRole.entities.CaregiverNotification.create({
         notification_type: 'safety_concern',
         severity: 'urgent',
@@ -34,9 +40,36 @@ Deno.serve(async (req) => {
         },
         triggered_by: 'geofence_system'
       });
+    } catch (notifError) {
+      console.error('Failed to create caregiver notification:', notifError);
+    }
+    
+    // Send emails only if addresses provided
+    const emailPromises = emails.map(async email => {
+      // Send notification to caregiver notification center (per email - for multi-caregiver support)
+      try {
+        await base44.asServiceRole.entities.CaregiverNotification.create({
+          notification_type: 'safety_concern',
+          severity: 'urgent',
+          title: `Patient Left Safe Zone - ${zone_name}`,
+          message: `Alert sent to: ${email}`,
+          data: {
+            latitude,
+            longitude,
+            zone_name,
+            distance_from_zone,
+            google_maps_url: googleMapsUrl,
+            alert_email: email
+          },
+          triggered_by: 'geofence_system'
+        });
+      } catch (err) {
+        console.error(`Failed to create notification for ${email}:`, err);
+      }
 
       // Also send email notification
-      return base44.asServiceRole.integrations.Core.SendEmail({
+      try {
+        return await base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
         subject: `🚨 URGENT: Patient Left Safe Zone - ${zone_name}`,
         body: `
@@ -81,14 +114,25 @@ Deno.serve(async (req) => {
             </div>
           </div>
         `
-      })
-    );
+        });
+      } catch (emailErr) {
+        console.error(`Failed to send email to ${email}:`, emailErr);
+        throw emailErr; // Let the promise rejection be caught
+      }
+    });
 
-    await Promise.all(emailPromises);
+    // Send all emails and collect results
+    const emailResults = await Promise.allSettled(emailPromises);
+    const successfulEmails = emailResults.filter(r => r.status === 'fulfilled').length;
+    const failedEmails = emailResults.filter(r => r.status === 'rejected').length;
+
+    console.log(`📧 Geofence alerts: ${successfulEmails} sent, ${failedEmails} failed`);
 
     return Response.json({
       success: true,
-      alerts_sent: alert_emails.length,
+      alerts_sent: successfulEmails,
+      alerts_failed: failedEmails,
+      total_emails: emails.length,
       location_url: googleMapsUrl
     });
 
