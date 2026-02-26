@@ -56,11 +56,17 @@
   body {
     @apply bg-background text-foreground antialiased;
     overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
     -webkit-overflow-scrolling: touch;
     font-feature-settings: "kern" 1, "liga" 1;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Prevent pull-to-refresh on Android */
+    -webkit-overscroll-behavior: none;
+    overscroll-behavior: none;
+    /* Disable double-tap zoom */
+    touch-action: manipulation;
   }
   
   button, a, [role="button"] {
@@ -69,6 +75,13 @@
     -webkit-tap-highlight-color: transparent;
     min-height: 44px;
     min-width: 44px;
+    /* Native-like button press feedback */
+    transition: transform 0.1s ease, opacity 0.1s ease;
+  }
+  
+  button:active, a:active, [role="button"]:active {
+    transform: scale(0.97);
+    opacity: 0.9;
   }
 
   .select-none {

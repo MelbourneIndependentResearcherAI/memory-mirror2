@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ThemeProvider } from 'next-themes';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
@@ -6,7 +6,7 @@ import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 
@@ -17,12 +17,74 @@ import ScrollToTop from '@/components/ScrollToTop';
 
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
 
   // Main bottom tab pages for page transitions
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
   const isMainPage = mainPages.includes(currentPageName);
+
+  // Android-like back button behavior
+  useEffect(() => {
+    const handlePopState = (event) => {
+      // Prevent default browser behavior
+      event.preventDefault();
+      
+      // If on landing page, exit app (on Android WebView)
+      if (currentPageName === 'Landing') {
+        if (window.AndroidInterface?.exitApp) {
+          window.AndroidInterface.exitApp();
+        }
+        return;
+      }
+      
+      // Navigate back with proper animation
+      navigate(-1);
+    };
+
+    // Handle Android hardware back button
+    const handleBackButton = (event) => {
+      event.preventDefault();
+      
+      // If on home or landing, attempt to exit
+      if (currentPageName === 'Home' || currentPageName === 'Landing') {
+        if (window.AndroidInterface?.exitApp) {
+          window.AndroidInterface.exitApp();
+        } else {
+          // Web fallback - go to landing
+          if (currentPageName === 'Home') {
+            navigate('/');
+          }
+        }
+        return;
+      }
+      
+      // Otherwise, navigate back
+      navigate(-1);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    document.addEventListener('backbutton', handleBackButton); // Cordova/WebView back button
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      document.removeEventListener('backbutton', handleBackButton);
+    };
+  }, [currentPageName, navigate]);
+
+  // Prevent accidental navigation gestures on main app pages
+  useEffect(() => {
+    if (isMainPage) {
+      document.body.style.overscrollBehavior = 'none';
+      document.body.style.touchAction = 'pan-y';
+    }
+    
+    return () => {
+      document.body.style.overscrollBehavior = '';
+      document.body.style.touchAction = '';
+    };
+  }, [isMainPage]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -40,20 +102,39 @@ export default function Layout({ children, currentPageName }) {
                 }}
               >
                 <div className="flex-1 relative overflow-hidden">
-                  <AnimatePresence mode="wait" initial={false}>
+                  <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
                     {isMainPage ? (
                       <motion.div
                         key={location.pathname}
-                        initial={{ x: 300, opacity: 0 }}
+                        custom={location.state?.direction}
+                        initial={(custom) => ({
+                          x: custom === 'back' ? -300 : 300,
+                          opacity: 0
+                        })}
                         animate={{ x: 0, opacity: 1 }}
-                        exit={{ x: -300, opacity: 0 }}
-                        transition={{ type: 'tween', duration: 0.3, ease: 'easeInOut' }}
+                        exit={(custom) => ({
+                          x: custom === 'back' ? 300 : -300,
+                          opacity: 0
+                        })}
+                        transition={{ 
+                          type: 'tween', 
+                          duration: 0.25, 
+                          ease: [0.4, 0.0, 0.2, 1] // Material Design easing
+                        }}
                         className="absolute inset-0"
                       >
                         {children}
                       </motion.div>
                     ) : (
-                      <div>{children}</div>
+                      <motion.div
+                        key={location.pathname}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {children}
+                      </motion.div>
                     )}
                   </AnimatePresence>
                 </div>
