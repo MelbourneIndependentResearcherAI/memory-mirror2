@@ -121,11 +121,12 @@ export default function Pricing() {
   });
 
   const handleSelectPlan = (plan) => {
-    if (plan.id === 'free') {
-      toast.info('Free plan is already active');
-      return;
-    }
-    setSelectedPlan(plan);
+   if (plan.id === 'free') {
+     toast.info('Free plan is already active');
+     return;
+   }
+   setSelectedPlan(plan);
+   setShowPaymentInfo(false);
   };
 
   const handleSubscribe = async () => {
@@ -380,16 +381,16 @@ export default function Pricing() {
 
               <Button
                 onClick={handleSubscribe}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 min-h-[48px]"
-                disabled={processing || (!user && !userEmail)}
+                className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 min-h-[48px] font-semibold text-white"
+                disabled={processing || (!user && !userEmail) || !selectedPlan}
               >
                 {processing ? (
                   <>
                     <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                    Creating Subscription...
+                    Processing Payment...
                   </>
                 ) : (
-                  'Confirm Subscription'
+                  `Complete Subscription - ${formatCurrency(selectedPlan.price)}/month`
                 )}
               </Button>
 
