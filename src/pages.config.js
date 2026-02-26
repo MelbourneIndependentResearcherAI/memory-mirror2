@@ -141,6 +141,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import Resources from './pages/Resources';
+import QuickAccess from './pages/QuickAccess';
 import __Layout from './Layout.jsx';
 
 
@@ -239,6 +240,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "Resources": Resources,
+    "QuickAccess": QuickAccess,
 }
 
 export const pagesConfig = {
