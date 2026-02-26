@@ -37,21 +37,30 @@ export function useSubscriptionStatus() {
       try {
         const user = await base44.auth.me();
         if (!user) {
+          // Not authenticated - try cache first
           const cached = offlineHelper.getCachedSubscription();
-          return cached || { isSubscribed: false, subscription: null };
+          return cached || { isSubscribed: false, subscription: null, user: null };
         }
 
+        // User is authenticated - fetch fresh subscription data
         const subscriptions = await base44.entities.Subscription.filter({
           user_email: user.email
         });
 
+        // Check for active premium subscription
         const activeSubscription = subscriptions.find(
           (sub) => sub.plan_name === 'premium' && sub.status === 'active'
         );
 
+        // Also check for pending (to show payment required)
+        const pendingSubscription = subscriptions.find(
+          (sub) => sub.plan_name === 'premium' && sub.status === 'pending'
+        );
+
         const result = {
           isSubscribed: !!activeSubscription,
-          subscription: activeSubscription || null,
+          isPending: !!pendingSubscription,
+          subscription: activeSubscription || pendingSubscription || null,
           user,
           isOnline: true
         };
@@ -64,11 +73,13 @@ export function useSubscriptionStatus() {
         if (cached) {
           return { ...cached, isOnline: false, offline: true };
         }
-        return { isSubscribed: false, subscription: null };
+        // Return default state that won't block rendering
+        return { isSubscribed: false, subscription: null, user: null, error: true };
       }
     },
-    retry: 0,
+    retry: 1,
     staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000
+    gcTime: 10 * 60 * 1000,
+    initialData: { isSubscribed: false, subscription: null, user: null, isLoading: true }
   });
 }
