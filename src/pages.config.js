@@ -66,6 +66,7 @@ import ChatHistory from './pages/ChatHistory';
 import ChatMode from './pages/ChatMode';
 import ContentLibrary from './pages/ContentLibrary';
 import ConversationAnalytics from './pages/ConversationAnalytics';
+import DiagnosticTest from './pages/DiagnosticTest';
 import EmergencyAlerts from './pages/EmergencyAlerts';
 import FAQ from './pages/FAQ';
 import FakeBankSettings from './pages/FakeBankSettings';
@@ -135,7 +136,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import DiagnosticTest from './pages/DiagnosticTest';
+import ManualProcessing from './pages/ManualProcessing';
 import __Layout from './Layout.jsx';
 
 
@@ -159,6 +160,7 @@ export const PAGES = {
     "ChatMode": ChatMode,
     "ContentLibrary": ContentLibrary,
     "ConversationAnalytics": ConversationAnalytics,
+    "DiagnosticTest": DiagnosticTest,
     "EmergencyAlerts": EmergencyAlerts,
     "FAQ": FAQ,
     "FakeBankSettings": FakeBankSettings,
@@ -228,7 +230,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "DiagnosticTest": DiagnosticTest,
+    "ManualProcessing": ManualProcessing,
 }
 
 export const pagesConfig = {
