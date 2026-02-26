@@ -17,11 +17,9 @@ import SmartHomeControls from '../smartHome/SmartHomeControls';
 import HandsFreeMode from './HandsFreeMode';
 import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
-import { offlineAIChat, offlineEntities, offlineFunction } from '@/components/utils/offlineAPI';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
-import { isOnline } from '../utils/offlineManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -79,7 +77,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryKey: ['safeZones'],
     queryFn: async () => {
       try {
-        return await offlineEntities.list('SafeMemoryZone');
+        return await base44.entities.SafeMemoryZone.list();
       } catch (error) {
         console.error('Safe zones fetch failed:', error);
         return [];
@@ -93,7 +91,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryKey: ['memories'],
     queryFn: async () => {
       try {
-        return await offlineEntities.list('Memory', '-created_date', 50);
+        return await base44.entities.Memory.list('-created_date', 50);
       } catch (error) {
         console.error('Memories fetch failed:', error);
         return [];
@@ -107,7 +105,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryKey: ['userProfile'],
     queryFn: async () => {
       try {
-        const profiles = await offlineEntities.list('UserProfile');
+        const profiles = await base44.entities.UserProfile.list();
         return profiles?.[0] || null;
       } catch (error) {
         console.error('Profile fetch failed:', error);
@@ -122,7 +120,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     queryKey: ['cognitiveAssessments'],
     queryFn: async () => {
       try {
-        return await offlineEntities.list('CognitiveAssessment', '-assessment_date', 1);
+        return await base44.entities.CognitiveAssessment.list('-assessment_date', 1);
       } catch (error) {
         console.error('Assessments fetch failed:', error);
         return [];
@@ -706,8 +704,8 @@ Now respond like their best friend who genuinely cares and listened carefully to
     }
     abortControllerRef.current = new AbortController();
     
-    // Log chat activity (offline-aware)
-    offlineEntities.create('ActivityLog', {
+    // Log chat activity
+    base44.entities.ActivityLog.create({
       activity_type: 'chat',
       details: { message_length: userMessage.length, era: selectedEra, language: selectedLanguage }
     }).catch(() => {});
@@ -724,15 +722,15 @@ Now respond like their best friend who genuinely cares and listened carefully to
     setConversationHistory(newHistory);
     setIsLoading(true);
 
-    // Perform sentiment analysis on English text (offline-aware)
+    // Perform sentiment analysis on English text
     let sentimentAnalysis = null;
     try {
-      const sentimentResult = await offlineFunction('analyzeSentiment', { text: userMessageEnglish });
+      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessageEnglish });
       sentimentAnalysis = sentimentResult.data;
       
       // Create caregiver alert for immediate attention needs
-      if (sentimentAnalysis.needs_immediate_attention) {
-        offlineEntities.create('CaregiverAlert', {
+       if (sentimentAnalysis.needs_immediate_attention) {
+         base44.entities.CaregiverAlert.create({
           alert_type: 'high_anxiety',
           severity: 'urgent',
           message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
@@ -740,11 +738,11 @@ Now respond like their best friend who genuinely cares and listened carefully to
         }).catch(() => {});
         
         // Also create team notification for collaborative care
-        try {
-          const profiles = await offlineEntities.list('UserProfile');
-          const patientProfile = profiles?.[0];
-          if (patientProfile?.id) {
-            await offlineEntities.create('CaregiverNotification', {
+         try {
+           const profiles = await base44.entities.UserProfile.list();
+           const patientProfile = profiles?.[0];
+           if (patientProfile?.id) {
+             await base44.entities.CaregiverNotification.create({
               patient_profile_id: patientProfile.id,
               notification_type: 'high_anxiety',
               severity: 'urgent',
@@ -778,10 +776,10 @@ Now respond like their best friend who genuinely cares and listened carefully to
       return updated;
     });
 
-    // Recall relevant memories proactively (offline-aware)
+    // Recall relevant memories proactively
     let memoryRecall = null;
     try {
-      const recallResult = await offlineFunction('recallMemories', {
+      const recallResult = await base44.functions.invoke('recallMemories', {
         context: userMessageEnglish,
         sentiment_analysis: sentimentAnalysis,
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra
@@ -791,10 +789,10 @@ Now respond like their best friend who genuinely cares and listened carefully to
       console.error('Memory recall failed:', error);
     }
 
-    // Suggest visual responses (images/videos) - offline-aware
+    // Suggest visual responses (images/videos)
     let visualSuggestions = null;
     try {
-      const visualResult = await offlineFunction('suggestVisualResponses', {
+      const visualResult = await base44.functions.invoke('suggestVisualResponses', {
         conversation_context: userMessageEnglish,
         detected_emotion: sentimentAnalysis?.emotional_tone?.[0] || 'neutral',
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra,
@@ -808,7 +806,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
 
     // ENHANCED: Find relevant photos and memories using AI with emotional context
     try {
-      const relevantMedia = await offlineFunction('findRelevantMedia', {
+      const relevantMedia = await base44.functions.invoke('findRelevantMedia', {
         context: userMessageEnglish,
         current_era: selectedEra === 'auto' ? detectedEra : selectedEra,
         conversation_topics: conversationTopics,
@@ -906,9 +904,10 @@ RESPOND NOW:
 - Make them feel understood and loved`;
 
       console.log('Calling AI chat...');
-      let response = await offlineAIChat(fullPrompt, {
-        add_context_from_internet: false
-      });
+       let response = await base44.integrations.Core.InvokeLLM({
+         prompt: fullPrompt,
+         add_context_from_internet: false
+       });
 
       console.log('AI response received:', response);
 
@@ -946,10 +945,10 @@ RESPOND NOW:
         assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
       }
 
-      // Track anxiety trends (offline-aware)
+      // Track anxiety trends
       if (detectedAnxiety >= 4) {
         const today = new Date().toISOString().split('T')[0];
-        offlineEntities.create('AnxietyTrend', {
+        base44.entities.AnxietyTrend.create({
           date: today,
           anxiety_level: detectedAnxiety,
           trigger_category: sentimentAnalysis?.trigger_words?.[0] ? 'distress' : 'none',
@@ -958,9 +957,9 @@ RESPOND NOW:
         }).catch(() => {});
       }
 
-      // Persist conversation snapshot every 10 messages (offline-aware)
+      // Persist conversation snapshot every 10 messages
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
-        offlineEntities.create('Conversation', {
+        base44.entities.Conversation.create({
           mode: 'chat',
           detected_era: detectedEra || selectedEra,
           messages: conversationHistory.slice(-20),
@@ -968,9 +967,9 @@ RESPOND NOW:
         }).catch(() => {});
       }
 
-      // Periodic cognitive assessment (every 10 messages) - offline-aware
+      // Periodic cognitive assessment (every 10 messages)
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
-        offlineFunction('assessCognitiveLevel', {
+        base44.functions.invoke('assessCognitiveLevel', {
           conversation_history: conversationHistory,
           recent_interactions: { message_count: conversationHistory.length }
         }).then(result => {
@@ -988,10 +987,10 @@ RESPOND NOW:
         console.log('Message added to chat');
       }
 
-      // Trigger mood-based device control (offline-aware)
+      // Trigger mood-based device control
       if (detectedAnxiety >= 4) {
         try {
-          const moodControl = await offlineFunction('moodBasedDeviceControl', {
+          const moodControl = await base44.functions.invoke('moodBasedDeviceControl', {
             anxiety_level: detectedAnxiety,
             detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
             conversation_context: userMessageEnglish
@@ -1061,8 +1060,7 @@ RESPOND NOW:
       console.error('Chat error details:', {
         error: error.message,
         name: error.name,
-        stack: error.stack,
-        isOnline: isOnline()
+        stack: error.stack
       });
       
       // Exponential backoff retry logic (but not for user input errors)
@@ -1100,8 +1098,6 @@ RESPOND NOW:
       // Add context-specific warmth
       if (error.name === 'AbortError') {
         fallback = "I'm still here. Let's try again, okay?";
-      } else if (!isOnline()) {
-        fallback = "I'm in offline mode right now, but I'm still here with you. Always.";
       }
       
       // Translate fallback message
