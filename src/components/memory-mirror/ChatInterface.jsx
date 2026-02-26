@@ -23,6 +23,8 @@ import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmin
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
+import { checkRateLimit } from '@/components/RateLimitManager';
+import RateLimitAlert from '@/components/RateLimitManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -47,6 +49,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [lastAssessment, setLastAssessment] = useState(null);
   const [showFreeTierAlert, setShowFreeTierAlert] = useState(false);
   const [freeTierUsage, setFreeTierUsage] = useState(null);
+  const [rateLimitStatus, setRateLimitStatus] = useState({ limited: false, remaining: 10, resetTime: null });
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     try {
       return localStorage.getItem('memoryMirrorLanguage') || 'en';
