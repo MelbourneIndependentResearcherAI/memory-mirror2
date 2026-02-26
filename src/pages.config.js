@@ -139,6 +139,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import Pricing from './pages/Pricing';
 import GeofenceTracking from './pages/GeofenceTracking';
+import TestDashboard from './pages/TestDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -235,6 +236,7 @@ export const PAGES = {
     "phone": phone,
     "Pricing": Pricing,
     "GeofenceTracking": GeofenceTracking,
+    "TestDashboard": TestDashboard,
 }
 
 export const pagesConfig = {
