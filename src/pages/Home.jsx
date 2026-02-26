@@ -3,28 +3,39 @@ import { MessageCircle, Settings, HeartCrack, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
+import { motion } from 'framer-motion';
 import ChatMode from './ChatMode';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
 import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflectionSession';
+import PullToRefresh from '@/components/ui/pull-to-refresh';
 import PageLoadTip from '@/components/tips/PageLoadTip';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import LanguageSelector from '@/components/LanguageSelector';
+import { toast } from 'sonner';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
+  const [showOfflineDownload, setShowOfflineDownload] = useState(false);
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { t } = useLanguage();
 
   const { data: userProfiles = [] } = useQuery({
     queryKey: ['userProfile'],
     queryFn: () => base44.entities.UserProfile.list()
   });
+
+  const handleRefresh = async () => {
+    toast.info('Refreshing...');
+    await queryClient.invalidateQueries();
+    toast.success('Refreshed!');
+  };
 
   useEffect(() => {
     // Check authentication on mount - but allow guest access too
@@ -77,20 +88,28 @@ export default function Home() {
 
 
   return (
-    <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-24`}>
-      <div className="max-w-lg mx-auto">
-        {/* Header */}
-        <div className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg">
-          <div className="flex justify-between items-center mb-4">
-            <LanguageSwitcher />
-            <div className="flex gap-2">
-              <Link to={createPageUrl('CaregiverPortal')}>
-                <button className="text-white hover:bg-white/20 rounded-full p-2 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center">
-                  <Settings className="w-6 h-6" />
-                </button>
-              </Link>
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-24`}>
+        <div className="max-w-lg mx-auto">
+          {/* Header */}
+          <header 
+            className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg"
+            role="banner"
+          >
+            <div className="flex justify-between items-center mb-4">
+              <LanguageSwitcher />
+              <div className="flex gap-2">
+                <Link to={createPageUrl('CaregiverPortal')}>
+                  <button 
+                    className="text-white hover:bg-white/20 rounded-full p-2 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
+                    aria-label="Go to caregiver portal"
+                  >
+                    <Settings className="w-6 h-6" />
+                    <span className="sr-only">Settings</span>
+                  </button>
+                </Link>
+              </div>
             </div>
-          </div>
           
           <div className="text-center">
             <h1 className="text-3xl font-light tracking-wide mb-1">{t('memoryMirror')}</h1>
@@ -180,16 +199,8 @@ export default function Home() {
       )}
 
       <PageLoadTip pageName="Home" />
-      
-      {/* Offline Download Progress Modal */}
-      {showOfflineDownload && (
-        <OfflineDownloadProgress 
-          onComplete={() => {
-            setTimeout(() => setShowOfflineDownload(false), 3000);
-          }}
-          autoStart={true}
-        />
-      )}
-    </div>
-  );
-}
+      </div>
+      </div>
+      </PullToRefresh>
+      );
+      }
