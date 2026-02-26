@@ -22,23 +22,24 @@ const SUBSCRIPTION_CHECK_TIMEOUT = 100;
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: subscriptionData } = useSubscriptionStatus();
+  const { data: subscriptionData, isLoading } = useSubscriptionStatus();
   
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
   
-  // Check subscription access (non-blocking)
+  // Check subscription access - allow pages to render while loading
   useEffect(() => {
-    if (!subscriptionData?.isSubscribed) return;
+    // Don't block while loading
+    if (isLoading) return;
     
     const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
-    // Only redirect if explicitly no subscription and trying to access gated content
-    if (!subscriptionData.isSubscribed && !isRestrictedPage) {
+    // Only redirect if data loaded AND user not subscribed AND accessing gated content
+    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage) {
       navigate('/paywall');
     }
-  }, [subscriptionData?.isSubscribed, currentPageName, navigate]);
+  }, [isLoading, subscriptionData, currentPageName, navigate]);
 
   // Main bottom tab pages for page transitions
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
