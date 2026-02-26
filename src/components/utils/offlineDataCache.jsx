@@ -19,55 +19,80 @@ class OfflineDataCache {
   }
 
   async init() {
-    if (this.initialized) return this.db;
+    if (this.initialized && this.db) return this.db;
 
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open(DB_NAME, 3);
+      const timeout = setTimeout(() => {
+        reject(new Error('Data cache initialization timeout after 10 seconds'));
+      }, 10000);
 
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => {
-        this.db = request.result;
-        this.initialized = true;
-        resolve(this.db);
-      };
+      try {
+        const request = indexedDB.open(DB_NAME, 3);
 
-      request.onupgradeneeded = (event) => {
-        const db = event.target.result;
+        request.onerror = () => {
+          clearTimeout(timeout);
+          reject(request.error || new Error('IndexedDB open failed'));
+        };
+        
+        request.onsuccess = () => {
+          clearTimeout(timeout);
+          this.db = request.result;
+          this.initialized = true;
+          
+          // Set error handler
+          this.db.onerror = (event) => {
+            console.error('Data cache connection error:', event);
+          };
+          
+          resolve(this.db);
+        };
 
-        // Care Journals
-        if (!db.objectStoreNames.contains(STORES.journals)) {
-          const journalStore = db.createObjectStore(STORES.journals, { keyPath: 'id' });
-          journalStore.createIndex('created_date', 'created_date', { unique: false });
-          journalStore.createIndex('sync_status', 'sync_status', { unique: false });
-        }
+        request.onupgradeneeded = (event) => {
+          clearTimeout(timeout);
+          const db = event.target.result;
 
-        // Memories
-        if (!db.objectStoreNames.contains(STORES.memories)) {
-          const memoryStore = db.createObjectStore(STORES.memories, { keyPath: 'id' });
-          memoryStore.createIndex('created_date', 'created_date', { unique: false });
-          memoryStore.createIndex('sync_status', 'sync_status', { unique: false });
-        }
+          try {
+            // Care Journals
+            if (!db.objectStoreNames.contains(STORES.journals)) {
+              const journalStore = db.createObjectStore(STORES.journals, { keyPath: 'id' });
+              journalStore.createIndex('created_date', 'created_date', { unique: false });
+              journalStore.createIndex('sync_status', 'sync_status', { unique: false });
+            }
 
-        // Family Media
-        if (!db.objectStoreNames.contains(STORES.media)) {
-          const mediaStore = db.createObjectStore(STORES.media, { keyPath: 'id' });
-          mediaStore.createIndex('created_date', 'created_date', { unique: false });
-          mediaStore.createIndex('sync_status', 'sync_status', { unique: false });
-        }
+            // Memories
+            if (!db.objectStoreNames.contains(STORES.memories)) {
+              const memoryStore = db.createObjectStore(STORES.memories, { keyPath: 'id' });
+              memoryStore.createIndex('created_date', 'created_date', { unique: false });
+              memoryStore.createIndex('sync_status', 'sync_status', { unique: false });
+            }
 
-        // AI Responses Cache
-        if (!db.objectStoreNames.contains(STORES.aiResponses)) {
-          const aiStore = db.createObjectStore(STORES.aiResponses, { keyPath: 'hash' });
-          aiStore.createIndex('created_at', 'created_at', { unique: false });
-        }
+            // Family Media
+            if (!db.objectStoreNames.contains(STORES.media)) {
+              const mediaStore = db.createObjectStore(STORES.media, { keyPath: 'id' });
+              mediaStore.createIndex('created_date', 'created_date', { unique: false });
+              mediaStore.createIndex('sync_status', 'sync_status', { unique: false });
+            }
 
-        // Pending Sync Queue
-        if (!db.objectStoreNames.contains(STORES.pendingSync)) {
-          const syncStore = db.createObjectStore(STORES.pendingSync, { keyPath: 'id', autoIncrement: true });
-          syncStore.createIndex('entity_type', 'entity_type', { unique: false });
-          syncStore.createIndex('created_at', 'created_at', { unique: false });
-        }
-      };
+            // AI Responses Cache
+            if (!db.objectStoreNames.contains(STORES.aiResponses)) {
+              const aiStore = db.createObjectStore(STORES.aiResponses, { keyPath: 'hash' });
+              aiStore.createIndex('created_at', 'created_at', { unique: false });
+            }
+
+            // Pending Sync Queue
+            if (!db.objectStoreNames.contains(STORES.pendingSync)) {
+              const syncStore = db.createObjectStore(STORES.pendingSync, { keyPath: 'id', autoIncrement: true });
+              syncStore.createIndex('entity_type', 'entity_type', { unique: false });
+              syncStore.createIndex('created_at', 'created_at', { unique: false });
+            }
+          } catch (storeError) {
+            console.error('Error creating data cache stores:', storeError);
+          }
+        };
+      } catch (error) {
+        clearTimeout(timeout);
+        reject(error);
+      }
     });
   }
 
@@ -284,12 +309,33 @@ class OfflineDataCache {
   async _put(storeName, data) {
     await this.init();
     return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([storeName], 'readwrite');
-      const store = transaction.objectStore(storeName);
-      const request = store.put(data);
+      const timeout = setTimeout(() => {
+        reject(new Error(`Put operation timeout on ${storeName}`));
+      }, 5000);
 
-      request.onsuccess = () => resolve(data);
-      request.onerror = () => reject(request.error);
+      try {
+        const transaction = this.db.transaction([storeName], 'readwrite');
+        const store = transaction.objectStore(storeName);
+        const request = store.put(data);
+
+        request.onsuccess = () => {
+          clearTimeout(timeout);
+          resolve(data);
+        };
+        
+        request.onerror = () => {
+          clearTimeout(timeout);
+          reject(request.error || new Error('Put failed'));
+        };
+        
+        transaction.onerror = () => {
+          clearTimeout(timeout);
+          reject(transaction.error || new Error('Transaction failed'));
+        };
+      } catch (error) {
+        clearTimeout(timeout);
+        reject(error);
+      }
     });
   }
 
@@ -308,12 +354,33 @@ class OfflineDataCache {
   async _getAll(storeName) {
     await this.init();
     return new Promise((resolve, reject) => {
-      const transaction = this.db.transaction([storeName], 'readonly');
-      const store = transaction.objectStore(storeName);
-      const request = store.getAll();
+      const timeout = setTimeout(() => {
+        reject(new Error(`GetAll operation timeout on ${storeName}`));
+      }, 5000);
 
-      request.onsuccess = () => resolve(request.result || []);
-      request.onerror = () => reject(request.error);
+      try {
+        const transaction = this.db.transaction([storeName], 'readonly');
+        const store = transaction.objectStore(storeName);
+        const request = store.getAll();
+
+        request.onsuccess = () => {
+          clearTimeout(timeout);
+          resolve(request.result || []);
+        };
+        
+        request.onerror = () => {
+          clearTimeout(timeout);
+          reject(request.error || new Error('GetAll failed'));
+        };
+        
+        transaction.onerror = () => {
+          clearTimeout(timeout);
+          reject(transaction.error || new Error('Transaction failed'));
+        };
+      } catch (error) {
+        clearTimeout(timeout);
+        reject(error);
+      }
     });
   }
 
