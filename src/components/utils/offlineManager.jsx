@@ -52,31 +52,58 @@ let db = null;
 
 // Initialize IndexedDB
 export const initOfflineDB = async () => {
+  if (db) return db; // Return existing connection
+
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, 1);
+    const timeout = setTimeout(() => {
+      reject(new Error('Offline DB initialization timeout after 10 seconds'));
+    }, 10000);
 
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      db = request.result;
-      resolve(db);
-    };
+    try {
+      const request = indexedDB.open(DB_NAME, 1);
 
-    request.onupgradeneeded = (event) => {
-      const database = event.target.result;
+      request.onerror = () => {
+        clearTimeout(timeout);
+        reject(request.error || new Error('IndexedDB open failed'));
+      };
       
-      if (!database.objectStoreNames.contains(RESPONSES_STORE)) {
-        database.createObjectStore(RESPONSES_STORE, { keyPath: 'id', autoIncrement: true });
-      }
-      if (!database.objectStoreNames.contains(AUDIO_STORE)) {
-        database.createObjectStore(AUDIO_STORE, { keyPath: 'id' });
-      }
-      if (!database.objectStoreNames.contains(AUDIO_LIBRARY_STORE)) {
-        database.createObjectStore(AUDIO_LIBRARY_STORE, { keyPath: 'id' });
-      }
-      if (!database.objectStoreNames.contains(METADATA_STORE)) {
-        database.createObjectStore(METADATA_STORE, { keyPath: 'key' });
-      }
-    };
+      request.onsuccess = () => {
+        clearTimeout(timeout);
+        db = request.result;
+        
+        // Error handler for connection issues
+        db.onerror = (event) => {
+          console.error('Offline DB connection error:', event);
+        };
+        
+        resolve(db);
+      };
+
+      request.onupgradeneeded = (event) => {
+        clearTimeout(timeout);
+        const database = event.target.result;
+        
+        try {
+          if (!database.objectStoreNames.contains(RESPONSES_STORE)) {
+            database.createObjectStore(RESPONSES_STORE, { keyPath: 'id', autoIncrement: true });
+          }
+          if (!database.objectStoreNames.contains(AUDIO_STORE)) {
+            database.createObjectStore(AUDIO_STORE, { keyPath: 'id' });
+          }
+          if (!database.objectStoreNames.contains(AUDIO_LIBRARY_STORE)) {
+            database.createObjectStore(AUDIO_LIBRARY_STORE, { keyPath: 'id' });
+          }
+          if (!database.objectStoreNames.contains(METADATA_STORE)) {
+            database.createObjectStore(METADATA_STORE, { keyPath: 'key' });
+          }
+        } catch (storeError) {
+          console.error('Error creating stores:', storeError);
+        }
+      };
+    } catch (error) {
+      clearTimeout(timeout);
+      reject(error);
+    }
   });
 };
 
@@ -259,22 +286,40 @@ export const getOfflineAudioLibrary = async () => {
   if (!db) await initOfflineDB();
 
   return new Promise((resolve) => {
-    const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readonly');
-    const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-    const request = store.getAll();
+    const timeout = setTimeout(() => {
+      resolve([]); // Timeout fallback
+    }, 5000);
 
-    request.onsuccess = () => {
-      const items = request.result.map(item => ({
-        id: item.id,
-        title: item.title,
-        type: item.type,
-        downloaded_at: item.downloaded_at,
-        storage_size: item.storage_size
-      }));
-      resolve(items);
-    };
+    try {
+      const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readonly');
+      const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
+      const request = store.getAll();
 
-    request.onerror = () => resolve([]);
+      request.onsuccess = () => {
+        clearTimeout(timeout);
+        const items = request.result?.map(item => ({
+          id: item.id,
+          title: item.title,
+          type: item.type,
+          downloaded_at: item.downloaded_at,
+          storage_size: item.storage_size
+        })) || [];
+        resolve(items);
+      };
+
+      request.onerror = () => {
+        clearTimeout(timeout);
+        resolve([]);
+      };
+      
+      transaction.onerror = () => {
+        clearTimeout(timeout);
+        resolve([]);
+      };
+    } catch (error) {
+      clearTimeout(timeout);
+      resolve([]);
+    }
   });
 };
 
