@@ -8,10 +8,10 @@ export default function NightWatchDashboardPage() {
   const nightWatchOptions = [
     { id: 1, title: 'Night Watch Mode', icon: '🌙', description: 'Activate 24/7 monitoring with AI protection', path: '/NightWatch', background: '#1E1B4B' },
     { id: 2, title: 'Incident Log', icon: '📋', description: 'View all recorded nighttime incidents', path: '/NightWatchPage', background: '#1F2937' },
-    { id: 3, title: 'Alert Settings', icon: '🚨', description: 'Configure alert conditions and notifications', path: '/EmergencyAlerts', background: '#7C2D12' },
-    { id: 4, title: 'Activity Monitor', icon: '📊', description: 'Track movement and activity patterns', path: '/InsightsAnalytics', background: '#164E63' },
-    { id: 5, title: 'Smart Home Control', icon: '⚙️', description: 'Manage lights, locks, and temperature', path: '/SmartHome', background: '#292524' },
-    { id: 6, title: 'Emergency Contacts', icon: '☎️', description: 'Set up and manage emergency contacts', path: '/EmergencyAlerts', background: '#1F2937' }
+    { id: 3, title: 'Location Tracking', icon: '📍', description: 'Set safe zones and track patient location in real-time', path: '/GeofenceTracking', background: '#065F46' },
+    { id: 4, title: 'Alert Settings', icon: '🚨', description: 'Configure alert conditions and notifications', path: '/EmergencyAlerts', background: '#7C2D12' },
+    { id: 5, title: 'Activity Monitor', icon: '📊', description: 'Track movement and activity patterns', path: '/InsightsAnalytics', background: '#164E63' },
+    { id: 6, title: 'Smart Home Control', icon: '⚙️', description: 'Manage lights, locks, and temperature', path: '/SmartHome', background: '#292524' }
   ];
 
   return (

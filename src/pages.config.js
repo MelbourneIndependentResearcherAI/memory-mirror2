@@ -138,6 +138,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import Pricing from './pages/Pricing';
+import GeofenceTracking from './pages/GeofenceTracking';
 import __Layout from './Layout.jsx';
 
 
@@ -233,6 +234,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "Pricing": Pricing,
+    "GeofenceTracking": GeofenceTracking,
 }
 
 export const pagesConfig = {
