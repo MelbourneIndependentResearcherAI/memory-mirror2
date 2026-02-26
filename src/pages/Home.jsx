@@ -16,6 +16,7 @@ import LanguageSwitcher from '@/components/LanguageSwitcher';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import SingAlongPlayer from '@/components/music/SingAlongPlayer';
+import ReferralDashboard from '@/components/referral/ReferralDashboard';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
@@ -93,6 +94,13 @@ export default function Home() {
     <PullToRefresh onRefresh={handleRefresh}>
       <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-24`}>
         <div className="max-w-lg mx-auto">
+          {/* Referral Dashboard */}
+          <div className="p-4">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6">
+              <ReferralDashboard />
+            </div>
+          </div>
+
           {/* Header */}
           <header 
             className="bg-gradient-to-r from-blue-400 via-cyan-400 to-sky-400 dark:from-blue-600 dark:via-cyan-600 dark:to-sky-600 text-white p-6 rounded-t-2xl shadow-lg"
