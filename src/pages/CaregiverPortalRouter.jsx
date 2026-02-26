@@ -62,6 +62,7 @@ const featureCards = [
   { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/ContentLibrary', background: '#F3E8FF' },
   { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/AuditTrail', background: '#DBEAFE' },
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/FakeBankSettings', background: '#E0F2FE' },
+  { id: 32, title: 'Location Safety', icon: '📍', description: 'Set up safe zones and track patient location in real-time', path: '/GeofenceTracking', background: '#D1FAE5' },
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/EmergencyAlerts', background: '#FEE2E2' },
   { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/PatientRegistration', background: '#DBEAFE' },
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/ActivityReports', background: '#E0E7FF' },
