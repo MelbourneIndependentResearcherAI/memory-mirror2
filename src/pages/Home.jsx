@@ -109,39 +109,52 @@ export default function Home() {
           <LanguageSelector />
         </div>
 
-        {/* Quick Access Buttons */}
+        {/* Quick Access Buttons - Premium Design */}
         <div className="p-4 space-y-3">
           <Link to={createPageUrl('GeofenceTracking')}>
-            <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold select-none">
-              <MapPin className="w-8 h-8" />
+            <motion.button 
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-6 rounded-2xl shadow-premium transition-all duration-300 flex items-center justify-center gap-3 text-xl font-bold select-none border border-white/20"
+            >
+              <MapPin className="w-8 h-8 drop-shadow-lg" />
               Location Safety
-            </button>
+            </motion.button>
           </Link>
 
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setShowBadDayMode(true)}
-            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold select-none"
+            className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-premium transition-all duration-300 flex items-center justify-center gap-3 text-xl font-bold select-none border border-white/20"
           >
-            <HeartCrack className="w-8 h-8" />
+            <HeartCrack className="w-8 h-8 drop-shadow-lg" />
             {t('havingBadDay')}
-          </button>
+          </motion.button>
           
-          <button
+          <motion.button
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
             onClick={() => setShowReflection(true)}
-            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-5 rounded-2xl shadow-lg transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-lg font-semibold select-none"
+            className="w-full bg-gradient-to-r from-blue-500 to-purple-500 hover:from-blue-600 hover:to-purple-600 text-white py-5 rounded-2xl shadow-premium transition-all duration-300 flex items-center justify-center gap-3 text-lg font-bold select-none border border-white/20"
           >
-            <MessageCircle className="w-7 h-7" />
+            <MessageCircle className="w-7 h-7 drop-shadow-lg" />
             Memory Reflection
-          </button>
+          </motion.button>
         </div>
 
-        {/* Main Content */}
-        <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-sm shadow-2xl transition-all duration-500 border-4 border-blue-200 dark:border-blue-800">
+        {/* Main Content - Premium Shadow */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl shadow-premium-lg rounded-2xl transition-all duration-500 border-2 border-purple-200 dark:border-purple-800 overflow-hidden"
+        >
           <ChatMode 
             onEraChange={setDetectedEra} 
             onBadDayActivated={() => setShowBadDayMode(true)}
           />
-        </div>
+        </motion.div>
 
         <p className="text-center text-slate-500 dark:text-slate-400 text-sm mt-6 px-4 mb-24">
           {t('memoryMirror')} — {t('aiCompanion')}
