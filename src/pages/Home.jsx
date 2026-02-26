@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { MessageCircle, Settings, HeartCrack, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -198,18 +198,18 @@ export default function Home() {
         />
 
         {showBadDayMode && (
-          <React.Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
+          <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
             <BadDayMode 
               onClose={() => setShowBadDayMode(false)}
               userProfile={userProfiles[0]}
             />
-          </React.Suspense>
+          </Suspense>
         )}
 
         {showReflection && (
-          <React.Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
+          <Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
             <MemoryReflectionSession onClose={() => setShowReflection(false)} />
-          </React.Suspense>
+          </Suspense>
         )}
 
         {showSingAlong && (
@@ -225,9 +225,9 @@ export default function Home() {
                 </button>
               </div>
               <div className="p-6 max-h-96 overflow-y-auto">
-                <React.Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+                <Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
                   <SingAlongPlayer />
-                </React.Suspense>
+                </Suspense>
               </div>
             </div>
           </div>
