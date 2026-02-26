@@ -61,32 +61,6 @@ export default function Footer() {
             Designed with care for families living with dementia 💜
           </p>
         </div>
-        
-        <p className="text-sm text-slate-300">
-          AI Companion for Dementia Care
-        </p>
-        
-        <div className="flex items-center justify-center gap-2 text-sm text-slate-400">
-          <Mail className="w-4 h-4" />
-          <a 
-            href="mailto:mcnamaram86@gmail.com?subject=Memory%20Mirror%20Support"
-            className="hover:text-orange-400 transition-colors underline"
-          >
-            mcnamaram86@gmail.com
-          </a>
-        </div>
-        
-        <div className="pt-3 border-t border-slate-700">
-          <p className="text-xs text-slate-400">
-            © {new Date().getFullYear()} Memory Mirror. Created by <span className="font-semibold">MM AI Technologies</span>.
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            ABN 22366098626
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            All rights reserved. Designed with care for families living with dementia.
-          </p>
-        </div>
       </div>
     </footer>
   );
