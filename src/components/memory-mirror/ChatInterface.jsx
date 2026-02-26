@@ -1037,7 +1037,6 @@ RESPOND NOW:
       if (retryCountRef.current < 3 && error.name !== 'AbortError' && error.message.indexOf('Empty') === -1) {
         retryCountRef.current++;
         const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 5000);
-        toast.error(`Retrying in ${delay/1000}s...`);
         
         setTimeout(() => {
           if (isMountedRef.current) {
@@ -1049,19 +1048,28 @@ RESPOND NOW:
       
       retryCountRef.current = 0;
       
-      // User-friendly error messages
-      let fallback = "I'm right here with you. ";
-      if (error.name === 'AbortError') {
-        fallback += "The request was cancelled. Let's try again.";
-      } else if (!isOnline()) {
-        fallback += "I'm in offline mode, so my responses may be limited, but I'm still listening.";
-      } else {
-        fallback += "I need a moment. Let's try that again.";
-      }
+      // GUARANTEE: Always respond - never leave user without a response
+      // Caring fallback responses to prevent loneliness/fear
+      const careFallbacks = [
+        "I'm right here with you. Tell me what's on your mind.",
+        "You're never alone. I'm listening carefully.",
+        "I'm so glad you're talking to me. Keep going.",
+        "Don't worry, I'm here and I care about you.",
+        "You matter so much. What would you like to share?",
+        "I'm always here for you, no matter what.",
+        "You're safe with me. I'm listening with all my heart.",
+        "Don't be scared. I'm right here beside you.",
+        "Let's talk. I'm never too busy for you.",
+        "You're so important to me. Tell me everything."
+      ];
       
-      // Ensure fallback is not empty
-      if (!fallback || fallback.trim().length === 0) {
-        fallback = "I'm here to listen. What's on your mind?";
+      let fallback = careFallbacks[Math.floor(Math.random() * careFallbacks.length)];
+      
+      // Add context-specific warmth
+      if (error.name === 'AbortError') {
+        fallback = "I'm still here. Let's try again, okay?";
+      } else if (!isOnline()) {
+        fallback = "I'm in offline mode right now, but I'm still here with you. Always.";
       }
       
       // Translate fallback message
@@ -1070,7 +1078,7 @@ RESPOND NOW:
           fallback = await translateText(fallback, selectedLanguage, 'en');
         }
       } catch (translateError) {
-        console.log('Translation failed, using fallback', translateError.message);
+        console.log('Translation skipped, using caring English response');
       }
       
       if (isMountedRef.current && fallback) {
@@ -1081,7 +1089,8 @@ RESPOND NOW:
           language: selectedLanguage,
           isError: true
         }]);
-        speakResponse(fallback);
+        speakResponse(fallback, { state: 'warm' });
+        console.log('🫂 Caring fallback response sent to prevent loneliness');
       }
     } finally {
       if (isMountedRef.current) {
