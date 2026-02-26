@@ -17,6 +17,8 @@ import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
 import SingAlongPlayer from '@/components/music/SingAlongPlayer';
 import ReferralDashboard from '@/components/referral/ReferralDashboard';
+import InstallAppButton from '@/components/InstallAppButton';
+import { Suspense } from 'react';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
@@ -94,6 +96,11 @@ export default function Home() {
     <PullToRefresh onRefresh={handleRefresh}>
       <div className={`min-h-screen bg-gradient-to-br ${getBackgroundClass()} transition-all duration-1000 pb-24`}>
         <div className="max-w-lg mx-auto">
+          {/* Install App Button */}
+          <div className="p-4 pb-2">
+            <InstallAppButton />
+          </div>
+
           {/* Referral Dashboard */}
           <div className="p-4">
             <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6">
