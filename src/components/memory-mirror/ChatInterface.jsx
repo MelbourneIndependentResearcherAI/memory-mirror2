@@ -1498,6 +1498,10 @@ RESPOND NOW:
         />
       )}
 
+      {rateLimitStatus.limited && (
+        <RateLimitAlert limited={true} resetTime={rateLimitStatus.resetTime} />
+      )}
+
       {showFreeTierAlert && freeTierUsage && (
         <div className="fixed bottom-32 left-4 right-4 z-40 max-w-md mx-auto">
           <FreeTierLimitAlert 
