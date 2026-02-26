@@ -118,6 +118,8 @@ import PhoneMode from './pages/PhoneMode';
 import PhotoLibrary from './pages/PhotoLibrary';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
+import QuickAccess from './pages/QuickAccess';
+import Resources from './pages/Resources';
 import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
 import SharedJournal from './pages/SharedJournal';
@@ -140,8 +142,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import Resources from './pages/Resources';
-import QuickAccess from './pages/QuickAccess';
 import __Layout from './Layout.jsx';
 
 
@@ -217,6 +217,8 @@ export const PAGES = {
     "PhotoLibrary": PhotoLibrary,
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
+    "QuickAccess": QuickAccess,
+    "Resources": Resources,
     "Security": Security,
     "SecurityMode": SecurityMode,
     "SharedJournal": SharedJournal,
@@ -239,8 +241,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "Resources": Resources,
-    "QuickAccess": QuickAccess,
 }
 
 export const pagesConfig = {
