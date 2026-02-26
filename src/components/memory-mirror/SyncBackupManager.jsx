@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Cloud, HardDrive, CheckCircle2, AlertCircle, Loader2, RotateCw, Settings } from 'lucide-react';
+import { Cloud, HardDrive, CheckCircle2, AlertCircle, Loader2, RotateCw, Settings, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,6 +9,7 @@ import {
 } from '../utils/syncManager';
 import { getOfflineStorageUsage } from '../utils/offlineManager';
 import { isOnline } from '../utils/offlineManager';
+import { downloadManager } from '../utils/offlineDownloadManager';
 
 export default function SyncBackupManager() {
   const [metadata, setMetadata] = useState(getSyncMetadata());
