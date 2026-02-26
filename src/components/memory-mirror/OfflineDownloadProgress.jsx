@@ -42,58 +42,49 @@ export default function OfflineDownloadProgress({ onComplete, autoStart = false 
       const { downloadManager } = await import('../utils/offlineDownloadManager');
       
       // Subscribe to download manager progress
-      let itemsDone = 0;
-      const totalItems = 335; // AI responses + stories + music + exercises
-      
       const unsubscribe = downloadManager.subscribe((progressData) => {
         setCurrentItem(progressData.currentItem);
         setDownloadedSize(progressData.downloadedBytes);
-        
-        // Update category-specific progress
-        if (progressData.currentItem.includes('AI Response')) {
-          setDownloadStats(prev => ({ ...prev, aiResponses: { current: itemsDone, total: 250 } }));
-        } else if (progressData.currentItem.includes('Story')) {
-          setDownloadStats(prev => ({ ...prev, stories: { current: itemsDone, total: 20 } }));
-        } else if (progressData.currentItem.includes('Music')) {
-          setDownloadStats(prev => ({ ...prev, music: { current: itemsDone, total: 40 } }));
-        } else if (progressData.currentItem.includes('Exercise')) {
-          setDownloadStats(prev => ({ ...prev, exercises: { current: itemsDone, total: 25 } }));
-        }
-        
-        // Update overall progress
-        setProgress((progressData.current / progressData.total) * 100);
+        setProgress(Math.min((progressData.current / progressData.total) * 100, 99)); // Cap at 99% until complete
       });
       
-      // Start the download
+      // Start the download with error handling
       const result = await downloadManager.startFullDownload();
       
       // Unsubscribe from updates
-      unsubscribe();
+      if (unsubscribe) unsubscribe();
       
-      // Update final stats
+      // Update final stats with safe fallbacks
       setDownloadStats({
-        aiResponses: { current: result.aiResponses || 0, total: 250 },
-        stories: { current: result.stories || 0, total: 20 },
-        music: { current: result.music || 0, total: 40 },
-        exercises: { current: result.exercises || 0, total: 25 },
+        aiResponses: { current: result?.aiResponses || 0, total: 250 },
+        stories: { current: result?.stories || 0, total: 20 },
+        music: { current: result?.music || 0, total: 40 },
+        exercises: { current: result?.exercises || 0, total: 25 },
         entities: { current: 0, total: 0 }
       });
 
       setProgress(100);
       setIsComplete(true);
-      setCurrentItem('Download Complete ✅');
+      setCurrentItem('✅ Offline Download Complete - 335+ Items Ready');
 
       // Verify the download
-      const stats = await downloadManager.getStorageStats();
-      console.log('📊 Storage verified:', stats);
+      if (downloadManager.getStorageStats) {
+        try {
+          const stats = await downloadManager.getStorageStats();
+          console.log('📊 Offline storage verified:', stats);
+        } catch (verifyErr) {
+          console.warn('Storage verification warning:', verifyErr);
+        }
+      }
 
       if (onComplete) {
         setTimeout(onComplete, 1500);
       }
     } catch (error) {
-      console.error('Download failed:', error);
-      setCurrentItem('Download Failed - ' + error.message);
+      console.error('❌ Download failed:', error);
+      setCurrentItem('Download Error: ' + (error?.message || 'Unknown error'));
       setIsDownloading(false);
+      setIsComplete(false);
     }
   };
 

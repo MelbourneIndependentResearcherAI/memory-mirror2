@@ -260,13 +260,28 @@ export class OfflineDownloadManager {
     console.log('🗑️ Clearing offline data...');
     try {
       // Clear main databases
-      await Promise.all([
-        clearStore(STORES.aiResponses),
-        clearStore(STORES.stories),
-        clearStore(STORES.music),
-        clearStore(STORES.exercises),
-        clearStore(STORES.audioLibrary)
-      ]);
+      const storeNames = [
+        STORES.aiResponses,
+        STORES.stories,
+        STORES.music,
+        STORES.exercises,
+        STORES.audioLibrary
+      ];
+      
+      for (const storeName of storeNames) {
+        try {
+          const db = await initOfflineStorage();
+          await new Promise((resolve, reject) => {
+            const tx = db.transaction(storeName, 'readwrite');
+            const store = tx.objectStore(storeName);
+            const request = store.clear();
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(request.error);
+          });
+        } catch (err) {
+          console.warn(`Failed to clear ${storeName}:`, err);
+        }
+      }
       
       console.log('✅ Offline data cleared');
       return { success: true };

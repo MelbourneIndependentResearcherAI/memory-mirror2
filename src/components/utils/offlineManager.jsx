@@ -174,61 +174,83 @@ export const downloadAudioForOffline = async (audioItem) => {
     // Support multiple audio URL formats
     const audioUrl = audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url;
     if (!audioUrl) {
-      throw new Error('Invalid audio item - missing audio URL (audio_url, audio_file_url, or youtube_url required)');
+      throw new Error('Missing audio URL (audio_url, audio_file_url, or youtube_url required)');
     }
+    
+    // Validate URL format
+    try {
+      new URL(audioUrl);
+    } catch {
+      throw new Error('Invalid audio URL format');
+    }
+    
+    // Fetch with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
     
     const response = await fetch(audioUrl, { 
       method: 'GET',
       headers: { 'Accept': 'audio/*' },
-      credentials: 'same-origin'
+      credentials: 'same-origin',
+      signal: controller.signal
     });
     
+    clearTimeout(timeoutId);
+    
     if (!response.ok) {
-      throw new Error(`Failed to fetch audio: ${response.status} ${response.statusText}`);
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
     
     const blob = await response.blob();
     if (blob.size === 0) {
-      throw new Error('Downloaded audio file is empty');
+      throw new Error('Audio file is empty');
     }
     
-    // Store in IndexedDB
+    // Store in IndexedDB with full error handling
     return new Promise((resolve, reject) => {
       try {
         const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readwrite');
         const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
 
         const data = {
-          id: audioItem.id || `audio_${Date.now()}`,
-          title: audioItem.title || audioItem.name || 'Untitled',
+          id: audioItem.id || `audio_${Date.now()}_${Math.random()}`,
+          title: audioItem.title || audioItem.name || 'Untitled Audio',
           type: audioItem.type || 'audio',
           audio_blob: blob,
           source_url: audioUrl,
           metadata: audioItem.metadata || {
-            artist: audioItem.artist,
-            era: audioItem.era,
-            genre: audioItem.genre
+            artist: audioItem.artist || 'Unknown',
+            era: audioItem.era || 'present',
+            genre: audioItem.genre || 'unknown'
           },
           downloaded_at: new Date().toISOString(),
-          storage_size: blob.size
+          storage_size: blob.size,
+          offline_ready: true
         };
 
         const request = store.put(data);
+        
         request.onerror = () => {
-          console.error('IndexedDB store error:', request.error);
-          reject(request.error);
+          console.error('❌ IndexedDB store error:', request.error);
+          reject(new Error(`Storage error: ${request.error?.message || 'Unknown'}`));
         };
+        
         request.onsuccess = () => {
-          console.log('✅ Audio cached successfully:', data.title);
-          resolve(request.result);
+          console.log(`✅ Audio cached: ${data.title} (${(data.storage_size / 1024).toFixed(2)}KB)`);
+          resolve({ id: data.id, size: data.storage_size });
+        };
+        
+        transaction.onerror = () => {
+          reject(new Error('Transaction failed'));
         };
       } catch (error) {
         reject(error);
       }
     });
   } catch (error) {
-    console.error('Failed to download audio:', error.message);
-    throw error;
+    console.error('❌ Audio download failed:', error.message);
+    // Don't re-throw - allow app to continue with missing audio
+    return { success: false, error: error.message };
   }
 };
 

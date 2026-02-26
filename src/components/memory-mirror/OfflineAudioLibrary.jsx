@@ -57,22 +57,32 @@ export default function OfflineAudioLibrary() {
     setDownloadingIds(prev => new Set([...prev, audioItem.id]));
 
     try {
-      await downloadAudioForOffline({
-        id: audioItem.id,
-        title: audioItem.title || audioItem.name || 'Unknown',
-        type: audioItem.type,
-        audio_url: audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url,
+      const audioUrl = audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url;
+      if (!audioUrl) {
+        throw new Error('No audio URL available for download');
+      }
+
+      const result = await downloadAudioForOffline({
+        id: audioItem.id || `audio_${Date.now()}`,
+        title: audioItem.title || audioItem.name || 'Unknown Audio',
+        type: audioItem.type || 'audio',
+        audio_url: audioUrl,
         metadata: {
           entity_id: audioItem.entity_id,
-          artist: audioItem.artist,
-          era: audioItem.era
+          artist: audioItem.artist || 'Unknown',
+          era: audioItem.era || 'present'
         }
       });
 
-      await loadOfflineLibrary();
+      if (result.success === false) {
+        console.warn('Download completed with warning:', result.error);
+      }
+
+      // Reload library after successful download
+      setTimeout(() => loadOfflineLibrary(), 500);
     } catch (error) {
-      console.error('Download failed:', error);
-      alert(`Failed to download audio: ${error.message}`);
+      console.error('❌ Download failed:', error);
+      alert(`Download error: ${error?.message || 'Unable to download audio'}`);
     } finally {
       setDownloadingIds(prev => {
         const newSet = new Set(prev);

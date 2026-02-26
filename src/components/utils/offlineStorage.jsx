@@ -183,14 +183,25 @@ export async function clearStore(storeName) {
         const tx = db.transaction(normalizedStore, 'readwrite');
         const store = tx.objectStore(normalizedStore);
         const request = store.clear();
-        request.onsuccess = () => resolve();
-        request.onerror = () => reject(request.error);
+        
+        request.onsuccess = () => {
+          console.log(`✅ Cleared ${normalizedStore}`);
+          resolve();
+        };
+        
+        request.onerror = () => {
+          console.warn(`Failed to clear ${normalizedStore}:`, request.error);
+          reject(request.error);
+        };
+        
+        tx.onerror = () => reject(tx.error);
       } catch (error) {
         reject(error);
       }
     });
   } catch (error) {
     console.warn(`Failed to clear ${storeName}:`, error.message);
+    return Promise.resolve(); // Don't fail completely
   }
 }
 

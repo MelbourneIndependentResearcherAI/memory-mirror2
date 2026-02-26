@@ -770,16 +770,21 @@ export async function preloadEssentialData() {
         });
         results.music++;
         
-        // Download actual audio file if URL provided
-        if (song.audio_file_url && isOnline()) {
-          try {
-            const { downloadAudioForOffline } = await import('./offlineManager');
-            await downloadAudioForOffline(song);
-            console.log(`🎵 Downloaded audio: ${song.title}`);
-          } catch (audioError) {
-            console.warn(`Audio download failed for ${song.title}:`, audioError.message);
-          }
-        }
+        // Download actual audio file if URL provided and online
+         if ((song.audio_file_url || song.audio_url) && isOnline && isOnline()) {
+           try {
+             const { downloadAudioForOffline } = await import('./offlineManager');
+             await downloadAudioForOffline({
+               ...song,
+               id: `music_${Date.now()}_${Math.random()}`,
+               type: 'music'
+             });
+             console.log(`🎵 Downloaded audio: ${song.title}`);
+           } catch (audioError) {
+             console.warn(`Audio download warning for ${song.title} (non-critical):`, audioError.message);
+             // Don't fail - audio download is optional
+           }
+         }
       } catch (error) {
         console.warn('Music cache failed:', error.message || 'Unknown error');
       }
