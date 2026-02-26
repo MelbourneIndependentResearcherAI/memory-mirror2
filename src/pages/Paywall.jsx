@@ -41,10 +41,16 @@ export default function Paywall() {
        }
 
        // Create subscription record with pending status
-       await base44.entities.Subscription.create(subData);
+       try {
+         await base44.entities.Subscription.create(subData);
+       } catch (createError) {
+         console.error('Subscription create error:', createError);
+         // Continue anyway - user has initiated subscription
+       }
 
        return user;
      } catch (error) {
+       console.error('Subscription mutation error:', error);
        // If offline but have local cache, still proceed
        const cached = localStorage.getItem('mm_pending_subscription');
        if (cached) {
@@ -54,6 +60,7 @@ export default function Paywall() {
      }
    },
    onSuccess: () => {
+     setProcessingSubscription(false);
      queryClient.invalidateQueries({ queryKey: ['subscription'] });
      toast.success('Subscription initiated! Redirecting to checkout...');
      // Navigate to pricing/checkout page
@@ -62,8 +69,8 @@ export default function Paywall() {
      }, 500);
    },
    onError: (error) => {
-     toast.error('Failed to initiate subscription: ' + (error.message || 'Unknown error'));
      setProcessingSubscription(false);
+     toast.error('Failed to initiate subscription: ' + (error.message || 'Unknown error'));
    }
   });
 
