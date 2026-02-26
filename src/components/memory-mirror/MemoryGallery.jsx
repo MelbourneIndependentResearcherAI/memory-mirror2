@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
-import { BookHeart, X, Play, ArrowLeft } from 'lucide-react';
+import { BookHeart, X, Play, ArrowLeft, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import { speakWithRealisticVoice } from './voiceUtils';
+import MemorySearch from './MemorySearch';
 
 export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
   const [selectedMemory, setSelectedMemory] = useState(null);
+  const [activeTab, setActiveTab] = useState('browse');
   const queryClient = useQueryClient();
 
   const { data: memories = [] } = useQuery({
@@ -32,9 +35,13 @@ export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
     speakWithRealisticVoice(text);
   };
 
+  const handleSelectFromSearch = (type, item) => {
+    setSelectedMemory(item);
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto dark:bg-slate-900">
+      <DialogContent className="max-w-4xl max-h-[85vh] overflow-hidden dark:bg-slate-900">
         <DialogHeader>
           <DialogTitle className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -47,7 +54,7 @@ export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
                 <ArrowLeft className="w-5 h-5" />
               </Button>
               <BookHeart className="w-6 h-6 text-pink-600 dark:text-pink-400" />
-              <span>Memory Gallery</span>
+              <span>Memory Library</span>
             </div>
             <Button
               variant="ghost"
@@ -60,8 +67,21 @@ export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
           </DialogTitle>
         </DialogHeader>
 
-        <PullToRefresh onRefresh={handleRefresh} className="max-h-[60vh]">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4">
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1">
+          <TabsList className="grid w-full grid-cols-2 mb-4">
+            <TabsTrigger value="browse" className="flex items-center gap-2">
+              <BookHeart className="w-4 h-4" />
+              Browse All
+            </TabsTrigger>
+            <TabsTrigger value="search" className="flex items-center gap-2">
+              <Search className="w-4 h-4" />
+              AI Search
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="browse" className="overflow-y-auto max-h-[calc(85vh-180px)]">
+            <PullToRefresh onRefresh={handleRefresh}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4">
             {filteredMemories.map((memory) => (
               <Card 
                 key={memory.id} 
@@ -107,9 +127,19 @@ export default function MemoryGallery({ isOpen, onClose, filterEra = null }) {
               <p>No memories available yet</p>
             </div>
           )}
-        </PullToRefresh>
+          </div>
+          </PullToRefresh>
+          </TabsContent>
 
-        {selectedMemory && (
+          <TabsContent value="search" className="overflow-y-auto max-h-[calc(85vh-180px)] p-4">
+          <MemorySearch 
+          onSelectMemory={handleSelectFromSearch}
+          currentEra={filterEra || 'present'}
+          />
+          </TabsContent>
+          </Tabs>
+
+          {selectedMemory && (
           <Dialog open={!!selectedMemory} onOpenChange={() => setSelectedMemory(null)}>
             <DialogContent className="dark:bg-slate-900">
               <DialogHeader>
