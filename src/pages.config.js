@@ -146,6 +146,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import SecureMessagingPage from './pages/SecureMessagingPage';
+import Registration from './pages/Registration';
 import __Layout from './Layout.jsx';
 
 
@@ -249,6 +250,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "SecureMessagingPage": SecureMessagingPage,
+    "Registration": Registration,
 }
 
 export const pagesConfig = {
