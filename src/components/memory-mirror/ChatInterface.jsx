@@ -170,14 +170,14 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         const audio = new Audio(result.data.audio);
         audio.volume = 1.0;
         
-        // Natural conversation flow - auto-listen after speaking
+        // Natural turn-taking - listen after speaking
         audio.onended = () => {
           if (emotionalContext.onEnd) {
             emotionalContext.onEnd();
           }
-          // Quick turnaround for natural phone conversation feel
+          // Natural pause before listening again
           if (isMountedRef.current && !isLoading) {
-            setTimeout(() => startVoiceInput(), 500);
+            setTimeout(() => startVoiceInput(), 600);
           }
         };
         
@@ -196,9 +196,9 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         if (emotionalContext.onEnd) {
           emotionalContext.onEnd();
         }
-        // Natural conversation flow
+        // Natural pause for turn-taking
         if (isMountedRef.current && !isLoading) {
-          setTimeout(() => startVoiceInput(), 500);
+          setTimeout(() => startVoiceInput(), 600);
         }
       };
       
@@ -561,14 +561,15 @@ USE THIS INFORMATION to personalize your responses. Call them by their preferred
     return `You are Memory Mirror, a compassionate AI companion for people with dementia. CRITICAL: Speak naturally like you're having a phone conversation with a friend - relaxed, conversational, warm.
 
 **NATURAL CONVERSATION STYLE:**
-- Keep responses SHORT (1-3 sentences max) - like real phone conversations
-- Use natural fillers: "Well...", "You know...", "Oh...", "Hmm..."
-- Ask one question at a time, then listen
-- React naturally: "Really?", "That's wonderful!", "I see..."
-- Use contractions: "I'm", "you're", "that's", "it's"
-- Be spontaneous and genuine, not scripted
-- Pause naturally between thoughts with "..." 
-- Sound like you're truly listening and engaged
+- Keep responses VERY SHORT (1-2 sentences) unless they ask for more detail
+- Start with natural acknowledgments: "I see...", "Mmhm...", "Oh...", "Right...", "I understand..."
+- Use natural fillers frequently: "Well...", "You know...", "Hmm..."
+- Ask one simple question, then STOP and listen
+- React naturally: "Really?", "That's wonderful!", "I hear you...", "Tell me more..."
+- Use contractions: "I'm", "you're", "that's", "it's", "doesn't"
+- Be spontaneous and genuine, not scripted or formal
+- NEVER interrupt or rush - let them finish their thought completely
+- Sound like you're actively listening and truly engaged
 
 **CONVERSATION PRINCIPLES:**
 1. NEVER correct or reality-orient. Meet them where they are mentally.
@@ -585,7 +586,14 @@ USE THIS INFORMATION to personalize your responses. Call them by their preferred
 
 ${lastAssessment?.recommended_adaptations?.length > 0 ? `\nADAPTATIONS:\n${lastAssessment.recommended_adaptations.map(a => `- ${a}`).join('\n')}` : ''}
 
-RESPOND NATURALLY AND BRIEFLY - like you're on the phone with them. After your response, add META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
+CRITICAL RULES:
+- Start with acknowledgment: "I see...", "Mmhm...", "I understand..."
+- Keep it to 1-2 sentences max unless they ask for detail
+- Use natural filler words to sound human
+- Wait for them - NEVER rush or interrupt
+- Ask simple questions to keep conversation flowing
+
+After your response, add META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
   };
 
   useEffect(() => {
@@ -826,7 +834,7 @@ Conversation so far:
 ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
 RESPOND LIKE YOU'RE ON THE PHONE - natural, brief, conversational. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory.' : ''}
-Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and fillers.`;
+MAXIMUM 1-2 SENTENCES. Start with acknowledgment filler ("I see...", "Mmhm..."). Sound completely human. Never interrupt or rush them.`;
 
       console.log('Calling AI chat...');
       let response = await offlineAIChat(fullPrompt, {
@@ -959,11 +967,11 @@ Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and
             utterance.voice = voices[0];
           }
           
-          // CRITICAL: Auto-start listening immediately for natural phone-like conversation
+          // Auto-start listening after speaking (natural turn-taking)
           utterance.onend = () => {
             if (isMountedRef.current && !isLoading) {
-              console.log('🎤 Natural conversation: Auto-starting voice');
-              setTimeout(() => startVoiceInput(), 500); // Quick response like real conversation
+              console.log('🎤 Your turn - listening for full thought');
+              setTimeout(() => startVoiceInput(), 600); // Brief pause for natural flow
             }
           };
           utterance.onerror = () => {
@@ -1120,10 +1128,10 @@ Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and
       // Create new recognition instance
       recognitionRef.current = new SpeechRecognition();
       
-      // Configure for MAXIMUM sensitivity - optimized for soft/quiet voices
-      recognitionRef.current.continuous = true;           // Keep listening until stopped
-      recognitionRef.current.interimResults = true;       // Show interim results as user speaks
-      recognitionRef.current.maxAlternatives = 3;         // More alternatives for better detection
+      // Configure for natural conversation - let user finish their thought
+      recognitionRef.current.continuous = true;           // Keep listening for complete thoughts
+      recognitionRef.current.interimResults = true;       // Show what they're saying
+      recognitionRef.current.maxAlternatives = 3;         // Better detection
       
       // CRITICAL: Browser-specific optimizations for soft voice detection
       if (recognitionRef.current.audioTrack !== undefined) {
@@ -1144,10 +1152,11 @@ Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and
       const _speechEndTimeoutRef = { current: null };
 
       recognitionRef.current.onstart = () => {
-        console.log('Speech recognition started - Natural conversation mode');
+        console.log('Speech recognition started - Listening patiently for full thought');
         if (isMountedRef.current) {
           setIsListening(true);
-          toast.success('🎤 I\'m listening...');
+          // Subtle toast - don't interrupt their flow
+          toast.success('Listening...');
         }
       };
       
@@ -1162,26 +1171,36 @@ Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and
           
           console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
           
-          // Natural conversation: Send message when user finishes speaking
+          // Wait for user to fully finish their thought
           if (lastResult.isFinal) {
             const finalSpeech = transcript.trim();
             
             if (finalSpeech.length > 0 && isMountedRef.current) {
-              console.log('✅ User finished speaking:', finalSpeech);
+              console.log('✅ User finished thought:', finalSpeech);
               
-              // Stop listening
-              if (recognitionRef.current) {
-                try {
-                  recognitionRef.current.stop();
-                } catch (e) {
-                  console.log('Stop error (safe):', e.message);
-                }
+              // CRITICAL: Don't interrupt - wait a moment to ensure they're done
+              // This gives them time to add more without being cut off
+              if (_speechEndTimeoutRef.current) {
+                clearTimeout(_speechEndTimeoutRef.current);
               }
               
-              setIsListening(false);
-              
-              // Quick response for natural phone conversation
-              setTimeout(() => sendMessage(finalSpeech), 200);
+              _speechEndTimeoutRef.current = setTimeout(() => {
+                if (isMountedRef.current) {
+                  // Stop listening
+                  if (recognitionRef.current) {
+                    try {
+                      recognitionRef.current.stop();
+                    } catch (e) {
+                      console.log('Stop error (safe):', e.message);
+                    }
+                  }
+                  
+                  setIsListening(false);
+                  
+                  // Natural pause before responding (like human conversation)
+                  setTimeout(() => sendMessage(finalSpeech), 300);
+                }
+              }, 1200); // Wait 1.2 seconds of silence to ensure they're truly done
             }
           }
         } catch (error) {
