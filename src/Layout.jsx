@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
+import SessionTimeoutManager from '@/components/SessionTimeoutManager';
 
 // Add small delay to allow async checks
 const SUBSCRIPTION_CHECK_TIMEOUT = 100;
