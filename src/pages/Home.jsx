@@ -18,7 +18,6 @@ import { toast } from 'sonner';
 import SingAlongPlayer from '@/components/music/SingAlongPlayer';
 import ReferralDashboard from '@/components/referral/ReferralDashboard';
 import InstallAppButton from '@/components/InstallAppButton';
-import { Suspense } from 'react';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
