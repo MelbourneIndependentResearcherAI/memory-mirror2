@@ -1456,6 +1456,17 @@ RESPOND NOW:
         />
       )}
 
+      {showFreeTierAlert && freeTierUsage && (
+        <div className="fixed bottom-32 left-4 right-4 z-40 max-w-md mx-auto">
+          <FreeTierLimitAlert 
+            featureType="chat"
+            used={freeTierUsage.used}
+            limit={freeTierUsage.limit}
+            onDismiss={() => setShowFreeTierAlert(false)}
+          />
+        </div>
+      )}
+
       {showPersonalizedCompanion && (
         <div className="absolute inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto">
           <div className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-4">
