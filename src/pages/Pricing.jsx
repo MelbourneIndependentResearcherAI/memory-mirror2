@@ -105,19 +105,20 @@ export default function Pricing() {
   ];
 
   const createSubscriptionMutation = useMutation({
-    mutationFn: async (data) => {
-      return await base44.entities.Subscription.create(data);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['userSubscription']);
-      toast.success('Subscription request created!');
-      setProcessing(false);
-      setShowPaymentInfo(true);
-    },
-    onError: () => {
-      toast.error('Failed to create subscription');
-      setProcessing(false);
-    }
+   mutationFn: async (data) => {
+     return await base44.entities.Subscription.create(data);
+   },
+   onSuccess: () => {
+     queryClient.invalidateQueries({ queryKey: ['userSubscription'] });
+     toast.success('Subscription request created!');
+     setProcessing(false);
+     setShowPaymentInfo(true);
+   },
+   onError: (error) => {
+     console.error('Subscription error:', error);
+     toast.error('Failed to create subscription: ' + (error.message || 'Unknown error'));
+     setProcessing(false);
+   }
   });
 
   const handleSelectPlan = (plan) => {

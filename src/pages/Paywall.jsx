@@ -44,16 +44,20 @@ export default function Paywall() {
        await base44.entities.Subscription.create(subData);
 
        // Log in audit
-       await base44.asServiceRole.entities.AuditLog.create({
-         action: 'subscription_initiated',
-         user_email: user.email,
-         details: {
-           plan: 'premium',
-           price: 9.99,
-           payment_reference: paymentRef,
-           timestamp: new Date().toISOString()
+         try {
+           await base44.asServiceRole.entities.AuditLog.create({
+             action: 'subscription_initiated',
+             user_email: user.email,
+             details: {
+               plan: 'premium',
+               price: 9.99,
+               payment_reference: paymentRef
+             },
+             timestamp: new Date().toISOString()
+           });
+         } catch (logError) {
+           console.error('Failed to log subscription:', logError);
          }
-       });
 
        return user;
      } catch (error) {

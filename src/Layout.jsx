@@ -11,6 +11,9 @@ import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 
+// Add small delay to allow async checks
+const SUBSCRIPTION_CHECK_TIMEOUT = 100;
+
 /**
  * Memory Mirror - AI Companion for Dementia Care
  * EMERGENCY SIMPLIFIED VERSION - Removes all blocking initialization
@@ -28,12 +31,13 @@ export default function Layout({ children, currentPageName }) {
   useEffect(() => {
     if (!subscriptionData) return; // Wait for data to load
     
-    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal'];
+    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
     // If not subscribed and trying to access restricted page, redirect to paywall
     if (!subscriptionData.isSubscribed && !isRestrictedPage) {
-      navigate('/paywall');
+      const timer = setTimeout(() => navigate('/paywall'), SUBSCRIPTION_CHECK_TIMEOUT);
+      return () => clearTimeout(timer);
     }
   }, [subscriptionData, currentPageName, navigate]);
 
