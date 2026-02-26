@@ -30,23 +30,13 @@ export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated:
         onMemoryGalleryOpen={() => setShowMemoryGallery(true)}
       />
       
-      <MemoryGallery
-        isOpen={showMemoryGallery}
-        onClose={() => setShowMemoryGallery(false)}
-        filterEra={detectedEra}
-      />
-
-      <WakeWordListener 
-        onWakeWordDetected={handleWakeWord}
-        isActive={wakeWordActive}
-      />
-
-      <VoiceCommandListener 
-        currentMode="chat"
-        onMemoryGalleryOpen={() => setShowMemoryGallery(true)}
-      />
-
-      <PageLoadTip pageName="ChatMode" />
+      {showMemoryGallery && (
+        <MemoryGallery
+          isOpen={showMemoryGallery}
+          onClose={() => setShowMemoryGallery(false)}
+          filterEra={detectedEra}
+        />
+      )}
     </>
   );
 }
