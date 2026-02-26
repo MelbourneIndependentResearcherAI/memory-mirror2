@@ -20,6 +20,8 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { offlineCache } from '@/components/utils/simpleOfflineCache';
+import { offlineStatus } from '@/components/utils/offlineStatusManager';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -904,14 +906,33 @@ RESPOND NOW:
 - Make them feel understood and loved`;
 
       console.log('Calling AI chat...');
-       let response = await base44.integrations.Core.InvokeLLM({
-         prompt: fullPrompt,
-         add_context_from_internet: false
-       });
+       let response;
 
-      console.log('AI response received:', response);
+       // Try online first
+       if (offlineStatus.getStatus()) {
+         try {
+           response = await base44.integrations.Core.InvokeLLM({
+             prompt: fullPrompt,
+             add_context_from_internet: false
+           });
+         } catch (error) {
+           console.error('AI call failed, checking offline cache:', error);
+           response = offlineCache.findSimilarResponse(userMessage);
+           if (!response) {
+             response = offlineCache.getOfflineResponse();
+           }
+         }
+       } else {
+         // Offline - use cache
+         response = offlineCache.findSimilarResponse(userMessage);
+         if (!response) {
+           response = offlineCache.getOfflineResponse();
+         }
+       }
 
-      let assistantMessage = typeof response === 'string' ? response : response?.text || response;
+       console.log('AI response received:', response);
+
+       let assistantMessage = typeof response === 'string' ? response : response?.text || response || offlineCache.getOfflineResponse();
       
       if (!assistantMessage) {
         throw new Error('Empty response from AI');
@@ -984,6 +1005,8 @@ RESPOND NOW:
       if (isMountedRef.current && assistantMessage) {
         setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
         setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+        // Cache for offline use
+        offlineCache.cacheInteraction(userMessage, assistantMessage);
         console.log('Message added to chat');
       }
 

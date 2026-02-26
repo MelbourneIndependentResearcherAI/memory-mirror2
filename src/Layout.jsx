@@ -5,6 +5,7 @@ import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
+import OfflineIndicator from '@/components/OfflineIndicator';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
@@ -137,6 +138,7 @@ export default function Layout({ children, currentPageName }) {
         <AppStateProvider>
           <LockModeProvider>
             <ErrorBoundary>
+              <OfflineIndicator />
               <ScrollToTop />
               
               <div 

@@ -131,6 +131,7 @@ import SecurityMode from './pages/SecurityMode';
 import SharedJournal from './pages/SharedJournal';
 import SingAlongStudio from './pages/SingAlongStudio';
 import SmartHome from './pages/SmartHome';
+import SubscriptionStatus from './pages/SubscriptionStatus';
 import SyncBackup from './pages/SyncBackup';
 import TVDashboard from './pages/TVDashboard';
 import TVMode from './pages/TVMode';
@@ -149,7 +150,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import SubscriptionStatus from './pages/SubscriptionStatus';
 import __Layout from './Layout.jsx';
 
 
@@ -238,6 +238,7 @@ export const PAGES = {
     "SharedJournal": SharedJournal,
     "SingAlongStudio": SingAlongStudio,
     "SmartHome": SmartHome,
+    "SubscriptionStatus": SubscriptionStatus,
     "SyncBackup": SyncBackup,
     "TVDashboard": TVDashboard,
     "TVMode": TVMode,
@@ -256,7 +257,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "SubscriptionStatus": SubscriptionStatus,
 }
 
 export const pagesConfig = {
