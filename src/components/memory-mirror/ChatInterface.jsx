@@ -22,6 +22,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
+import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
@@ -44,6 +45,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [conversationTopics, setConversationTopics] = useState([]);
   const [cognitiveLevel, setCognitiveLevel] = useState('mild');
   const [lastAssessment, setLastAssessment] = useState(null);
+  const [showFreeTierAlert, setShowFreeTierAlert] = useState(false);
+  const [freeTierUsage, setFreeTierUsage] = useState(null);
   const [selectedLanguage, setSelectedLanguage] = useState(() => {
     try {
       return localStorage.getItem('memoryMirrorLanguage') || 'en';
