@@ -38,7 +38,7 @@ export default function SingAlongPlayer({
     mutationFn: ({ id, times_sung }) => 
       base44.entities.SingAlongSong.update(id, { times_sung }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['singAlongSongs']);
+      queryClient.invalidateQueries({ queryKey: ['singAlongSongs'] });
     }
   });
 

@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 export default function SingAlongStudio() {
   const [selectedSong, setSelectedSong] = useState(null);
   const [currentEra, setCurrentEra] = useState('timeless');
+  const [showModal, setShowModal] = useState(false);
 
   const { data: songs = [] } = useQuery({
     queryKey: ['singAlongSongs'],
@@ -107,7 +108,10 @@ export default function SingAlongStudio() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.05 }}
-                onClick={() => setSelectedSong(song)}
+                onClick={() => {
+                  setSelectedSong(song);
+                  setShowModal(true);
+                }}
               >
                 <Card className="p-4 cursor-pointer hover:shadow-lg transition-all dark:bg-slate-800 hover:border-purple-400 dark:hover:border-purple-600 border-2">
                   <div className="flex items-start justify-between mb-2">
@@ -162,10 +166,13 @@ export default function SingAlongStudio() {
       </div>
 
       {/* Sing-Along Modal */}
-      {selectedSong && (
+      {selectedSong && showModal && (
         <SingAlongPlayer
           currentEra={currentEra}
-          onClose={() => setSelectedSong(null)}
+          onClose={() => {
+            setSelectedSong(null);
+            setShowModal(false);
+          }}
         />
       )}
     </div>
