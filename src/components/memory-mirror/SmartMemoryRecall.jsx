@@ -4,7 +4,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function SmartMemoryRecall({ memories, photos, onClose, onSelect }) {
+export default function SmartMemoryRecall({ memories, photos, onClose, onSelect, reasoning, suggestedMention }) {
   if (!memories?.length && !photos?.length) return null;
 
   return (
@@ -19,7 +19,7 @@ export default function SmartMemoryRecall({ memories, photos, onClose, onSelect 
           <CardContent className="p-4">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
-                <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center">
+                <div className="w-8 h-8 bg-amber-400 rounded-full flex items-center justify-center animate-pulse">
                   <Image className="w-4 h-4 text-white" />
                 </div>
                 <h3 className="font-semibold text-slate-800 dark:text-slate-100">
@@ -36,9 +36,19 @@ export default function SmartMemoryRecall({ memories, photos, onClose, onSelect 
               </Button>
             </div>
 
-            <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
-              I found some memories that might bring comfort
-            </p>
+            {suggestedMention && (
+              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 mb-3 border-2 border-amber-200 dark:border-amber-800">
+                <p className="text-sm text-slate-700 dark:text-slate-300 italic">
+                  💬 "{suggestedMention}"
+                </p>
+              </div>
+            )}
+
+            {reasoning && (
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-3">
+                {reasoning}
+              </p>
+            )}
 
             <div className="space-y-2 max-h-80 overflow-y-auto">
               {photos?.map((photo) => (
@@ -60,8 +70,13 @@ export default function SmartMemoryRecall({ memories, photos, onClose, onSelect 
                         📸 {photo.title}
                       </p>
                       {photo.caption && (
-                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                        <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-1">
                           {photo.caption}
+                        </p>
+                      )}
+                      {photo.ai_prompt && (
+                        <p className="text-xs text-blue-600 dark:text-blue-400 italic mb-1">
+                          💭 {photo.ai_prompt}
                         </p>
                       )}
                       <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-500">
@@ -100,7 +115,12 @@ export default function SmartMemoryRecall({ memories, photos, onClose, onSelect 
                       <p className="text-xs text-slate-600 dark:text-slate-400 line-clamp-2 mb-1">
                         {memory.description}
                       </p>
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500">
+                      {memory.ai_prompt && (
+                        <p className="text-xs text-purple-600 dark:text-purple-400 italic mb-1">
+                          💭 {memory.ai_prompt}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-500 flex-wrap">
                         {memory.era && (
                           <span className="bg-purple-100 dark:bg-purple-900/50 px-2 py-0.5 rounded">
                             {memory.era}

@@ -702,7 +702,8 @@ After your response, on a new line output META: {"era": "1940s|1960s|1980s|prese
           show: true,
           photos: relevantMedia.data.photos || [],
           memories: relevantMedia.data.memories || [],
-          reasoning: relevantMedia.data.reasoning
+          reasoning: relevantMedia.data.reasoning,
+          suggestedMention: relevantMedia.data.suggested_mention
         });
       }
     } catch (error) {
@@ -1204,11 +1205,13 @@ If appropriate, gently reference their memories or suggest looking at photos tog
     if (!item || !type || !isMountedRef.current) return;
     
     try {
-      setSmartRecall({ show: false, photos: [], memories: [] });
+      setSmartRecall({ show: false, photos: [], memories: [], reasoning: null, suggestedMention: null });
       
-      // Create a message about the selected memory
+      // Use AI-generated prompt if available, otherwise create a basic one
       let description = '';
-      if (type === 'photo' && item.title) {
+      if (item.ai_prompt) {
+        description = item.ai_prompt;
+      } else if (type === 'photo' && item.title) {
         description = `Tell me about this photo: "${item.title}". ${item.caption || ''}`;
       } else if (item.title) {
         description = `I'd like to talk about: "${item.title}". ${item.description?.substring(0, 100) || ''}`;
@@ -1353,7 +1356,9 @@ If appropriate, gently reference their memories or suggest looking at photos tog
         <SmartMemoryRecall
           photos={smartRecall.photos}
           memories={smartRecall.memories}
-          onClose={() => setSmartRecall({ show: false, photos: [], memories: [] })}
+          reasoning={smartRecall.reasoning}
+          suggestedMention={smartRecall.suggestedMention}
+          onClose={() => setSmartRecall({ show: false, photos: [], memories: [], reasoning: null, suggestedMention: null })}
           onSelect={handleMemorySelect}
         />
       )}

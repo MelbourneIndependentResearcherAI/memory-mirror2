@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
     ]);
 
     // Use AI to intelligently match media/memories to conversation context
-    const analysisPrompt = `You are analyzing a conversation to find relevant photos and memories.
+    const analysisPrompt = `You are analyzing a conversation to find relevant photos and memories for a person with dementia.
 
 CONVERSATION CONTEXT: ${context}
 CURRENT ERA: ${current_era}
@@ -39,10 +39,14 @@ TASK: Identify which photos and memories are most relevant to the current conver
 3. Topic relevance (names, places, activities mentioned)
 4. Therapeutic value (what would help redirect if there's anxiety?)
 
+For EACH selected item, generate a personalized conversation prompt that invites them to discuss that memory.
+
 Return a JSON object with:
 {
   "relevant_photos": [array of photo numbers that are relevant, max 3],
   "relevant_memories": [array of memory numbers that are relevant, max 3],
+  "photo_prompts": ["personalized prompt for photo 1", "prompt for photo 2", ...],
+  "memory_prompts": ["personalized prompt for memory 1", "prompt for memory 2", ...],
   "reasoning": "brief explanation of why these are relevant",
   "should_show": true/false (show popup only if highly relevant),
   "suggested_mention": "a natural way to introduce these memories in conversation"
@@ -55,6 +59,8 @@ Return a JSON object with:
         properties: {
           relevant_photos: { type: "array", items: { type: "number" } },
           relevant_memories: { type: "array", items: { type: "number" } },
+          photo_prompts: { type: "array", items: { type: "string" } },
+          memory_prompts: { type: "array", items: { type: "string" } },
           reasoning: { type: "string" },
           should_show: { type: "boolean" },
           suggested_mention: { type: "string" }
@@ -63,13 +69,19 @@ Return a JSON object with:
       }
     });
 
-    // Map numbers back to actual records
+    // Map numbers back to actual records and enrich with AI prompts
     const selectedPhotos = aiAnalysis.relevant_photos
-      ?.map(num => media[num - 1])
+      ?.map((num, idx) => {
+        const photo = media[num - 1];
+        return photo ? { ...photo, ai_prompt: aiAnalysis.photo_prompts?.[idx] } : null;
+      })
       .filter(Boolean) || [];
     
     const selectedMemories = aiAnalysis.relevant_memories
-      ?.map(num => memories[num - 1])
+      ?.map((num, idx) => {
+        const memory = memories[num - 1];
+        return memory ? { ...memory, ai_prompt: aiAnalysis.memory_prompts?.[idx] } : null;
+      })
       .filter(Boolean) || [];
 
     return Response.json({
