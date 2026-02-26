@@ -78,13 +78,38 @@ export default function Layout({ children, currentPageName }) {
     if (isMainPage) {
       document.body.style.overscrollBehavior = 'none';
       document.body.style.touchAction = 'pan-y';
+      document.documentElement.style.overscrollBehavior = 'none';
     }
     
     return () => {
       document.body.style.overscrollBehavior = '';
       document.body.style.touchAction = '';
+      document.documentElement.style.overscrollBehavior = '';
     };
   }, [isMainPage]);
+
+  // Handle back gesture on iOS/Android
+  useEffect(() => {
+    let touchStartX = 0;
+    const handleTouchStart = (e) => {
+      touchStartX = e.touches[0].clientX;
+    };
+    const handleTouchEnd = (e) => {
+      const touchEndX = e.changedTouches[0].clientX;
+      // Right swipe > 50px = back
+      if (touchEndX - touchStartX > 50 && touchStartX < 30) {
+        navigate(-1);
+      }
+    };
+
+    document.addEventListener('touchstart', handleTouchStart, false);
+    document.addEventListener('touchend', handleTouchEnd, false);
+
+    return () => {
+      document.removeEventListener('touchstart', handleTouchStart, false);
+      document.removeEventListener('touchend', handleTouchEnd, false);
+    };
+  }, [navigate]);
 
   return (
     <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
