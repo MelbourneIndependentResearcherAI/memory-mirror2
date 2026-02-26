@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
 
-import { useState } from 'react';
-
 export default function CaregiverDashboardPage() {
   const navigate = useNavigate();
   const [selectedPatient, setSelectedPatient] = useState(null);
