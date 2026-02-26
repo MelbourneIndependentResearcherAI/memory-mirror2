@@ -740,16 +740,25 @@ After your response, add META: {"era": "1940s|1960s|1980s|present", "anxiety": 0
       console.error('Visual suggestions failed:', error);
     }
 
-    // Find relevant photos and conversation snippets using AI (offline-aware)
+    // ENHANCED: Find relevant photos and memories using AI with emotional context
     try {
       const relevantMedia = await offlineFunction('findRelevantMedia', {
         context: userMessageEnglish,
         current_era: selectedEra === 'auto' ? detectedEra : selectedEra,
-        conversation_topics: conversationTopics
+        conversation_topics: conversationTopics,
+        emotional_state: sentimentAnalysis?.emotional_tone?.[0] || 'neutral',
+        anxiety_level: anxietyLevel,
+        user_profile: userProfile
       });
       
       if (relevantMedia.data?.should_show && 
           (relevantMedia.data?.photos?.length > 0 || relevantMedia.data?.memories?.length > 0)) {
+        console.log('🎯 Smart Memory Recall triggered:', {
+          photos: relevantMedia.data.photos?.length || 0,
+          memories: relevantMedia.data.memories?.length || 0,
+          reasoning: relevantMedia.data.reasoning
+        });
+        
         setSmartRecall({
           show: true,
           photos: relevantMedia.data.photos || [],

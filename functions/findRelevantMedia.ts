@@ -9,7 +9,7 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { context, current_era, conversation_topics } = await req.json();
+    const { context, current_era, conversation_topics, emotional_state, anxiety_level, user_profile } = await req.json();
 
     // Fetch family media and memories using service role
     const [media, memories] = await Promise.all([
@@ -17,12 +17,20 @@ Deno.serve(async (req) => {
       base44.asServiceRole.entities.Memory.list('-created_date', 100)
     ]);
 
-    // Use AI to intelligently match media/memories to conversation context
-    const analysisPrompt = `You are analyzing a conversation to find relevant photos and memories for a person with dementia.
+    // Use AI to intelligently match media/memories to conversation context with emotional awareness
+    const analysisPrompt = `You are an AI memory assistant analyzing conversation to suggest relevant, comforting memories for a person with dementia.
 
 CONVERSATION CONTEXT: ${context}
 CURRENT ERA: ${current_era}
 RECENT TOPICS: ${conversation_topics?.join(', ') || 'general conversation'}
+EMOTIONAL STATE: ${emotional_state || 'neutral'}
+ANXIETY LEVEL: ${anxiety_level || 0}/10
+${user_profile ? `
+PERSON'S PROFILE:
+- Name: ${user_profile.loved_one_name}
+- Interests: ${user_profile.interests?.join(', ') || 'unknown'}
+- Important people: ${user_profile.important_people?.map(p => `${p.name} (${p.relationship})`).join(', ') || 'unknown'}
+` : ''}
 
 AVAILABLE PHOTOS:
 ${media.slice(0, 20).map((m, i) => `${i+1}. "${m.title}" (${m.era || 'unknown era'}) - ${m.caption || 'no description'}
@@ -33,13 +41,21 @@ ${memories.slice(0, 20).map((m, i) => `${i+1}. "${m.title}" (${m.era || 'present
    Location: ${m.location || 'not specified'}
    People: ${m.people_involved?.join(', ') || 'not specified'}`).join('\n')}
 
-TASK: Identify which photos and memories are most relevant to the current conversation. Consider:
-1. Era match (is the conversation happening in a specific time period?)
-2. Emotional context (what would bring comfort or joy right now?)
-3. Topic relevance (names, places, activities mentioned)
-4. Therapeutic value (what would help redirect if there's anxiety?)
+CRITICAL THERAPEUTIC GUIDELINES:
+- If anxiety is HIGH (7+): Select ONLY calming, safe, joyful memories from their comfort zone
+- If anxiety is MEDIUM (4-6): Select positive, familiar memories
+- If anxiety is LOW: Can explore any relevant memories
+- ALWAYS prioritize memories matching their current era
+- Consider their interests and important people
 
-For EACH selected item, generate a personalized conversation prompt that invites them to discuss that memory.
+TASK: Intelligently select the MOST relevant and therapeutic photos/memories. Consider:
+1. **Emotional Appropriateness**: Match to current emotional state and anxiety level
+2. **Era Alignment**: Prioritize memories from detected era
+3. **Topic Relevance**: Direct connections to what they're talking about
+4. **Therapeutic Value**: What would bring comfort, joy, or meaningful connection?
+5. **Personal Significance**: Leverage profile data (interests, important people)
+
+For EACH selected item, generate a warm, personalized conversation starter that feels natural.
 
 Return a JSON object with:
 {
