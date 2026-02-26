@@ -26,11 +26,13 @@ export default function Layout({ children, currentPageName }) {
   
   // Check subscription access
   useEffect(() => {
+    if (!subscriptionData) return; // Wait for data to load
+    
     const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
     // If not subscribed and trying to access restricted page, redirect to paywall
-    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage) {
+    if (!subscriptionData.isSubscribed && !isRestrictedPage) {
       navigate('/paywall');
     }
   }, [subscriptionData, currentPageName, navigate]);
