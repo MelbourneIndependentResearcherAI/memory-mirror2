@@ -61,6 +61,33 @@ export default function SyncBackupManager() {
     setMetadata(getSyncMetadata());
   };
 
+  const handleDownloadOfflineData = async () => {
+    setIsDownloading(true);
+    setDownloadMessage('Initializing download...');
+    setDownloadProgress(0);
+
+    try {
+      const unsubscribe = downloadManager.subscribe((progress) => {
+        setDownloadProgress(progress.current);
+        setDownloadMessage(progress.currentItem || 'Downloading...');
+      });
+
+      const result = await downloadManager.startFullDownload();
+      
+      unsubscribe();
+      
+      if (result.success) {
+        setDownloadMessage('✓ Download complete! Data is ready offline.');
+      } else {
+        setDownloadMessage('Download completed with some warnings.');
+      }
+    } catch (error) {
+      setDownloadMessage(`Error: ${error.message}`);
+    } finally {
+      setIsDownloading(false);
+    }
+  };
+
   const formatDate = (date) => {
     if (!date) return 'Never';
     return new Date(date).toLocaleString();
