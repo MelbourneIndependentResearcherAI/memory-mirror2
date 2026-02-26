@@ -189,6 +189,11 @@ export default function Pricing() {
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Start with our free plan or unlock premium features to support your loved one's memory journey
           </p>
+          <div className="mt-4 max-w-3xl mx-auto bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
+            <p className="text-xs text-slate-600 dark:text-slate-400">
+              <strong>Payment Notice:</strong> Payments are processed externally via bank transfer. This is a subscription to our healthcare companion service, not an in-app digital purchase. You are subscribing to access our AI dementia care platform and related services.
+            </p>
+          </div>
         </div>
 
         {/* Current Subscription Status */}
@@ -350,10 +355,17 @@ export default function Pricing() {
                 </div>
               </div>
 
-              <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
-                <p className="text-sm text-amber-800 dark:text-amber-400">
-                  <strong>Important:</strong> Please include your email address in the payment reference so we can activate your subscription quickly.
-                </p>
+              <div className="space-y-3">
+                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                  <p className="text-sm text-amber-800 dark:text-amber-400">
+                    <strong>Important:</strong> Please include your email address in the payment reference so we can activate your subscription quickly.
+                  </p>
+                </div>
+                <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3">
+                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                    <strong>External Payment Service:</strong> This payment is processed outside the app via direct bank transfer. You are purchasing a subscription service for healthcare companion features, not in-app digital content. All transactions are handled externally in compliance with app store policies.
+                  </p>
+                </div>
               </div>
 
               <Button
@@ -426,6 +438,14 @@ export default function Pricing() {
               </p>
             </CardContent>
           </Card>
+        </div>
+
+        {/* Compliance Footer */}
+        <div className="mt-8 text-center">
+          <p className="text-xs text-slate-500 dark:text-slate-500">
+            Memory Mirror is a healthcare companion service. Subscriptions are managed externally via bank transfer and provide access to our dementia care platform. 
+            This is not an in-app purchase. By subscribing, you agree to our Terms of Service and understand that payments are processed outside the application.
+          </p>
         </div>
       </div>
     </div>
