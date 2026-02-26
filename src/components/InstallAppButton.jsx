@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
+import { Download } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { toast } from 'sonner';
 
 export default function InstallAppButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [_isInstalled, setIsInstalled] = useState(false);
-  const [_showPrompt, setShowPrompt] = useState(false);
+  const [isInstalled, setIsInstalled] = useState(false);
+  const [showPrompt, setShowPrompt] = useState(false);
 
   useEffect(() => {
     // Check if already installed
@@ -26,6 +29,7 @@ export default function InstallAppButton() {
       setIsInstalled(true);
       setShowPrompt(false);
       setDeferredPrompt(null);
+      toast.success('App installed! Access it from your home screen.');
     });
 
     return () => {
@@ -33,10 +37,12 @@ export default function InstallAppButton() {
     };
   }, []);
 
-  const _handleInstallClick = async () => {
+  const handleInstallClick = async () => {
     if (!deferredPrompt) {
       // Fallback instructions for iOS or if prompt not available
-      alert('To install:\n\niPhone/iPad: Tap Share button → "Add to Home Screen"\n\nAndroid: Tap menu (⋮) → "Install app" or "Add to Home screen"');
+      toast.info('On iPhone: Tap Share → "Add to Home Screen"\nOn Android: Tap menu → "Install app"', {
+        duration: 5000
+      });
       return;
     }
 
@@ -47,7 +53,7 @@ export default function InstallAppButton() {
     const { outcome } = await deferredPrompt.userChoice;
     
     if (outcome === 'accepted') {
-      console.log('App installed');
+      toast.success('App installed successfully!');
       setIsInstalled(true);
     }
 
@@ -56,6 +62,23 @@ export default function InstallAppButton() {
     setShowPrompt(false);
   };
 
-  // Don't show anything - no install button needed
-  return null;
+  // Don't show if already installed
+  if (isInstalled) {
+    return null;
+  }
+
+  // Don't show if no prompt available
+  if (!showPrompt && !deferredPrompt) {
+    return null;
+  }
+
+  return (
+    <Button
+      onClick={handleInstallClick}
+      className="w-full bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-700 hover:to-cyan-700 text-white gap-2"
+    >
+      <Download className="w-4 h-4" />
+      Download to Home Screen
+    </Button>
+  );
 }
