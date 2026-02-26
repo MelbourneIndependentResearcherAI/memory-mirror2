@@ -41,6 +41,7 @@ import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const featureCards = [
   { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalization profile for your loved one', path: '/UserProfile', background: '#F0F9FF' },
+  { id: 33, title: 'Family Memory Library', icon: '💝', description: 'Share memories, photos, audio & collaborate with family', path: '/FamilyMemoryLibrary', background: '#FCE7F3', isNew: true },
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
   { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
   { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
@@ -152,12 +153,17 @@ function CaregiverPortalHome() {
           <button
             key={card.id}
             onClick={() => handleCardClick(card)}
-            className="text-left p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer min-h-[160px] flex flex-col items-start"
+            className="text-left p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer min-h-[160px] flex flex-col items-start relative"
             style={{
               backgroundColor: card.background,
               boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
             }}
           >
+            {card.isNew && (
+              <div className="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
+                NEW
+              </div>
+            )}
             <div className="text-4xl mb-4">{card.icon}</div>
             <h3 className="text-xl font-extrabold text-slate-900 mb-3" style={{ color: '#1e293b' }}>
               {card.title}
