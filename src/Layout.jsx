@@ -93,6 +93,16 @@ export default function Layout({ children, currentPageName }) {
           <LockModeProvider>
             <ErrorBoundary>
               <ScrollToTop />
+              
+              {/* WCAG 2.1 Skip to Main Content Link */}
+              <a 
+                href="#main-content" 
+                className="skip-to-main"
+                aria-label="Skip to main content"
+              >
+                Skip to main content
+              </a>
+              
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
                 style={{
@@ -100,8 +110,14 @@ export default function Layout({ children, currentPageName }) {
                   paddingBottom: showBottomNav ? '100px' : '20px',
                   overscrollBehaviorY: 'none'
                 }}
+                lang="en"
               >
-                <div className="flex-1 relative overflow-hidden">
+                <main 
+                  id="main-content" 
+                  className="flex-1 relative overflow-hidden"
+                  role="main"
+                  aria-label="Main content"
+                >
                   <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
                     {isMainPage ? (
                       <motion.div
@@ -137,7 +153,7 @@ export default function Layout({ children, currentPageName }) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </div>
+                </main>
                 {showFooter && <Footer />}
                 {showBottomNav && <BottomNav />}
               </div>

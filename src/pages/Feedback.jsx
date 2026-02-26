@@ -232,7 +232,8 @@ export default function Feedback() {
         )}
       </div>
 
-      <PageLoadTip pageName="Feedback" />
-    </div>
+        <PageLoadTip pageName="Feedback" />
+      </div>
+    </PullToRefresh>
   );
 }

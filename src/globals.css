@@ -201,7 +201,7 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
-  /* Accessibility - Screen Reader Only */
+  /* Accessibility - Screen Reader Only - WCAG 2.1 */
   .sr-only {
     position: absolute;
     width: 1px;
@@ -213,12 +213,41 @@
     white-space: nowrap;
     border-width: 0;
   }
+  
+  /* Skip to Main Content - WCAG 2.1 2.4.1 */
+  .skip-to-main {
+    position: absolute;
+    top: -100px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    background: #2563eb;
+    color: white;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: top 0.2s;
+  }
+  
+  .skip-to-main:focus {
+    top: 10px;
+  }
 
-  /* Focus Visible - WCAG 2.1 2.4.7 */
+  /* Focus Visible - WCAG 2.1 2.4.7 & 2.4.11 (WCAG 2.2) */
   :focus-visible {
-    outline: 3px solid #9333ea;
-    outline-offset: 2px;
-    border-radius: 6px;
+    outline: 3px solid #2563eb;
+    outline-offset: 3px;
+    border-radius: 4px;
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0.2);
+  }
+  
+  /* High Contrast Focus for Accessibility */
+  @media (prefers-contrast: high) {
+    :focus-visible {
+      outline: 4px solid #000;
+      outline-offset: 4px;
+      box-shadow: 0 0 0 8px rgba(0, 0, 0, 0.3);
+    }
   }
 
   /* Reduced Motion Support - WCAG 2.1 */

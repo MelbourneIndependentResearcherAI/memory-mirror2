@@ -99,6 +99,8 @@ export default function BottomNav() {
         paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
         paddingTop: '12px'
       }}
+      role="navigation"
+      aria-label="Main navigation"
     >
       <div className="flex justify-around items-center px-1">
         {navItems.map((item) => {
@@ -124,6 +126,8 @@ export default function BottomNav() {
                 WebkitTapHighlightColor: 'transparent',
                 touchAction: 'manipulation'
               }}
+              aria-label={`${item.label} ${active ? '(current page)' : ''}`}
+              aria-current={active ? 'page' : undefined}
             >
               <Icon 
                 className={`w-7 h-7 transition-transform ${active ? item.color + ' scale-110' : 'text-slate-500 dark:text-slate-400'}`} 
