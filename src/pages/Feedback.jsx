@@ -3,12 +3,16 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageSquare, Plus, Filter, TrendingUp, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import FeedbackCard from '@/components/feedback/FeedbackCard';
 import FeedbackForm from '@/components/feedback/FeedbackForm';
+import PullToRefresh from '@/components/ui/pull-to-refresh';
+import PageLoadTip from '@/components/tips/PageLoadTip';
+import { toast } from 'sonner';
 
 export default function Feedback() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [showForm, setShowForm] = useState(false);
   const [filterCategory, setFilterCategory] = useState('all');
   const [sortBy, setSortBy] = useState('recent');
@@ -22,6 +26,13 @@ export default function Feedback() {
     queryKey: ['feedbackComments'],
     queryFn: () => base44.entities.FeedbackComment.filter({ is_published: true }),
   });
+
+  const handleRefresh = async () => {
+    toast.info('Refreshing feedback...');
+    await queryClient.invalidateQueries({ queryKey: ['feedbacks'] });
+    await queryClient.invalidateQueries({ queryKey: ['feedbackComments'] });
+    toast.success('Feedback refreshed!');
+  };
 
   const filteredFeedbacks = feedbacks
     .filter(f => filterCategory === 'all' || f.category === filterCategory)
@@ -43,8 +54,9 @@ export default function Feedback() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-purple-950 dark:to-pink-950 pb-20">
-      <div className="max-w-6xl mx-auto px-4 py-8">
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-purple-950 dark:to-pink-950 pb-20">
+        <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Premium Header */}
         <div className="bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-3xl p-8 mb-8 shadow-premium-lg text-white">
           <Button
@@ -230,9 +242,9 @@ export default function Feedback() {
             ))}
           </div>
         )}
-      </div>
-
+        
         <PageLoadTip pageName="Feedback" />
+        </div>
       </div>
     </PullToRefresh>
   );
