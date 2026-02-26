@@ -94,6 +94,7 @@ import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
 import InsightsAnalytics from './pages/InsightsAnalytics';
 import Landing from './pages/Landing';
+import ManualProcessing from './pages/ManualProcessing';
 import MemoryGames from './pages/MemoryGames';
 import MemorySessions from './pages/MemorySessions';
 import MoodAutomations from './pages/MoodAutomations';
@@ -136,7 +137,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import ManualProcessing from './pages/ManualProcessing';
+import Pricing from './pages/Pricing';
 import __Layout from './Layout.jsx';
 
 
@@ -188,6 +189,7 @@ export const PAGES = {
     "ImportArticle": ImportArticle,
     "InsightsAnalytics": InsightsAnalytics,
     "Landing": Landing,
+    "ManualProcessing": ManualProcessing,
     "MemoryGames": MemoryGames,
     "MemorySessions": MemorySessions,
     "MoodAutomations": MoodAutomations,
@@ -230,7 +232,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "ManualProcessing": ManualProcessing,
+    "Pricing": Pricing,
 }
 
 export const pagesConfig = {
