@@ -35,9 +35,16 @@ export default function Settings() {
       localStorage.setItem('quickAccessEnabled', enabled.toString());
       toast.success(
         enabled 
-          ? 'Quick Access Button enabled - patients will see the big red button' 
-          : 'Quick Access Button disabled'
+          ? '✅ Quick Access enabled - Landing page will automatically redirect to the big red button' 
+          : 'Quick Access disabled - Landing page shows normal interface'
       );
+      
+      // Refresh the page to apply changes immediately
+      if (enabled) {
+        setTimeout(() => {
+          window.location.reload();
+        }, 1500);
+      }
     } catch (error) {
       toast.error('Failed to save setting');
     }
