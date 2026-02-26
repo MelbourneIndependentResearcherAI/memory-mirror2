@@ -85,8 +85,10 @@ export default function OfflineContentTester() {
 
     try {
       let result;
-      
-      switch (testId) {
+
+      // Add 5 second timeout per test
+      const testPromise = (async () => {
+        switch (testId) {
         case 'comprehensive_check':
           const healthCheck = await runOfflineHealthCheck();
           const statusEmoji = {
@@ -185,8 +187,16 @@ export default function OfflineContentTester() {
 
         default:
           result = { status: 'failed', message: 'Unknown test' };
-      }
+        }
+        return result;
+      })();
 
+      // Race against timeout
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error('Test timeout')), 5000)
+      );
+
+      result = await Promise.race([testPromise, timeoutPromise]);
       setTestResults(prev => ({ ...prev, [testId]: result }));
     } catch (error) {
       setTestResults(prev => ({ 
@@ -204,8 +214,12 @@ export default function OfflineContentTester() {
   const runAllTests = async () => {
     setTesting(true);
     for (const test of tests) {
-      await runTest(test.id);
-      await new Promise(resolve => setTimeout(resolve, 500));
+      try {
+        await runTest(test.id);
+      } catch (error) {
+        console.error(`Test ${test.id} failed:`, error);
+      }
+      await new Promise(resolve => setTimeout(resolve, 300));
     }
     setTesting(false);
   };
