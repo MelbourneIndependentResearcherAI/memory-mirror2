@@ -60,14 +60,14 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
           if (detected) {
             console.log('🎯 WAKE WORD DETECTED!');
             setWakeWordDetected(true);
-            
+
             // Speak confirmation
             const utterance = new SpeechSynthesisUtterance("I'm here. How can I help?");
             utterance.rate = 0.95;
             utterance.volume = 1.0;
             window.speechSynthesis.speak(utterance);
-            
-            onWakeWordDetected();
+
+            if (onWakeWordDetected) onWakeWordDetected();
             
             // Visual feedback
             setTimeout(() => setWakeWordDetected(false), 2000);
@@ -116,7 +116,7 @@ export default function WakeWordListener({ onWakeWordDetected, isActive }) {
         recognitionRef.current = null;
       }
     };
-  }, [isListening, isActive, onWakeWordDetected]);
+  }, [isListening, isActive]);
 
   const toggleListening = () => {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
