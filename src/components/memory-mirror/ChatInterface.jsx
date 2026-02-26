@@ -153,11 +153,11 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       const voice = voiceMap[selectedLanguage] || 'en-US-JennyNeural';
       const anxietyLevel = emotionalContext.anxietyLevel || 0;
       
-      // Adjust rate based on anxiety and cognitive level
-      let rate = '-8%'; // Slightly slower for dementia care
-      if (cognitiveLevel === 'moderate') rate = '-15%';
-      if (cognitiveLevel === 'advanced') rate = '-20%';
-      if (anxietyLevel >= 7) rate = '-25%'; // Very slow for high anxiety
+      // Natural conversational pacing - like phone conversation
+      let rate = '0%'; // Normal speed feels more natural
+      if (cognitiveLevel === 'moderate') rate = '-5%';
+      if (cognitiveLevel === 'advanced') rate = '-10%';
+      if (anxietyLevel >= 7) rate = '-15%'; // Slower only for high anxiety
 
       const result = await base44.functions.invoke('edgeTTS', {
         text: text.substring(0, 3000),
@@ -170,24 +170,37 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         const audio = new Audio(result.data.audio);
         audio.volume = 1.0;
         
-        if (emotionalContext.onEnd) {
-          audio.onended = emotionalContext.onEnd;
-        }
+        // Natural conversation flow - auto-listen after speaking
+        audio.onended = () => {
+          if (emotionalContext.onEnd) {
+            emotionalContext.onEnd();
+          }
+          // Quick turnaround for natural phone conversation feel
+          if (isMountedRef.current && !isLoading) {
+            setTimeout(() => startVoiceInput(), 500);
+          }
+        };
         
         await audio.play();
       }
     } catch (error) {
       console.error('Edge TTS error, falling back to system voice:', error);
       
-      // Fallback to system voice
+      // Fallback to system voice with natural pacing
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
+      utterance.rate = 0.95; // Near-normal speed for natural conversation
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
       
-      if (emotionalContext.onEnd) {
-        utterance.onend = emotionalContext.onEnd;
-      }
+      utterance.onend = () => {
+        if (emotionalContext.onEnd) {
+          emotionalContext.onEnd();
+        }
+        // Natural conversation flow
+        if (isMountedRef.current && !isLoading) {
+          setTimeout(() => startVoiceInput(), 500);
+        }
+      };
       
       window.speechSynthesis.speak(utterance);
     }
@@ -545,26 +558,34 @@ USE THIS INFORMATION to personalize your responses. Call them by their preferred
 
     const adaptation = cognitiveAdaptations[cognitiveLevel] || cognitiveAdaptations.mild;
 
-    return `You are Memory Mirror, a compassionate AI companion for people with dementia. Core principles:
+    return `You are Memory Mirror, a compassionate AI companion for people with dementia. CRITICAL: Speak naturally like you're having a phone conversation with a friend - relaxed, conversational, warm.
 
-1. NEVER correct or reality-orient. Meet people where they are mentally.
+**NATURAL CONVERSATION STYLE:**
+- Keep responses SHORT (1-3 sentences max) - like real phone conversations
+- Use natural fillers: "Well...", "You know...", "Oh...", "Hmm..."
+- Ask one question at a time, then listen
+- React naturally: "Really?", "That's wonderful!", "I see..."
+- Use contractions: "I'm", "you're", "that's", "it's"
+- Be spontaneous and genuine, not scripted
+- Pause naturally between thoughts with "..." 
+- Sound like you're truly listening and engaged
+
+**CONVERSATION PRINCIPLES:**
+1. NEVER correct or reality-orient. Meet them where they are mentally.
 2. ${eraInstructions}${eraSpecificContext[selectedEra] || ''}
-3. When transitioning between eras, do so gently: "I can tell you're thinking about [time period]... let's talk about that..."
-4. When confusion or anxiety is detected, redirect to "safe memory zones" - positive, familiar topics.
-5. Proactively suggest specific positive memories when appropriate.
-6. Validate all emotions without judgment.
-7. Use warm, simple, clear language with era-appropriate expressions.
-8. Reassure them that everything is taken care of.
-9. Be patient and repeat information if needed.${profileContext}${safeZoneContext}${memoryContext}
+3. Use warm, simple language - like talking to a dear friend
+4. When confusion detected, gently redirect to positive familiar topics
+5. Validate emotions naturally: "I understand how you feel"
+6. Keep it conversational - no formal language${profileContext}${safeZoneContext}${memoryContext}
 
-**COGNITIVE ADAPTATION (Current level: ${cognitiveLevel}):**
-- Communication complexity: ${adaptation.complexity}
-- Response pacing: ${adaptation.speed}
-- Memory recall approach: ${adaptation.memory}
+**COGNITIVE ADAPTATION (${cognitiveLevel}):**
+- Complexity: ${adaptation.complexity}
+- Pacing: ${adaptation.speed}
+- Memory: ${adaptation.memory}
 
-${lastAssessment?.recommended_adaptations?.length > 0 ? `\nRECOMMENDED ADAPTATIONS:\n${lastAssessment.recommended_adaptations.map(a => `- ${a}`).join('\n')}` : ''}
+${lastAssessment?.recommended_adaptations?.length > 0 ? `\nADAPTATIONS:\n${lastAssessment.recommended_adaptations.map(a => `- ${a}`).join('\n')}` : ''}
 
-After your response, on a new line output META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
+RESPOND NATURALLY AND BRIEFLY - like you're on the phone with them. After your response, add META: {"era": "1940s|1960s|1980s|present", "anxiety": 0-10, "suggestedMemory": "memory title or null"}`;
   };
 
   useEffect(() => {
@@ -804,8 +825,8 @@ ${memories.slice(0, 5).map(m => `- "${m.title}" (${m.era})`).join('\n')}`
 Conversation so far:
 ${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
 
-Respond with compassion, validation, and warmth. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory/memories.' : ''}
-If appropriate, gently reference their memories or suggest looking at photos together.`;
+RESPOND LIKE YOU'RE ON THE PHONE - natural, brief, conversational. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory.' : ''}
+Maximum 2-3 sentences. Sound human, not robotic. Use natural speech patterns and fillers.`;
 
       console.log('Calling AI chat...');
       let response = await offlineAIChat(fullPrompt, {
@@ -938,11 +959,11 @@ If appropriate, gently reference their memories or suggest looking at photos tog
             utterance.voice = voices[0];
           }
           
-          // CRITICAL FIX #1: Auto-start listening immediately after AI finishes speaking
+          // CRITICAL: Auto-start listening immediately for natural phone-like conversation
           utterance.onend = () => {
             if (isMountedRef.current && !isLoading) {
-              console.log('🎤 HANDS-FREE: Auto-starting voice after AI response');
-              setTimeout(() => startVoiceInput(), 800); // Short delay for natural flow
+              console.log('🎤 Natural conversation: Auto-starting voice');
+              setTimeout(() => startVoiceInput(), 500); // Quick response like real conversation
             }
           };
           utterance.onerror = () => {
@@ -1123,10 +1144,10 @@ If appropriate, gently reference their memories or suggest looking at photos tog
       const _speechEndTimeoutRef = { current: null };
 
       recognitionRef.current.onstart = () => {
-        console.log('Speech recognition started - CAPTURING FULL SENTENCES');
+        console.log('Speech recognition started - Natural conversation mode');
         if (isMountedRef.current) {
           setIsListening(true);
-          toast.success('🎤 Listening... Speak your full sentence!');
+          toast.success('🎤 I\'m listening...');
         }
       };
       
@@ -1141,12 +1162,12 @@ If appropriate, gently reference their memories or suggest looking at photos tog
           
           console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
           
-          // CRITICAL FIX #2: Send message immediately when final result arrives
+          // Natural conversation: Send message when user finishes speaking
           if (lastResult.isFinal) {
             const finalSpeech = transcript.trim();
             
             if (finalSpeech.length > 0 && isMountedRef.current) {
-              console.log('✅ FINAL SPEECH - INSTANT REPLY:', finalSpeech);
+              console.log('✅ User finished speaking:', finalSpeech);
               
               // Stop listening
               if (recognitionRef.current) {
@@ -1159,8 +1180,8 @@ If appropriate, gently reference their memories or suggest looking at photos tog
               
               setIsListening(false);
               
-              // CRITICAL: Send message immediately for continuous conversation
-              sendMessage(finalSpeech);
+              // Quick response for natural phone conversation
+              setTimeout(() => sendMessage(finalSpeech), 200);
             }
           }
         } catch (error) {
