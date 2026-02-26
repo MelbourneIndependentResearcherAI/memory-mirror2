@@ -4,6 +4,7 @@ import { ArrowLeft, MapPin } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import GeofenceManager from '@/components/caregiver/GeofenceManager';
 import LiveLocationTracker from '@/components/caregiver/LiveLocationTracker';
+import PageLoadTip from '@/components/tips/PageLoadTip';
 
 export default function GeofenceTracking() {
   const navigate = useNavigate();
@@ -51,6 +52,8 @@ export default function GeofenceTracking() {
         {activeTab === 'zones' && <GeofenceManager />}
         {activeTab === 'tracking' && <LiveLocationTracker />}
       </div>
+
+      <PageLoadTip pageName="GeofenceTracking" />
     </div>
   );
 }

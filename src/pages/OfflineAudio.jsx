@@ -26,6 +26,8 @@ export default function OfflineAudio() {
       <div className="pb-20">
         <OfflineAudioLibrary />
       </div>
+
+      <PageLoadTip pageName="OfflineAudio" />
     </div>
   );
 }

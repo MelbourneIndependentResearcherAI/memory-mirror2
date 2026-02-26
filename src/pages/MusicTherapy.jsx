@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Music, Play, Pause, SkipForward, SkipBack, Clock, Volume2 } from 'lucide-react';
 import { toast } from 'sonner';
+import PageLoadTip from '@/components/tips/PageLoadTip';
 
 const eraColors = {
   '1940s': 'from-amber-500 to-orange-500',
@@ -291,6 +292,8 @@ export default function MusicTherapy() {
           </Card>
         )}
       </div>
+
+      <PageLoadTip pageName="MusicTherapy" />
     </div>
   );
 }

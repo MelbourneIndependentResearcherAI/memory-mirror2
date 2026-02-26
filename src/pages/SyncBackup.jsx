@@ -32,6 +32,8 @@ export default function SyncBackup() {
       <div className="pb-20">
         <SyncBackupManager />
       </div>
+
+      <PageLoadTip pageName="SyncBackup" />
     </div>
   );
 }
