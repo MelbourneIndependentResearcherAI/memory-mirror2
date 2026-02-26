@@ -49,14 +49,18 @@ export default function PhoneMode() {
   };
 
   return (
-    <div className="h-screen flex flex-col">
-      {/* Lock/Unlock Button - Always visible for caregivers */}
+    <div className="h-screen flex flex-col bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-950 dark:to-blue-950">
+      {/* Lock/Unlock Button - Premium Design */}
       <div className="absolute top-4 right-4 z-50">
         <Button
           onClick={handleLockToggle}
           variant={locked ? "destructive" : "outline"}
           size="sm"
-          className="shadow-lg"
+          className={`shadow-premium font-bold ${
+            locked 
+              ? 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700' 
+              : 'bg-white dark:bg-slate-800 border-2 border-blue-300 dark:border-blue-700 hover:bg-blue-50'
+          }`}
         >
           {locked ? (
             <>
