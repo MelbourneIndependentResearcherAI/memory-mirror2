@@ -709,8 +709,23 @@ Now respond like their best friend who genuinely cares and listened carefully to
     }
     abortControllerRef.current = new AbortController();
     
+    // Check free tier limits and increment usage
+    try {
+      const usageResult = await base44.functions.invoke('checkFreeTierUsage', {});
+      if (usageResult.data && !usageResult.data.isPremium && usageResult.data.isLimitExceeded?.chat) {
+        setShowFreeTierAlert(true);
+        setFreeTierUsage({ used: usageResult.data.usage.chat_messages.used, limit: usageResult.data.usage.chat_messages.limit });
+        setIsLoading(false);
+        return;
+      }
+      // Increment usage for free tier
+      await base44.functions.invoke('incrementFreeTierUsage', { feature_type: 'chat' }).catch(() => {});
+    } catch (error) {
+      console.log('Free tier check skipped (offline mode)');
+    }
+    
     // Log chat activity
-    base44.entities.ActivityLog.create({
+    offlineEntities.create('ActivityLog', {
       activity_type: 'chat',
       details: { message_length: userMessage.length, era: selectedEra, language: selectedLanguage }
     }).catch(() => {});
@@ -728,14 +743,14 @@ Now respond like their best friend who genuinely cares and listened carefully to
     setIsLoading(true);
 
     // Perform sentiment analysis on English text
-    let sentimentAnalysis = null;
-    try {
-      const sentimentResult = await base44.functions.invoke('analyzeSentiment', { text: userMessageEnglish });
-      sentimentAnalysis = sentimentResult.data;
+     let sentimentAnalysis = null;
+     try {
+       const sentimentResult = await offlineFunction('analyzeSentiment', { text: userMessageEnglish });
+       sentimentAnalysis = sentimentResult.data;
       
       // Create caregiver alert for immediate attention needs
-       if (sentimentAnalysis.needs_immediate_attention) {
-         base44.entities.CaregiverAlert.create({
+        if (sentimentAnalysis.needs_immediate_attention) {
+          offlineEntities.create('CaregiverAlert', {
           alert_type: 'high_anxiety',
           severity: 'urgent',
           message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
@@ -744,10 +759,10 @@ Now respond like their best friend who genuinely cares and listened carefully to
         
         // Also create team notification for collaborative care
          try {
-           const profiles = await base44.entities.UserProfile.list();
-           const patientProfile = profiles?.[0];
-           if (patientProfile?.id) {
-             await base44.entities.CaregiverNotification.create({
+            const profiles = await base44.entities.UserProfile.list();
+            const patientProfile = profiles?.[0];
+            if (patientProfile?.id) {
+              await offlineEntities.create('CaregiverNotification', {
               patient_profile_id: patientProfile.id,
               notification_type: 'high_anxiety',
               severity: 'urgent',
@@ -784,7 +799,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
     // Recall relevant memories proactively
     let memoryRecall = null;
     try {
-      const recallResult = await base44.functions.invoke('recallMemories', {
+      const recallResult = await offlineFunction('recallMemories', {
         context: userMessageEnglish,
         sentiment_analysis: sentimentAnalysis,
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra
@@ -797,7 +812,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
     // Suggest visual responses (images/videos)
     let visualSuggestions = null;
     try {
-      const visualResult = await base44.functions.invoke('suggestVisualResponses', {
+      const visualResult = await offlineFunction('suggestVisualResponses', {
         conversation_context: userMessageEnglish,
         detected_emotion: sentimentAnalysis?.emotional_tone?.[0] || 'neutral',
         detected_era: selectedEra === 'auto' ? detectedEra : selectedEra,
@@ -811,7 +826,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
 
     // ENHANCED: Find relevant photos and memories using AI with emotional context
     try {
-      const relevantMedia = await base44.functions.invoke('findRelevantMedia', {
+      const relevantMedia = await offlineFunction('findRelevantMedia', {
         context: userMessageEnglish,
         current_era: selectedEra === 'auto' ? detectedEra : selectedEra,
         conversation_topics: conversationTopics,
