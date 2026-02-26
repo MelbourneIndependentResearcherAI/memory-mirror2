@@ -83,10 +83,10 @@ export default function Pricing() {
     {
       id: 'premium',
       name: 'Premium',
-      price: 9.99,
-      billing: 'AUD $9.99/month',
+      price: 14.99,
+      billing: 'AUD $14.99/month',
       badge: '⏰ LIMITED: Lifetime Lock-In Price',
-      description: 'Full access to all Memory Mirror features — First 200 users get lifetime access at this price',
+      description: 'Full access to all Memory Mirror features — First 200 users get lifetime access at this price forever',
       features: [
         'Unlimited conversations',
         'Unlimited memory storage',

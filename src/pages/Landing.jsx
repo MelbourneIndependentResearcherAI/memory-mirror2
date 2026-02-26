@@ -206,7 +206,7 @@ export default function Landing() {
             className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold disabled:opacity-50"
             onClick={handleGetStarted}
           >
-            {isLoading ? 'Loading...' : subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : 'Get Started → $9.99/month'}
+            {isLoading ? 'Loading...' : subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : 'Get Started → $14.99/month'}
           </Button>
           <div className="flex gap-4 justify-center flex-wrap">
             <button

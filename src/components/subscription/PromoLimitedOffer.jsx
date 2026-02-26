@@ -56,7 +56,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
                 Lifetime Access for Half Price! 💎
               </h3>
               <p className="text-slate-600 dark:text-slate-300 mb-3">
-                First 200 users get <strong>lifetime access for only $9.99/month</strong> instead of $19.99. 
+                First 200 users get <strong>lifetime access for only $9.99/month</strong> instead of $14.99. 
                 Lock in this price forever—no price increases ever!
               </p>
               
@@ -108,7 +108,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
               Lifetime Access — Lock in 50% Off
             </h2>
             <p className="text-slate-600 dark:text-slate-300 text-lg">
-              Be one of the first 200 to get <strong>lifetime access for $9.99/month</strong>
+              Be one of the first 200 to get <strong>lifetime access for $9.99/month</strong> instead of $14.99
             </p>
           </div>
 
@@ -117,7 +117,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
               <Heart className="w-5 h-5 text-red-500 flex-shrink-0 mt-1" />
               <div>
                 <p className="font-semibold text-slate-900 dark:text-white">Never Pay More Again</p>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Locked-in price forever, even if we raise to $19.99</p>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Locked-in price forever, even if we raise to $14.99 or higher</p>
               </div>
             </div>
 
@@ -167,7 +167,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
           </Button>
 
           <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
-            Once the 200 spots are filled, this offer ends forever. New subscribers pay $19.99/month.
+            Once the 200 spots are filled, this offer ends forever. New subscribers pay $14.99/month.
           </p>
         </div>
       </Card>
