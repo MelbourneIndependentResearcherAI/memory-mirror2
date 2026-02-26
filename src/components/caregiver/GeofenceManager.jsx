@@ -38,6 +38,13 @@ export default function GeofenceManager() {
   const [alertEmails, setAlertEmails] = useState('');
   const [currentLocation, setCurrentLocation] = useState(null);
 
+  useEffect(() => {
+    // Set default map center to Sydney, Australia for initialization
+    if (!currentLocation && !position) {
+      setCurrentLocation({ lat: -33.8688, lng: 151.2093 }); // Sydney coordinates
+    }
+  }, []);
+
   const { data: zones = [] } = useQuery({
     queryKey: ['geofenceZones'],
     queryFn: () => base44.entities.GeofenceZone.list('-created_date')
