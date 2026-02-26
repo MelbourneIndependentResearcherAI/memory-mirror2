@@ -136,12 +136,13 @@ export default function Pricing() {
    if (!selectedPlan) return;
 
    const email = user?.email || userEmail;
-   if (!email) {
-     toast.error('Please enter your email address');
+   if (!email || email.trim() === '') {
+     toast.error('Email address is required to complete your subscription');
      return;
    }
 
-   if (!email.includes('@')) {
+   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+   if (!emailRegex.test(email)) {
      toast.error('Please enter a valid email address');
      return;
    }
@@ -337,14 +338,25 @@ export default function Pricing() {
             <CardContent className="space-y-6">
               {!user && (
                 <div>
-                  <label className="block text-sm font-medium mb-2">Your Email Address *</label>
+                  <label className="block text-sm font-medium mb-2 text-slate-900 dark:text-white">
+                    Your Email Address <span className="text-red-600">*</span> (Required)
+                  </label>
                   <Input
                     type="email"
                     placeholder="your@email.com"
                     value={userEmail}
                     onChange={(e) => setUserEmail(e.target.value)}
                     className="min-h-[44px]"
+                    required
                   />
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">We use this to track your subscription and send updates.</p>
+                </div>
+              )}
+              {user && (
+                <div className="bg-slate-50 dark:bg-slate-800 rounded-lg p-4 border border-slate-200 dark:border-slate-700">
+                  <p className="text-sm font-medium text-slate-900 dark:text-white mb-1">Subscription Email</p>
+                  <p className="text-slate-700 dark:text-slate-300 font-semibold">{user.email}</p>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">This email will be used for your subscription records.</p>
                 </div>
               )}
 
