@@ -15,6 +15,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import LanguageSelector from '@/components/LanguageSelector';
 import { toast } from 'sonner';
+import SingAlongPlayer from '@/components/music/SingAlongPlayer';
 
 export default function Home() {
   const [detectedEra, setDetectedEra] = useState('present');
@@ -22,6 +23,7 @@ export default function Home() {
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
   const [showOfflineDownload, setShowOfflineDownload] = useState(false);
+  const [showSingAlong, setShowSingAlong] = useState(false);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useLanguage();
@@ -160,6 +162,16 @@ export default function Home() {
             <MessageCircle className="w-7 h-7 drop-shadow-lg" />
             Memory Reflection
           </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.02, y: -2 }}
+            whileTap={{ scale: 0.98 }}
+            onClick={() => setShowSingAlong(true)}
+            className="w-full bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white py-5 rounded-2xl shadow-premium transition-all duration-300 flex items-center justify-center gap-3 text-lg font-bold select-none border border-white/20"
+          >
+            <span className="text-3xl">🎤</span>
+            Sing Along
+          </motion.button>
         </div>
 
         {/* Main Content - Premium Shadow */}
@@ -194,6 +206,25 @@ export default function Home() {
 
         {showReflection && (
           <MemoryReflectionSession onClose={() => setShowReflection(false)} />
+        )}
+
+        {showSingAlong && (
+          <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl w-full max-w-2xl shadow-2xl">
+              <div className="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
+                <h2 className="text-2xl font-bold text-slate-900 dark:text-white">🎤 Sing Along</h2>
+                <button
+                  onClick={() => setShowSingAlong(false)}
+                  className="text-slate-500 hover:text-slate-700 dark:hover:text-slate-300 text-2xl font-bold"
+                >
+                  ✕
+                </button>
+              </div>
+              <div className="p-6 max-h-96 overflow-y-auto">
+                <SingAlongPlayer />
+              </div>
+            </div>
+          </div>
         )}
 
         <PageLoadTip pageName="Home" />
