@@ -981,7 +981,11 @@ RESPOND NOW:
 
       // Translate response to user's language
       if (selectedLanguage !== 'en') {
-        assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
+        try {
+          assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
+        } catch (e) {
+          console.log('Translation failed, using original response');
+        }
       }
 
       // Track anxiety trends
@@ -1031,7 +1035,7 @@ RESPOND NOW:
       // Trigger mood-based device control
       if (detectedAnxiety >= 4) {
         try {
-          const moodControl = await base44.functions.invoke('moodBasedDeviceControl', {
+          const moodControl = await offlineFunction('moodBasedDeviceControl', {
             anxiety_level: detectedAnxiety,
             detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
             conversation_context: userMessageEnglish
