@@ -217,20 +217,19 @@
   /* Skip to Main Content - WCAG 2.1 2.4.1 */
   .skip-to-main {
     position: absolute;
-    top: -100px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: -9999px;
+    left: -9999px;
     z-index: 9999;
     background: #2563eb;
     color: white;
     padding: 12px 24px;
     border-radius: 8px;
     font-weight: 600;
-    transition: top 0.2s;
   }
   
   .skip-to-main:focus {
-    top: 10px;
+    top: -9999px;
+    left: -9999px;
   }
 
   /* Focus Visible - WCAG 2.1 2.4.7 & 2.4.11 (WCAG 2.2) */
