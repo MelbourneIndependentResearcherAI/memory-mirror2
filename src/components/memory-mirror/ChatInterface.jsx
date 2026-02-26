@@ -383,8 +383,16 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     
     // Start proactive check-ins (every 5-10 minutes)
     startProactiveCheckIns();
+
+    // Evaluate alert conditions every 2 minutes
+    const alertCheckInterval = setInterval(() => {
+      if (isMountedRef.current) {
+        evaluateAlertConditions();
+      }
+    }, 2 * 60 * 1000);
     
     return () => {
+      clearInterval(alertCheckInterval);
       isMountedRef.current = false;
       clearTimeout(greetingTimeout);
       
@@ -435,7 +443,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         }).catch(() => {});
       }
     };
-  }, [sendProactiveMessage, startProactiveCheckIns]);
+  }, [sendProactiveMessage, startProactiveCheckIns, evaluateAlertConditions]);
 
   // Keep refs in sync with latest state so the unmount cleanup can read fresh values
   useEffect(() => { conversationHistoryRef.current = conversationHistory; }, [conversationHistory]);
@@ -629,6 +637,26 @@ Now respond like their best friend who genuinely cares and listened carefully to
       localStorage.setItem('memoryMirrorLanguage', languageCode);
     } catch {}
   };
+
+  const evaluateAlertConditions = useCallback(async () => {
+    try {
+      const userProfile = userProfile;
+      const lastMsgTime = lastMessageTimeRef.current ? new Date(lastMessageTimeRef.current) : null;
+      
+      await base44.functions.invoke('evaluateAlertConditions', {
+        patient_profile_id: userProfile?.id,
+        activity_data: {
+          anxiety_level: anxietyState.level,
+          last_message_time: lastMsgTime?.toISOString(),
+          consecutive_distress_minutes: anxietyState.level >= 7 ? Math.round((Date.now() - sessionStartTimeRef.current) / 60000) : 0,
+          confusion_count: 0,
+          exit_attempt_detected: false
+        }
+      });
+    } catch (error) {
+      console.error('Alert evaluation failed:', error);
+    }
+  }, [anxietyState.level, userProfile]);
 
   const sendMessage = useCallback(async (transcribedText) => {
     // Validation
