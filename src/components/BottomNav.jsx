@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard, CircleDot, BookOpen } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
@@ -7,6 +7,7 @@ import { useLockMode } from '@/components/LockModeManager';
 
 export default function BottomNav() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { t } = useLanguage();
   const { isAnyModeLocked } = useLockMode();
   
@@ -69,6 +70,23 @@ export default function BottomNav() {
     }
   ], [t]);
 
+  const handleNavClick = (e, path) => {
+    e.preventDefault();
+    
+    // Determine navigation direction for smooth animation
+    const currentIndex = navItems.findIndex(item => item.path === location.pathname);
+    const targetIndex = navItems.findIndex(item => item.path === path);
+    const direction = targetIndex < currentIndex ? 'back' : 'forward';
+    
+    // Native-like haptic feedback
+    if (navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+    
+    // Navigate with state for proper animation
+    navigate(path, { state: { direction } });
+  };
+
   // Hide bottom nav when in locked mode
   if (isAnyModeLocked()) {
     return null;
@@ -91,18 +109,24 @@ export default function BottomNav() {
             <Link
               key={item.path}
               to={item.path}
+              onClick={(e) => handleNavClick(e, item.path)}
               className={`
                 flex flex-col items-center justify-center gap-1 
                 px-2 py-2 rounded-xl transition-all duration-200
                 min-w-[60px] min-h-[72px]
+                active:scale-95 active:opacity-80
                 ${active 
                   ? 'bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950 dark:to-cyan-950 border-2 border-blue-400 dark:border-blue-600 shadow-md' 
                   : 'hover:bg-slate-100 dark:hover:bg-slate-800'
                 }
               `}
+              style={{
+                WebkitTapHighlightColor: 'transparent',
+                touchAction: 'manipulation'
+              }}
             >
               <Icon 
-                className={`w-7 h-7 ${active ? item.color : 'text-slate-500 dark:text-slate-400'}`} 
+                className={`w-7 h-7 transition-transform ${active ? item.color + ' scale-110' : 'text-slate-500 dark:text-slate-400'}`} 
                 strokeWidth={active ? 2.5 : 2}
               />
               <span 
