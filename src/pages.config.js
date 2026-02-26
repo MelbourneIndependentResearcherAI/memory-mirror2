@@ -116,12 +116,16 @@ import OfflineModeDashboard from './pages/OfflineModeDashboard';
 import OfflineTest from './pages/OfflineTest';
 import PatientAccess from './pages/PatientAccess';
 import PatientRegistration from './pages/PatientRegistration';
+import PaymentIntegrationTest from './pages/PaymentIntegrationTest';
+import Paywall from './pages/Paywall';
 import PhoneMode from './pages/PhoneMode';
 import PhotoLibrary from './pages/PhotoLibrary';
 import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import QuickAccess from './pages/QuickAccess';
+import Registration from './pages/Registration';
 import Resources from './pages/Resources';
+import SecureMessagingPage from './pages/SecureMessagingPage';
 import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
 import SharedJournal from './pages/SharedJournal';
@@ -145,10 +149,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import SecureMessagingPage from './pages/SecureMessagingPage';
-import Registration from './pages/Registration';
-import PaymentIntegrationTest from './pages/PaymentIntegrationTest';
-import Paywall from './pages/Paywall';
 import __Layout from './Layout.jsx';
 
 
@@ -222,12 +222,16 @@ export const PAGES = {
     "OfflineTest": OfflineTest,
     "PatientAccess": PatientAccess,
     "PatientRegistration": PatientRegistration,
+    "PaymentIntegrationTest": PaymentIntegrationTest,
+    "Paywall": Paywall,
     "PhoneMode": PhoneMode,
     "PhotoLibrary": PhotoLibrary,
     "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "QuickAccess": QuickAccess,
+    "Registration": Registration,
     "Resources": Resources,
+    "SecureMessagingPage": SecureMessagingPage,
     "Security": Security,
     "SecurityMode": SecurityMode,
     "SharedJournal": SharedJournal,
@@ -251,10 +255,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "SecureMessagingPage": SecureMessagingPage,
-    "Registration": Registration,
-    "PaymentIntegrationTest": PaymentIntegrationTest,
-    "Paywall": Paywall,
 }
 
 export const pagesConfig = {

@@ -163,6 +163,13 @@ export default function Pricing() {
      notes: 'Payment awaiting bank transfer verification. Include payment reference in transfer.'
    };
 
+   // Cache subscription locally for offline support
+   try {
+     localStorage.setItem('mm_pending_subscription', JSON.stringify(subscriptionData));
+   } catch (e) {
+     console.error('Failed to cache subscription:', e);
+   }
+
    createSubscriptionMutation.mutate(subscriptionData);
   };
 

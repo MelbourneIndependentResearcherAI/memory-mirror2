@@ -12,48 +12,71 @@ export default function Paywall() {
   const [processingSubscription, setProcessingSubscription] = useState(false);
 
   const subscriptionMutation = useMutation({
-    mutationFn: async () => {
-      const user = await base44.auth.me();
-      if (!user) {
-        throw new Error('Not authenticated');
-      }
+   mutationFn: async () => {
+     try {
+       const user = await base44.auth.me();
+       if (!user) {
+         throw new Error('Not authenticated');
+       }
 
-      // Create subscription record with pending status
-      await base44.entities.Subscription.create({
-        user_email: user.email,
-        plan_name: 'premium',
-        plan_price: 9.99,
-        status: 'pending',
-        payment_method: 'manual_bank_transfer',
-        start_date: new Date().toISOString(),
-        next_billing_date: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
-      });
+       const paymentRef = `SUB-${user.email.split('@')[0].toUpperCase()}-${Date.now()}`;
+       const nextBillingDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 
-      // Log in audit
-      await base44.asServiceRole.entities.AuditLog.create({
-        action: 'subscription_initiated',
-        user_email: user.email,
-        details: {
-          plan: 'premium',
-          price: 9.99,
-          timestamp: new Date().toISOString()
-        }
-      });
+       const subData = {
+         user_email: user.email,
+         plan_name: 'premium',
+         plan_price: 9.99,
+         status: 'pending',
+         payment_method: 'manual_bank_transfer',
+         payment_reference: paymentRef,
+         start_date: new Date().toISOString(),
+         next_billing_date: nextBillingDate.toISOString()
+       };
 
-      return user;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(['subscription']);
-      toast.success('Subscription initiated! Redirecting to checkout...');
-      // Navigate to pricing/checkout page
-      setTimeout(() => {
-        navigate('/pricing');
-      }, 500);
-    },
-    onError: () => {
-      toast.error('Failed to initiate subscription');
-      setProcessingSubscription(false);
-    }
+       // Cache locally for offline support
+       try {
+         localStorage.setItem('mm_pending_subscription', JSON.stringify(subData));
+       } catch (e) {
+         console.error('Failed to cache subscription:', e);
+       }
+
+       // Create subscription record with pending status
+       await base44.entities.Subscription.create(subData);
+
+       // Log in audit
+       await base44.asServiceRole.entities.AuditLog.create({
+         action: 'subscription_initiated',
+         user_email: user.email,
+         details: {
+           plan: 'premium',
+           price: 9.99,
+           payment_reference: paymentRef,
+           timestamp: new Date().toISOString()
+         }
+       });
+
+       return user;
+     } catch (error) {
+       // If offline but have local cache, still proceed
+       const cached = localStorage.getItem('mm_pending_subscription');
+       if (cached) {
+         return JSON.parse(cached);
+       }
+       throw error;
+     }
+   },
+   onSuccess: () => {
+     queryClient.invalidateQueries(['subscription']);
+     toast.success('Subscription initiated! Redirecting to checkout...');
+     // Navigate to pricing/checkout page
+     setTimeout(() => {
+       navigate('/pricing');
+     }, 500);
+   },
+   onError: (error) => {
+     toast.error('Failed to initiate subscription: ' + (error.message || 'Unknown error'));
+     setProcessingSubscription(false);
+   }
   });
 
   const handleSubscribe = async () => {
