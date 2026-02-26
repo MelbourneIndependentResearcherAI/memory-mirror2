@@ -965,39 +965,20 @@ MAXIMUM 1-2 SENTENCES. Start with acknowledgment filler ("I see...", "Mmhm...").
                            detectedAnxiety >= 3 ? 'warm' :
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
-      // CRITICAL FIX: Speak the response AND immediately start listening after it finishes
+      // Speak the response with proper voice synthesis
       if (assistantMessage && isMountedRef.current) {
         console.log('🔊 Speaking response with state:', emotionalState);
-        try {
-          // Use native Web Speech API with auto-listen callback
-          const utterance = new SpeechSynthesisUtterance(assistantMessage);
-          utterance.rate = 0.85;
-          utterance.pitch = 1.0;
-          utterance.volume = 1.0;
-          
-          // Try to get a quality voice
-          const voices = window.speechSynthesis.getVoices();
-          if (voices.length > 0) {
-            utterance.voice = voices[0];
-          }
-          
-          // Auto-start listening after speaking (natural turn-taking)
-          utterance.onend = () => {
+        speakResponse(assistantMessage, { 
+          state: emotionalState,
+          anxietyLevel: detectedAnxiety,
+          onEnd: () => {
+            // Auto-start listening after speaking for natural conversation flow
             if (isMountedRef.current && !isLoading) {
-              console.log('🎤 Your turn - listening for full thought');
-              setTimeout(() => startVoiceInput(), 600); // Brief pause for natural flow
+              console.log('🎤 Your turn - listening...');
+              setTimeout(() => startVoiceInput(), 600);
             }
-          };
-          utterance.onerror = () => {
-            console.error('Utterance error, but continuing...');
-          };
-          
-          window.speechSynthesis.cancel(); // Clear any previous speech
-          window.speechSynthesis.speak(utterance);
-          console.log('✅ Speech synthesis started with auto-listen callback');
-        } catch (voiceError) {
-          console.error('Voice synthesis error:', voiceError);
-        }
+          }
+        });
       }
 
       // Show anxiety alert if needed

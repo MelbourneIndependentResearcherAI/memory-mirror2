@@ -92,18 +92,21 @@ ${conversationHistory?.slice(-10).map(m => `${m.role === 'user' ? userProfile?.p
 
 Respond to their message with warmth, understanding, and dignity. Keep your response natural and conversational.`;
 
-    // Get AI response
+    // Get AI response with proper structure
     const aiResponse = await base44.integrations.Core.InvokeLLM({
       prompt: `${systemPrompt}
 
 Current message from ${userProfile?.preferred_name || 'them'}: "${userText}"
 
-Respond naturally and compassionately. Include meta-data in your response:
-- Start with [ERA:1940s|1960s|1980s|present] based on what era they seem to be experiencing
-- If you detect high anxiety (7+ out of 10), include [ANXIETY:HIGH]
-- If suggesting a specific memory or person to mention, include [RECALL:description]
+Respond naturally and compassionately in 1-3 sentences maximum.
 
-Then provide your spoken response.`
+After your response, add this metadata line:
+META: {"era": "${era}", "anxiety": <0-10>, "suggestedMemory": null}
+
+Example:
+"I'm here with you. Everything is safe. Would you like to look at some photos together?"
+
+META: {"era": "present", "anxiety": 3, "suggestedMemory": null}`
     });
 
     // Parse meta-data and response
