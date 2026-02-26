@@ -26,13 +26,20 @@ export default function AlertNotificationCenter({ patientProfileId }) {
   const { data: alerts = [], isLoading, refetch } = useQuery({
     queryKey: ['caregiverAlerts', patientProfileId, filter],
     queryFn: async () => {
-      const query = filter === 'unresolved'
-        ? { patient_profile_id: patientProfileId, resolved: false }
-        : { patient_profile_id: patientProfileId };
-      
-      return await base44.entities.CaregiverAlert.filter(query, '-timestamp', 50);
+      try {
+        const query = filter === 'unresolved'
+          ? { patient_profile_id: patientProfileId, resolved: false }
+          : { patient_profile_id: patientProfileId };
+        
+        const result = await base44.entities.CaregiverAlert.filter(query, '-timestamp', 50);
+        return result || [];
+      } catch (error) {
+        console.error('Failed to fetch alerts:', error);
+        return [];
+      }
     },
-    staleTime: 1000 * 30 // Refresh every 30 seconds
+    staleTime: 1000 * 30, // Refresh every 30 seconds
+    retry: 1
   });
 
   const resolveMutation = useMutation({

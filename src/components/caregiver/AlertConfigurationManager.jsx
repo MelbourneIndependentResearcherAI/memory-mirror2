@@ -23,10 +23,16 @@ export default function AlertConfigurationManager({ patientProfileId }) {
   const { data: conditions = [], isLoading } = useQuery({
     queryKey: ['alertConditions', patientProfileId],
     queryFn: async () => {
-      const alerts = await base44.entities.AlertCondition.filter({ is_enabled: true }, '-created_date', 50);
-      return alerts;
+      try {
+        const alerts = await base44.entities.AlertCondition.filter({ is_enabled: true }, '-created_date', 50);
+        return alerts || [];
+      } catch (error) {
+        console.error('Failed to fetch alert conditions:', error);
+        return [];
+      }
     },
-    staleTime: 1000 * 60 * 5
+    staleTime: 1000 * 60 * 5,
+    retry: 1
   });
 
   const createMutation = useMutation({
