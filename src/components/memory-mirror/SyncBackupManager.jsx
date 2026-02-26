@@ -245,6 +245,50 @@ export default function SyncBackupManager() {
         </div>
       </motion.div>
 
+      {/* Download Button */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3 }}
+        className="bg-white dark:bg-slate-800 rounded-2xl p-6 border-2 border-slate-200 dark:border-slate-700"
+      >
+        <h3 className="text-xl font-bold text-slate-900 dark:text-white mb-4">Download for Offline Use</h3>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4">
+          Download all essential content to use the app without internet connection.
+        </p>
+        {isDownloading && (
+          <div className="mb-4">
+            <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2 mb-2">
+              <div
+                className="bg-gradient-to-r from-green-500 to-emerald-600 h-2 rounded-full transition-all duration-300"
+                style={{ width: `${(downloadProgress / 335) * 100}%` }}
+              />
+            </div>
+            <p className="text-sm text-slate-600 dark:text-slate-400">{downloadMessage}</p>
+          </div>
+        )}
+        <Button
+          onClick={handleDownloadOfflineData}
+          disabled={isDownloading}
+          className="w-full gap-2 bg-green-600 hover:bg-green-700 text-white min-h-[50px] text-lg"
+        >
+          {isDownloading ? (
+            <>
+              <Loader2 className="w-5 h-5 animate-spin" />
+              Downloading... {Math.round((downloadProgress / 335) * 100)}%
+            </>
+          ) : (
+            <>
+              <Download className="w-5 h-5" />
+              Download Now
+            </>
+          )}
+        </Button>
+        {!isDownloading && downloadMessage && (
+          <p className="text-sm text-green-700 dark:text-green-400 mt-2">{downloadMessage}</p>
+        )}
+      </motion.div>
+
       {/* Manual Sync Button */}
       <Button
         onClick={handleSync}
