@@ -14,6 +14,8 @@ export default function PatientAccess() {
   const [pin, setPin] = useState('');
   const [voiceName, setVoiceName] = useState('');
   const [isVerifying, setIsVerifying] = useState(false);
+  const [userEmail, setUserEmail] = useState('');
+  const [userName, setUserName] = useState('');
 
   const { data: patientProfiles = [] } = useQuery({
     queryKey: ['patientProfiles'],
@@ -21,11 +23,25 @@ export default function PatientAccess() {
   });
 
   const handleInstantAccess = async () => {
+    // Store user details if provided
+    if (userEmail || userName) {
+      try {
+        localStorage.setItem('memory_mirror_user', JSON.stringify({
+          email: userEmail,
+          name: userName,
+          registered_at: new Date().toISOString()
+        }));
+      } catch (error) {
+        console.log('Local storage not available');
+      }
+    }
+
     // Track session
     try {
       await base44.functions.invoke('trackPatientSession', {
         access_method: 'instant',
-        patient_name: 'Guest User'
+        patient_name: userName || 'Guest User',
+        user_email: userEmail
       });
     } catch (error) {
       console.log('Session tracking skipped:', error.message);
@@ -130,6 +146,40 @@ export default function PatientAccess() {
           </div>
 
           <div className="space-y-4">
+            <Card className="border-2 bg-white/90 dark:bg-slate-900/90 backdrop-blur">
+              <CardContent className="p-6">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                      Your Name (Optional)
+                    </label>
+                    <Input
+                      type="text"
+                      value={userName}
+                      onChange={(e) => setUserName(e.target.value)}
+                      placeholder="Enter your name"
+                      className="h-12 text-base"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
+                      Email Address (Optional)
+                    </label>
+                    <Input
+                      type="email"
+                      value={userEmail}
+                      onChange={(e) => setUserEmail(e.target.value)}
+                      placeholder="your.email@example.com"
+                      className="h-12 text-base"
+                    />
+                  </div>
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
+                    This helps us personalize your experience. Not required for security.
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card 
               onClick={handleInstantAccess}
               className="cursor-pointer hover:shadow-xl transition-all hover:scale-102 border-2 hover:border-blue-400"
