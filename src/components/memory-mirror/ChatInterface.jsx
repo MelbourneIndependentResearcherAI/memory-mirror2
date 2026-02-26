@@ -632,18 +632,21 @@ Now respond like their best friend who genuinely cares and listened carefully to
     // Validation
     if (!transcribedText || typeof transcribedText !== 'string') {
       console.error('Invalid message input:', transcribedText);
-      toast.error('Could not process your message');
+      // Don't tell them about error - just be ready to listen again
+      console.log('Invalid input detected, ready to listen again');
       return;
     }
 
     const userMessage = transcribedText.trim();
     if (!userMessage) {
-      toast.error('Please say something');
+      // Silently ready to listen again - don't make them feel bad for silence
+      console.log('Empty message, listening again');
       return;
     }
     
     if (isLoading) {
-      toast.info('Still processing. Please wait...');
+      // Let them know we're still thinking - never ignore them
+      console.log('Still processing previous message');
       return;
     }
     
