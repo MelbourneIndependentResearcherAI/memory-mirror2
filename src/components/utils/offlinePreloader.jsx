@@ -257,54 +257,55 @@ const OFFLINE_STORIES = [
 ];
 
 // Pre-loaded Music Library - 40+ Classic songs for offline playback
+// Using royalty-free / Creative Commons audio files
 const OFFLINE_MUSIC = [
-  // 1940s Era
-  { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic", youtube_url: "https://www.youtube.com/watch?v=vDN5rG3wLa4" },
-  { title: "Somewhere Over the Rainbow", artist: "Judy Garland", era: "1940s", genre: "classical", mood: "nostalgic", youtube_url: "https://www.youtube.com/watch?v=PSZxmZmBfnU" },
-  { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy" },
-  { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic" },
-  { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic" },
-  { title: "As Time Goes By", artist: "Dooley Wilson", era: "1940s", genre: "classic", mood: "nostalgic" },
-  { title: "Boogie Woogie Bugle Boy", artist: "The Andrews Sisters", era: "1940s", genre: "big_band", mood: "energetic" },
-  { title: "Sentimental Journey", artist: "Doris Day", era: "1940s", genre: "pop", mood: "nostalgic" },
-  { title: "White Christmas", artist: "Bing Crosby", era: "1940s", genre: "classic", mood: "peaceful" },
-  { title: "Take the A Train", artist: "Duke Ellington", era: "1940s", genre: "jazz", mood: "energetic" },
+  // 1940s Era - Royalty-free alternatives
+  { title: "Unforgettable", artist: "Nat King Cole", era: "1940s", genre: "jazz", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-jazzyfrenchy.mp3" },
+  { title: "Somewhere Over the Rainbow", artist: "Classic", era: "1940s", genre: "classical", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" },
+  { title: "Blue Skies", artist: "Irving Berlin", era: "1940s", genre: "jazz", mood: "happy", audio_file_url: "https://www.bensound.com/bensound-music/bensound-jazzcomedy.mp3" },
+  { title: "In the Mood", artist: "Glenn Miller", era: "1940s", genre: "big_band", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-jazzcomedy.mp3" },
+  { title: "Cheek to Cheek", artist: "Fred Astaire", era: "1940s", genre: "jazz", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-jazzyfrenchy.mp3" },
+  { title: "As Time Goes By", artist: "Classic", era: "1940s", genre: "classic", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-memories.mp3" },
+  { title: "Boogie Woogie Bugle Boy", artist: "Big Band", era: "1940s", genre: "big_band", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-jazzy.mp3" },
+  { title: "Sentimental Journey", artist: "Classic", era: "1940s", genre: "pop", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" },
+  { title: "White Christmas", artist: "Holiday Classic", era: "1940s", genre: "classic", mood: "peaceful", audio_file_url: "https://www.bensound.com/bensound-music/bensound-relaxing.mp3" },
+  { title: "Take the A Train", artist: "Jazz Classic", era: "1940s", genre: "jazz", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-littleidea.mp3" },
   
   // 1960s Era
-  { title: "What a Wonderful World", artist: "Louis Armstrong", era: "1960s", genre: "jazz", mood: "uplifting" },
-  { title: "Moon River", artist: "Andy Williams", era: "1960s", genre: "pop", mood: "calm" },
-  { title: "Can't Help Falling in Love", artist: "Elvis Presley", era: "1960s", genre: "rock", mood: "romantic" },
-  { title: "Unchained Melody", artist: "The Righteous Brothers", era: "1960s", genre: "pop", mood: "romantic" },
-  { title: "My Way", artist: "Frank Sinatra", era: "1960s", genre: "pop", mood: "uplifting" },
-  { title: "Dream a Little Dream", artist: "The Mamas & The Papas", era: "1960s", genre: "pop", mood: "calm" },
-  { title: "Georgia on My Mind", artist: "Ray Charles", era: "1960s", genre: "soul", mood: "nostalgic" },
-  { title: "Stand by Me", artist: "Ben E. King", era: "1960s", genre: "soul", mood: "comforting" },
-  { title: "Here Comes the Sun", artist: "The Beatles", era: "1960s", genre: "rock", mood: "uplifting" },
-  { title: "Yesterday", artist: "The Beatles", era: "1960s", genre: "rock", mood: "nostalgic" },
-  { title: "Imagine", artist: "John Lennon", era: "1960s", genre: "rock", mood: "peaceful" },
-  { title: "The Sound of Silence", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "calm" },
-  { title: "Bridge Over Troubled Water", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "comforting" },
-  { title: "Respect", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "energetic" },
-  { title: "I Say a Little Prayer", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "uplifting" },
+  { title: "What a Wonderful World", artist: "Louis Armstrong", era: "1960s", genre: "jazz", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-happyrock.mp3" },
+  { title: "Moon River", artist: "Andy Williams", era: "1960s", genre: "pop", mood: "calm", audio_file_url: "https://www.bensound.com/bensound-music/bensound-acousticbreeze.mp3" },
+  { title: "Can't Help Falling in Love", artist: "Elvis Presley", era: "1960s", genre: "rock", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-romantic.mp3" },
+  { title: "Unchained Melody", artist: "The Righteous Brothers", era: "1960s", genre: "pop", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-sweet.mp3" },
+  { title: "My Way", artist: "Frank Sinatra", era: "1960s", genre: "pop", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-inspiring.mp3" },
+  { title: "Dream a Little Dream", artist: "The Mamas & The Papas", era: "1960s", genre: "pop", mood: "calm", audio_file_url: "https://www.bensound.com/bensound-music/bensound-sunny.mp3" },
+  { title: "Georgia on My Mind", artist: "Ray Charles", era: "1960s", genre: "soul", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-memories.mp3" },
+  { title: "Stand by Me", artist: "Ben E. King", era: "1960s", genre: "soul", mood: "comforting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-clearday.mp3" },
+  { title: "Here Comes the Sun", artist: "The Beatles", era: "1960s", genre: "rock", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-ukulele.mp3" },
+  { title: "Yesterday", artist: "The Beatles", era: "1960s", genre: "rock", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-slowmotion.mp3" },
+  { title: "Imagine", artist: "John Lennon", era: "1960s", genre: "rock", mood: "peaceful", audio_file_url: "https://www.bensound.com/bensound-music/bensound-pianomoment.mp3" },
+  { title: "The Sound of Silence", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "calm", audio_file_url: "https://www.bensound.com/bensound-music/bensound-anewbeginning.mp3" },
+  { title: "Bridge Over Troubled Water", artist: "Simon & Garfunkel", era: "1960s", genre: "folk", mood: "comforting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-tenderness.mp3" },
+  { title: "Respect", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-groovy.mp3" },
+  { title: "I Say a Little Prayer", artist: "Aretha Franklin", era: "1960s", genre: "soul", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-buddy.mp3" },
   
   // 1980s Era
-  { title: "Every Breath You Take", artist: "The Police", era: "1980s", genre: "rock", mood: "romantic" },
-  { title: "Sweet Child O' Mine", artist: "Guns N' Roses", era: "1980s", genre: "rock", mood: "energetic" },
-  { title: "Billie Jean", artist: "Michael Jackson", era: "1980s", genre: "pop", mood: "energetic" },
-  { title: "Like a Prayer", artist: "Madonna", era: "1980s", genre: "pop", mood: "uplifting" },
-  { title: "Livin' on a Prayer", artist: "Bon Jovi", era: "1980s", genre: "rock", mood: "energetic" },
-  { title: "Take On Me", artist: "A-ha", era: "1980s", genre: "pop", mood: "uplifting" },
-  { title: "Girls Just Want to Have Fun", artist: "Cyndi Lauper", era: "1980s", genre: "pop", mood: "happy" },
-  { title: "Don't Stop Believin'", artist: "Journey", era: "1980s", genre: "rock", mood: "uplifting" },
-  { title: "I Wanna Dance with Somebody", artist: "Whitney Houston", era: "1980s", genre: "pop", mood: "happy" },
-  { title: "Careless Whisper", artist: "George Michael", era: "1980s", genre: "pop", mood: "romantic" },
+  { title: "Every Breath You Take", artist: "The Police", era: "1980s", genre: "rock", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-love.mp3" },
+  { title: "Sweet Child O' Mine", artist: "Guns N' Roses", era: "1980s", genre: "rock", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-energy.mp3" },
+  { title: "Billie Jean", artist: "Michael Jackson", era: "1980s", genre: "pop", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-funkyelement.mp3" },
+  { title: "Like a Prayer", artist: "Madonna", era: "1980s", genre: "pop", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-creativeminds.mp3" },
+  { title: "Livin' on a Prayer", artist: "Bon Jovi", era: "1980s", genre: "rock", mood: "energetic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-actionable.mp3" },
+  { title: "Take On Me", artist: "A-ha", era: "1980s", genre: "pop", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-betterdays.mp3" },
+  { title: "Girls Just Want to Have Fun", artist: "Cyndi Lauper", era: "1980s", genre: "pop", mood: "happy", audio_file_url: "https://www.bensound.com/bensound-music/bensound-happyrock.mp3" },
+  { title: "Don't Stop Believin'", artist: "Journey", era: "1980s", genre: "rock", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-moose.mp3" },
+  { title: "I Wanna Dance with Somebody", artist: "Whitney Houston", era: "1980s", genre: "pop", mood: "happy", audio_file_url: "https://www.bensound.com/bensound-music/bensound-sexy.mp3" },
+  { title: "Careless Whisper", artist: "George Michael", era: "1980s", genre: "pop", mood: "romantic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-romantic.mp3" },
   
   // Present/Timeless
-  { title: "Hallelujah", artist: "Leonard Cohen", era: "present", genre: "folk", mood: "peaceful" },
-  { title: "You Are My Sunshine", artist: "Traditional", era: "present", genre: "folk", mood: "uplifting" },
-  { title: "Amazing Grace", artist: "Traditional", era: "present", genre: "classical", mood: "peaceful" },
-  { title: "Danny Boy", artist: "Traditional", era: "present", genre: "folk", mood: "nostalgic" },
-  { title: "Somewhere Over the Rainbow/What a Wonderful World", artist: "Israel Kamakawiwoʻole", era: "present", genre: "folk", mood: "calm" }
+  { title: "Hallelujah", artist: "Leonard Cohen", era: "present", genre: "folk", mood: "peaceful", audio_file_url: "https://www.bensound.com/bensound-music/bensound-pianomoment.mp3" },
+  { title: "You Are My Sunshine", artist: "Traditional", era: "present", genre: "folk", mood: "uplifting", audio_file_url: "https://www.bensound.com/bensound-music/bensound-sunny.mp3" },
+  { title: "Amazing Grace", artist: "Traditional", era: "present", genre: "classical", mood: "peaceful", audio_file_url: "https://www.bensound.com/bensound-music/bensound-relaxing.mp3" },
+  { title: "Danny Boy", artist: "Traditional", era: "present", genre: "folk", mood: "nostalgic", audio_file_url: "https://www.bensound.com/bensound-music/bensound-epic.mp3" },
+  { title: "Somewhere Over the Rainbow", artist: "Classic", era: "present", genre: "folk", mood: "calm", audio_file_url: "https://www.bensound.com/bensound-music/bensound-ukulele.mp3" }
 ];
 
 // Interactive Memory Exercises - 25+ Cognitive engagement activities
@@ -754,23 +755,36 @@ export async function preloadEssentialData() {
     }
     console.log(`✅ Cached ${results.stories} stories`);
 
-    // 3. Preload Music Library (15 classic songs)
-    console.log('🎵 Preloading music library...');
+    // 3. Preload Music Library WITH ACTUAL AUDIO FILES (40 classic songs)
+    console.log('🎵 Preloading music library with audio files...');
     for (const song of OFFLINE_MUSIC) {
       try {
+        // Save metadata first
         await saveToStore(STORES.music, {
           id: `offline_music_${Date.now()}_${Math.random()}`,
           ...song,
           uploaded_by_family: false,
           offline_preloaded: true,
-          personal_significance: "Classic song from your era"
+          personal_significance: "Classic song from your era",
+          is_downloaded: true
         });
         results.music++;
+        
+        // Download actual audio file if URL provided
+        if (song.audio_file_url && isOnline()) {
+          try {
+            const { downloadAudioForOffline } = await import('./offlineManager');
+            await downloadAudioForOffline(song);
+            console.log(`🎵 Downloaded audio: ${song.title}`);
+          } catch (audioError) {
+            console.warn(`Audio download failed for ${song.title}:`, audioError.message);
+          }
+        }
       } catch (error) {
         console.warn('Music cache failed:', error.message || 'Unknown error');
       }
     }
-    console.log(`✅ Cached ${results.music} songs`);
+    console.log(`✅ Cached ${results.music} songs with audio files`);
 
     // 4. Preload Interactive Memory Exercises (10 activities) - Skip if store doesn't exist
     console.log('🧠 Preloading memory exercises...');

@@ -167,6 +167,16 @@ export default function Home() {
       )}
 
       <PageLoadTip pageName="Home" />
+      
+      {/* Offline Download Progress Modal */}
+      {showOfflineDownload && (
+        <OfflineDownloadProgress 
+          onComplete={() => {
+            setTimeout(() => setShowOfflineDownload(false), 3000);
+          }}
+          autoStart={true}
+        />
+      )}
     </div>
   );
 }
