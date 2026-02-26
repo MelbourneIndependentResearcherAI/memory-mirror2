@@ -14,10 +14,11 @@ import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();
-  const { data: subscriptionData } = useSubscriptionStatus();
+  const { data: subscriptionData, isLoading } = useSubscriptionStatus();
 
   const navigateTo = (page) => navigate(createPageUrl(page));
   const handleGetStarted = () => {
+    if (isLoading) return; // Prevent click while loading
     if (subscriptionData?.isSubscribed) {
       navigate(createPageUrl('Home'));
     } else {
@@ -197,10 +198,11 @@ export default function Landing() {
           <InstallAppButton />
           <Button
             size="lg"
-            className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+            disabled={isLoading}
+            className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold disabled:opacity-50"
             onClick={handleGetStarted}
           >
-            {subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : 'Get Started → $9.99/month'}
+            {isLoading ? 'Loading...' : subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : 'Get Started → $9.99/month'}
           </Button>
           <div className="flex gap-4 justify-center flex-wrap">
             <button
