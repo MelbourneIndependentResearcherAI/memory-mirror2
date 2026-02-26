@@ -9,6 +9,7 @@ import GameInterface from '../games/GameInterface';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
 import EraSelector from './EraSelector';
 import MusicPlayer from './MusicPlayer';
+import SingAlongPlayer from '../music/SingAlongPlayer';
 import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
@@ -34,6 +35,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [detectedEra, setDetectedEra] = useState('present');
   const [showGames, setShowGames] = useState(false);
   const [showMusic, setShowMusic] = useState(false);
+  const [showSingAlong, setShowSingAlong] = useState(false);
   const [showStory, setShowStory] = useState(false);
   const [showHandsFree, setShowHandsFree] = useState(false);
   const [showPersonalizedCompanion, setShowPersonalizedCompanion] = useState(false);
@@ -1455,6 +1457,14 @@ RESPOND NOW:
           <MusicPlayer 
             currentEra={selectedEra === 'auto' ? detectedEra : selectedEra} 
             onClose={() => setShowMusic(false)} 
+          />
+        )}
+
+        {showSingAlong && (
+          <SingAlongPlayer
+            currentEra={selectedEra === 'auto' ? detectedEra : selectedEra}
+            mood={anxietyState.level >= 5 ? 'calm' : 'happy'}
+            onClose={() => setShowSingAlong(false)}
           />
         )}
         
