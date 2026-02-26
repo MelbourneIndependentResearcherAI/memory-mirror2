@@ -1,255 +1,210 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
+import { ChevronDown, Search, HelpCircle, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-
-const faqs = [
-  {
-    category: 'Getting Started',
-    questions: [
-      {
-        q: 'How do I start using Memory Mirror?',
-        a: 'Simply click "Start Companion" on the landing page or say "Hey Mirror" to activate voice mode. The app works immediately in your browser - no downloads, logins, or complex setup required.'
-      },
-      {
-        q: 'Do I need to install anything?',
-        a: 'No installation required! Memory Mirror works directly in your web browser on any device. However, you can install it as a Progressive Web App (PWA) on your phone or tablet for offline access and a native app-like experience.'
-      },
-      {
-        q: 'Is there a caregiver portal?',
-        a: 'Yes! Click "Caregiver Login" from the landing page to access the full Caregiver Portal where you can monitor wellbeing, upload family content, manage care plans, configure alerts, and track your loved one\'s daily interactions.'
-      },
-      {
-        q: 'What modes are available?',
-        a: 'Memory Mirror offers Chat Mode (text conversations), Phone Mode (safe calling), Voice Mode (hands-free), Big Button Mode (simplified interface), Night Watch (nighttime support), Security Mode (reassurance), and My Bank (safe financial simulation).'
-      }
-    ]
-  },
-  {
-    category: 'Core Features',
-    questions: [
-      {
-        q: 'What is the AI Companion?',
-        a: 'The AI Companion is a patient, understanding conversational partner specifically trained for dementia care. It adapts to different eras (1940s-present), detects anxiety, recalls personalized memories, and provides gentle redirection when needed.'
-      },
-      {
-        q: 'How does Phone Mode work?',
-        a: 'Phone Mode provides a realistic touch-tone dial pad that looks and feels like a real phone. All calls connect to the AI companion instead of real numbers, preventing accidental emergency calls while maintaining the familiar comfort of phone use.'
-      },
-      {
-        q: 'What is Night Watch?',
-        a: 'Night Watch is a dedicated nighttime companion that provides comfort during late hours, helps prevent wandering with gentle conversation, logs any night incidents for caregiver review, and maintains a calming presence when anxiety peaks at night.'
-      },
-      {
-        q: 'How does the Security Reassurance feature work?',
-        a: 'Security Mode displays a visual dashboard showing that all doors are locked, windows are secure, cameras are monitoring, and the alarm is active. It provides an AI "security guard" who gives reassuring voice messages to reduce safety-related anxiety.'
-      },
-      {
-        q: 'What is the Fake Banking feature?',
-        a: 'My Bank provides a safe, simulated banking interface that shows account balances and transactions without any real financial connections. This reduces financial anxiety and provides familiar interactions for those who enjoyed managing their accounts.'
-      },
-      {
-        q: 'Can Memory Mirror work completely offline?',
-        a: 'Yes! Download audio content, music, stories, and conversations to your device through the Offline Audio page. The app includes intelligent offline responses and can function without internet for extended periods.'
-      }
-    ]
-  },
-  {
-    category: 'Geofence & Location Safety',
-    questions: [
-      {
-        q: 'What is Geofence Tracking?',
-        a: 'Geofence Tracking lets caregivers set up virtual "safe zones" around the home or familiar areas. If your loved one leaves the safe zone, the system sends immediate alerts with GPS location, distance from zone, and a Google Maps link.'
-      },
-      {
-        q: 'How accurate is the location tracking?',
-        a: 'Location tracking uses GPS and provides accuracy within 10-50 meters depending on device and conditions. The live map updates in real-time and shows movement trails so you can see where your loved one has been.'
-      },
-      {
-        q: 'Who gets notified when a geofence is breached?',
-        a: 'You specify alert contacts when creating each safe zone. Alerts are sent via in-app notifications and email to all designated caregivers immediately when a breach is detected.'
-      },
-      {
-        q: 'Does location tracking drain the battery?',
-        a: 'The app is optimized for battery efficiency. Battery level is monitored and displayed on the tracker. We recommend keeping the device charged and using battery saver mode if needed.'
-      }
-    ]
-  },
-  {
-    category: 'Privacy & Security',
-    questions: [
-      {
-        q: 'Is my loved one\'s data private and secure?',
-        a: 'Absolutely. All conversations, location data, and personal information are encrypted end-to-end. We comply with healthcare privacy standards (HIPAA, GDPR). Your data is never shared with third parties or used for advertising.'
-      },
-      {
-        q: 'Who can access my loved one\'s information?',
-        a: 'Only caregivers you explicitly invite to the Care Team can access patient data. You control access levels (full access, view-only, or limited) and can revoke access at any time.'
-      },
-      {
-        q: 'How is location data protected?',
-        a: 'Location data is encrypted in transit and at rest. Only authorized caregivers on your team can view location information. You can disable location tracking at any time from the Geofence Settings.'
-      },
-      {
-        q: 'Can I export or delete all data?',
-        a: 'Yes! From the Caregiver Portal, you can export all data (conversations, activities, care journals) as a PDF or CSV file. You can also request complete data deletion at any time - we honor all data removal requests within 48 hours.'
-      }
-    ]
-  },
-  {
-    category: 'Caregiver Tools & Monitoring',
-    questions: [
-      {
-        q: 'How do I monitor my loved one\'s wellbeing?',
-        a: 'The Caregiver Portal provides an Insights Dashboard showing anxiety trends over time, daily activity patterns, conversation themes, cognitive assessments, and behavioral changes. You can generate detailed reports and track progress.'
-      },
-      {
-        q: 'Can I upload family photos and memories?',
-        a: 'Yes! Upload unlimited family photos, videos, voice messages, and personalized stories through the Media Library. The AI uses these to trigger memory recall and create more meaningful, personalized conversations.'
-      },
-      {
-        q: 'What are Care Plans?',
-        a: 'Care Plans let you document daily routines, dietary needs, medical history, medications, emergency contacts, and specific care instructions. This ensures consistent care and helps all team members stay informed.'
-      },
-      {
-        q: 'How do emergency alerts work?',
-        a: 'Configure custom alert conditions like prolonged distress, high anxiety levels, no interaction for X hours, night incidents, or geofence breaches. Choose notification methods (email, SMS, in-app) and which team members receive each alert type.'
-      },
-      {
-        q: 'What is the Care Journal?',
-        a: 'The Care Journal is a shared log where all caregivers can record observations, mood changes, medication given, activities completed, and concerns. It ensures seamless communication between family members and professional caregivers.'
-      },
-      {
-        q: 'Can I invite multiple caregivers?',
-        a: 'Yes! Build a complete Care Team by inviting family members, professional caregivers, nurses, or friends. Assign roles (primary, secondary, respite) and set individual access levels and notification preferences for each team member.'
-      }
-    ]
-  },
-  {
-    category: 'Technical & Troubleshooting',
-    questions: [
-      {
-        q: 'What devices does Memory Mirror work on?',
-        a: 'Memory Mirror works on all modern smartphones, tablets, and computers with a web browser (Chrome, Safari, Firefox, Edge). For best experience, we recommend tablets or phones for their portability and touch interfaces.'
-      },
-      {
-        q: 'What happens if internet connection is lost?',
-        a: 'The app continues to function with pre-loaded offline content. Conversations, music, stories, and core features remain available. Data syncs automatically when connection is restored through the Sync & Backup system.'
-      },
-      {
-        q: 'How do I sync data across devices?',
-        a: 'Data automatically syncs across all devices logged into the same account. You can manually trigger sync from the Sync & Backup page, view sync status, and configure auto-sync preferences.'
-      },
-      {
-        q: 'Can I use this on my TV?',
-        a: 'Yes! Memory Mirror can be displayed on smart TVs through screen mirroring/casting from your phone or tablet, or by opening the web app directly on TV browsers. The large screen format is great for viewing photos and videos together.'
-      },
-      {
-        q: 'What if voice recognition isn\'t working?',
-        a: 'Ensure microphone permissions are enabled in your browser settings. Speak clearly and at a moderate pace. The "Hey Mirror" wake word requires a quiet environment. You can also use touch/click instead of voice for all features.'
-      }
-    ]
-  },
-  {
-    category: 'Pricing & Support',
-    questions: [
-      {
-        q: 'How much does Memory Mirror cost?',
-        a: 'Memory Mirror costs AUD $9.99/month with manual bank transfer payment. We intentionally keep pricing low because quality dementia care support should be accessible to every family, not just the wealthy.'
-      },
-      {
-        q: 'What payment methods do you accept?',
-        a: 'We currently accept manual bank transfer to our Australian account. Simply transfer to BSB 633123, Account 166572719, or use PayID mickiimac@up.me. Premium features activate once payment is confirmed.'
-      },
-      {
-        q: 'Is there a free trial?',
-        a: 'Yes! You can use all core features for free immediately. The premium subscription adds advanced features like unlimited storage, priority AI responses, voice cloning, and advanced analytics.'
-      },
-      {
-        q: 'What if I can\'t afford the subscription?',
-        a: 'We never turn families away due to financial hardship. Contact support@memorymirror.com.au to discuss assistance options, payment plans, or hardship arrangements. Every family deserves quality dementia care support.'
-      },
-      {
-        q: 'How do I get technical support?',
-        a: 'Email support@memorymirror.com.au for technical help, feature questions, or troubleshooting. You can also use the AI Support Assistant in the Caregiver Portal for instant 24/7 automated help.'
-      },
-      {
-        q: 'Can I cancel anytime?',
-        a: 'Yes, you can cancel your subscription at any time with no penalties or fees. Your access continues until the end of your paid period, and you can export all your data before canceling.'
-      }
-    ]
-  }
-];
+import { Input } from '@/components/ui/input';
+import { useNavigate } from 'react-router-dom';
 
 export default function FAQ() {
   const navigate = useNavigate();
-  const [expandedItems, setExpandedItems] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [openIndex, setOpenIndex] = useState(null);
 
-  const toggleItem = (categoryIdx, questionIdx) => {
-    const key = `${categoryIdx}-${questionIdx}`;
-    setExpandedItems(prev =>
-      prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key]
-    );
-  };
+  const faqs = [
+    {
+      category: 'Quick Access & Be My Eyes Feature',
+      questions: [
+        {
+          q: 'What is the Quick Access button?',
+          a: 'The Quick Access button is a single BIG RED BUTTON inspired by the "Be My Eyes" app. It\'s designed for people with dementia who struggle to find apps or answer their phone. One simple press launches Memory Mirror instantly - no complex navigation needed.'
+        },
+        {
+          q: 'How do I set up Quick Access for my loved one?',
+          a: 'Go to Caregiver Portal → Settings and enable "Quick Access Mode". Then, add the Quick Access page to your loved one\'s phone home screen for instant one-tap launch. This makes it as easy as possible for them to use the app.'
+        },
+        {
+          q: 'Can I customize what the big button does?',
+          a: 'Currently, the big red button launches the main AI companion interface. This keeps it simple and predictable. If you need different default behavior, you can set up custom shortcuts in the Caregiver Portal.'
+        },
+        {
+          q: 'Why was this feature added?',
+          a: 'Based on feedback from Becky, a caregiver who mentioned the "Be My Eyes" app\'s single big button design. She noted that finding apps is difficult for dementia patients, and her husband struggles with even answering his phone. We designed Quick Access to solve exactly this problem.'
+        }
+      ]
+    },
+    {
+      category: 'Getting Started',
+      questions: [
+        {
+          q: 'How do I get started with Memory Mirror?',
+          a: 'Simply tap "Quick Access" or "Start Companion" on the landing page. No account creation is required to start using the AI companion. Caregivers can set up the full portal later to access advanced features.'
+        },
+        {
+          q: 'Do I need to create an account?',
+          a: 'For basic AI companion features, no account is needed. However, creating an account (or signing in) unlocks caregiver tools, history tracking, and personalization features.'
+        },
+        {
+          q: 'Is Memory Mirror free?',
+          a: 'Memory Mirror is currently free to use during beta. We may introduce optional premium features in the future, but the core AI companion will always remain accessible.'
+        }
+      ]
+    },
+    {
+      category: 'For Caregivers',
+      questions: [
+        {
+          q: 'How do I monitor my loved one\'s interactions?',
+          a: 'Sign in to the Caregiver Portal to view conversation history, anxiety trends, and activity logs. You can also set up alerts for specific triggers or concerning patterns.'
+        },
+        {
+          q: 'Can I customize the AI\'s behavior?',
+          a: 'Yes! In the Caregiver Portal, you can set up user profiles with era preferences, important memories, safe topics, and communication style. This helps the AI provide more personalized and appropriate responses.'
+        },
+        {
+          q: 'What is Night Watch mode?',
+          a: 'Night Watch is an AI-powered overnight monitoring feature that detects distress, confusion, or emergency situations during nighttime hours. It can alert caregivers when immediate attention may be needed.'
+        }
+      ]
+    },
+    {
+      category: 'Safety & Privacy',
+      questions: [
+        {
+          q: 'Is my data private and secure?',
+          a: 'Yes. All conversations and personal data are encrypted and stored securely. We never sell data to third parties, and you can delete your account and all data at any time.'
+        },
+        {
+          q: 'Can the AI detect scams or dangerous situations?',
+          a: 'Memory Mirror includes a Security Scanner feature that can help identify potential scams, suspicious messages, and online safety risks. However, it should not replace human oversight.'
+        },
+        {
+          q: 'What happens if there\'s an emergency?',
+          a: 'The app includes emergency contact buttons and can alert designated caregivers through the Emergency Alert System. Night Watch mode also monitors for distress signals during nighttime hours.'
+        }
+      ]
+    },
+    {
+      category: 'Features',
+      questions: [
+        {
+          q: 'Does Memory Mirror work offline?',
+          a: 'Yes! Many features work offline, including offline audio playback, memory viewing, and basic interactions. Some AI features require internet, but core functionality is available without WiFi.'
+        },
+        {
+          q: 'What is the Fake Banking feature?',
+          a: 'The Fake Banking feature displays a reassuring fake bank balance to reduce financial anxiety. This can help when a person with dementia repeatedly checks their finances and becomes worried. Caregivers can configure what balance is displayed.'
+        },
+        {
+          q: 'Can family members contribute content?',
+          a: 'Yes! Through the Family Portal, family members can upload photos, music, stories, and messages. This helps create a rich library of familiar content for your loved one.'
+        }
+      ]
+    },
+    {
+      category: 'Technical',
+      questions: [
+        {
+          q: 'What devices does Memory Mirror work on?',
+          a: 'Memory Mirror works on any modern smartphone, tablet, or computer with a web browser. For the best experience, we recommend using Chrome, Safari, or Edge.'
+        },
+        {
+          q: 'Can I install Memory Mirror as an app?',
+          a: 'Yes! Memory Mirror is a Progressive Web App (PWA). You can install it on your home screen for a native app-like experience. Look for the "Install App" button on the landing page.'
+        },
+        {
+          q: 'How do I add Quick Access to my home screen?',
+          a: 'Visit the Quick Access page, then use your browser\'s "Add to Home Screen" option. On iPhone: tap Share → Add to Home Screen. On Android: tap the menu (three dots) → Add to Home Screen.'
+        }
+      ]
+    }
+  ];
+
+  const filteredFaqs = faqs.map(category => ({
+    ...category,
+    questions: category.questions.filter(
+      faq =>
+        faq.q.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        faq.a.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+  })).filter(category => category.questions.length > 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 pb-20">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="flex items-center gap-4 mb-8">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="min-h-[44px] min-w-[44px]"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div>
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-100 flex items-center gap-3">
-              <HelpCircle className="w-10 h-10 text-blue-600" />
-              Frequently Asked Questions
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              Everything you need to know about Memory Mirror
-            </p>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-slate-50 to-purple-50 dark:from-slate-950 dark:via-blue-950 dark:to-purple-950 p-4 md:p-8 pb-20">
+      <div className="max-w-4xl mx-auto">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(-1)}
+          className="mb-6"
+        >
+          ← Back
+        </Button>
+
+        <div className="text-center mb-12">
+          <div className="flex justify-center mb-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-full flex items-center justify-center shadow-xl">
+              <HelpCircle className="w-8 h-8 text-white" />
+            </div>
           </div>
+          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
+            Frequently Asked Questions
+          </h1>
+          <p className="text-lg text-slate-600 dark:text-slate-400">
+            Everything you need to know about Memory Mirror
+          </p>
         </div>
 
+        {/* Search */}
+        <div className="relative mb-8">
+          <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Input
+            type="text"
+            placeholder="Search questions..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="pl-12 h-14 text-base"
+          />
+        </div>
+
+        {/* FAQ Sections */}
         <div className="space-y-8">
-          {faqs.map((category, catIdx) => (
-            <div key={catIdx}>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
+          {filteredFaqs.map((category, categoryIndex) => (
+            <div key={categoryIndex} className="bg-white dark:bg-slate-900 rounded-2xl shadow-lg p-6 border border-slate-200/60 dark:border-slate-700/50">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 flex items-center gap-2">
+                {category.category === 'Quick Access & Be My Eyes Feature' && (
+                  <Target className="w-6 h-6 text-red-500" />
+                )}
                 {category.category}
               </h2>
               <div className="space-y-3">
-                {category.questions.map((item, qIdx) => {
-                  const isExpanded = expandedItems.includes(`${catIdx}-${qIdx}`);
+                {category.questions.map((faq, index) => {
+                  const globalIndex = categoryIndex * 1000 + index;
+                  const isOpen = openIndex === globalIndex;
+                  
                   return (
-                    <Card key={qIdx}>
-                      <CardContent
-                        className="p-0 cursor-pointer"
-                        onClick={() => toggleItem(catIdx, qIdx)}
+                    <div
+                      key={index}
+                      className="border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden"
+                    >
+                      <button
+                        onClick={() => setOpenIndex(isOpen ? null : globalIndex)}
+                        className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                       >
-                        <div className="p-6">
-                          <div className="flex items-start justify-between gap-4">
-                            <h3 className="font-semibold text-lg text-slate-900 dark:text-white flex-1">
-                              {item.q}
-                            </h3>
-                            {isExpanded ? (
-                              <ChevronUp className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                            )}
-                          </div>
-                          {isExpanded && (
-                            <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed">
-                              {item.a}
-                            </p>
-                          )}
+                        <span className="font-semibold text-slate-900 dark:text-white pr-4">
+                          {faq.q}
+                        </span>
+                        <ChevronDown
+                          className={`w-5 h-5 text-slate-500 transition-transform flex-shrink-0 ${
+                            isOpen ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+                      {isOpen && (
+                        <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+                          <p className="text-slate-700 dark:text-slate-300 leading-relaxed">
+                            {faq.a}
+                          </p>
                         </div>
-                      </CardContent>
-                    </Card>
+                      )}
+                    </div>
                   );
                 })}
               </div>
@@ -257,22 +212,35 @@ export default function FAQ() {
           ))}
         </div>
 
-        <Card className="mt-12 bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-blue-950/30 dark:to-cyan-950/30 border-2 border-blue-200 dark:border-blue-800">
-          <CardContent className="p-8 text-center">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-              Still Have Questions?
-            </h2>
-            <p className="text-slate-600 dark:text-slate-400 mb-6">
-              We're here to help! Reach out anytime.
+        {filteredFaqs.length === 0 && (
+          <div className="text-center py-12">
+            <p className="text-slate-500 dark:text-slate-400 text-lg">
+              No questions found matching "{searchTerm}"
             </p>
+          </div>
+        )}
+
+        {/* Contact Support */}
+        <div className="mt-12 bg-gradient-to-br from-blue-600 to-purple-600 rounded-2xl p-8 text-center text-white shadow-xl">
+          <h2 className="text-2xl font-bold mb-3">Still have questions?</h2>
+          <p className="mb-6 text-white/90">
+            We're here to help. Reach out to our support team anytime.
+          </p>
+          <div className="flex gap-4 justify-center flex-wrap">
             <Button
-              onClick={() => window.location.href = 'mailto:support@memorymirror.com.au'}
-              className="bg-blue-600 hover:bg-blue-700"
+              onClick={() => navigate('/Feedback')}
+              className="bg-white text-blue-600 hover:bg-white/90"
             >
-              Contact Support
+              Send Feedback
             </Button>
-          </CardContent>
-        </Card>
+            <a
+              href="mailto:support@memorymirror.app"
+              className="inline-flex items-center px-6 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
+            >
+              Email Support
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -1,14 +1,47 @@
-import React, { useState } from 'react';
-import { AlertTriangle, Trash2, Loader2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { AlertTriangle, Trash2, Loader2, Target } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Switch } from '@/components/ui/switch';
 import { base44 } from '@/api/base44Client';
+import { toast } from 'sonner';
 
 export default function Settings() {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [deleteError, setDeleteError] = useState('');
+  const [useQuickAccess, setUseQuickAccess] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Load Quick Access preference
+    const loadSettings = () => {
+      try {
+        const saved = localStorage.getItem('quickAccessEnabled');
+        setUseQuickAccess(saved === 'true');
+      } catch (error) {
+        console.error('Failed to load settings:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    loadSettings();
+  }, []);
+
+  const toggleQuickAccess = (enabled) => {
+    setUseQuickAccess(enabled);
+    try {
+      localStorage.setItem('quickAccessEnabled', enabled.toString());
+      toast.success(
+        enabled 
+          ? 'Quick Access Button enabled - patients will see the big red button' 
+          : 'Quick Access Button disabled'
+      );
+    } catch (error) {
+      toast.error('Failed to save setting');
+    }
+  };
 
   const handleDeleteAccount = async () => {
     setIsDeleting(true);
@@ -43,6 +76,45 @@ export default function Settings() {
 
   return (
     <div className="space-y-6">
+      {/* Quick Access Settings - Inspired by "Be My Eyes" */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Target className="w-5 h-5 text-red-500" />
+            Quick Access Button
+          </CardTitle>
+          <CardDescription>
+            One big red button for easy access - inspired by "Be My Eyes" app
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+            <div className="flex-1">
+              <h3 className="font-semibold text-sm mb-1">Enable Quick Access Mode</h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mb-2">
+                Shows a single large red button that's easy to find and press. Perfect for patients who struggle with finding apps or answering their phone.
+              </p>
+              <p className="text-xs text-blue-600 dark:text-blue-400">
+                💡 Tip: Add the Quick Access page to the home screen for instant one-tap launch
+              </p>
+            </div>
+            <Switch
+              checked={useQuickAccess}
+              onCheckedChange={toggleQuickAccess}
+              disabled={loading}
+            />
+          </div>
+
+          {useQuickAccess && (
+            <Alert>
+              <AlertDescription className="text-sm">
+                ✅ Quick Access is enabled. Patients will see a big red button on the landing page. You can also direct them to the Quick Access page directly for the simplest experience.
+              </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+      </Card>
+
       <Card className="border-red-200 dark:border-red-900">
         <CardHeader>
           <CardTitle className="text-red-600 dark:text-red-400 flex items-center gap-2">
