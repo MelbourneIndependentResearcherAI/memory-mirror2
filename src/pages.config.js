@@ -148,6 +148,7 @@ import phone from './pages/phone';
 import SecureMessagingPage from './pages/SecureMessagingPage';
 import Registration from './pages/Registration';
 import PaymentIntegrationTest from './pages/PaymentIntegrationTest';
+import Paywall from './pages/Paywall';
 import __Layout from './Layout.jsx';
 
 
@@ -253,6 +254,7 @@ export const PAGES = {
     "SecureMessagingPage": SecureMessagingPage,
     "Registration": Registration,
     "PaymentIntegrationTest": PaymentIntegrationTest,
+    "Paywall": Paywall,
 }
 
 export const pagesConfig = {

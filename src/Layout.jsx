@@ -9,6 +9,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
 import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
@@ -18,8 +19,21 @@ import ScrollToTop from '@/components/ScrollToTop';
 export default function Layout({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { data: subscriptionData } = useSubscriptionStatus();
+  
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
+  
+  // Check subscription access
+  useEffect(() => {
+    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal'];
+    const isRestrictedPage = restrictedPages.includes(currentPageName);
+    
+    // If not subscribed and trying to access restricted page, redirect to paywall
+    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage) {
+      navigate('/paywall');
+    }
+  }, [subscriptionData, currentPageName, navigate]);
 
   // Main bottom tab pages for page transitions
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];

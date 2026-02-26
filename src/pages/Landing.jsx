@@ -9,13 +9,21 @@ import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSe
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
+import { useSubscriptionStatus } from '@/hooks/useSubscriptionStatus';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
   const navigate = useNavigate();
+  const { data: subscriptionData } = useSubscriptionStatus();
 
   const navigateTo = (page) => navigate(createPageUrl(page));
-  const handleGetStarted = () => navigate(createPageUrl('Home'));
+  const handleGetStarted = () => {
+    if (subscriptionData?.isSubscribed) {
+      navigate(createPageUrl('Home'));
+    } else {
+      navigate('/paywall');
+    }
+  };
 
   const featureCards = [
     { icon: '🔴', title: 'Quick Access Button', desc: 'ONE BIG RED BUTTON for instant access - inspired by "Be My Eyes"', page: 'QuickAccess', color: 'from-red-500 to-rose-600' },
@@ -189,10 +197,10 @@ export default function Landing() {
           <InstallAppButton />
           <Button
             size="lg"
-            className="px-8 py-5 text-base md:text-xl rounded-xl bg-blue-600 hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
+            className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold"
             onClick={handleGetStarted}
           >
-            Go to Memory Mirror →
+            {subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : 'Get Started → $9.99/month'}
           </Button>
           <div className="flex gap-4 justify-center flex-wrap">
             <button
