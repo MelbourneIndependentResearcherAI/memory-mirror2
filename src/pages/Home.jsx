@@ -198,14 +198,18 @@ export default function Home() {
         />
 
         {showBadDayMode && (
-          <BadDayMode 
-            onClose={() => setShowBadDayMode(false)}
-            userProfile={userProfiles[0]}
-          />
+          <React.Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
+            <BadDayMode 
+              onClose={() => setShowBadDayMode(false)}
+              userProfile={userProfiles[0]}
+            />
+          </React.Suspense>
         )}
 
         {showReflection && (
-          <MemoryReflectionSession onClose={() => setShowReflection(false)} />
+          <React.Suspense fallback={<div className="fixed inset-0 bg-black/50 flex items-center justify-center"><div className="bg-white rounded-lg p-8">Loading...</div></div>}>
+            <MemoryReflectionSession onClose={() => setShowReflection(false)} />
+          </React.Suspense>
         )}
 
         {showSingAlong && (
@@ -221,13 +225,13 @@ export default function Home() {
                 </button>
               </div>
               <div className="p-6 max-h-96 overflow-y-auto">
-                <SingAlongPlayer />
+                <React.Suspense fallback={<div className="p-8 text-center">Loading...</div>}>
+                  <SingAlongPlayer />
+                </React.Suspense>
               </div>
             </div>
           </div>
         )}
-
-        <PageLoadTip pageName="Home" />
       </div>
     </PullToRefresh>
   );
