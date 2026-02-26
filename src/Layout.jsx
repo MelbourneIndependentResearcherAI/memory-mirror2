@@ -138,6 +138,7 @@ export default function Layout({ children, currentPageName }) {
         <AppStateProvider>
           <LockModeProvider>
             <ErrorBoundary>
+              <SessionTimeoutManager />
               <OfflineIndicator />
               <ScrollToTop />
               
