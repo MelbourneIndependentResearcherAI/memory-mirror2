@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Settings, HeartCrack } from 'lucide-react';
+import { MessageCircle, Settings, HeartCrack, MapPin } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
@@ -95,6 +95,13 @@ export default function Home() {
 
         {/* Quick Access Buttons */}
         <div className="p-4 space-y-3">
+          <Link to={createPageUrl('GeofenceTracking')}>
+            <button className="w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold select-none">
+              <MapPin className="w-8 h-8" />
+              Location Safety
+            </button>
+          </Link>
+
           <button
             onClick={() => setShowBadDayMode(true)}
             className="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-6 rounded-2xl shadow-xl transition-all duration-300 hover:scale-105 flex items-center justify-center gap-3 text-xl font-semibold select-none"
