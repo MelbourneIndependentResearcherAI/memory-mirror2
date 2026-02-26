@@ -5,10 +5,11 @@ function Skeleton({
   ...props
 }) {
   return (
-    (<div
-      className={cn("animate-pulse rounded-md bg-primary/10", className)}
-      {...props} />)
-  );
+    <div
+      className={cn("animate-pulse rounded-md bg-slate-100 dark:bg-slate-800", className)}
+      {...props}
+    />
+  )
 }
 
 export { Skeleton }

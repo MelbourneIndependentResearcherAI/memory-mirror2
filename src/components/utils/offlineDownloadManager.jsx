@@ -24,6 +24,8 @@ export class OfflineDownloadManager {
   // Subscribe to download progress
   subscribe(callback) {
     this.listeners.push(callback);
+    // Immediately send current status to new subscriber
+    callback(this.progress);
     return () => {
       this.listeners = this.listeners.filter(cb => cb !== callback);
     };
@@ -31,7 +33,13 @@ export class OfflineDownloadManager {
 
   // Notify all listeners
   notify() {
-    this.listeners.forEach(callback => callback(this.progress));
+    this.listeners.forEach(callback => {
+      try {
+        callback(this.progress);
+      } catch (error) {
+        console.warn('Listener notification failed:', error);
+      }
+    });
   }
 
   // Start full offline download
@@ -56,15 +64,28 @@ export class OfflineDownloadManager {
       await initOfflineStorage();
       await initOfflineDB();
       
-      this.progress.currentItem = 'Storage Ready';
+      this.progress.currentItem = 'Storage Ready ✓';
+      this.progress.current = 5;
       this.notify();
 
       // Import preloader
       const { default: preloadEssentialData } = await import('./offlinePreloader');
       
+      // Track progress during preload
+      const progressInterval = setInterval(() => {
+        this.progress.current += 1;
+        if (this.progress.current > this.progress.total - 10) {
+          this.progress.current = this.progress.total - 10; // Cap near end
+        }
+        this.notify();
+      }, 100); // Update every 100ms for smooth progress
+      
       // Execute preload with progress tracking
       console.log('🚀 Starting download...');
       const result = await preloadEssentialData();
+      
+      // Stop progress interval
+      clearInterval(progressInterval);
 
       // Update final progress
       this.progress.current = this.progress.total;
