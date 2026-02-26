@@ -56,7 +56,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
                 Lifetime Access for Half Price! 💎
               </h3>
               <p className="text-slate-600 dark:text-slate-300 mb-3">
-                First 200 users get <strong>lifetime access for only $9.99/month</strong> instead of $14.99. 
+                First 200 users get <strong>lifetime access for only $9.99/month</strong> instead of $12.99. 
                 Lock in this price forever—no price increases ever!
               </p>
               
