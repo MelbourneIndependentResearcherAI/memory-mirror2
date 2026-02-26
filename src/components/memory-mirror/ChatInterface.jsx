@@ -840,25 +840,38 @@ ${sentimentAnalysis.trigger_words?.length > 0 ? `- Trigger words: ${sentimentAna
         : '';
 
       const memoryContext = memoryRecall?.should_proactively_mention && memoryRecall?.selected_memories?.length > 0
-        ? `\n\nRELEVANT MEMORIES TO MENTION:
-${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention}\n  Reasoning: ${m.reasoning}`).join('\n')}
-Tone: ${memoryRecall.tone_recommendation}`
+        ? `\n\nMEMORIES THAT FIT THIS CONVERSATION:
+${memoryRecall.selected_memories.map(m => `- "${m.title}": ${m.suggested_mention}`).join('\n')}`
         : '';
 
       // Add recent memories for context-aware responses
       const recentMemoriesContext = memories.length > 0
-        ? `\n\nRECENT MEMORIES AVAILABLE (mention naturally when relevant):
-${memories.slice(0, 5).map(m => `- "${m.title}" (${m.era})`).join('\n')}`
+        ? `\n\nTHINGS YOU KNOW ABOUT THEM:
+${memories.slice(0, 5).map(m => `- "${m.title}"`).join('\n')}`
+        : '';
+
+      // Extract what they're specifically talking about
+      const topicDetection = sentimentAnalysis?.themes?.length > 0 
+        ? `\n\nWHAT THEY'RE TALKING ABOUT: ${sentimentAnalysis.themes.join(', ')}`
         : '';
 
       // Get AI response (offline-aware)
-      const fullPrompt = `${getSystemPrompt()}${emotionalContext}${memoryContext}${recentMemoriesContext}
+      const fullPrompt = `${getSystemPrompt()}
 
-Conversation so far:
-${newHistory.map(m => `${m.role}: ${m.content}`).join('\n')}
+WHAT THEY JUST SAID:
+"${userMessageEnglish}"
+${topicDetection}
+${emotionalContext}${memoryContext}${recentMemoriesContext}
 
-RESPOND LIKE YOU'RE ON THE PHONE - natural, brief, conversational. ${memoryRecall?.should_proactively_mention ? 'Naturally weave in the suggested memory.' : ''}
-MAXIMUM 1-2 SENTENCES. Start with acknowledgment filler ("I see...", "Mmhm..."). Sound completely human. Never interrupt or rush them.`;
+Conversation history:
+${newHistory.slice(-6).map(m => `${m.role === 'user' ? 'They' : 'You'}: ${m.content}`).join('\n')}
+
+RESPOND NOW:
+- Respond DIRECTLY about what they said
+- Show you listened carefully
+- Keep it 1-2 sentences max
+- Sound like their best friend
+- Make them feel understood and loved`;
 
       console.log('Calling AI chat...');
       let response = await offlineAIChat(fullPrompt, {
