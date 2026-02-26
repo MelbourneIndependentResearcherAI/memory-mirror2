@@ -147,6 +147,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import SecureMessagingPage from './pages/SecureMessagingPage';
 import Registration from './pages/Registration';
+import PaymentIntegrationTest from './pages/PaymentIntegrationTest';
 import __Layout from './Layout.jsx';
 
 
@@ -251,6 +252,7 @@ export const PAGES = {
     "phone": phone,
     "SecureMessagingPage": SecureMessagingPage,
     "Registration": Registration,
+    "PaymentIntegrationTest": PaymentIntegrationTest,
 }
 
 export const pagesConfig = {
