@@ -1115,12 +1115,21 @@ MAXIMUM 1-2 SENTENCES. Start with acknowledgment filler ("I see...", "Mmhm...").
       // Configure for natural conversation - let user finish their thought
       recognitionRef.current.continuous = true;           // Keep listening for complete thoughts
       recognitionRef.current.interimResults = true;       // Show what they're saying
-      recognitionRef.current.maxAlternatives = 3;         // Better detection
+      recognitionRef.current.maxAlternatives = 5;         // Better detection - improved accuracy
+      recognitionRef.current.abortOnError = false;        // Don't stop on errors - stay engaged
       
-      // CRITICAL: Browser-specific optimizations for soft voice detection
+      // CRITICAL: Maximize microphone sensitivity for all speech levels
       if (recognitionRef.current.audioTrack !== undefined) {
-        // Enable audio processing for quieter speech
         recognitionRef.current.audioTrack = true;
+      }
+      
+      // Android-specific audio settings for better capture
+      if (window.SpeechRecognition && window.SpeechRecognition.prototype.setAudioSource) {
+        try {
+          recognitionRef.current.setAudioSource('microphone');
+        } catch (e) {
+          console.log('Audio source setting not available');
+        }
       }
       
       // Language mapping
