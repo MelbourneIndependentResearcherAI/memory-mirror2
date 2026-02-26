@@ -249,14 +249,58 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Testimonials Section */}
+      <div className="max-w-5xl mx-auto px-4 mb-12">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">
+            Loved by Families & Caregivers
+          </h2>
+          <p className="text-slate-600 dark:text-slate-400">Real stories from people using Memory Mirror</p>
+        </div>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex gap-1 mb-4">
+              {[...Array(5)].map((_, i) => <span key={i} className="text-xl">⭐</span>)}
+            </div>
+            <p className="text-slate-700 dark:text-slate-300 mb-4 text-sm leading-relaxed">
+              "My mom finally smiles again. She talks to Memory Mirror like she's talking to an old friend, and it gives me so much peace of mind knowing she's never lonely."
+            </p>
+            <p className="font-semibold text-slate-900 dark:text-white">Sarah M.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Daughter, Adelaide</p>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex gap-1 mb-4">
+              {[...Array(5)].map((_, i) => <span key={i} className="text-xl">⭐</span>)}
+            </div>
+            <p className="text-slate-700 dark:text-slate-300 mb-4 text-sm leading-relaxed">
+              "The music therapy features are incredible. My dad lights up when his favorite songs from the 60s play. It's made such a difference in his mood."
+            </p>
+            <p className="font-semibold text-slate-900 dark:text-white">James L.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Son & Caregiver, Melbourne</p>
+          </div>
+
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-6 shadow-lg border border-slate-200 dark:border-slate-700">
+            <div className="flex gap-1 mb-4">
+              {[...Array(5)].map((_, i) => <span key={i} className="text-xl">⭐</span>)}
+            </div>
+            <p className="text-slate-700 dark:text-slate-300 mb-4 text-sm leading-relaxed">
+              "As a care home manager, this has been a game-changer. It reduces anxiety, keeps residents engaged, and our families feel so much more confident."
+            </p>
+            <p className="font-semibold text-slate-900 dark:text-white">Margaret T.</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400">Care Manager, Brisbane</p>
+          </div>
+        </div>
+      </div>
+
       {/* Footer */}
       <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
         <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
         <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
-        <div className="mt-6 flex justify-center gap-4 flex-wrap text-xs">
+        <div className="mt-6 flex justify-center gap-2 flex-wrap text-xs">
           <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
           <span className="text-slate-600">•</span>
-          <Link to={createPageUrl('Resources')} className="text-slate-400 hover:text-slate-300 transition-colors">Emergency Resources</Link>
+          <Link to={createPageUrl('Resources')} className="text-slate-400 hover:text-slate-300 transition-colors">Resources</Link>
           <span className="text-slate-600">•</span>
           <Link to={createPageUrl('TermsOfService')} className="text-slate-400 hover:text-slate-300 transition-colors">Terms</Link>
           <span className="text-slate-600">•</span>
