@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
+import PageLoadTip from '@/components/tips/PageLoadTip';
 
 export default function BigButtonMode() {
   const navigate = useNavigate();
@@ -161,6 +162,8 @@ export default function BigButtonMode() {
           </div>
         </div>
       </div>
+
+      <PageLoadTip pageName="BigButtonMode" />
     </div>
   );
 }
