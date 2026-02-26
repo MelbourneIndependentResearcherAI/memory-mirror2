@@ -10,6 +10,7 @@ import FeatureTutorial from '@/components/landing/FeatureTutorial';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
+import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
@@ -192,6 +193,9 @@ export default function Landing() {
             </button>
           ))}
         </div>
+
+        {/* Limited Time Offer */}
+        <PromoLimitedOffer variant="banner" />
 
         {/* CTA Buttons */}
         <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">

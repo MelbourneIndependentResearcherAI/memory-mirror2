@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
+import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
 
 export default function Pricing() {
   const navigate = useNavigate();
@@ -84,7 +85,8 @@ export default function Pricing() {
       name: 'Premium',
       price: 9.99,
       billing: 'AUD $9.99/month',
-      description: 'Full access to all Memory Mirror features',
+      badge: '⏰ LIMITED: Lifetime Lock-In Price',
+      description: 'Full access to all Memory Mirror features — First 200 users get lifetime access at this price',
       features: [
         'Unlimited conversations',
         'Unlimited memory storage',
@@ -200,6 +202,8 @@ export default function Pricing() {
           Back
         </button>
 
+        <PromoLimitedOffer variant="card" />
+
         <div className="text-center mb-12">
           <Badge className="mb-4 bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 border-purple-200 dark:border-purple-800">
             <Sparkles className="w-3 h-3 mr-1" />
@@ -255,7 +259,14 @@ export default function Pricing() {
                   : 'border-slate-200 dark:border-slate-700'
               }`}
             >
-              {plan.popular && (
+              {plan.badge && (
+                <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                  <Badge className="bg-gradient-to-r from-orange-500 to-red-500 text-white border-0 px-4 py-1 animate-pulse font-bold">
+                    {plan.badge}
+                  </Badge>
+                </div>
+              )}
+              {plan.popular && !plan.badge && (
                 <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                   <Badge className="bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0 px-4 py-1">
                     ⭐ Most Popular
