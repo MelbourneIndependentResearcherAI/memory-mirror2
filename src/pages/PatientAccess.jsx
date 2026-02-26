@@ -12,31 +12,46 @@ export default function PatientAccess() {
   const [userName, setUserName] = useState('');
 
   const handleInstantAccess = async () => {
-    // Store user details if provided
-    if (userEmail || userName) {
-      try {
-        localStorage.setItem('memory_mirror_user', JSON.stringify({
-          email: userEmail,
-          name: userName,
-          registered_at: new Date().toISOString()
-        }));
-      } catch (error) {
-        console.log('Local storage not available');
-      }
-    }
-
-    // Track session
+    // Check if user is authenticated
     try {
-      await base44.functions.invoke('trackPatientSession', {
-        access_method: 'instant',
-        patient_name: userName || 'Guest User',
-        user_email: userEmail
-      });
+      const isAuth = await base44.auth.isAuthenticated();
+      
+      if (!isAuth) {
+        // Redirect to login, then back to Home after login
+        base44.auth.redirectToLogin(window.location.origin + '/Home');
+        return;
+      }
+
+      // Store user details if provided
+      if (userEmail || userName) {
+        try {
+          localStorage.setItem('memory_mirror_user', JSON.stringify({
+            email: userEmail,
+            name: userName,
+            registered_at: new Date().toISOString()
+          }));
+        } catch (error) {
+          console.log('Local storage not available');
+        }
+      }
+
+      // Track session
+      try {
+        await base44.functions.invoke('trackPatientSession', {
+          access_method: 'instant',
+          patient_name: userName || 'Guest User',
+          user_email: userEmail
+        });
+      } catch (error) {
+        console.log('Session tracking skipped:', error.message);
+      }
+      
+      navigate('/Home');
     } catch (error) {
-      console.log('Session tracking skipped:', error.message);
+      console.error('Authentication check failed:', error);
+      // Redirect to login on error
+      base44.auth.redirectToLogin(window.location.origin + '/Home');
     }
-    
-    navigate('/ChatMode');
   };
 
 
@@ -56,7 +71,7 @@ export default function PatientAccess() {
             Welcome
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-400">
-            How would you like to access Memory Mirror?
+            Sign up or log in to start using Memory Mirror
           </p>
         </div>
 
@@ -100,8 +115,12 @@ export default function PatientAccess() {
             className="w-full h-16 text-lg bg-blue-600 hover:bg-blue-700"
           >
             <User className="w-6 h-6 mr-3" />
-            Start Chatting
+            Continue to Memory Mirror
           </Button>
+          
+          <p className="text-sm text-center text-slate-500 dark:text-slate-400 mt-4">
+            You'll be asked to sign up or log in on the next page
+          </p>
         </div>
       </div>
     </div>

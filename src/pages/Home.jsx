@@ -17,7 +17,7 @@ export default function Home() {
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
-  const _navigate = useNavigate();
+  const navigate = useNavigate();
   const { t } = useLanguage();
 
   const { data: userProfiles = [] } = useQuery({
@@ -26,6 +26,22 @@ export default function Home() {
   });
 
   useEffect(() => {
+    // Check authentication on mount
+    const checkAuth = async () => {
+      try {
+        const isAuth = await base44.auth.isAuthenticated();
+        if (!isAuth) {
+          // Redirect to login
+          base44.auth.redirectToLogin();
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        base44.auth.redirectToLogin();
+      }
+    };
+    
+    checkAuth();
+    
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
       speechSynthesis.getVoices();
