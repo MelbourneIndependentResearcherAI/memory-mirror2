@@ -163,7 +163,9 @@ export default function Pricing() {
      start_date: new Date().toISOString(),
      next_billing_date: nextBillingDate.toISOString(),
      payment_reference: paymentRef,
-     notes: 'Payment awaiting bank transfer verification. Include payment reference in transfer.'
+     notes: 'Payment awaiting bank transfer verification. Include payment reference in transfer.',
+     is_lifetime_deal: selectedPlan.id === 'premium', // Lock in lifetime pricing for premium tier
+     promo_slot_number: selectedPlan.id === 'premium' ? Date.now() : null // Timestamp as slot identifier
    };
 
    // Cache subscription locally for offline support
