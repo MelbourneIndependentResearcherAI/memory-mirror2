@@ -81,14 +81,18 @@ export default function OfflineDownloadProgress({ onComplete, autoStart = false 
 
       setProgress(100);
       setIsComplete(true);
-      setCurrentItem('Download Complete');
+      setCurrentItem('Download Complete ✅');
+
+      // Verify the download
+      const stats = await downloadManager.getStorageStats();
+      console.log('📊 Storage verified:', stats);
 
       if (onComplete) {
         setTimeout(onComplete, 1500);
       }
     } catch (error) {
       console.error('Download failed:', error);
-      setCurrentItem('Download Failed');
+      setCurrentItem('Download Failed - ' + error.message);
       setIsDownloading(false);
     }
   };
