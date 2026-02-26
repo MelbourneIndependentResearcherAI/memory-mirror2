@@ -89,6 +89,7 @@ import FamilyTree from './pages/FamilyTree';
 import FamilyTreePage from './pages/FamilyTreePage';
 import FamilyVideoCall from './pages/FamilyVideoCall';
 import Feedback from './pages/Feedback';
+import GeofenceTracking from './pages/GeofenceTracking';
 import HealthMonitor from './pages/HealthMonitor';
 import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
@@ -115,6 +116,7 @@ import PatientAccess from './pages/PatientAccess';
 import PatientRegistration from './pages/PatientRegistration';
 import PhoneMode from './pages/PhoneMode';
 import PhotoLibrary from './pages/PhotoLibrary';
+import Pricing from './pages/Pricing';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
@@ -128,6 +130,7 @@ import TVPairing from './pages/TVPairing';
 import TVPhotoGallery from './pages/TVPhotoGallery';
 import TeamNotifications from './pages/TeamNotifications';
 import TermsOfService from './pages/TermsOfService';
+import TestDashboard from './pages/TestDashboard';
 import UserProfile from './pages/UserProfile';
 import VoiceAlwaysOnDashboard from './pages/VoiceAlwaysOnDashboard';
 import VoiceCloning from './pages/VoiceCloning';
@@ -137,9 +140,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import Pricing from './pages/Pricing';
-import GeofenceTracking from './pages/GeofenceTracking';
-import TestDashboard from './pages/TestDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -186,6 +186,7 @@ export const PAGES = {
     "FamilyTreePage": FamilyTreePage,
     "FamilyVideoCall": FamilyVideoCall,
     "Feedback": Feedback,
+    "GeofenceTracking": GeofenceTracking,
     "HealthMonitor": HealthMonitor,
     "Home": Home,
     "ImportArticle": ImportArticle,
@@ -212,6 +213,7 @@ export const PAGES = {
     "PatientRegistration": PatientRegistration,
     "PhoneMode": PhoneMode,
     "PhotoLibrary": PhotoLibrary,
+    "Pricing": Pricing,
     "PrivacyPolicy": PrivacyPolicy,
     "Security": Security,
     "SecurityMode": SecurityMode,
@@ -225,6 +227,7 @@ export const PAGES = {
     "TVPhotoGallery": TVPhotoGallery,
     "TeamNotifications": TeamNotifications,
     "TermsOfService": TermsOfService,
+    "TestDashboard": TestDashboard,
     "UserProfile": UserProfile,
     "VoiceAlwaysOnDashboard": VoiceAlwaysOnDashboard,
     "VoiceCloning": VoiceCloning,
@@ -234,9 +237,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "Pricing": Pricing,
-    "GeofenceTracking": GeofenceTracking,
-    "TestDashboard": TestDashboard,
 }
 
 export const pagesConfig = {

@@ -10,40 +10,69 @@ const faqs = [
     questions: [
       {
         q: 'How do I start using Memory Mirror?',
-        a: 'Simply click "Start Companion" on the landing page or say "Hey Mirror" to activate voice mode. No login or setup required for instant access.'
+        a: 'Simply click "Start Companion" on the landing page or say "Hey Mirror" to activate voice mode. The app works immediately in your browser - no downloads, logins, or complex setup required.'
       },
       {
         q: 'Do I need to install anything?',
-        a: 'No installation required! Memory Mirror works directly in your web browser. However, you can install it as a Progressive Web App (PWA) for offline access and a native app-like experience.'
+        a: 'No installation required! Memory Mirror works directly in your web browser on any device. However, you can install it as a Progressive Web App (PWA) on your phone or tablet for offline access and a native app-like experience.'
       },
       {
         q: 'Is there a caregiver portal?',
-        a: 'Yes! Click "Caregiver Portal" from the landing page to access monitoring, insights, content management, and configuration tools.'
+        a: 'Yes! Click "Caregiver Login" from the landing page to access the full Caregiver Portal where you can monitor wellbeing, upload family content, manage care plans, configure alerts, and track your loved one\'s daily interactions.'
+      },
+      {
+        q: 'What modes are available?',
+        a: 'Memory Mirror offers Chat Mode (text conversations), Phone Mode (safe calling), Voice Mode (hands-free), Big Button Mode (simplified interface), Night Watch (nighttime support), Security Mode (reassurance), and My Bank (safe financial simulation).'
       }
     ]
   },
   {
-    category: 'Features & Functionality',
+    category: 'Core Features',
     questions: [
       {
-        q: 'What is Phone Mode?',
-        a: 'Phone Mode provides a realistic dial pad that connects to the AI companion instead of emergency services, preventing accidental 911 calls while maintaining familiarity for users.'
+        q: 'What is the AI Companion?',
+        a: 'The AI Companion is a patient, understanding conversational partner specifically trained for dementia care. It adapts to different eras (1940s-present), detects anxiety, recalls personalized memories, and provides gentle redirection when needed.'
       },
       {
-        q: 'How does Night Watch work?',
-        a: 'Night Watch is a gentle nighttime companion that provides comfort during late hours, helps prevent wandering, and logs incidents for caregiver review.'
+        q: 'How does Phone Mode work?',
+        a: 'Phone Mode provides a realistic touch-tone dial pad that looks and feels like a real phone. All calls connect to the AI companion instead of real numbers, preventing accidental emergency calls while maintaining the familiar comfort of phone use.'
       },
       {
-        q: 'What is the Security Scanner?',
-        a: 'A reassuring visual interface that simulates security checks to reduce anxiety about locks and safety - purely comforting, never makes real alerts.'
+        q: 'What is Night Watch?',
+        a: 'Night Watch is a dedicated nighttime companion that provides comfort during late hours, helps prevent wandering with gentle conversation, logs any night incidents for caregiver review, and maintains a calming presence when anxiety peaks at night.'
       },
       {
-        q: 'Can Memory Mirror work offline?',
-        a: 'Yes! Memory Mirror includes 250+ pre-loaded AI responses, 20 stories, 15 songs, and 10 memory exercises that work completely offline.'
+        q: 'How does the Security Reassurance feature work?',
+        a: 'Security Mode displays a visual dashboard showing that all doors are locked, windows are secure, cameras are monitoring, and the alarm is active. It provides an AI "security guard" who gives reassuring voice messages to reduce safety-related anxiety.'
       },
       {
-        q: 'What is Fake Banking?',
-        a: 'A safe simulated banking interface that provides familiar financial interactions without any real transactions - perfect for reducing financial anxiety.'
+        q: 'What is the Fake Banking feature?',
+        a: 'My Bank provides a safe, simulated banking interface that shows account balances and transactions without any real financial connections. This reduces financial anxiety and provides familiar interactions for those who enjoyed managing their accounts.'
+      },
+      {
+        q: 'Can Memory Mirror work completely offline?',
+        a: 'Yes! Download audio content, music, stories, and conversations to your device through the Offline Audio page. The app includes intelligent offline responses and can function without internet for extended periods.'
+      }
+    ]
+  },
+  {
+    category: 'Geofence & Location Safety',
+    questions: [
+      {
+        q: 'What is Geofence Tracking?',
+        a: 'Geofence Tracking lets caregivers set up virtual "safe zones" around the home or familiar areas. If your loved one leaves the safe zone, the system sends immediate alerts with GPS location, distance from zone, and a Google Maps link.'
+      },
+      {
+        q: 'How accurate is the location tracking?',
+        a: 'Location tracking uses GPS and provides accuracy within 10-50 meters depending on device and conditions. The live map updates in real-time and shows movement trails so you can see where your loved one has been.'
+      },
+      {
+        q: 'Who gets notified when a geofence is breached?',
+        a: 'You specify alert contacts when creating each safe zone. Alerts are sent via in-app notifications and email to all designated caregivers immediately when a breach is detected.'
+      },
+      {
+        q: 'Does location tracking drain the battery?',
+        a: 'The app is optimized for battery efficiency. Battery level is monitored and displayed on the tracker. We recommend keeping the device charged and using battery saver mode if needed.'
       }
     ]
   },
@@ -51,37 +80,74 @@ const faqs = [
     category: 'Privacy & Security',
     questions: [
       {
-        q: 'Is my data private?',
-        a: 'Yes. All conversations and data are encrypted and stored securely. We comply with HIPAA and GDPR standards. Your data is never shared with third parties.'
+        q: 'Is my loved one\'s data private and secure?',
+        a: 'Absolutely. All conversations, location data, and personal information are encrypted end-to-end. We comply with healthcare privacy standards (HIPAA, GDPR). Your data is never shared with third parties or used for advertising.'
       },
       {
-        q: 'Can family members access the data?',
-        a: 'Only authorized caregivers you invite to your Care Team can access patient data. Access levels can be configured (full, view-only, or limited).'
+        q: 'Who can access my loved one\'s information?',
+        a: 'Only caregivers you explicitly invite to the Care Team can access patient data. You control access levels (full access, view-only, or limited) and can revoke access at any time.'
       },
       {
-        q: 'How long is data retained?',
-        a: 'By default, data is retained for 2 years per healthcare compliance standards. You can export or delete data at any time from the Caregiver Portal.'
+        q: 'How is location data protected?',
+        a: 'Location data is encrypted in transit and at rest. Only authorized caregivers on your team can view location information. You can disable location tracking at any time from the Geofence Settings.'
+      },
+      {
+        q: 'Can I export or delete all data?',
+        a: 'Yes! From the Caregiver Portal, you can export all data (conversations, activities, care journals) as a PDF or CSV file. You can also request complete data deletion at any time - we honor all data removal requests within 48 hours.'
       }
     ]
   },
   {
-    category: 'Caregiver Tools',
+    category: 'Caregiver Tools & Monitoring',
     questions: [
       {
-        q: 'How do I track my loved one\'s wellbeing?',
-        a: 'The Insights Dashboard shows anxiety trends, activity patterns, conversation themes, and cognitive assessments. You can also view detailed reports and export data.'
+        q: 'How do I monitor my loved one\'s wellbeing?',
+        a: 'The Caregiver Portal provides an Insights Dashboard showing anxiety trends over time, daily activity patterns, conversation themes, cognitive assessments, and behavioral changes. You can generate detailed reports and track progress.'
       },
       {
-        q: 'Can I upload custom content?',
-        a: 'Yes! Upload family photos, music, personalized stories, and create custom memory exercises through the Content Library in the Caregiver Portal.'
+        q: 'Can I upload family photos and memories?',
+        a: 'Yes! Upload unlimited family photos, videos, voice messages, and personalized stories through the Media Library. The AI uses these to trigger memory recall and create more meaningful, personalized conversations.'
+      },
+      {
+        q: 'What are Care Plans?',
+        a: 'Care Plans let you document daily routines, dietary needs, medical history, medications, emergency contacts, and specific care instructions. This ensures consistent care and helps all team members stay informed.'
       },
       {
         q: 'How do emergency alerts work?',
-        a: 'Configure alert conditions (high anxiety, no interaction, night incidents) and choose notification methods (email, SMS, app) for your emergency contacts.'
+        a: 'Configure custom alert conditions like prolonged distress, high anxiety levels, no interaction for X hours, night incidents, or geofence breaches. Choose notification methods (email, SMS, in-app) and which team members receive each alert type.'
       },
       {
-        q: 'Can I clone a family member\'s voice?',
-        a: 'Yes! Upload 1-5 minutes of clear audio from a family member, and the AI will learn to speak in their voice for more personalized comfort.'
+        q: 'What is the Care Journal?',
+        a: 'The Care Journal is a shared log where all caregivers can record observations, mood changes, medication given, activities completed, and concerns. It ensures seamless communication between family members and professional caregivers.'
+      },
+      {
+        q: 'Can I invite multiple caregivers?',
+        a: 'Yes! Build a complete Care Team by inviting family members, professional caregivers, nurses, or friends. Assign roles (primary, secondary, respite) and set individual access levels and notification preferences for each team member.'
+      }
+    ]
+  },
+  {
+    category: 'Technical & Troubleshooting',
+    questions: [
+      {
+        q: 'What devices does Memory Mirror work on?',
+        a: 'Memory Mirror works on all modern smartphones, tablets, and computers with a web browser (Chrome, Safari, Firefox, Edge). For best experience, we recommend tablets or phones for their portability and touch interfaces.'
+      },
+      {
+        q: 'What happens if internet connection is lost?',
+        a: 'The app continues to function with pre-loaded offline content. Conversations, music, stories, and core features remain available. Data syncs automatically when connection is restored through the Sync & Backup system.'
+      },
+      {
+        q: 'How do I sync data across devices?',
+        a: 'Data automatically syncs across all devices logged into the same account. You can manually trigger sync from the Sync & Backup page, view sync status, and configure auto-sync preferences.'
+      },
+      {
+        q: 'Can I use this on my TV?',
+        a: 'Yes! Memory Mirror can be displayed on smart TVs through screen mirroring/casting from your phone or tablet, or by opening the web app directly on TV browsers. The large screen format is great for viewing photos and videos together.'
+      },
+      {
+        q: 'What if voice recognition isn\'t working?',
+        a: 'Ensure microphone permissions are enabled in your browser settings. Speak clearly and at a moderate pace. The "Hey Mirror" wake word requires a quiet environment. You can also use touch/click instead of voice for all features.'
       }
     ]
   },
@@ -90,15 +156,27 @@ const faqs = [
     questions: [
       {
         q: 'How much does Memory Mirror cost?',
-        a: 'Memory Mirror is transitioning to $9.99/month premium subscription in 2 weeks. We intentionally keep pricing low because quality dementia care support should be accessible to every family.'
+        a: 'Memory Mirror costs AUD $9.99/month with manual bank transfer payment. We intentionally keep pricing low because quality dementia care support should be accessible to every family, not just the wealthy.'
+      },
+      {
+        q: 'What payment methods do you accept?',
+        a: 'We currently accept manual bank transfer to our Australian account. Simply transfer to BSB 633123, Account 166572719, or use PayID mickiimac@up.me. Premium features activate once payment is confirmed.'
+      },
+      {
+        q: 'Is there a free trial?',
+        a: 'Yes! You can use all core features for free immediately. The premium subscription adds advanced features like unlimited storage, priority AI responses, voice cloning, and advanced analytics.'
       },
       {
         q: 'What if I can\'t afford the subscription?',
-        a: 'Families facing financial hardship can contact support@memorymirror.com.au to discuss assistance options. No family gets turned away.'
+        a: 'We never turn families away due to financial hardship. Contact support@memorymirror.com.au to discuss assistance options, payment plans, or hardship arrangements. Every family deserves quality dementia care support.'
       },
       {
         q: 'How do I get technical support?',
-        a: 'Email support@memorymirror.com.au or use the AI Support Assistant in the Caregiver Portal for 24/7 help with features and troubleshooting.'
+        a: 'Email support@memorymirror.com.au for technical help, feature questions, or troubleshooting. You can also use the AI Support Assistant in the Caregiver Portal for instant 24/7 automated help.'
+      },
+      {
+        q: 'Can I cancel anytime?',
+        a: 'Yes, you can cancel your subscription at any time with no penalties or fees. Your access continues until the end of your paid period, and you can export all your data before canceling.'
       }
     ]
   }
