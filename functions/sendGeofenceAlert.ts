@@ -17,8 +17,26 @@ Deno.serve(async (req) => {
 
     const googleMapsUrl = `https://www.google.com/maps?q=${latitude},${longitude}`;
     
-    const emailPromises = alert_emails.map(email => 
-      base44.asServiceRole.integrations.Core.SendEmail({
+    // Create notifications in the system instead of sending emails
+    const emailPromises = alert_emails.map(async email => {
+      // Send notification to caregiver notification center
+      await base44.asServiceRole.entities.CaregiverNotification.create({
+        notification_type: 'safety_concern',
+        severity: 'urgent',
+        title: `Patient Left Safe Zone - ${zone_name}`,
+        message: `Patient has left the ${zone_name} safe zone. Distance: ${distance_from_zone}m. View location immediately.`,
+        data: {
+          latitude,
+          longitude,
+          zone_name,
+          distance_from_zone,
+          google_maps_url: googleMapsUrl
+        },
+        triggered_by: 'geofence_system'
+      });
+
+      // Also send email notification
+      return base44.asServiceRole.integrations.Core.SendEmail({
         to: email,
         subject: `🚨 URGENT: Patient Left Safe Zone - ${zone_name}`,
         body: `
@@ -67,22 +85,6 @@ Deno.serve(async (req) => {
     );
 
     await Promise.all(emailPromises);
-
-    // Log the alert
-    await base44.asServiceRole.entities.CaregiverNotification.create({
-      notification_type: 'safety_concern',
-      severity: 'urgent',
-      title: 'Geofence Breach Alert',
-      message: `Patient left ${zone_name} safe zone. Distance: ${distance_from_zone}m`,
-      data: {
-        latitude,
-        longitude,
-        zone_name,
-        distance_from_zone,
-        google_maps_url: googleMapsUrl
-      },
-      triggered_by: 'geofence_system'
-    });
 
     return Response.json({
       success: true,
