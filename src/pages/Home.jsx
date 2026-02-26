@@ -27,17 +27,16 @@ export default function Home() {
   });
 
   useEffect(() => {
-    // Check authentication on mount
+    // Check authentication on mount - but allow guest access too
     const checkAuth = async () => {
       try {
         const isAuth = await base44.auth.isAuthenticated();
         if (!isAuth) {
-          // Redirect to login
-          base44.auth.redirectToLogin();
+          // Allow guest access for patient use - don't force redirect
+          console.log('Guest mode - limited features available');
         }
       } catch (error) {
         console.error('Auth check failed:', error);
-        base44.auth.redirectToLogin();
       }
     };
     

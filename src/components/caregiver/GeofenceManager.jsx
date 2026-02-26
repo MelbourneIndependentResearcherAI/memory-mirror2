@@ -180,7 +180,7 @@ export default function GeofenceManager() {
 
               <div className="h-64 rounded-lg overflow-hidden border">
                 <MapContainer
-                  center={position || [51.505, -0.09]}
+                  center={position ? [position.lat, position.lng] : (currentLocation ? [currentLocation.lat, currentLocation.lng] : [-33.8688, 151.2093])}
                   zoom={15}
                   style={{ height: '100%', width: '100%' }}
                 >
