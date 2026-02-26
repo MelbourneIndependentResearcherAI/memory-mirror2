@@ -17,6 +17,9 @@ export default function SyncBackupManager() {
   const [isSyncing, setIsSyncing] = useState(false);
   const [syncMessage, setSyncMessage] = useState('');
   const [syncSummary, setSyncSummary] = useState(null);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadProgress, setDownloadProgress] = useState(0);
+  const [downloadMessage, setDownloadMessage] = useState('');
 
   useEffect(() => {
     loadStorageInfo();
