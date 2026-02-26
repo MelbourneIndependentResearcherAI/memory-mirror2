@@ -73,10 +73,38 @@ export default function EnhancedEmergencyButton() {
     }, 5000);
   };
 
+  if (isLoading) {
+    return (
+      <div className="w-full h-32 rounded-3xl bg-gray-200 animate-pulse flex items-center justify-center">
+        <span className="text-gray-500">Loading...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="relative">
+      {!userProfile && (
+        <RegistrationModal 
+          isOpen={showRegistration} 
+          onClose={() => setShowRegistration(false)}
+          onSuccess={() => {
+            setShowRegistration(false);
+            // Refresh user profile after registration
+            const checkProfile = async () => {
+              const user = await base44.auth.me();
+              if (user) {
+                const profiles = await base44.entities.UserProfile.filter({ created_by: user.email });
+                setUserProfile(profiles?.[0] || null);
+              }
+            };
+            checkProfile();
+          }}
+        />
+      )}
+
       <button
         onClick={clicked ? handleSecondClick : handleFirstClick}
+        disabled={isLoading}
         className={`w-full h-32 rounded-3xl flex flex-col items-center justify-center gap-2 text-white font-bold text-xl transition-all shadow-2xl ${
           confirmed
             ? 'bg-red-600 animate-pulse'
@@ -88,7 +116,12 @@ export default function EnhancedEmergencyButton() {
         <Phone className="w-12 h-12" />
         <span>{clicked ? 'CONFIRM EMERGENCY' : 'EMERGENCY CALL'}</span>
       </button>
-      {clicked && !confirmed && (
+      {!userProfile && !showRegistration && (
+        <p className="text-center mt-3 text-sm font-semibold text-amber-600">
+          ⚠️ Register your details to use emergency call
+        </p>
+      )}
+      {clicked && !confirmed && userProfile && (
         <p className="text-center mt-3 text-sm font-semibold text-red-600 animate-pulse">
           ⚠️ Tap again to confirm and alert carer
         </p>
