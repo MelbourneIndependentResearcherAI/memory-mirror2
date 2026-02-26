@@ -7,6 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
 import RemoteCheckIn from '../caregiver/RemoteCheckIn';
+import { speakWithRealisticVoice } from './voiceUtils';
 
 // Night Watch AI System - Prevents wandering, provides comfort, monitors safety
 class NightWatchSystem {
@@ -656,42 +657,52 @@ export default function NightWatch({ onClose }) {
   };
 
   const speakText = (text) => {
-    if ('speechSynthesis' in window) {
-      // Stop any ongoing speech
-      window.speechSynthesis.cancel();
+    if (!text) return;
+    
+    try {
+      setIsSpeaking(true);
+      console.log('🔊 Night Watch speaking...');
       
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.85;
-      utterance.pitch = 1.0;
-      utterance.volume = 0.9;
+      // Use enhanced voice synthesis
+      speakWithRealisticVoice(text, {
+        emotionalState: 'soothing',
+        anxietyLevel: 8, // Night watch is for high anxiety/confusion
+        cognitiveLevel: 'moderate',
+        rate: 0.85,
+        pitch: 1.0,
+        volume: 0.95,
+        onEnd: () => {
+          console.log('✅ AI done speaking - resuming voice');
+          setIsSpeaking(false);
+          
+          // Resume listening after speech
+          setTimeout(() => {
+            if (isActive && !isSpeaking) {
+              console.log('🔄 Resuming voice recognition...');
+              startListening();
+            }
+          }, 300);
+        }
+      });
+    } catch (error) {
+      console.error('Night Watch speech error:', error);
+      setIsSpeaking(false);
       
-      utterance.onstart = () => {
-        console.log('🔊 AI speaking - voice paused');
-        setIsSpeaking(true);
-      };
-      
-      utterance.onend = () => {
-        console.log('✅ AI done speaking - resuming voice');
-        setIsSpeaking(false);
-        
-        // Resume listening after speech ends
-        setTimeout(() => {
-          if (isActive && !isSpeaking) {
-            console.log('🔄 Resuming voice recognition...');
-            startListening();
-          }
-        }, 300);
-      };
-      
-      utterance.onerror = () => {
-        console.log('❌ Speech error - resuming voice');
-        setIsSpeaking(false);
-        setTimeout(() => {
-          if (isActive) startListening();
-        }, 300);
-      };
-      
-      window.speechSynthesis.speak(utterance);
+      // Fallback to basic speech
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.rate = 0.85;
+        utterance.pitch = 1.0;
+        utterance.volume = 0.9;
+        utterance.onend = () => {
+          setIsSpeaking(false);
+          setTimeout(() => {
+            if (isActive) startListening();
+          }, 300);
+        };
+        window.speechSynthesis.speak(utterance);
+      }
     }
   };
 

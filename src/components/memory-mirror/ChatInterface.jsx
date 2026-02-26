@@ -134,61 +134,25 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     if (!text || !isMountedRef.current) return;
     
     try {
-      // Use Edge TTS for natural, high-quality voices
-      const voiceMap = {
-        en: 'en-US-JennyNeural',
-        es: 'es-ES-ElviraNeural', 
-        fr: 'fr-FR-DeniseNeural',
-        de: 'de-DE-KatjaNeural',
-        it: 'it-IT-ElsaNeural',
-        pt: 'pt-BR-FranciscaNeural',
-        zh: 'zh-CN-XiaoxiaoNeural',
-        ja: 'ja-JP-NanamiNeural',
-        ko: 'ko-KR-SunHiNeural',
-        ar: 'ar-SA-ZariyahNeural',
-        hi: 'hi-IN-SwaraNeural',
-        ru: 'ru-RU-SvetlanaNeural'
-      };
-
-      const voice = voiceMap[selectedLanguage] || 'en-US-JennyNeural';
-      const anxietyLevel = emotionalContext.anxietyLevel || 0;
-      
-      // Natural conversational pacing - like phone conversation
-      let rate = '0%'; // Normal speed feels more natural
-      if (cognitiveLevel === 'moderate') rate = '-5%';
-      if (cognitiveLevel === 'advanced') rate = '-10%';
-      if (anxietyLevel >= 7) rate = '-15%'; // Slower only for high anxiety
-
-      const result = await base44.functions.invoke('edgeTTS', {
-        text: text.substring(0, 3000),
-        voice: voice,
-        rate: rate,
-        pitch: '0Hz'
-      });
-
-      if (result.data?.audio) {
-        const audio = new Audio(result.data.audio);
-        audio.volume = 1.0;
-        
-        // Natural turn-taking - listen after speaking
-        audio.onended = () => {
+      // Use advanced voice synthesis from voiceUtils
+      speakWithRealisticVoice(text, {
+        emotionalState: emotionalContext.state || 'neutral',
+        anxietyLevel: emotionalContext.anxietyLevel || 0,
+        cognitiveLevel: cognitiveLevel,
+        language: selectedLanguage,
+        userProfile: userProfile,
+        onEnd: () => {
           if (emotionalContext.onEnd) {
             emotionalContext.onEnd();
           }
-          // Natural pause before listening again
-          if (isMountedRef.current && !isLoading) {
-            setTimeout(() => startVoiceInput(), 600);
-          }
-        };
-        
-        await audio.play();
-      }
+        }
+      });
     } catch (error) {
-      console.error('Edge TTS error, falling back to system voice:', error);
+      console.error('Voice synthesis error:', error);
       
-      // Fallback to system voice with natural pacing
+      // Ultimate fallback - basic speech synthesis
       const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95; // Near-normal speed for natural conversation
+      utterance.rate = 0.95;
       utterance.pitch = 1.0;
       utterance.volume = 1.0;
       
@@ -196,12 +160,15 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         if (emotionalContext.onEnd) {
           emotionalContext.onEnd();
         }
-        // Natural pause for turn-taking
-        if (isMountedRef.current && !isLoading) {
-          setTimeout(() => startVoiceInput(), 600);
+      };
+      
+      utterance.onerror = () => {
+        if (emotionalContext.onEnd) {
+          emotionalContext.onEnd();
         }
       };
       
+      window.speechSynthesis.cancel();
       window.speechSynthesis.speak(utterance);
     }
   }, [selectedLanguage, cognitiveLevel, userProfile]);
