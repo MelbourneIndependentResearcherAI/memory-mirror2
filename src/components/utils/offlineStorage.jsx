@@ -47,40 +47,65 @@ export async function initOfflineStorage() {
   if (dbInstance) return dbInstance;
 
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open(DB_NAME, DB_VERSION);
+    const timeout = setTimeout(() => {
+      reject(new Error('IndexedDB initialization timeout after 10 seconds'));
+    }, 10000);
 
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => {
-      dbInstance = request.result;
-      resolve(dbInstance);
-    };
+    try {
+      const request = indexedDB.open(DB_NAME, DB_VERSION);
 
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
+      request.onerror = () => {
+        clearTimeout(timeout);
+        reject(request.error || new Error('IndexedDB open failed'));
+      };
 
-      // Create unique store names
-      const uniqueStores = [...new Set(Object.values(STORES))];
+      request.onsuccess = () => {
+        clearTimeout(timeout);
+        dbInstance = request.result;
+        
+        // Set up error listener to catch connection errors
+        dbInstance.onerror = (event) => {
+          console.error('Database connection error:', event);
+        };
+        
+        resolve(dbInstance);
+      };
 
-      // Create all object stores if they don't exist
-      uniqueStores.forEach((storeName) => {
-        if (!db.objectStoreNames.contains(storeName)) {
-          if (storeName === 'messages') {
-            const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
-            store.createIndex('conversationId', 'conversationId', { unique: false });
-            store.createIndex('timestamp', 'timestamp', { unique: false });
-          } else if (storeName === 'aiResponses') {
-            const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
-            store.createIndex('prompt', 'prompt', { unique: false });
-            store.createIndex('timestamp', 'timestamp', { unique: false });
-          } else if (storeName === 'audioLibrary') {
-            const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
-            store.createIndex('fileName', 'fileName', { unique: false });
-          } else {
-            db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+      request.onupgradeneeded = (event) => {
+        clearTimeout(timeout);
+        const db = event.target.result;
+
+        // Create unique store names
+        const uniqueStores = [...new Set(Object.values(STORES))];
+
+        // Create all object stores if they don't exist
+        uniqueStores.forEach((storeName) => {
+          try {
+            if (!db.objectStoreNames.contains(storeName)) {
+              if (storeName === 'messages') {
+                const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                store.createIndex('conversationId', 'conversationId', { unique: false });
+                store.createIndex('timestamp', 'timestamp', { unique: false });
+              } else if (storeName === 'aiResponses') {
+                const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                store.createIndex('prompt', 'prompt', { unique: false });
+                store.createIndex('timestamp', 'timestamp', { unique: false });
+              } else if (storeName === 'audioLibrary') {
+                const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+                store.createIndex('fileName', 'fileName', { unique: false });
+              } else {
+                db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
+              }
+            }
+          } catch (storeError) {
+            console.error(`Error creating store ${storeName}:`, storeError);
           }
-        }
-      });
-    };
+        });
+      };
+    } catch (error) {
+      clearTimeout(timeout);
+      reject(error);
+    }
   });
 }
 
@@ -92,19 +117,37 @@ export async function saveToStore(storeName, data) {
     const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error(`Save operation timeout on ${normalizedStore}`));
+      }, 5000);
+
       try {
-        const tx = db.transaction(normalizedStore, 'readwrite');
+        const tx = db.transaction([normalizedStore], 'readwrite');
         const store = tx.objectStore(normalizedStore);
         const request = store.put(data);
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
+        
+        request.onsuccess = () => {
+          clearTimeout(timeout);
+          resolve(request.result);
+        };
+        
+        request.onerror = () => {
+          clearTimeout(timeout);
+          reject(request.error || new Error('Put request failed'));
+        };
+        
+        tx.onerror = () => {
+          clearTimeout(timeout);
+          reject(tx.error || new Error('Transaction failed'));
+        };
       } catch (error) {
+        clearTimeout(timeout);
         reject(error);
       }
     });
   } catch (error) {
     console.warn(`Failed to save to ${storeName}:`, error.message);
-    throw error;
+    return null;
   }
 }
 
@@ -136,13 +179,31 @@ export async function getAllFromStore(storeName) {
     const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        reject(new Error(`GetAll operation timeout on ${normalizedStore}`));
+      }, 5000);
+
       try {
-        const tx = db.transaction(normalizedStore, 'readonly');
+        const tx = db.transaction([normalizedStore], 'readonly');
         const store = tx.objectStore(normalizedStore);
         const request = store.getAll();
-        request.onsuccess = () => resolve(request.result || []);
-        request.onerror = () => reject(request.error);
+        
+        request.onsuccess = () => {
+          clearTimeout(timeout);
+          resolve(request.result || []);
+        };
+        
+        request.onerror = () => {
+          clearTimeout(timeout);
+          reject(request.error || new Error('GetAll request failed'));
+        };
+        
+        tx.onerror = () => {
+          clearTimeout(timeout);
+          reject(tx.error || new Error('Transaction failed'));
+        };
       } catch (error) {
+        clearTimeout(timeout);
         reject(error);
       }
     });
