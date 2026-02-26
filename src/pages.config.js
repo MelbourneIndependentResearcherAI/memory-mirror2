@@ -151,6 +151,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import HealthCheck from './pages/HealthCheck';
+import Settings from './pages/Settings';
 import __Layout from './Layout.jsx';
 
 
@@ -259,6 +260,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "HealthCheck": HealthCheck,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {
