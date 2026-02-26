@@ -987,7 +987,7 @@ RESPOND NOW:
       // Track anxiety trends
       if (detectedAnxiety >= 4) {
         const today = new Date().toISOString().split('T')[0];
-        base44.entities.AnxietyTrend.create({
+        offlineEntities.create('AnxietyTrend', {
           date: today,
           anxiety_level: detectedAnxiety,
           trigger_category: sentimentAnalysis?.trigger_words?.[0] ? 'distress' : 'none',
@@ -998,7 +998,7 @@ RESPOND NOW:
 
       // Persist conversation snapshot every 10 messages
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
-        base44.entities.Conversation.create({
+        offlineEntities.create('Conversation', {
           mode: 'chat',
           detected_era: detectedEra || selectedEra,
           messages: conversationHistory.slice(-20),
@@ -1008,7 +1008,7 @@ RESPOND NOW:
 
       // Periodic cognitive assessment (every 10 messages)
       if (conversationHistory.length % 10 === 0 && conversationHistory.length > 0) {
-        base44.functions.invoke('assessCognitiveLevel', {
+        offlineFunction('assessCognitiveLevel', {
           conversation_history: conversationHistory,
           recent_interactions: { message_count: conversationHistory.length }
         }).then(result => {
