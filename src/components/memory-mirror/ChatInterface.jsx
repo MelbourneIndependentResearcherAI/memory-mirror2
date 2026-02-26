@@ -134,20 +134,62 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     if (!text || !isMountedRef.current) return;
     
     try {
-      // Use cloned voice if available, otherwise fallback to system voice
-      await speakWithClonedVoice(text, {
-        rate: 0.92,
-        pitch: 1.05,
-        volume: 1.0,
-        emotionalState: emotionalContext.state || 'neutral',
-        anxietyLevel: emotionalContext.anxietyLevel || 0,
-        cognitiveLevel: cognitiveLevel,
-        language: selectedLanguage,
-        userProfile: userProfile,
-        onEnd: emotionalContext.onEnd
+      // Use Edge TTS for natural, high-quality voices
+      const voiceMap = {
+        en: 'en-US-JennyNeural',
+        es: 'es-ES-ElviraNeural', 
+        fr: 'fr-FR-DeniseNeural',
+        de: 'de-DE-KatjaNeural',
+        it: 'it-IT-ElsaNeural',
+        pt: 'pt-BR-FranciscaNeural',
+        zh: 'zh-CN-XiaoxiaoNeural',
+        ja: 'ja-JP-NanamiNeural',
+        ko: 'ko-KR-SunHiNeural',
+        ar: 'ar-SA-ZariyahNeural',
+        hi: 'hi-IN-SwaraNeural',
+        ru: 'ru-RU-SvetlanaNeural'
+      };
+
+      const voice = voiceMap[selectedLanguage] || 'en-US-JennyNeural';
+      const anxietyLevel = emotionalContext.anxietyLevel || 0;
+      
+      // Adjust rate based on anxiety and cognitive level
+      let rate = '-8%'; // Slightly slower for dementia care
+      if (cognitiveLevel === 'moderate') rate = '-15%';
+      if (cognitiveLevel === 'advanced') rate = '-20%';
+      if (anxietyLevel >= 7) rate = '-25%'; // Very slow for high anxiety
+
+      const result = await base44.functions.invoke('edgeTTS', {
+        text: text.substring(0, 3000),
+        voice: voice,
+        rate: rate,
+        pitch: '0Hz'
       });
+
+      if (result.data?.audio) {
+        const audio = new Audio(result.data.audio);
+        audio.volume = 1.0;
+        
+        if (emotionalContext.onEnd) {
+          audio.onended = emotionalContext.onEnd;
+        }
+        
+        await audio.play();
+      }
     } catch (error) {
-      console.error('Speech synthesis error:', error);
+      console.error('Edge TTS error, falling back to system voice:', error);
+      
+      // Fallback to system voice
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.85;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      
+      if (emotionalContext.onEnd) {
+        utterance.onend = emotionalContext.onEnd;
+      }
+      
+      window.speechSynthesis.speak(utterance);
     }
   }, [selectedLanguage, cognitiveLevel, userProfile]);
 
