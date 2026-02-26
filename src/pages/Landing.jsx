@@ -158,23 +158,28 @@ export default function Landing() {
           </button>
         </div>
 
-        {/* Feature Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 max-w-5xl mx-auto mb-12 px-4">
-          {featureCards.map((card) => (
+        {/* Key Features - Simplified */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12 px-4">
+          {[
+            { icon: '🧠', title: 'AI Chat', page: 'Home' },
+            { icon: '🌙', title: 'Night Watch', page: 'NightWatch' },
+            { icon: '📱', title: 'Phone Mode', page: 'PhoneMode' },
+            { icon: '👨‍⚕️', title: 'Caregiver Tools', page: 'CaregiverPortal' },
+            { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
+            { icon: '🎵', title: 'Music', page: 'MusicTherapy' },
+            { icon: '🛡️', title: 'Security', page: 'Security' },
+            { icon: '🏦', title: 'Banking', page: 'MyBank' },
+          ].map((card) => (
             <button
               key={card.title}
               onClick={() => navigateTo(card.page)}
-              className="group text-left bg-white dark:bg-slate-900 rounded-2xl shadow-md hover:shadow-xl border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-6"
+              className="group text-center bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-lg border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-4"
             >
-              <div className="text-4xl mb-3">{card.icon}</div>
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-slate-100 mb-2">{card.title}</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{card.desc}</p>
+              <div className="text-3xl mb-2">{card.icon}</div>
+              <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{card.title}</h3>
             </button>
           ))}
         </div>
-
-        {/* Feature Tutorial */}
-        <FeatureTutorial />
 
         {/* CTA Buttons */}
         <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">
@@ -194,43 +199,28 @@ export default function Landing() {
           </button>
         </div>
 
-        {/* Info Section */}
+        {/* Quick Stats */}
         <div className="max-w-4xl mx-auto px-4 mb-12">
-          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 md:p-12 shadow-lg border border-slate-200/60 dark:border-slate-700/50">
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-              Memory Mirror — AI Companion for Dementia Care
+          <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg border border-slate-200/60 dark:border-slate-700/50 text-center">
+            <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+              Compassionate AI for Dementia Care
             </h2>
-            <p className="text-base md:text-lg text-slate-700 dark:text-slate-300 leading-relaxed mb-6">
-              Memory Mirror is a compassionate AI assistant designed specifically for individuals living with dementia and their caregivers. Using advanced artificial intelligence, Memory Mirror provides comfort, dignity, and emotional support through natural conversation and voice interaction.
-            </p>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="flex items-start gap-3 p-4 bg-blue-50 dark:bg-blue-950/30 rounded-xl">
-                <Shield className="w-6 h-6 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Safe & Private</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">All data stays private and secure on your device and encrypted servers.</p>
-                </div>
+            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+              <div>
+                <div className="text-3xl font-bold text-blue-600 mb-1">24/7</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Always Available</div>
               </div>
-              <div className="flex items-start gap-3 p-4 bg-purple-50 dark:bg-purple-950/30 rounded-xl">
-                <Music className="w-6 h-6 text-purple-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Music Therapy</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Era-specific music with proven therapeutic benefits for dementia patients.</p>
-                </div>
+              <div>
+                <div className="text-3xl font-bold text-purple-600 mb-1">100%</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Private & Secure</div>
               </div>
-              <div className="flex items-start gap-3 p-4 bg-slate-50 dark:bg-slate-800/50 rounded-xl">
-                <Wifi className="w-6 h-6 text-slate-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <h3 className="font-semibold text-slate-800 dark:text-slate-100 mb-1">Works Offline</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">250+ pre-loaded responses, stories and songs available without internet.</p>
-                </div>
+              <div>
+                <div className="text-3xl font-bold text-green-600 mb-1">Offline</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Works Without WiFi</div>
               </div>
             </div>
           </div>
         </div>
-
-        {/* Community Feedback */}
-        <CommunityFeedbackSection />
       </div>
 
       {/* Footer */}

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import PhoneInterface from '@/components/memory-mirror/PhoneInterface';
 import VoiceCommandListener from '@/components/voice/VoiceCommandListener';
+import PageLoadTip from '@/components/tips/PageLoadTip';
 import { useLockMode } from '@/components/LockModeManager';
 import UnlockModal from '@/components/UnlockModal';
 import { Button } from '@/components/ui/button';
@@ -80,6 +81,8 @@ export default function PhoneMode() {
         onCancel={() => {}}
         modeName="Phone Mode"
       />
+
+      <PageLoadTip pageName="PhoneMode" />
     </div>
   );
 }

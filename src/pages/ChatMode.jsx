@@ -3,6 +3,7 @@ import ChatInterface from '@/components/memory-mirror/ChatInterface';
 import VoiceCommandListener from '@/components/voice/VoiceCommandListener';
 import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import MemoryGallery from '@/components/memory-mirror/MemoryGallery';
+import PageLoadTip from '@/components/tips/PageLoadTip';
 import { toast } from 'sonner';
 
 export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated: _onBadDayActivated }) {
@@ -44,6 +45,8 @@ export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated:
         currentMode="chat"
         onMemoryGalleryOpen={() => setShowMemoryGallery(true)}
       />
+
+      <PageLoadTip pageName="ChatMode" />
     </>
   );
 }
