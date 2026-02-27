@@ -233,7 +233,7 @@ export default function Landing() {
         </div>
 
         {/* CTA Buttons */}
-        <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">
+        <div className="flex flex-col gap-3 items-center px-4 max-w-md mx-auto mb-8">
           <InstallAppButton />
           <Button
             size="lg"
