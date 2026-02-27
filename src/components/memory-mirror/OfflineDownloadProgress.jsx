@@ -43,9 +43,9 @@ export default function OfflineDownloadProgress({ onComplete, autoStart = false 
       
       // Subscribe to download manager progress
       const unsubscribe = downloadManager.subscribe((progressData) => {
-        setCurrentItem(progressData.currentItem);
-        setDownloadedSize(progressData.downloadedBytes);
-        setProgress(Math.min((progressData.current / progressData.total) * 100, 99)); // Cap at 99% until complete
+        setCurrentItem(progressData.currentItem || '');
+        setDownloadedSize(progressData.downloadedBytes || 0);
+        setProgress(Math.min(progressData.current || 0, 99)); // current is already 0-100
       });
       
       // Start the download with error handling
