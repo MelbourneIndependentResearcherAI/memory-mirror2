@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { speakWithRealisticVoice } from './voiceUtils';
 import PersonalizedStoryGenerator from './PersonalizedStoryGenerator';
+import { offlineEntities } from '@/components/utils/offlineAPI';
 
 export default function StoryTeller({ currentEra, currentMood = 'peaceful', userProfile, onClose }) {
   const [selectedStory, setSelectedStory] = useState(null);
