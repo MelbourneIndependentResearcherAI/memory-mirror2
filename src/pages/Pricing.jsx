@@ -221,6 +221,23 @@ export default function Pricing() {
           <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
             Start with our free plan or unlock premium features to support your loved one's memory journey
           </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${billingCycle === 'monthly' ? 'bg-purple-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-5 py-2 rounded-full font-semibold text-sm transition-all flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-purple-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
+            >
+              Yearly
+              <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">Save 20%</span>
+            </button>
+          </div>
           <div className="mt-4 max-w-3xl mx-auto bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
             <p className="text-xs text-slate-600 dark:text-slate-400">
               <strong>Payment Notice:</strong> Payments are processed externally via bank transfer. This is a subscription to our healthcare companion service, not an in-app digital purchase. You are subscribing to access our AI dementia care platform and related services.
