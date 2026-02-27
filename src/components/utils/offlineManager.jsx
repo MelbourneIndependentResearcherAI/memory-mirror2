@@ -181,6 +181,23 @@ export const getOfflineAudioLibrary = async () => {
   }
 };
 
+// Remove audio from offline library
+export const removeOfflineAudio = async (audioId) => {
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction([STORES.audioLibrary], 'readwrite');
+      const store = tx.objectStore(STORES.audioLibrary);
+      const request = store.delete(audioId);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to remove audio:', error);
+    throw error;
+  }
+};
+
 // Get audio blob for playback
 export const getOfflineAudioBlob = async (audioId) => {
   try {
