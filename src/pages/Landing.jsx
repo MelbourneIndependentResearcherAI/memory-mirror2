@@ -227,6 +227,11 @@ export default function Landing() {
         {/* Limited Time Offer */}
         <PromoLimitedOffer variant="banner" />
 
+        {/* Free Cognitive Assessment */}
+        <div className="max-w-4xl mx-auto px-4 mb-12">
+          <CognitiveAssessmentLink />
+        </div>
+
         {/* CTA Buttons */}
         <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">
           <InstallAppButton />
