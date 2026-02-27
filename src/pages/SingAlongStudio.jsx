@@ -1,180 +1,161 @@
 import React, { useState } from 'react';
+import { Music, Play, Pause } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Music2, Heart, Clock, Zap } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
-import SingAlongPlayer from '@/components/music/SingAlongPlayer';
 import { motion } from 'framer-motion';
 
 export default function SingAlongStudio() {
   const [selectedSong, setSelectedSong] = useState(null);
-  const [currentEra, setCurrentEra] = useState('timeless');
-  const [showModal, setShowModal] = useState(false);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
-  const { data: songs = [] } = useQuery({
+  const { data: songs = [], isLoading } = useQuery({
     queryKey: ['singAlongSongs'],
     queryFn: () => base44.entities.SingAlongSong.list()
   });
 
-  const eraOptions = ['timeless', '1940s', '1960s', '1980s'];
-  const filteredSongs = songs.filter(s => 
-    s.era === currentEra || s.era === 'timeless'
-  );
+  const playNext = () => {
+    if (selectedSong && selectedSong.lyrics && currentLineIndex < selectedSong.lyrics.length - 1) {
+      setCurrentLineIndex(currentLineIndex + 1);
+    }
+  };
 
-  const songStats = {
-    total: songs.length,
-    nurseryRhymes: songs.filter(s => s.category === 'nursery_rhyme').length,
-    classicSongs: songs.filter(s => s.category === 'classic_song').length,
-    hymns: songs.filter(s => s.category === 'hymn').length
+  const playPrev = () => {
+    if (currentLineIndex > 0) {
+      setCurrentLineIndex(currentLineIndex - 1);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 dark:from-purple-950 dark:via-pink-950 dark:to-blue-950 pb-20">
-      <div className="max-w-4xl mx-auto p-6 space-y-6">
+    <div className="min-h-screen bg-gradient-to-br from-yellow-100 via-orange-100 to-red-100 dark:from-yellow-900 dark:via-orange-900 dark:to-red-800 p-4 pb-24">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center space-y-2"
-        >
+        <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
-            <Music2 className="w-10 h-10 text-purple-600 dark:text-purple-400" />
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
-              Sing-Along Studio
-            </h1>
+            <span className="text-5xl">🎤</span>
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Sing Along</h1>
           </div>
-          <p className="text-slate-600 dark:text-slate-300">
-            Sing along to your favorite songs, nursery rhymes, and classics
-          </p>
-        </motion.div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {[
-            { label: 'Total Songs', value: songStats.total, icon: Music2, color: 'purple' },
-            { label: 'Nursery Rhymes', value: songStats.nurseryRhymes, icon: Heart, color: 'pink' },
-            { label: 'Classics', value: songStats.classicSongs, icon: Zap, color: 'blue' },
-            { label: 'Hymns', value: songStats.hymns, icon: Clock, color: 'indigo' }
-          ].map((stat, idx) => {
-            const Icon = stat.icon;
-            return (
-              <motion.div
-                key={idx}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: idx * 0.1 }}
-              >
-                <Card className="p-4 text-center dark:bg-slate-800">
-                  <Icon className={`w-6 h-6 mx-auto mb-2 text-${stat.color}-600 dark:text-${stat.color}-400`} />
-                  <p className="text-2xl font-bold text-slate-900 dark:text-white">
-                    {stat.value}
-                  </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                    {stat.label}
-                  </p>
-                </Card>
-              </motion.div>
-            );
-          })}
+          <p className="text-slate-600 dark:text-slate-300">Your favorite songs with lyrics to follow</p>
         </div>
 
-        {/* Era Selection */}
-        <div className="space-y-3">
-          <h2 className="font-bold text-slate-900 dark:text-white">Choose an Era</h2>
-          <div className="flex flex-wrap gap-2">
-            {eraOptions.map(era => (
-              <Button
-                key={era}
-                onClick={() => setCurrentEra(era)}
-                variant={currentEra === era ? 'default' : 'outline'}
-                className={currentEra === era ? 'bg-purple-600 hover:bg-purple-700' : ''}
-              >
-                {era === 'timeless' ? '✨ All Time' : `📅 ${era}`}
-              </Button>
-            ))}
-          </div>
-        </div>
-
-        {/* Song Grid */}
-        <div className="space-y-3">
-          <h2 className="font-bold text-slate-900 dark:text-white">
-            Available Songs ({filteredSongs.length})
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {filteredSongs.map((song, idx) => (
-              <motion.div
-                key={song.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                onClick={() => {
-                  setSelectedSong(song);
-                  setShowModal(true);
-                }}
-              >
-                <Card className="p-4 cursor-pointer hover:shadow-lg transition-all dark:bg-slate-800 hover:border-purple-400 dark:hover:border-purple-600 border-2">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-bold text-slate-900 dark:text-white">
-                        {song.title}
-                      </h3>
-                      {song.artist && (
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {song.artist}
-                        </p>
-                      )}
+        {!selectedSong ? (
+          /* Song Selection */
+          <div className="space-y-3">
+            <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Available Songs</h2>
+            {isLoading ? (
+              <div className="text-center py-8">Loading songs...</div>
+            ) : (
+              songs.map((song) => (
+                <motion.button
+                  key={song.id}
+                  whileHover={{ y: -2 }}
+                  onClick={() => {
+                    setSelectedSong(song);
+                    setCurrentLineIndex(0);
+                  }}
+                  className="w-full bg-white dark:bg-slate-700 rounded-xl p-5 shadow-md hover:shadow-lg transition-all text-left border-l-4 border-orange-500"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex-1">
+                      <h3 className="text-lg font-bold text-slate-900 dark:text-white">{song.title}</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400">{song.artist}</p>
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        <span className="text-xs bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 px-2 py-1 rounded">
+                          {song.mood}
+                        </span>
+                        <span className="text-xs bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 px-2 py-1 rounded">
+                          {song.difficulty}
+                        </span>
+                      </div>
                     </div>
-                    {song.popular && (
-                      <Heart className="w-5 h-5 text-red-500 fill-red-500 flex-shrink-0" />
-                    )}
+                    <Play className="w-8 h-8 text-orange-600" />
                   </div>
-
-                  <div className="flex flex-wrap gap-1">
-                    <span className="text-xs px-2 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 rounded">
-                      {song.category?.replace('_', ' ')}
-                    </span>
-                    <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
-                      {song.mood}
-                    </span>
-                    {song.lyrics?.length && (
-                      <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 rounded">
-                        {song.lyrics.length} lines
-                      </span>
-                    )}
-                  </div>
-
-                  {song.times_sung > 0 && (
-                    <p className="text-xs text-purple-600 dark:text-purple-400 mt-2 font-medium">
-                      🎤 Sung {song.times_sung} times
-                    </p>
-                  )}
-                </Card>
-              </motion.div>
-            ))}
+                </motion.button>
+              ))
+            )}
           </div>
-        </div>
+        ) : (
+          /* Sing Along Player */
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-6"
+          >
+            {/* Song Header */}
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">{selectedSong.title}</h2>
+              <p className="text-lg text-slate-600 dark:text-slate-400">{selectedSong.artist}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-500 mt-2 uppercase tracking-wide">{selectedSong.era} • {selectedSong.mood}</p>
+            </div>
 
-        {filteredSongs.length === 0 && (
-          <Card className="p-8 text-center dark:bg-slate-800">
-            <Music2 className="w-12 h-12 mx-auto mb-3 opacity-50 text-slate-400" />
-            <p className="text-slate-600 dark:text-slate-400">
-              No songs available for this era.
-            </p>
-          </Card>
+            {/* Lyrics Display */}
+            <div className="bg-gradient-to-b from-orange-50 to-yellow-50 dark:from-slate-700 dark:to-slate-600 rounded-xl p-8 mb-6 min-h-[200px] flex flex-col justify-between">
+              {/* Current Line - LARGE */}
+              <div className="text-center">
+                <p className="text-5xl md:text-6xl font-bold text-orange-600 dark:text-orange-400 leading-tight">
+                  {selectedSong.lyrics?.[currentLineIndex]?.line}
+                </p>
+              </div>
+
+              {/* Next Line - Small */}
+              {currentLineIndex < selectedSong.lyrics.length - 1 && (
+                <p className="text-center text-sm text-slate-500 dark:text-slate-400 mt-6 italic">
+                  Next: {selectedSong.lyrics[currentLineIndex + 1]?.line}
+                </p>
+              )}
+            </div>
+
+            {/* Progress */}
+            <div className="text-center mb-6">
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                Line {currentLineIndex + 1} of {selectedSong.lyrics?.length || 0}
+              </p>
+              <div className="w-full bg-slate-200 dark:bg-slate-600 rounded-full h-2 mt-2">
+                <div
+                  className="bg-gradient-to-r from-orange-500 to-yellow-500 h-2 rounded-full transition-all duration-300"
+                  style={{ width: `${((currentLineIndex + 1) / (selectedSong.lyrics?.length || 1)) * 100}%` }}
+                />
+              </div>
+            </div>
+
+            {/* Controls */}
+            <div className="flex gap-3 mb-4">
+              <Button
+                onClick={playPrev}
+                disabled={currentLineIndex === 0}
+                className="flex-1 bg-slate-600 hover:bg-slate-700 disabled:opacity-50"
+              >
+                ← Previous
+              </Button>
+              <Button
+                onClick={playNext}
+                disabled={currentLineIndex === selectedSong.lyrics?.length - 1}
+                className="flex-1 bg-orange-600 hover:bg-orange-700 disabled:opacity-50"
+              >
+                Next →
+              </Button>
+            </div>
+
+            {/* Full Lyrics Button */}
+            <div className="bg-slate-100 dark:bg-slate-700 rounded-xl p-4 mb-4 max-h-[200px] overflow-y-auto">
+              <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-wrap">{selectedSong.full_lyrics}</p>
+            </div>
+
+            {/* Back Button */}
+            <Button
+              onClick={() => {
+                setSelectedSong(null);
+                setCurrentLineIndex(0);
+              }}
+              variant="outline"
+              className="w-full"
+            >
+              ← Back to Songs
+            </Button>
+          </motion.div>
         )}
       </div>
-
-      {/* Sing-Along Modal */}
-      {selectedSong && showModal && (
-        <SingAlongPlayer
-          currentEra={currentEra}
-          onClose={() => {
-            setSelectedSong(null);
-            setShowModal(false);
-          }}
-        />
-      )}
     </div>
   );
 }

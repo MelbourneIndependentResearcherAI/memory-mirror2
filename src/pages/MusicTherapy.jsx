@@ -1,299 +1,194 @@
 import React, { useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
-import { Card, CardContent } from '@/components/ui/card';
+import { Music, Upload, Play, Pause, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Music, Play, Pause, SkipForward, SkipBack, Clock, Volume2 } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { motion } from 'framer-motion';
 import { toast } from 'sonner';
-import PageLoadTip from '@/components/tips/PageLoadTip';
-
-const eraColors = {
-  '1940s': 'from-amber-500 to-orange-500',
-  '1960s': 'from-orange-500 to-red-500',
-  '1980s': 'from-purple-500 to-pink-500',
-  'present': 'from-blue-500 to-cyan-500'
-};
-
-const moodColors = {
-  'uplifting': 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400',
-  'calm': 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400',
-  'nostalgic': 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400',
-  'energetic': 'bg-orange-100 text-orange-800 dark:bg-orange-900/30 dark:text-orange-400',
-  'romantic': 'bg-pink-100 text-pink-800 dark:bg-pink-900/30 dark:text-pink-400'
-};
 
 export default function MusicTherapy() {
-  const [selectedEra, setSelectedEra] = useState('all');
-  const [selectedMood, setSelectedMood] = useState('all');
-  const [currentlyPlaying, setCurrentlyPlaying] = useState(null);
+  const [selectedSong, setSelectedSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const queryClient = useQueryClient();
 
   const { data: songs = [], isLoading } = useQuery({
-    queryKey: ['music', selectedEra, selectedMood],
-    queryFn: async () => {
-      let allSongs = await base44.entities.Music.list();
-      
-      if (selectedEra !== 'all') {
-        allSongs = allSongs.filter(s => s.era === selectedEra);
-      }
-      if (selectedMood !== 'all') {
-        allSongs = allSongs.filter(s => s.mood === selectedMood);
-      }
-      
-      return allSongs;
+    queryKey: ['musicTracks'],
+    queryFn: () => base44.entities.Music.list()
+  });
+
+  const uploadMutation = useMutation({
+    mutationFn: async (file) => {
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      return base44.entities.Music.create({
+        title: file.name.replace(/\.[^/.]+$/, ''),
+        artist: 'Custom Upload',
+        era: 'present',
+        genre: 'custom',
+        mood: 'calm',
+        audio_file_url: file_url,
+        is_custom_upload: true
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['musicTracks'] });
+      toast.success('Music added successfully!');
+      setUploading(false);
+    },
+    onError: () => {
+      toast.error('Failed to upload music');
+      setUploading(false);
     }
   });
 
-  const { data: playlists = [] } = useQuery({
-    queryKey: ['playlists'],
-    queryFn: () => base44.entities.Playlist.list()
-  });
+  const handleFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const handlePlayPause = (song) => {
-    if (currentlyPlaying?.id === song.id && isPlaying) {
-      setIsPlaying(false);
-      toast.info('Paused');
-    } else {
-      setCurrentlyPlaying(song);
-      setIsPlaying(true);
-      toast.success(`Now playing: ${song.title}`);
+    if (!file.type.startsWith('audio/')) {
+      toast.error('Please select an audio file');
+      return;
     }
-  };
 
-  const handleSkipBack = () => {
-    if (!songs.length) return;
-    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
-    const prevIndex = currentIndex <= 0 ? songs.length - 1 : currentIndex - 1;
-    setCurrentlyPlaying(songs[prevIndex]);
-    setIsPlaying(true);
-    toast.success(`Now playing: ${songs[prevIndex].title}`);
+    setUploading(true);
+    uploadMutation.mutate(file);
   };
-
-  const handleSkipForward = () => {
-    if (!songs.length) return;
-    const currentIndex = songs.findIndex(s => s.id === currentlyPlaying?.id);
-    const nextIndex = currentIndex >= songs.length - 1 ? 0 : currentIndex + 1;
-    setCurrentlyPlaying(songs[nextIndex]);
-    setIsPlaying(true);
-    toast.success(`Now playing: ${songs[nextIndex].title}`);
-  };
-
-  const eras = ['all', '1940s', '1960s', '1980s', 'present'];
-  const moods = ['all', 'uplifting', 'calm', 'nostalgic', 'energetic', 'romantic'];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-rose-50 dark:from-slate-950 dark:via-purple-950 dark:to-pink-950 p-4 md:p-6">
-      <div className="max-w-6xl mx-auto">
+    <div className="min-h-screen bg-gradient-to-br from-purple-100 via-pink-100 to-purple-200 dark:from-purple-900 dark:via-pink-900 dark:to-purple-800 p-4">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
-        <div className="text-center mb-12">
-          <div className="flex justify-center mb-4">
-            <div className="w-20 h-20 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center shadow-2xl">
-              <Music className="w-10 h-10 text-white" />
-            </div>
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center gap-3 mb-4">
+            <Music className="w-12 h-12 text-purple-600" />
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-white">Music Therapy</h1>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
-            Music Therapy
-          </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Era-specific songs and therapeutic playlists designed for dementia care
-          </p>
+          <p className="text-slate-600 dark:text-slate-300">Therapeutic music for comfort and wellbeing</p>
         </div>
 
-        {/* Filters */}
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-3 mb-8">
-          {eras.map((era) => (
-            <Button
-              key={era}
-              onClick={() => setSelectedEra(era)}
-              variant={selectedEra === era ? 'default' : 'outline'}
-              className={`capitalize min-h-[44px] ${
-                selectedEra === era && era !== 'all'
-                  ? `bg-gradient-to-r ${eraColors[era]} text-white`
-                  : ''
-              }`}
-            >
-              {era === 'all' ? 'All Eras' : era}
-            </Button>
-          ))}
-        </div>
-
-        <div className="grid grid-cols-2 md:grid-cols-6 gap-3 mb-8">
-          {moods.map((mood) => (
-            <Button
-              key={mood}
-              onClick={() => setSelectedMood(mood)}
-              variant={selectedMood === mood ? 'default' : 'outline'}
-              className="capitalize min-h-[44px]"
-            >
-              {mood === 'all' ? 'All Moods' : mood}
-            </Button>
-          ))}
-        </div>
-
-        {/* Now Playing */}
-        {currentlyPlaying && (
-          <Card className="mb-8 bg-gradient-to-r from-purple-600 to-pink-600 text-white border-0">
-            <CardContent className="p-8">
-              <div className="flex items-center justify-between mb-6">
-                <div className="flex-1">
-                  <p className="text-sm text-white/70 mb-1">Now Playing</p>
-                  <h2 className="text-3xl font-bold">{currentlyPlaying.title}</h2>
-                  <p className="text-lg text-white/90 mt-2">{currentlyPlaying.artist}</p>
-                </div>
-                <Volume2 className="w-12 h-12 animate-pulse" />
-              </div>
-              
-              <div className="flex items-center justify-center gap-4">
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleSkipBack}
-                  className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
-                >
-                  <SkipBack className="w-6 h-6" />
-                </Button>
-                <Button
-                  onClick={() => setIsPlaying(!isPlaying)}
-                  size="lg"
-                  className="min-h-[80px] min-w-[80px] rounded-full bg-white hover:bg-white/90 text-purple-600"
-                >
-                  {isPlaying ? <Pause className="w-8 h-8" /> : <Play className="w-8 h-8 ml-1" />}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="lg"
-                  onClick={handleSkipForward}
-                  className="min-h-[60px] min-w-[60px] rounded-full bg-white/20 hover:bg-white/30 text-white border-white/40"
-                >
-                  <SkipForward className="w-6 h-6" />
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {/* Playlists */}
-        {playlists.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-              Curated Playlists
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {playlists.map((playlist) => (
-                <Card
-                  key={playlist.id}
-                  className="hover:shadow-xl transition-all cursor-pointer"
-                  onClick={() => toast.info(`Playing ${playlist.name}`)}
-                >
-                  <CardContent className="p-6">
-                    <div className="flex items-center gap-4 mb-3">
-                      <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${eraColors[playlist.era] || 'from-slate-500 to-slate-600'} flex items-center justify-center`}>
-                        <Music className="w-6 h-6 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-bold text-lg">{playlist.name}</h3>
-                        <p className="text-sm text-slate-500">{playlist.song_ids?.length || 0} songs</p>
-                      </div>
-                    </div>
-                    {playlist.description && (
-                      <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                        {playlist.description}
-                      </p>
-                    )}
-                    <div className="flex gap-2">
-                      <Badge className={moodColors[playlist.mood] || 'bg-slate-100 text-slate-800'}>
-                        {playlist.mood}
-                      </Badge>
-                      <Badge variant="outline">{playlist.era}</Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+        {/* Upload Section */}
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-lg p-6 mb-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Add Your Own Music</h2>
+          <label className="flex flex-col items-center justify-center w-full min-h-[200px] border-4 border-dashed border-purple-300 dark:border-purple-600 rounded-xl cursor-pointer hover:bg-purple-50 dark:hover:bg-slate-700/50 transition-colors">
+            <div className="flex flex-col items-center justify-center py-8">
+              <Upload className="w-12 h-12 text-purple-500 mb-3" />
+              <p className="text-lg font-semibold text-slate-900 dark:text-white">Click to upload music</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">MP3, WAV, or other audio formats</p>
             </div>
-          </div>
-        )}
+            <input 
+              type="file" 
+              className="hidden" 
+              accept="audio/*"
+              onChange={handleFileUpload}
+              disabled={uploading}
+            />
+          </label>
+          {uploading && <p className="text-center mt-3 text-purple-600 font-semibold">Uploading...</p>}
+        </div>
 
-        {/* Song List */}
-        <div>
-          <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-4">
-            All Songs ({songs.length})
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {songs.map((song) => (
-              <Card
-                key={song.id}
-                className={`hover:shadow-lg transition-all ${
-                  currentlyPlaying?.id === song.id ? 'ring-2 ring-purple-500' : ''
-                }`}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-center justify-between mb-4">
+        {/* Pre-loaded Music */}
+        <div className="mb-6">
+          <h2 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Therapeutic Music Library</h2>
+          {isLoading ? (
+            <div className="text-center py-8">Loading music...</div>
+          ) : (
+            <div className="grid gap-3">
+              {songs.map((song) => (
+                <motion.div
+                  key={song.id}
+                  whileHover={{ y: -2 }}
+                  onClick={() => setSelectedSong(song)}
+                  className="bg-white dark:bg-slate-700 rounded-xl p-4 shadow-md hover:shadow-lg transition-all cursor-pointer border-l-4 border-purple-500"
+                >
+                  <div className="flex items-center justify-between">
                     <div className="flex-1">
-                      <h3 className="font-bold text-lg mb-1">{song.title}</h3>
-                      {song.artist && (
-                        <p className="text-sm text-slate-600 dark:text-slate-400">
-                          {song.artist}
-                        </p>
-                      )}
+                      <h3 className="font-semibold text-slate-900 dark:text-white">{song.title}</h3>
+                      <p className="text-sm text-slate-500 dark:text-slate-400">{song.artist}</p>
+                      <div className="flex gap-2 mt-2 flex-wrap">
+                        <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-1 rounded">
+                          {song.mood}
+                        </span>
+                        <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 px-2 py-1 rounded">
+                          {song.era}
+                        </span>
+                      </div>
                     </div>
                     <Button
-                      onClick={() => handlePlayPause(song)}
-                      size="lg"
-                      className={`min-h-[56px] min-w-[56px] rounded-full ${
-                        currentlyPlaying?.id === song.id && isPlaying
-                          ? 'bg-purple-600 hover:bg-purple-700'
-                          : 'bg-slate-600 hover:bg-slate-700'
-                      }`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setSelectedSong(song);
+                        setIsPlaying(!isPlaying);
+                      }}
+                      className="rounded-full p-3 bg-purple-600 hover:bg-purple-700 text-white"
                     >
-                      {currentlyPlaying?.id === song.id && isPlaying ? (
+                      {isPlaying && selectedSong?.id === song.id ? (
                         <Pause className="w-6 h-6" />
                       ) : (
-                        <Play className="w-6 h-6 ml-1" />
+                        <Play className="w-6 h-6" />
                       )}
                     </Button>
                   </div>
-
-                  <div className="flex flex-wrap gap-2">
-                    <Badge className={moodColors[song.mood] || 'bg-slate-100 text-slate-800'}>
-                      {song.mood}
-                    </Badge>
-                    <Badge variant="outline">{song.era}</Badge>
-                    {song.duration_seconds && (
-                      <Badge variant="outline">
-                        <Clock className="w-3 h-3 mr-1" />
-                        {Math.floor(song.duration_seconds / 60)}:{(song.duration_seconds % 60).toString().padStart(2, '0')}
-                      </Badge>
-                    )}
-                  </div>
-
-                  {song.personal_significance && (
-                    <p className="mt-3 text-sm text-slate-600 dark:text-slate-400 italic">
-                      "{song.personal_significance}"
-                    </p>
-                  )}
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
         </div>
 
-        {songs.length === 0 && !isLoading && (
-          <Card className="border-2 border-dashed">
-            <CardContent className="pt-12 pb-12 text-center">
-              <Music className="w-16 h-16 text-slate-300 dark:text-slate-700 mx-auto mb-4" />
-              <h3 className="text-xl font-bold text-slate-700 dark:text-slate-300 mb-2">
-                No songs found
-              </h3>
-              <p className="text-slate-500 dark:text-slate-400">
-                Try different filters or ask your caregiver to add music
-              </p>
-            </CardContent>
-          </Card>
+        {/* Now Playing */}
+        {selectedSong && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="fixed bottom-20 left-4 right-4 max-w-2xl mx-auto bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl shadow-2xl p-6 text-white"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-lg font-bold">{selectedSong.title}</h3>
+                <p className="text-white/80 text-sm">{selectedSong.artist}</p>
+              </div>
+              <button
+                onClick={() => {
+                  setSelectedSong(null);
+                  setIsPlaying(false);
+                }}
+                className="hover:bg-white/20 rounded-full p-2 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <audio
+              src={selectedSong.audio_file_url}
+              autoPlay
+              onPlay={() => setIsPlaying(true)}
+              onPause={() => setIsPlaying(false)}
+              onEnded={() => {
+                setIsPlaying(false);
+                setSelectedSong(null);
+              }}
+              className="w-full"
+              controls
+            />
+            <div className="flex gap-2 mt-4">
+              <Button
+                onClick={() => setIsPlaying(!isPlaying)}
+                className="flex-1 bg-white/20 hover:bg-white/30 text-white"
+              >
+                {isPlaying ? <Pause className="w-5 h-5" /> : <Play className="w-5 h-5" />}
+              </Button>
+              <Button
+                onClick={() => {
+                  setSelectedSong(null);
+                  setIsPlaying(false);
+                }}
+                variant="outline"
+                className="bg-white/20 hover:bg-white/30 text-white border-white/30"
+              >
+                Close
+              </Button>
+            </div>
+          </motion.div>
         )}
       </div>
-
-      <PageLoadTip pageName="MusicTherapy" />
     </div>
   );
 }
