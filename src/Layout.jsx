@@ -38,7 +38,8 @@ export default function Layout({ children, currentPageName }) {
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
     // Only redirect if data loaded AND user not subscribed AND accessing gated content
-    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage) {
+    // Admins bypass subscription checks
+    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage && subscriptionData.role !== 'admin') {
       navigate('/paywall');
     }
   }, [isLoading, subscriptionData, currentPageName, navigate]);
