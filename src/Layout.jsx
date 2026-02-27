@@ -12,6 +12,8 @@ import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import SessionTimeoutManager from '@/components/SessionTimeoutManager';
+import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
+import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
 
 // Add small delay to allow async checks
 const SUBSCRIPTION_CHECK_TIMEOUT = 100;
@@ -142,6 +144,8 @@ export default function Layout({ children, currentPageName }) {
             <ErrorBoundary>
               <SessionTimeoutManager />
               <OfflineIndicator />
+              <OfflineSyncStatus />
+              <OfflineFeaturesBadge />
               <ScrollToTop />
               
               <div 
