@@ -21,20 +21,20 @@ import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndica
 import OfflineJournalReader from '@/components/caregiver/OfflineJournalReader';
 import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
-import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
+
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
 import ContentUploader from '@/components/caregiver/ContentUploader';
-import AuditLogViewer from '@/components/admin/AuditLogViewer';
+
 import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
 import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
 import PatientRegistration from '@/components/caregiver/PatientRegistration';
 import CaregiverReports from '@/components/caregiver/CaregiverReports';
 import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
-import OfflineContentTester from '@/components/caregiver/OfflineContentTester';
+
 import CaregiverTeamManager from '@/components/caregiver/CaregiverTeamManager';
 import CaregiverNotificationCenter from '@/components/caregiver/CaregiverNotificationCenter';
 import SharedJournal from '@/components/caregiver/SharedJournal';
-import AgentMonitor from '@/components/admin/AgentMonitor';
+
 import ChatHistory from '@/components/caregiver/ChatHistory';
 import CaregiverDashboardComponent from '@/components/caregiver/CaregiverDashboard';
 import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
@@ -277,14 +277,7 @@ export default function CaregiverPortalRouter() {
               <AICareInsights />
             </div>
           } />
-          <Route path="monitoring" element={
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <MonitoringDashboard />
-            </div>
-          } />
+
           <Route path="family-tree" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <FamilyTreeBuilder onBack={() => navigate('/CaregiverPortal')} />
@@ -316,14 +309,7 @@ export default function CaregiverPortalRouter() {
               <ContentUploader />
             </div>
           } />
-          <Route path="audit-logs" element={
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <AuditLogViewer />
-            </div>
-          } />
+
           <Route path="bank-settings" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <BankSettingsManager onBack={() => navigate('/CaregiverPortal')} />
@@ -358,14 +344,7 @@ export default function CaregiverPortalRouter() {
               <OfflineContentManager onBack={() => navigate('/CaregiverPortal')} />
             </div>
           } />
-          <Route path="offline-test" element={
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <OfflineContentTester />
-            </div>
-          } />
+
           <Route path="care-team" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
@@ -399,14 +378,7 @@ export default function CaregiverPortalRouter() {
               <ChatHistory onBack={() => navigate('/CaregiverPortal')} />
             </div>
           } />
-          <Route path="agents" element={
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <AgentMonitor />
-            </div>
-          } />
+
           <Route path="patient-dashboard" element={
             <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
               <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
