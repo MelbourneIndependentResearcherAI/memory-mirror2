@@ -52,15 +52,26 @@ export function useSubscriptionStatus() {
           (sub) => sub.plan_name === 'premium' && sub.status === 'active'
         );
 
+        // Check for active tool subscriptions
+        const activeToolSubscriptions = subscriptions.filter(
+          (sub) => sub.plan_name === 'tool_subscription' && sub.status === 'active'
+        );
+
+        // Collect all subscribed tools across tool subscriptions
+        const subscribedTools = activeToolSubscriptions.flatMap(sub => sub.subscribed_tools || []);
+
         // Also check for pending (to show payment required)
         const pendingSubscription = subscriptions.find(
-          (sub) => sub.plan_name === 'premium' && sub.status === 'pending'
+          (sub) => (sub.plan_name === 'premium' || sub.plan_name === 'tool_subscription') && sub.status === 'pending'
         );
 
         const result = {
-          isSubscribed: !!activeSubscription,
+          isSubscribed: !!activeSubscription || activeToolSubscriptions.length > 0,
+          isPremium: !!activeSubscription,
           isPending: !!pendingSubscription,
           subscription: activeSubscription || pendingSubscription || null,
+          subscribedTools,
+          hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId),
           user,
           isOnline: true
         };
