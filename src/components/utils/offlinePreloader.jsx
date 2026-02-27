@@ -706,160 +706,69 @@ const COMPREHENSIVE_OFFLINE_RESPONSES = [
   { prompt: "default_6", response: "That sounds meaningful. Would you like to explore that thought further?", category: "fallback" }
 ];
 
+// Exported for use by both auto-start and manual (OfflineDownloadProgress) download
 export async function preloadEssentialData() {
-  console.log('🚀 Starting comprehensive offline data preload...');
+  console.log('🚀 Starting offline data preload...');
   
-  try {
-    await initOfflineStorage();
-    
-    const results = {
-      aiResponses: 0,
-      stories: 0,
-      music: 0,
-      exercises: 0,
-      entities: {},
-      errors: []
-    };
+  await initOfflineStorage();
+  
+  const results = { aiResponses: 0, stories: 0, music: 0, exercises: 0, entities: {}, errors: [] };
 
-    // 1. CRITICAL: Preload comprehensive AI response library (250+ responses)
-    console.log('📦 Preloading AI response library...');
-    for (let i = 0; i < COMPREHENSIVE_OFFLINE_RESPONSES.length; i++) {
-      const resp = COMPREHENSIVE_OFFLINE_RESPONSES[i];
-      try {
-        await saveToStore(STORES.aiResponses, {
-          prompt: resp.prompt,
-          response: resp.response,
-          category: resp.category,
-          timestamp: Date.now(),
-          offline: true
-        });
-        results.aiResponses++;
-      } catch (error) {
-        console.warn('Response cache failed:', error);
-      }
-    }
-    console.log(`✅ Cached ${results.aiResponses} AI responses`);
+  // 1. AI Responses
+  for (const resp of COMPREHENSIVE_OFFLINE_RESPONSES) {
+    try {
+      await saveToStore(STORES.aiResponses, { prompt: resp.prompt, response: resp.response, category: resp.category, timestamp: Date.now(), offline: true });
+      results.aiResponses++;
+    } catch (e) { /* skip */ }
+  }
 
-    // 2. Preload Story Library (20 stories)
-    console.log('📖 Preloading story library...');
-    for (const story of OFFLINE_STORIES) {
-      try {
-        await saveToStore(STORES.stories, {
-          ...story,
-          uploaded_by_family: false,
-          offline_preloaded: true
-        });
-        results.stories++;
-      } catch (error) {
-        console.warn('Story cache failed:', error.message || 'Unknown error');
-      }
-    }
-    console.log(`✅ Cached ${results.stories} stories`);
+  // 2. Stories
+  for (const story of OFFLINE_STORIES) {
+    try {
+      await saveToStore(STORES.stories, { ...story, offline_preloaded: true });
+      results.stories++;
+    } catch (e) { /* skip */ }
+  }
 
-    // 3. Preload Music Library WITH ACTUAL AUDIO FILES (40 classic songs)
-    console.log('🎵 Preloading music library with audio files...');
-    for (const song of OFFLINE_MUSIC) {
-      try {
-        // Save metadata first
-        await saveToStore(STORES.music, {
-          ...song,
-          uploaded_by_family: false,
-          offline_preloaded: true,
-          personal_significance: "Classic song from your era",
-          is_downloaded: true
-        });
-        results.music++;
-        
-        // Note: We skip binary audio download due to CORS restrictions on external URLs.
-        // The audio_file_url is stored in metadata and will stream when online.
-        // For true offline audio, caregivers should upload custom audio files.
-      } catch (error) {
-        console.warn('Music cache failed:', error.message || 'Unknown error');
-      }
-    }
-    console.log(`✅ Cached ${results.music} songs with audio files`);
+  // 3. Music metadata
+  for (const song of OFFLINE_MUSIC) {
+    try {
+      await saveToStore(STORES.music, { ...song, offline_preloaded: true, is_downloaded: true });
+      results.music++;
+    } catch (e) { /* skip */ }
+  }
 
-    // 4. Preload Interactive Memory Exercises (10 activities) - Skip if store doesn't exist
-    console.log('🧠 Preloading memory exercises...');
-    for (const exercise of MEMORY_EXERCISES) {
-      try {
-        // Store exercises in general cache - no dedicated store needed
-        await saveToStore(STORES.activityLog, {
-          activity_type: 'memory_exercise',
-          exercise_id: exercise.id,
-          details: exercise,
-          offline_preloaded: true,
-          created_date: new Date().toISOString()
-        });
-        results.exercises++;
-      } catch (error) {
-        console.warn('Exercise cache failed:', error.message || 'Unknown error');
-      }
-    }
-    console.log(`✅ Cached ${results.exercises} interactive exercises`);
+  // 4. Memory Exercises
+  for (const exercise of MEMORY_EXERCISES) {
+    try {
+      await saveToStore(STORES.activityLog, { activity_type: 'memory_exercise', exercise_id: exercise.id, details: exercise, offline_preloaded: true, created_date: new Date().toISOString() });
+      results.exercises++;
+    } catch (e) { /* skip */ }
+  }
 
-    // 5. Preload entity data (only if online)
-    if (!isOnline()) {
-      console.log('⚠️ Offline - skipping entity data fetch. AI responses are ready for offline use.');
-      return { ...results, offline_only: true };
-    }
-
-    console.log('📡 Fetching entity data...');
+  // 5. Entity data (online only)
+  if (isOnline()) {
     for (const entityName of ESSENTIAL_CATEGORIES) {
       try {
         const data = await base44.entities[entityName].list();
-        const storeName = entityName.toLowerCase();
-        
         let savedCount = 0;
         for (const item of data) {
-          try {
-            await saveToStore(storeName, item);
-            savedCount++;
-          } catch (err) {
-            console.warn(`Failed to save ${entityName} item:`, err.message);
-          }
+          try { await saveToStore(entityName.toLowerCase(), item); savedCount++; } catch (e) { /* skip */ }
         }
-        
         results.entities[entityName] = savedCount;
-        if (savedCount > 0) {
-          console.log(`✅ Cached ${savedCount} ${entityName} records`);
-        }
       } catch (error) {
-        console.log(`⚠️ Skipping ${entityName}:`, error.message);
         results.errors.push(`${entityName}: ${error.message}`);
       }
     }
-
-    console.log('✅ Offline mode fully ready:', results);
-    
-    // Mark as ready with comprehensive stats
-    await saveToStore(STORES.syncMeta, {
-      id: 'offline_ready',
-      key: 'offline_ready',
-      timestamp: new Date().toISOString(),
-      version: '4.0',
-      responseCount: results.aiResponses,
-      storiesCount: results.stories,
-      musicCount: results.music,
-      exercisesCount: results.exercises,
-      entityCount: Object.values(results.entities).reduce((a, b) => a + b, 0),
-      totalOfflineContent: results.aiResponses + results.stories + results.music + results.exercises
-    });
-    
-    return results;
-    
-  } catch (error) {
-    console.error('Preload failed:', error.message || error);
-    // Don't throw - allow partial offline functionality
-    return {
-      aiResponses: 0,
-      stories: 0,
-      music: 0,
-      exercises: 0,
-      entities: {},
-      errors: [error.message || 'Unknown preload error']
-    };
   }
+
+  // Mark complete
+  try {
+    await saveToStore(STORES.syncMeta, { key: 'offline_ready', timestamp: new Date().toISOString(), version: '5.0', ...results });
+  } catch (e) { /* skip */ }
+
+  console.log(`✅ Offline preload complete: ${results.aiResponses} AI, ${results.stories} stories, ${results.music} music, ${results.exercises} exercises`);
+  return results;
 }
 
 // Auto-preload on app start
