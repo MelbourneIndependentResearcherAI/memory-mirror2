@@ -340,6 +340,11 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Free Cognitive Assessment */}
+      <div className="max-w-4xl mx-auto px-4 mb-8">
+        <CognitiveAssessmentLink />
+      </div>
+
       {/* Footer */}
       <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
         <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
