@@ -92,7 +92,7 @@ export default function Landing() {
         </div>
 
         {/* Dual Access Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8 px-4">
           {/* Patient Access */}
           <button
             onClick={() => navigateTo('PatientAccess')}
