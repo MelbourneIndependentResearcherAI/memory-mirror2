@@ -14,6 +14,7 @@ import { isFreeTrial } from '@/components/subscription/FreeTrialManager';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
+  const [showTrialModal, setShowTrialModal] = useState(false);
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
 
@@ -22,9 +23,16 @@ export default function Landing() {
     if (isLoading) return; // Prevent click while loading
     if (subscriptionData?.isSubscribed) {
       navigate(createPageUrl('Home'));
+    } else if (isFreeTrial()) {
+      navigate(createPageUrl('Home'));
     } else {
-      navigate('/paywall');
+      setShowTrialModal(true);
     }
+  };
+
+  const handleTrialSuccess = () => {
+    setShowTrialModal(false);
+    navigate(createPageUrl('Home'));
   };
 
   const featureCards = [
