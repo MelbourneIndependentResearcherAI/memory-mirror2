@@ -2,6 +2,7 @@
 import { base44 } from '@/api/base44Client';
 import { saveToStore, STORES, initOfflineStorage } from './offlineStorage';
 import { isOnline } from './offlineManager';
+import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData';
 
 // Essential data categories for offline mode
 const ESSENTIAL_CATEGORIES = [
@@ -12,8 +13,8 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// Pre-loaded Stories Library - 20 comforting stories for offline access
-const OFFLINE_STORIES = [
+// Legacy compatibility - these are now in offlinePreloaderData.js
+const _LEGACY_STORIES = [
   {
     title: "The Garden of Memories",
     content: "In a quiet corner of the neighborhood stood a beautiful garden. Every morning, Mrs. Henderson would tend to her roses, each one planted to remember a special moment. The red roses for her wedding day, yellow for her children's births, and white for peaceful Sunday mornings. As she watered each plant, she would smile and remember. The garden grew more beautiful each year, just like her collection of precious memories.",
