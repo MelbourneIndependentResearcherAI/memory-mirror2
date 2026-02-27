@@ -195,6 +195,45 @@ export default function Landing() {
           ))}
         </div>
 
+        {/* Individual Tool Pricing Teaser */}
+        <div className="max-w-4xl mx-auto px-4 mb-10">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl border border-purple-200 dark:border-purple-800 shadow-lg overflow-hidden">
+            <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 text-center">
+              <h2 className="text-xl font-bold text-white">🛠️ Only Need One Feature? Pay for Just That.</h2>
+              <p className="text-purple-100 text-sm mt-1">Individual tool subscriptions from just $2.99/month</p>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 p-5">
+              {[
+                { emoji: '🧠', name: 'AI Chat', price: '$2.99' },
+                { emoji: '🌙', name: 'Night Watch', price: '$2.99' },
+                { emoji: '🎵', name: 'Music Therapy', price: '$2.99' },
+                { emoji: '🏦', name: 'Fake Banking', price: '$2.99' },
+                { emoji: '📍', name: 'GPS Safety', price: '$2.99' },
+                { emoji: '👨‍⚕️', name: 'Caregiver Tools', price: '$2.99' },
+              ].map(tool => (
+                <div key={tool.name} className="flex items-center gap-2 bg-slate-50 dark:bg-slate-800 rounded-xl p-3 border border-slate-200 dark:border-slate-700">
+                  <span className="text-xl">{tool.emoji}</span>
+                  <div>
+                    <p className="text-xs font-semibold text-slate-900 dark:text-white leading-tight">{tool.name}</p>
+                    <p className="text-xs text-purple-600 dark:text-purple-400 font-bold">{tool.price}/mo</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="px-5 pb-5 text-center">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mb-3">
+                💡 Full access to everything is only <strong>$9.99/month</strong> — better value if you need 4+ tools
+              </p>
+              <button
+                onClick={() => navigateTo('Pricing')}
+                className="inline-flex items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold px-6 py-3 rounded-xl text-sm hover:from-purple-700 hover:to-pink-700 transition-all shadow-md min-h-[44px]"
+              >
+                View All Plans & Subscribe →
+              </button>
+            </div>
+          </div>
+        </div>
+
         {/* Limited Time Offer */}
         <PromoLimitedOffer variant="banner" />
 
