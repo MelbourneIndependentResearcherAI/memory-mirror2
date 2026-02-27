@@ -58,23 +58,17 @@ const featureCards = [
   { id: 14, title: 'Voice Cloning', icon: '🎤', description: 'Clone family voices for personalized comfort', path: '/VoiceCloning', background: '#FDF4FF' },
   { id: 15, title: 'AI Care Insights', icon: '✨', description: 'Personalized recommendations from intelligent analysis', path: '/AICareInsights', background: '#FAF5FF' },
   { id: 16, title: 'Read Offline', icon: '📖', description: 'Access journals and memories without internet', path: '/CaregiverPortal/offline-read', background: '#F0FDFA' },
-  { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF' },
   { id: 18, title: 'Family Tree', icon: '🌳', description: 'Build a visual family tree with photos and memories', path: '/FamilyTree', background: '#FEF3C7' },
   { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/ContentLibrary', background: '#F3E8FF' },
-  { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/AuditTrail', background: '#DBEAFE' },
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/FakeBankSettings', background: '#E0F2FE' },
   { id: 32, title: 'Location Safety', icon: '📍', description: 'Set up safe zones and track patient location in real-time', path: '/GeofenceTracking', background: '#D1FAE5' },
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/EmergencyAlerts', background: '#FEE2E2' },
   { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/PatientRegistration', background: '#DBEAFE' },
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/ActivityReports', background: '#E0E7FF' },
   { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/OfflineContent', background: '#DBEAFE' },
-  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/OfflineTest', background: '#F0FDF4' },
   { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CareTeam', background: '#EFF6FF' },
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
-  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
-  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
-  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' },
-  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalisation profile for your loved one', path: '/UserProfile', background: '#EEF2FF' }
+  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' }
 ];
 
 function CaregiverPortalHome() {
