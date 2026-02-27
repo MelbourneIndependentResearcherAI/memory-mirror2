@@ -17,7 +17,29 @@ export function isFreeTrial() {
   try {
     const trial = JSON.parse(trialData);
     const endDate = new Date(trial.trial_end_date || trial.trialEndDate);
-    return new Date() < endDate;
+    const isActive = trial.trial_active !== false; // Assume active if not explicitly set to false
+    return isActive && new Date() < endDate;
+  } catch {
+    return false;
+  }
+}
+
+export function hasTrialExpired() {
+  let trialData = null;
+  const keys = Object.keys(localStorage);
+  const trialKey = keys.find(k => k.startsWith('freeTrialUser_'));
+  if (trialKey) {
+    trialData = localStorage.getItem(trialKey);
+  } else {
+    trialData = localStorage.getItem('freeTrialUser');
+  }
+  
+  if (!trialData) return false;
+
+  try {
+    const trial = JSON.parse(trialData);
+    const endDate = new Date(trial.trial_end_date || trial.trialEndDate);
+    return new Date() >= endDate;
   } catch {
     return false;
   }

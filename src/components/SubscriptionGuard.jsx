@@ -36,10 +36,28 @@ export function useSubscriptionStatus() {
     queryFn: async () => {
       try {
         const user = await base44.auth.me();
+        
+        // Check free trial status
+        let trialStatus = { isOnFreeTrial: false, trialExpired: false };
+        try {
+          const { isFreeTrial, hasTrialExpired } = await import('./FreeTrialManager');
+          trialStatus = {
+            isOnFreeTrial: isFreeTrial(),
+            trialExpired: hasTrialExpired()
+          };
+        } catch (e) {
+          console.log('Trial check skipped');
+        }
+
         if (!user) {
           // Not authenticated - try cache first
           const cached = offlineHelper.getCachedSubscription();
-          return cached || { isSubscribed: false, subscription: null, user: null };
+          return cached || { 
+            isSubscribed: trialStatus.isOnFreeTrial && !trialStatus.trialExpired, 
+            subscription: null, 
+            user: null,
+            ...trialStatus
+          };
         }
 
         // User is authenticated - fetch fresh subscription data
@@ -68,8 +86,11 @@ export function useSubscriptionStatus() {
         // Admin users bypass paywall entirely
         const isAdmin = user.role === 'admin';
 
+        // User is subscribed if: admin OR has active subscription OR on active free trial
+        const isSubscribed = isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0 || (trialStatus.isOnFreeTrial && !trialStatus.trialExpired);
+
         const result = {
-          isSubscribed: isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0,
+          isSubscribed,
           isPremium: isAdmin || !!activeSubscription,
           isAdmin,
           isPending: !!pendingSubscription,
@@ -77,7 +98,8 @@ export function useSubscriptionStatus() {
           subscribedTools,
           hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId),
           user,
-          isOnline: true
+          isOnline: true,
+          ...trialStatus
         };
 
         offlineHelper.saveSubscription(result);
@@ -89,12 +111,12 @@ export function useSubscriptionStatus() {
           return { ...cached, isOnline: false, offline: true };
         }
         // Return default state that won't block rendering
-        return { isSubscribed: false, subscription: null, user: null, error: true };
+        return { isSubscribed: false, subscription: null, user: null, error: true, isOnFreeTrial: false, trialExpired: false };
       }
     },
     retry: 1,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    initialData: { isSubscribed: false, subscription: null, user: null, isLoading: true }
+    initialData: { isSubscribed: false, subscription: null, user: null, isLoading: true, isOnFreeTrial: false, trialExpired: false }
   });
 }
