@@ -116,6 +116,12 @@ export async function saveToStore(storeName, data) {
     // Normalize store name to handle case variations
     const normalizedStore = STORES[storeName] || storeName;
     
+    // Strip undefined id so autoIncrement can work properly
+    const dataToSave = { ...data };
+    if (dataToSave.id === undefined || dataToSave.id === null) {
+      delete dataToSave.id;
+    }
+    
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
         reject(new Error(`Save operation timeout on ${normalizedStore}`));
@@ -124,7 +130,7 @@ export async function saveToStore(storeName, data) {
       try {
         const tx = db.transaction([normalizedStore], 'readwrite');
         const store = tx.objectStore(normalizedStore);
-        const request = store.put(data);
+        const request = store.put(dataToSave);
         
         request.onsuccess = () => {
           clearTimeout(timeout);
