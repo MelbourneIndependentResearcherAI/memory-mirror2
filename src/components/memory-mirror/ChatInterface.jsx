@@ -1626,15 +1626,43 @@ RESPOND NOW:
       </PullToRefresh>
 
       <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 space-y-4">
+        {/* Mode Toggle */}
+        <div className="flex gap-2 justify-center">
+          <Button
+            size="sm"
+            variant={!voiceTypingMode ? "default" : "outline"}
+            onClick={() => {
+              if (isListening) stopVoiceInput();
+              setVoiceTypingMode(false);
+            }}
+            className="rounded-full"
+          >
+            Voice Chat
+          </Button>
+          <Button
+            size="sm"
+            variant={voiceTypingMode ? "default" : "outline"}
+            onClick={() => {
+              if (isListening) stopVoiceInput();
+              setVoiceTypingMode(true);
+            }}
+            className="rounded-full"
+          >
+            Voice Typing
+          </Button>
+        </div>
+
         {/* Text Input for Hands-Free & Text Mode */}
         <div className="flex gap-2 items-end">
           <input
             type="text"
             placeholder="Type here or tap the mic..."
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
             onKeyPress={(e) => {
-              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                sendMessage(e.currentTarget.value.trim());
-                e.currentTarget.value = '';
+              if (e.key === 'Enter' && textInput.trim()) {
+                sendMessage(textInput.trim());
+                setTextInput('');
               }
             }}
             disabled={isLoading}
@@ -1642,11 +1670,10 @@ RESPOND NOW:
           />
           <Button
             size="lg"
-            onClick={(e) => {
-              const input = e.currentTarget.parentElement.querySelector('input');
-              if (input.value.trim()) {
-                sendMessage(input.value.trim());
-                input.value = '';
+            onClick={() => {
+              if (textInput.trim()) {
+                sendMessage(textInput.trim());
+                setTextInput('');
               }
             }}
             disabled={isLoading}
@@ -1681,10 +1708,16 @@ RESPOND NOW:
           </Button>
           <div className="text-center">
             <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-              {isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk'}
+              {voiceTypingMode 
+                ? (isListening ? 'Transcribing...' : isLoading ? 'Thinking...' : 'Tap to Type by Voice')
+                : (isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk')
+              }
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Or type below and press Enter'}
+              {voiceTypingMode
+                ? (isListening ? 'Speaking converts to text above' : 'Edit text before sending')
+                : (isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Or type below and press Enter')
+              }
             </p>
           </div>
         </div>
