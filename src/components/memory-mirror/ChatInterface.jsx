@@ -1617,7 +1617,38 @@ RESPOND NOW:
         </div>
       </PullToRefresh>
 
-      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 space-y-4">
+        {/* Text Input for Hands-Free & Text Mode */}
+        <div className="flex gap-2 items-end">
+          <input
+            type="text"
+            placeholder="Type here or tap the mic..."
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && e.currentTarget.value.trim()) {
+                sendMessage(e.currentTarget.value.trim());
+                e.currentTarget.value = '';
+              }
+            }}
+            disabled={isLoading}
+            className="flex-1 px-4 py-3 rounded-lg border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <Button
+            size="lg"
+            onClick={(e) => {
+              const input = e.currentTarget.parentElement.querySelector('input');
+              if (input.value.trim()) {
+                sendMessage(input.value.trim());
+                input.value = '';
+              }
+            }}
+            disabled={isLoading}
+            className="bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg"
+          >
+            Send
+          </Button>
+        </div>
+
+        {/* Voice Button */}
         <div className="flex flex-col items-center gap-4">
           <Button
             size="lg"
@@ -1645,7 +1676,7 @@ RESPOND NOW:
               {isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk'}
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Press the button to start'}
+              {isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Or type below and press Enter'}
             </p>
           </div>
         </div>
