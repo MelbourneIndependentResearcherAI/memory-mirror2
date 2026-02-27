@@ -218,8 +218,8 @@ export default function Pricing() {
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Choose Your Plan
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Start with our free plan or unlock premium features to support your loved one's memory journey
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-0">
+          Start with our free plan or unlock premium features to support your loved one's memory journey
           </p>
 
           {/* Billing Toggle */}
