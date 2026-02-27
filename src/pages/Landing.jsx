@@ -275,7 +275,7 @@ export default function Landing() {
         </div>
 
         {/* Quick Stats */}
-        <div className="max-w-4xl mx-auto px-4 mb-12">
+        <div className="max-w-4xl mx-auto px-4 mb-8">
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg border border-slate-200/60 dark:border-slate-700/50 text-center">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Compassionate AI for Dementia Care
