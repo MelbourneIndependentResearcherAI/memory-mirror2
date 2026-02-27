@@ -252,6 +252,26 @@ export default function Pricing() {
           </Card>
         )}
 
+        {/* Individual Tool Plans */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              🛠️ Just need one tool?
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+              Subscribe to individual features for <strong>$2.99/month each</strong> — or get everything with Premium below.
+            </p>
+          </div>
+          <IndividualToolPlans user={user} />
+        </div>
+
+        {/* Divider */}
+        <div className="flex items-center gap-4 mb-12">
+          <div className="flex-1 border-t border-slate-200 dark:border-slate-700" />
+          <span className="text-slate-500 dark:text-slate-400 font-semibold text-sm whitespace-nowrap">— OR GET EVERYTHING —</span>
+          <div className="flex-1 border-t border-slate-200 dark:border-slate-700" />
+        </div>
+
         {/* Pricing Cards */}
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           {plans.map((plan) => (
