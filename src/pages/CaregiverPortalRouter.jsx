@@ -21,6 +21,10 @@ import OfflineReadyIndicator from '@/components/memory-mirror/OfflineReadyIndica
 import OfflineJournalReader from '@/components/caregiver/OfflineJournalReader';
 import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer';
 import AgentSupport from '@/components/caregiver/AgentSupport';
+import MonitoringDashboard from '@/components/admin/MonitoringDashboard';
+import AuditLogViewer from '@/components/admin/AuditLogViewer';
+import AgentMonitor from '@/components/admin/AgentMonitor';
+import OfflineContentTester from '@/components/caregiver/OfflineContentTester';
 
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
 import ContentUploader from '@/components/caregiver/ContentUploader';
@@ -297,6 +301,38 @@ export default function CaregiverPortalRouter() {
                 <ArrowLeft className="w-5 h-5" />Back to Portal
               </button>
               <AICareInsights />
+            </div>
+          } />
+          <Route path="monitoring" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <MonitoringDashboard />
+            </div>
+          } />
+          <Route path="audit-logs" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <AuditLogViewer />
+            </div>
+          } />
+          <Route path="offline-test" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <OfflineContentTester />
+            </div>
+          } />
+          <Route path="agents" element={
+            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
+                <ArrowLeft className="w-5 h-5" />Back to Portal
+              </button>
+              <AgentMonitor />
             </div>
           } />
 
