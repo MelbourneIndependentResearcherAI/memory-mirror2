@@ -155,7 +155,7 @@ export default function Layout({ children, currentPageName }) {
               >
                 <main 
                   id="main-content" 
-                  className="flex-1 relative overflow-hidden"
+                  className="flex-1 relative overflow-auto"
                   role="main"
                   aria-label="Main content"
                 >
