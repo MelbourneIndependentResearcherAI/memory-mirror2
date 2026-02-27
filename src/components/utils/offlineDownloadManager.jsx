@@ -42,7 +42,7 @@ export class OfflineDownloadManager {
     });
   }
 
-  // Start full offline download
+  // Start full offline download - runs all phases with live progress updates
   async startFullDownload() {
     if (this.isDownloading) {
       console.warn('Download already in progress');
@@ -60,64 +60,95 @@ export class OfflineDownloadManager {
     this.notify();
 
     try {
-      // Step 1: Initialize databases
       await initOfflineStorage();
       await initOfflineDB();
+
       this.progress.current = 5;
-      this.progress.currentItem = 'Loading AI responses...';
+      this.progress.currentItem = 'Storage initialized...';
       this.notify();
 
-      // Step 2: Import and run preloader — it does the real work
-      const { preloadEssentialData } = await import('./offlinePreloader');
+      // Run preload in 4 explicit phases with progress between each
+      const { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } = await import('./offlinePreloaderData');
 
-      // Step 3: Run preload in phases with progress updates between steps
-      // We patch the saveToStore to count progress
-      let itemsSaved = 0;
-      const TOTAL_ITEMS = 335;
+      // Phase 1: AI Responses (250 items → 5% to 65%)
+      this.progress.currentItem = 'Downloading AI responses...';
+      this.notify();
+      let aiCount = 0;
+      for (const resp of COMPREHENSIVE_OFFLINE_RESPONSES) {
+        await saveToStore(STORES.aiResponses, {
+          prompt: resp.prompt,
+          response: resp.response,
+          category: resp.category,
+          timestamp: Date.now(),
+          offline: true
+        });
+        aiCount++;
+        // Update every 10 items to avoid UI overload
+        if (aiCount % 10 === 0) {
+          this.progress.current = 5 + Math.floor((aiCount / COMPREHENSIVE_OFFLINE_RESPONSES.length) * 55);
+          this.progress.currentItem = `AI responses: ${aiCount} / ${COMPREHENSIVE_OFFLINE_RESPONSES.length}`;
+          this.progress.downloadedBytes = aiCount * 200;
+          this.notify();
+        }
+      }
 
-      const originalSave = (await import('./offlineStorage')).saveToStore;
+      // Phase 2: Stories (20 items → 65% to 75%)
+      this.progress.current = 65;
+      this.progress.currentItem = 'Downloading stories...';
+      this.notify();
+      let storyCount = 0;
+      for (const story of OFFLINE_STORIES) {
+        await saveToStore(STORES.stories, { ...story, offline_preloaded: true });
+        storyCount++;
+      }
+      this.progress.current = 75;
+      this.progress.currentItem = `${storyCount} stories downloaded`;
+      this.notify();
 
-      // Monkey-patch to track saves (only for this download session)
-      const patchedSave = async (store, data) => {
-        const result = await originalSave(store, data);
-        itemsSaved++;
-        this.progress.current = Math.min(5 + Math.floor((itemsSaved / TOTAL_ITEMS) * 90), 95);
-        this.progress.downloadedBytes = itemsSaved * 300; // ~300 bytes avg per item
-        
-        // Update currentItem description based on store
-        if (store === 'aiResponses') this.progress.currentItem = `AI Responses (${itemsSaved})...`;
-        else if (store === 'stories') this.progress.currentItem = `Stories...`;
-        else if (store === 'music') this.progress.currentItem = `Music library...`;
-        else if (store === 'activityLog') this.progress.currentItem = `Memory exercises...`;
-        
-        this.notify();
-        return result;
-      };
+      // Phase 3: Music (40 items → 75% to 85%)
+      this.progress.current = 75;
+      this.progress.currentItem = 'Downloading music library...';
+      this.notify();
+      let musicCount = 0;
+      for (const song of OFFLINE_MUSIC) {
+        await saveToStore(STORES.music, { ...song, offline_preloaded: true, is_downloaded: true });
+        musicCount++;
+      }
+      this.progress.current = 85;
+      this.progress.currentItem = `${musicCount} songs downloaded`;
+      this.notify();
 
-      // Run preload with patched save
-      const { saveToStore: _s, ...storageRest } = await import('./offlineStorage');
-      const result = await preloadEssentialData({ saveToStoreFn: patchedSave });
+      // Phase 4: Exercises (25 items → 85% to 95%)
+      this.progress.currentItem = 'Downloading memory exercises...';
+      this.notify();
+      let exCount = 0;
+      for (const exercise of MEMORY_EXERCISES) {
+        await saveToStore(STORES.activityLog, {
+          activity_type: 'memory_exercise',
+          exercise_id: exercise.id,
+          details: exercise,
+          offline_preloaded: true,
+          created_date: new Date().toISOString()
+        });
+        exCount++;
+      }
+      this.progress.current = 95;
+      this.progress.currentItem = `${exCount} exercises downloaded`;
+      this.notify();
 
-      // Step 4: Verify
-      this.progress.current = 97;
+      // Phase 5: Verify
       this.progress.currentItem = 'Verifying download...';
       this.notify();
-
       const verified = await this.verifyDownload();
 
-      // Step 5: Complete
+      // Done
       this.progress.current = 100;
       this.progress.currentItem = 'Download Complete!';
-      this.progress.downloadedBytes = (
-        (result.aiResponses * 200) +
-        (result.stories * 1500) +
-        (result.music * 500) +
-        (result.exercises * 800)
-      );
+      this.progress.downloadedBytes = (aiCount * 200) + (storyCount * 1500) + (musicCount * 500) + (exCount * 800);
       this.notify();
 
-      console.log('✅ Download complete:', { ...result, verified });
-
+      const result = { aiResponses: aiCount, stories: storyCount, music: musicCount, exercises: exCount };
+      console.log('✅ Download complete:', result);
       return { success: true, ...result, verified };
 
     } catch (error) {
