@@ -102,15 +102,19 @@ export default function Paywall() {
             </div>
             <h1 className="text-3xl font-bold text-slate-900 dark:text-white">Memory Mirror</h1>
             <p className="text-slate-600 dark:text-slate-400 mt-2">AI Companion for Dementia Care</p>
+            <div className="mt-4 inline-block bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 px-4 py-2 rounded-full text-sm font-semibold">
+              🎉 Your 3-Day Free Trial Has Ended
+            </div>
           </div>
 
           {/* Pricing */}
           <div className="text-center mb-8">
-            <p className="text-slate-600 dark:text-slate-400 mb-2">Premium Access</p>
+            <p className="text-slate-600 dark:text-slate-400 mb-2">Continue with Premium</p>
             <div className="flex items-baseline justify-center gap-1">
               <span className="text-5xl font-bold text-slate-900 dark:text-white">$9.99</span>
               <span className="text-slate-600 dark:text-slate-400">/month</span>
             </div>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-3">Full access to all Memory Mirror features</p>
           </div>
 
           {/* Features */}
