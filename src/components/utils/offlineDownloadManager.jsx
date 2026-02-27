@@ -52,43 +52,61 @@ export class OfflineDownloadManager {
     this.isDownloading = true;
     this.progress = {
       current: 0,
-      total: 335, // Total items to download
-      currentItem: 'Initializing...',
+      total: 100,
+      currentItem: 'Initializing storage...',
       downloadedBytes: 0,
       errors: []
     };
+    this.notify();
 
     try {
-      // Initialize databases
-      console.log('📦 Initializing offline storage...');
+      // Step 1: Initialize databases
       await initOfflineStorage();
       await initOfflineDB();
-      
-      this.progress.currentItem = 'Storage Ready ✓';
       this.progress.current = 5;
+      this.progress.currentItem = 'Loading AI responses...';
       this.notify();
 
-      // Import preloader
-      const { default: preloadEssentialData } = await import('./offlinePreloader');
-      
-      // Track progress during preload
-      const progressInterval = setInterval(() => {
-        this.progress.current += 1;
-        if (this.progress.current > this.progress.total - 10) {
-          this.progress.current = this.progress.total - 10; // Cap near end
-        }
-        this.notify();
-      }, 100); // Update every 100ms for smooth progress
-      
-      // Execute preload with progress tracking
-      console.log('🚀 Starting download...');
-      const result = await preloadEssentialData();
-      
-      // Stop progress interval
-      clearInterval(progressInterval);
+      // Step 2: Import and run preloader — it does the real work
+      const { preloadEssentialData } = await import('./offlinePreloader');
 
-      // Update final progress
-      this.progress.current = this.progress.total;
+      // Step 3: Run preload in phases with progress updates between steps
+      // We patch the saveToStore to count progress
+      let itemsSaved = 0;
+      const TOTAL_ITEMS = 335;
+
+      const originalSave = (await import('./offlineStorage')).saveToStore;
+
+      // Monkey-patch to track saves (only for this download session)
+      const patchedSave = async (store, data) => {
+        const result = await originalSave(store, data);
+        itemsSaved++;
+        this.progress.current = Math.min(5 + Math.floor((itemsSaved / TOTAL_ITEMS) * 90), 95);
+        this.progress.downloadedBytes = itemsSaved * 300; // ~300 bytes avg per item
+        
+        // Update currentItem description based on store
+        if (store === 'aiResponses') this.progress.currentItem = `AI Responses (${itemsSaved})...`;
+        else if (store === 'stories') this.progress.currentItem = `Stories...`;
+        else if (store === 'music') this.progress.currentItem = `Music library...`;
+        else if (store === 'activityLog') this.progress.currentItem = `Memory exercises...`;
+        
+        this.notify();
+        return result;
+      };
+
+      // Run preload with patched save
+      const { saveToStore: _s, ...storageRest } = await import('./offlineStorage');
+      const result = await preloadEssentialData({ saveToStoreFn: patchedSave });
+
+      // Step 4: Verify
+      this.progress.current = 97;
+      this.progress.currentItem = 'Verifying download...';
+      this.notify();
+
+      const verified = await this.verifyDownload();
+
+      // Step 5: Complete
+      this.progress.current = 100;
       this.progress.currentItem = 'Download Complete!';
       this.progress.downloadedBytes = (
         (result.aiResponses * 200) +
@@ -98,24 +116,14 @@ export class OfflineDownloadManager {
       );
       this.notify();
 
-      // Verify download
-      const verified = await this.verifyDownload();
-      
-      console.log('✅ Download complete:', {
-        ...result,
-        verified,
-        totalBytes: this.progress.downloadedBytes
-      });
+      console.log('✅ Download complete:', { ...result, verified });
 
-      return {
-        success: true,
-        ...result,
-        verified
-      };
+      return { success: true, ...result, verified };
 
     } catch (error) {
       console.error('❌ Download failed:', error);
       this.progress.errors.push(error.message);
+      this.progress.currentItem = 'Download failed: ' + error.message;
       this.notify();
       throw error;
     } finally {
