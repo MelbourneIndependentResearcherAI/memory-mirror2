@@ -252,6 +252,13 @@ export default function Landing() {
             </button>
             <span className="text-slate-300">•</span>
             <button
+              onClick={() => navigateTo('Paywall')}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-medium"
+            >
+              🧪 Test Paywall
+            </button>
+            <span className="text-slate-300">•</span>
+            <button
               onClick={() => navigateTo('Resources')}
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
             >
