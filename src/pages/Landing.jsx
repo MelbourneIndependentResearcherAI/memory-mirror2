@@ -78,7 +78,7 @@ export default function Landing() {
         </div>
 
         {/* Quick Access - Big Red Button inspired by "Be My Eyes" */}
-        <div className="flex justify-center mb-10 px-4">
+        <div className="flex justify-center mb-8 px-4">
           <button
             onClick={() => navigateTo('QuickAccess')}
             className="w-full max-w-sm bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-bold rounded-full shadow-2xl transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-3 border-8 border-white"
