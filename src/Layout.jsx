@@ -146,7 +146,7 @@ export default function Layout({ children, currentPageName }) {
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
                 style={{
-                  paddingTop: '60px',
+                  paddingTop: '0px',
                   paddingBottom: showBottomNav ? '160px' : '20px',
                   overscrollBehaviorY: 'none'
                 }}
