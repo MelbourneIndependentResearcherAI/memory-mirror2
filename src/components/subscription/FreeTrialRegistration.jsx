@@ -22,16 +22,17 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
       });
 
       if (response.data.success) {
-        // Store trial info in localStorage
-        localStorage.setItem('freeTrialUser', JSON.stringify({
-          name,
-          email,
-          trialEndDate: response.data.trialEndDate,
-          registeredAt: new Date().toISOString()
-        }));
+         // Store trial info in localStorage with correct field names
+         localStorage.setItem('freeTrialUser', JSON.stringify({
+           name,
+           email,
+           trial_end_date: response.data.trialEndDate,
+           trial_start_date: new Date().toISOString(),
+           trial_active: true
+         }));
 
-        onSuccess?.();
-      }
+         onSuccess?.();
+       }
     } catch (err) {
       setError(err.message || 'Failed to register for free trial');
     } finally {
