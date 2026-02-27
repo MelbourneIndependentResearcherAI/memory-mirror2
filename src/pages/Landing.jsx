@@ -250,6 +250,9 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* App Tutorial Section */}
+      <AppTutorial />
+
       {/* Testimonials Section */}
       <div className="max-w-5xl mx-auto px-4 mb-12">
         <div className="text-center mb-8">
