@@ -42,6 +42,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showStory, setShowStory] = useState(false);
   const [showHandsFree, setShowHandsFree] = useState(false);
   const [showPersonalizedCompanion, setShowPersonalizedCompanion] = useState(false);
+  const [voiceTypingMode, setVoiceTypingMode] = useState(false);
+  const [textInput, setTextInput] = useState('');
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
   const [visualResponse, setVisualResponse] = useState({ show: false, suggestions: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
