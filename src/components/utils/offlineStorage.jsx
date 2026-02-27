@@ -1,44 +1,35 @@
-// Enhanced offline storage for all app data
+// Unified offline storage - SINGLE database with proper structure
 const DB_NAME = 'MemoryMirrorDB';
-const DB_VERSION = 4;
+const DB_VERSION = 5;
 
 const STORES = {
+  // Core conversation & messages
   conversations: 'conversations',
   messages: 'messages',
+  
+  // Content libraries
+  aiResponses: 'aiResponses',
+  stories: 'stories',
+  music: 'music',
+  audioLibrary: 'audioLibrary',
+  
+  // User data
   memories: 'memories',
   userProfile: 'userProfile',
-  safeZones: 'safeZones',
-  familyMedia: 'familyMedia',
-  familyEvents: 'familyEvents',
-  playlists: 'playlists',
-  music: 'music',
-  stories: 'stories',
-  cognitiveassessment: 'cognitiveassessment',
-  smartDevices: 'smartDevices',
-  routines: 'routines',
-  moodAutomations: 'moodAutomations',
-  nightIncidents: 'nightIncidents',
   careJournal: 'careJournal',
-  emergencyContacts: 'emergencyContacts',
+  familyMedia: 'familyMedia',
+  
+  // Activities & routines
   activityLog: 'activityLog',
-  pendingOps: 'pendingOps',
-  aiResponses: 'aiResponses',
-  audioLibrary: 'audioLibrary',
+  routines: 'routines',
+  
+  // Emergency & security
+  safeZones: 'safeZones',
+  emergencyContacts: 'emergencyContacts',
+  
+  // Metadata & sync
   syncMeta: 'syncMeta',
-  userprofile: 'userProfile',
-  safememoryzones: 'safeZones',
-  safememoryzone: 'safeZones',
-  memory: 'memories',
-  story: 'stories',
-  playlist: 'playlists',
-  reminder: 'reminders',
-  reminders: 'reminders',
-  familymedia: 'familyMedia',
-  familymessage: 'familyEvents',
-  smartdevice: 'smartDevices',
-  voiceprofile: 'voiceProfiles',
-  voiceProfiles: 'voiceProfiles',
-  cognitiveAssessment: 'cognitiveassessment'
+  pendingOps: 'pendingOps'
 };
 
 let dbInstance = null;
@@ -62,23 +53,17 @@ export async function initOfflineStorage() {
       request.onsuccess = () => {
         clearTimeout(timeout);
         dbInstance = request.result;
-        
-        // Set up error listener to catch connection errors
         dbInstance.onerror = (event) => {
-          console.error('Database connection error:', event);
+          console.error('Database error:', event);
         };
-        
         resolve(dbInstance);
       };
 
       request.onupgradeneeded = (event) => {
         clearTimeout(timeout);
         const db = event.target.result;
-
-        // Create unique store names
         const uniqueStores = [...new Set(Object.values(STORES))];
 
-        // Create all object stores if they don't exist
         uniqueStores.forEach((storeName) => {
           try {
             if (!db.objectStoreNames.contains(storeName)) {
@@ -92,13 +77,16 @@ export async function initOfflineStorage() {
                 store.createIndex('timestamp', 'timestamp', { unique: false });
               } else if (storeName === 'audioLibrary') {
                 const store = db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
-                store.createIndex('fileName', 'fileName', { unique: false });
+                store.createIndex('title', 'title', { unique: false });
+                store.createIndex('downloadedAt', 'downloadedAt', { unique: false });
+              } else if (storeName === 'syncMeta') {
+                db.createObjectStore(storeName, { keyPath: 'key' });
               } else {
                 db.createObjectStore(storeName, { keyPath: 'id', autoIncrement: true });
               }
             }
-          } catch (storeError) {
-            console.error(`Error creating store ${storeName}:`, storeError);
+          } catch (err) {
+            console.error(`Error creating store ${storeName}:`, err);
           }
         });
       };
@@ -113,10 +101,7 @@ export async function saveToStore(storeName, data) {
   try {
     const db = await initOfflineStorage();
     
-    // Normalize store name to handle case variations
-    const normalizedStore = STORES[storeName] || storeName;
-    
-    // Strip undefined id so autoIncrement can work properly
+    // Handle undefined/null ids
     const dataToSave = { ...data };
     if (dataToSave.id === undefined || dataToSave.id === null) {
       delete dataToSave.id;
@@ -124,12 +109,12 @@ export async function saveToStore(storeName, data) {
     
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error(`Save operation timeout on ${normalizedStore}`));
+        reject(new Error(`Save timeout on ${storeName}`));
       }, 5000);
 
       try {
-        const tx = db.transaction([normalizedStore], 'readwrite');
-        const store = tx.objectStore(normalizedStore);
+        const tx = db.transaction([storeName], 'readwrite');
+        const store = tx.objectStore(storeName);
         const request = store.put(dataToSave);
         
         request.onsuccess = () => {
@@ -139,7 +124,7 @@ export async function saveToStore(storeName, data) {
         
         request.onerror = () => {
           clearTimeout(timeout);
-          reject(request.error || new Error('Put request failed'));
+          reject(request.error || new Error('Put failed'));
         };
         
         tx.onerror = () => {
@@ -160,12 +145,11 @@ export async function saveToStore(storeName, data) {
 export async function getFromStore(storeName, id) {
   try {
     const db = await initOfflineStorage();
-    const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(normalizedStore, 'readonly');
-        const store = tx.objectStore(normalizedStore);
+        const tx = db.transaction(storeName, 'readonly');
+        const store = tx.objectStore(storeName);
         const request = store.get(id);
         request.onsuccess = () => resolve(request.result);
         request.onerror = () => reject(request.error);
@@ -182,16 +166,15 @@ export async function getFromStore(storeName, id) {
 export async function getAllFromStore(storeName) {
   try {
     const db = await initOfflineStorage();
-    const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
       const timeout = setTimeout(() => {
-        reject(new Error(`GetAll operation timeout on ${normalizedStore}`));
+        reject(new Error(`GetAll timeout on ${storeName}`));
       }, 5000);
 
       try {
-        const tx = db.transaction([normalizedStore], 'readonly');
-        const store = tx.objectStore(normalizedStore);
+        const tx = db.transaction([storeName], 'readonly');
+        const store = tx.objectStore(storeName);
         const request = store.getAll();
         
         request.onsuccess = () => {
@@ -201,7 +184,7 @@ export async function getAllFromStore(storeName) {
         
         request.onerror = () => {
           clearTimeout(timeout);
-          reject(request.error || new Error('GetAll request failed'));
+          reject(request.error || new Error('GetAll failed'));
         };
         
         tx.onerror = () => {
@@ -222,12 +205,11 @@ export async function getAllFromStore(storeName) {
 export async function deleteFromStore(storeName, id) {
   try {
     const db = await initOfflineStorage();
-    const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(normalizedStore, 'readwrite');
-        const store = tx.objectStore(normalizedStore);
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
         const request = store.delete(id);
         request.onsuccess = () => resolve();
         request.onerror = () => reject(request.error);
@@ -243,21 +225,20 @@ export async function deleteFromStore(storeName, id) {
 export async function clearStore(storeName) {
   try {
     const db = await initOfflineStorage();
-    const normalizedStore = STORES[storeName] || storeName;
     
     return new Promise((resolve, reject) => {
       try {
-        const tx = db.transaction(normalizedStore, 'readwrite');
-        const store = tx.objectStore(normalizedStore);
+        const tx = db.transaction(storeName, 'readwrite');
+        const store = tx.objectStore(storeName);
         const request = store.clear();
         
         request.onsuccess = () => {
-          console.log(`✅ Cleared ${normalizedStore}`);
+          console.log(`✅ Cleared ${storeName}`);
           resolve();
         };
         
         request.onerror = () => {
-          console.warn(`Failed to clear ${normalizedStore}:`, request.error);
+          console.warn(`Failed to clear ${storeName}:`, request.error);
           reject(request.error);
         };
         
@@ -268,11 +249,10 @@ export async function clearStore(storeName) {
     });
   } catch (error) {
     console.warn(`Failed to clear ${storeName}:`, error.message);
-    return Promise.resolve(); // Don't fail completely
+    return Promise.resolve();
   }
 }
 
-// Queue operation for later sync when back online
 export async function queueOperation(operation) {
   await saveToStore(STORES.pendingOps, {
     ...operation,
@@ -281,7 +261,6 @@ export async function queueOperation(operation) {
   });
 }
 
-// Get storage usage
 export async function getStorageInfo() {
   const stores = Object.values(STORES);
   const info = {};
@@ -294,7 +273,6 @@ export async function getStorageInfo() {
         size: new Blob([JSON.stringify(data)]).size
       };
     } catch (error) {
-      console.warn(`Failed to get storage info for ${store}:`, error.message);
       info[store] = { count: 0, size: 0 };
     }
   }
