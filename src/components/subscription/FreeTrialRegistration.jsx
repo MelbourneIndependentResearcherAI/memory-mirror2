@@ -51,10 +51,10 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
 
         <div className="mb-6">
           <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-            🎉 7-Day Free Trial
+            🎉 3-Day Free Trial
           </h2>
           <p className="text-slate-600 dark:text-slate-400">
-            No credit card needed. Full access to Memory Mirror for 7 days.
+            No credit card needed. Full access to Memory Mirror for 3 days.
           </p>
         </div>
 

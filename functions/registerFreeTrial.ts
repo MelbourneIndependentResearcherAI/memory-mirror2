@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
 
     // Calculate trial dates
     const now = new Date();
-    const trialEndDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000); // 7 days from now
+    const trialEndDate = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000); // 3 days from now
 
     // Create free trial user record
     const trialUser = await base44.asServiceRole.entities.FreeTrialUser.create({
