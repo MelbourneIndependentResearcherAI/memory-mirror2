@@ -128,7 +128,7 @@ export default function Pricing() {
 
   const handleSelectPlan = (plan) => {
    if (plan.id === 'free') {
-     toast.info('Free plan is already active');
+     navigate('/home');
      return;
    }
    setSelectedPlan(plan);
