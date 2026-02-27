@@ -2,7 +2,7 @@
 import { base44 } from '@/api/base44Client';
 import { saveToStore, STORES, initOfflineStorage } from './offlineStorage';
 import { isOnline } from './offlineManager';
-import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData.js';
+import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData';
 
 // Essential data categories for offline mode
 const ESSENTIAL_CATEGORIES = [
