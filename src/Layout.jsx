@@ -34,7 +34,7 @@ export default function Layout({ children, currentPageName }) {
     // Don't block while loading
     if (isLoading) return;
     
-    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration'];
+    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
     // Only redirect if data loaded AND user not subscribed AND accessing gated content

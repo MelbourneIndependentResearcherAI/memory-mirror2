@@ -63,6 +63,12 @@ export default function BottomNav() {
       color: 'text-cyan-500'
     },
     {
+      path: createPageUrl('Pricing'),
+      icon: CreditCard,
+      label: 'Pricing',
+      color: 'text-purple-500'
+    },
+    {
       path: createPageUrl('Feedback'),
       icon: Star,
       label: 'Feedback',
