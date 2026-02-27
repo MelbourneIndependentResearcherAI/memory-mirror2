@@ -211,6 +211,13 @@ export default function Landing() {
           </Button>
           <div className="flex gap-4 justify-center flex-wrap">
             <button
+              onClick={() => navigateTo('Pricing')}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium"
+            >
+              💳 View Pricing
+            </button>
+            <span className="text-slate-300">•</span>
+            <button
               onClick={() => navigateTo('Resources')}
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors font-medium"
             >
