@@ -1,6 +1,6 @@
 // Enhanced offline storage for all app data
 const DB_NAME = 'MemoryMirrorDB';
-const DB_VERSION = 3;
+const DB_VERSION = 4;
 
 const STORES = {
   conversations: 'conversations',
