@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BookOpen, AlertCircle, CheckCircle, Mic, Play, Pause, Upload, Filter } from 'lucide-react';
+import { BookOpen, AlertCircle, CheckCircle, Mic, Upload, Filter } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function SharedCareJournal({ patientProfileId }) {

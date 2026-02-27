@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, Save, X, Calendar, Star, Clock } from 'lucide-react';
+import { ArrowLeft, User, Heart, Music, Users, Book, Edit2, Check, X, Calendar, Star, Clock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -105,7 +105,7 @@ export default function UserProfile() {
 
   useEffect(() => {
     if (profile) populateForm(profile);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [profile?.id]);
 
   const handleStartEdit = () => {

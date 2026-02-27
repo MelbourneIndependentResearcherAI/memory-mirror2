@@ -1,14 +1,11 @@
 import React, { useState } from 'react';
-import { MessageCircle, Brain, Heart, Phone, Shield, Moon, Volume2, CreditCard, Music, Wifi } from 'lucide-react';
+import { MessageCircle, Brain, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
-import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
-import FeatureTutorial from '@/components/landing/FeatureTutorial';
 import AppTutorial from '@/components/landing/AppTutorial';
-import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';

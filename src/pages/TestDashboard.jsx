@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { useQuery, useMutation } from '@tanstack/react-query';
 import { CheckCircle2, AlertCircle, Loader2, Code } from 'lucide-react';
 import { toast } from 'sonner';
 

@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Brain, Heart, Shield, Moon, Music, Phone, 
-  Camera, Users, MessageCircle, MapPin, Zap,
-  ChevronRight, ChevronDown, Star, CheckCircle2
+import { Shield, Moon, Music, 
+  Camera, Users, MessageCircle, Zap,
+  ChevronRight, Star, CheckCircle2
 } from 'lucide-react';
 
 const WHO_CARDS = [

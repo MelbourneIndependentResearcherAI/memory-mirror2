@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Lightbulb, Heart } from 'lucide-react';
+import { X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const tips = [

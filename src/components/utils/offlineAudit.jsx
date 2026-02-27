@@ -3,7 +3,6 @@
  * Complete rewrite of offline system with proper error handling and safeguards
  */
 
-import { base44 } from '@/api/base44Client';
 
 // CRITICAL ISSUES FOUND & FIXED:
 // 1. Multiple IndexedDB databases causing conflicts (MemoryMirrorOfflineDB vs MemoryMirrorDB)

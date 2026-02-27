@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { ArrowLeft, MessageCircle, TrendingUp, BarChart3, Smile } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { format, subDays, parseISO } from 'date-fns';

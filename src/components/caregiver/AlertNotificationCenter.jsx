@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
-import { AlertCircle, CheckCircle, Trash2, MessageSquare } from 'lucide-react';
+import { AlertCircle, CheckCircle, Trash2 } from 'lucide-react';
 
 const severityColors = {
   low: 'bg-blue-100 text-blue-800 border-blue-300',

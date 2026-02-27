@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { Phone } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'react-hot-toast';
-import { Button } from '@/components/ui/button';
 import RegistrationModal from '@/components/RegistrationModal';
 
 export default function EnhancedEmergencyButton() {

@@ -5,8 +5,7 @@ import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Plus, Trash2, TrendingUp, Save, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, TrendingUp, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function AdaptiveRoutineManager({ patientProfileId, patientName }) {

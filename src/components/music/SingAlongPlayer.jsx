@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Music2, Play, Pause, Volume2, SkipForward, Heart, X, Sparkles } from 'lucide-react';
+import { Music2, Play, Pause, Volume2, SkipForward, Heart, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';

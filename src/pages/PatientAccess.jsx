@@ -4,7 +4,6 @@ import { ArrowLeft, User, Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
-import { createPageUrl } from '@/utils';
 
 export default function PatientAccess() {
   const navigate = useNavigate();

@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Send, Plus, Archive, X, Check, CheckCheck, Phone } from 'lucide-react';
+import { Send, Plus, X, Check, CheckCheck, Phone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'sonner';
 import SecureVideoCall from '@/components/video/SecureVideoCall';

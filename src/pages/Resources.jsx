@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ArrowLeft, Phone, Globe, Heart, Shield, BookOpen, Headphones, FileText, Home, Search } from 'lucide-react';
+import { ArrowLeft, Phone, Globe, Heart, Shield, BookOpen, Headphones, FileText, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
