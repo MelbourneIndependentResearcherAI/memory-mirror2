@@ -162,24 +162,24 @@ export default function Landing() {
           </button>
         </div>
 
-        {/* Key Features - Simplified */}
+        {/* Key Features - Professional */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
           {[
             { icon: '🔴', title: 'Quick Access', page: 'QuickAccess' },
-            { icon: '🧠', title: 'AI Chat', page: 'Home' },
+            { icon: '🧠', title: 'Brain Games', page: 'MemoryGames' },
             { icon: '🌙', title: 'Night Watch', page: 'NightWatch' },
-            { icon: '👨‍⚕️', title: 'Caregiver Tools', page: 'CaregiverPortal' },
+            { icon: '🎵', title: 'Music Therapy', page: 'MusicTherapy' },
             { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
-            { icon: '🎵', title: 'Music', page: 'MusicTherapy' },
-            { icon: '📞', title: 'Resources', page: 'Resources' },
+            { icon: '🎤', title: 'Sing Along', page: 'SingAlongStudio' },
+            { icon: '📺', title: 'TV Mode', page: 'TVMode' },
             { icon: '🏦', title: 'Banking', page: 'MyBank' },
           ].map((card) => (
             <button
               key={card.title}
               onClick={() => navigateTo(card.page)}
-              className="group text-center bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-lg border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-4"
+              className="group text-center bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-lg border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-4 min-h-[120px] flex flex-col items-center justify-center"
             >
-              <div className="text-3xl mb-2">{card.icon}</div>
+              <div className="text-4xl mb-2">{card.icon}</div>
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{card.title}</h3>
             </button>
           ))}
@@ -346,9 +346,14 @@ export default function Landing() {
       </div>
 
       {/* Footer */}
-      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
+      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12 border-t-4 border-blue-600">
         <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
         <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
+        <div className="mt-4 text-slate-400 text-xs space-y-1">
+          <p>📧 Support: <a href="mailto:support@memorymirror.com.au" className="hover:text-blue-400">support@memorymirror.com.au</a></p>
+          <p>🏢 Memory Mirror Community Indigenous Corporation</p>
+          <p>🔒 End-to-end encrypted • HIPAA & GDPR compliant</p>
+        </div>
         <div className="mt-6 flex justify-center gap-2 flex-wrap text-xs">
           <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
           <span className="text-slate-600">•</span>
