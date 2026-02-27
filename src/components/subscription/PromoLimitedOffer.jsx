@@ -13,7 +13,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
   const [loading, setLoading] = useState(true);
 
   // Base offset to make it look like spots are filling fast (hidden from users)
-  const FAKE_CLAIMED_BASE = 147;
+  const FAKE_CLAIMED_BASE = 150;
 
   useEffect(() => {
     const fetchRemainingSlots = async () => {
