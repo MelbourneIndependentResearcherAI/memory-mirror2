@@ -55,12 +55,12 @@ export default function Landing() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950">
       <QuickAccessCheck />
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16 md:py-24 max-w-5xl">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+      <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-5 py-2.5 rounded-full shadow-sm mb-6 border border-blue-200/50 dark:border-blue-700/50">
             <Heart className="w-4 h-4 text-blue-500 animate-pulse" />
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Compassionate Care at Home</span>
