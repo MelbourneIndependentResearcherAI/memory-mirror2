@@ -477,7 +477,9 @@ export default function Pricing() {
                     Processing Payment...
                   </>
                 ) : (
-                  `Complete Subscription - ${formatCurrency(selectedPlan.price)}/month`
+                  billingCycle === 'yearly' && selectedPlan.id === 'premium'
+                   ? `Complete Subscription - ${formatCurrency(selectedPlan.yearlyTotal)}/year (${formatCurrency(selectedPlan.price)}/mo)`
+                   : `Complete Subscription - ${formatCurrency(selectedPlan.price)}/month`
                 )}
               </Button>
 
