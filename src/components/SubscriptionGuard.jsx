@@ -65,9 +65,13 @@ export function useSubscriptionStatus() {
           (sub) => (sub.plan_name === 'premium' || sub.plan_name === 'tool_subscription') && sub.status === 'pending'
         );
 
+        // Admin users bypass paywall entirely
+        const isAdmin = user.role === 'admin';
+
         const result = {
-          isSubscribed: !!activeSubscription || activeToolSubscriptions.length > 0,
-          isPremium: !!activeSubscription,
+          isSubscribed: isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0,
+          isPremium: isAdmin || !!activeSubscription,
+          isAdmin,
           isPending: !!pendingSubscription,
           subscription: activeSubscription || pendingSubscription || null,
           subscribedTools,
