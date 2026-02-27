@@ -22,17 +22,17 @@ export default function CognitiveAssessmentLink() {
             Get a comprehensive cognitive health assessment anytime, completely free. Test your memory, attention, and thinking skills with our validated CogniCare assessment tool.
           </p>
           
-          <div className="flex flex-col sm:flex-row gap-3">
+          <div className="flex flex-col gap-4">
             <Button 
               onClick={handleStartAssessment}
-              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2"
+              className="bg-blue-600 hover:bg-blue-700 text-white flex items-center gap-2 w-fit"
             >
               <Brain className="w-4 h-4" />
               Start Free Assessment
               <ExternalLink className="w-4 h-4" />
             </Button>
             
-            <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2 sm:mt-2">
+            <p className="text-sm text-slate-600 dark:text-slate-400 flex items-center gap-2">
               <Download className="w-4 h-4" />
               Download your results as a letter when complete
             </p>
