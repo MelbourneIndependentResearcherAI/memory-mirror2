@@ -13,7 +13,10 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// Legacy compatibility - these are now in offlinePreloaderData.js
+// NOTE: All data arrays (OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES)
+// are now imported from ./offlinePreloaderData.js
+
+// Placeholder to avoid removing the rest of the file structure - start of old inline arrays
 const _LEGACY_STORIES = [
   {
     title: "The Garden of Memories",
