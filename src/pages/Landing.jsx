@@ -186,7 +186,7 @@ export default function Landing() {
         </div>
 
         {/* Individual Tool Pricing Teaser */}
-        <div className="max-w-4xl mx-auto px-4 mb-10">
+        <div className="max-w-4xl mx-auto px-4 mb-8">
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-purple-200 dark:border-purple-800 shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 text-center">
               <h2 className="text-xl font-bold text-white">🛠️ Only Need One Feature? Pay for Just That.</h2>
