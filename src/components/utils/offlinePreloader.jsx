@@ -721,10 +721,10 @@ export async function preloadEssentialData() {
 
     // 1. CRITICAL: Preload comprehensive AI response library (250+ responses)
     console.log('📦 Preloading AI response library...');
-    for (const resp of COMPREHENSIVE_OFFLINE_RESPONSES) {
+    for (let i = 0; i < COMPREHENSIVE_OFFLINE_RESPONSES.length; i++) {
+      const resp = COMPREHENSIVE_OFFLINE_RESPONSES[i];
       try {
         await saveToStore(STORES.aiResponses, {
-          id: `offline_${resp.category}_${Date.now()}_${Math.random()}`,
           prompt: resp.prompt,
           response: resp.response,
           category: resp.category,
