@@ -68,11 +68,14 @@ export default function StoryTeller({ currentEra, currentMood = 'peaceful', user
         volume: 1.0
       });
       
-      // Log activity
-      base44.entities.ActivityLog.create({
-        activity_type: 'memory_viewed',
-        details: { type: 'story', title: selectedStory.title, era: currentEra }
-      }).catch(() => {});
+      // Log activity (offline-safe)
+      try {
+        const { offlineEntities } = await import('@/components/utils/offlineAPI');
+        offlineEntities.create('ActivityLog', {
+          activity_type: 'memory_viewed',
+          details: { type: 'story', title: selectedStory.title, era: currentEra }
+        }).catch(() => {});
+      } catch (_e) {}
       
       // Monitor for completion
       const checkCompletion = setInterval(() => {
