@@ -23,6 +23,7 @@ import {
 import { toast } from 'sonner';
 import { createPageUrl } from '@/utils';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
+import IndividualToolPlans from '@/components/subscription/IndividualToolPlans';
 
 export default function Pricing() {
   const navigate = useNavigate();
