@@ -1312,6 +1312,12 @@ RESPOND NOW:
           
           console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
           
+          // In voice typing mode, show text in real-time
+          if (voiceTypingMode) {
+            setTextInput(transcript.trim());
+            return;
+          }
+          
           // Wait for user to fully finish their thought
           if (lastResult.isFinal) {
             const finalSpeech = transcript.trim();
