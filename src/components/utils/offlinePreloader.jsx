@@ -13,10 +13,9 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// Data arrays are imported from ./offlinePreloaderData.js — no duplicates here.
-// (inline copies removed)
+// Data arrays imported from offlinePreloaderData.js above.
 
-const _removedStart = {
+const _dummy = {
     content: "Every Saturday morning, the whole town knew where to find the most delicious fresh bread. Mr. Peterson's bakery on Main Street filled the air with the warm smell of cinnamon rolls and crusty loaves. Children would press their noses against the window, watching the magic happen. Inside, flour dusted the air like snow, and the ovens hummed their friendly tune. 'The secret ingredient,' Mr. Peterson would say with a wink, 'is making each loaf with love.'",
     theme: "nostalgia",
     era: "1940s",
