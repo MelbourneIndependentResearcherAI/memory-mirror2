@@ -16,7 +16,8 @@ export default function CognitiveAssessmentLink() {
 
   const handleStartAssessment = () => {
     if (hasEmailAccess) {
-      window.open('https://cogni-care-go.base44.app/', '_blank');
+      const email = localStorage.getItem('cognitiveAssessmentEmail');
+      window.open(`https://cognicheck.base44.app/StartTest?email=${encodeURIComponent(email)}`, '_blank');
     } else {
       setShowGate(true);
     }
@@ -25,7 +26,8 @@ export default function CognitiveAssessmentLink() {
   const handleEmailGateSubmit = () => {
     setHasEmailAccess(true);
     setTimeout(() => {
-      window.open('https://cogni-care-go.base44.app/', '_blank');
+      const email = localStorage.getItem('cognitiveAssessmentEmail');
+      window.open(`https://cognicheck.base44.app/StartTest?email=${encodeURIComponent(email)}`, '_blank');
       setShowGate(false);
     }, 1500);
   };
