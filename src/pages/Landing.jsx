@@ -11,6 +11,7 @@ import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
 import FreeTrialRegistration from '@/components/subscription/FreeTrialRegistration';
 import { isFreeTrial } from '@/components/subscription/FreeTrialManager';
+import CognitiveAssessmentLink from '@/components/cognitive/CognitiveAssessmentLink';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
