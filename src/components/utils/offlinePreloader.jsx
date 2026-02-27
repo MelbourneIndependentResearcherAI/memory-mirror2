@@ -743,7 +743,6 @@ export async function preloadEssentialData() {
     for (const story of OFFLINE_STORIES) {
       try {
         await saveToStore(STORES.stories, {
-          id: `offline_story_${Date.now()}_${Math.random()}`,
           ...story,
           uploaded_by_family: false,
           offline_preloaded: true
@@ -761,7 +760,6 @@ export async function preloadEssentialData() {
       try {
         // Save metadata first
         await saveToStore(STORES.music, {
-          id: `offline_music_${Date.now()}_${Math.random()}`,
           ...song,
           uploaded_by_family: false,
           offline_preloaded: true,
@@ -797,8 +795,8 @@ export async function preloadEssentialData() {
       try {
         // Store exercises in general cache - no dedicated store needed
         await saveToStore(STORES.activityLog, {
-          id: `exercise_${exercise.id}`,
           activity_type: 'memory_exercise',
+          exercise_id: exercise.id,
           details: exercise,
           offline_preloaded: true,
           created_date: new Date().toISOString()
