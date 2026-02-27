@@ -454,6 +454,19 @@ export default function Pricing() {
           </Card>
         )}
 
+        {/* Individual Tool Plans */}
+        <div className="mb-12">
+          <div className="text-center mb-8">
+            <h2 className="text-2xl md:text-3xl font-bold text-slate-900 dark:text-white mb-2">
+              🛠️ Just need one tool?
+            </h2>
+            <p className="text-slate-600 dark:text-slate-400 max-w-xl mx-auto">
+              Subscribe to individual features for <strong>$2.99/month each</strong> — or get all features with Premium for just $9.99/month.
+            </p>
+          </div>
+          <IndividualToolPlans user={user} />
+        </div>
+
         {/* Feature Highlights */}
         <div className="mt-12 grid md:grid-cols-3 gap-6">
           <Card>
