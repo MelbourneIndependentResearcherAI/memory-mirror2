@@ -12,19 +12,24 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
   const [remainingSlots, setRemainingSlots] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Base offset to make it look like spots are filling fast (hidden from users)
+  const FAKE_CLAIMED_BASE = 147;
+
   useEffect(() => {
     const fetchRemainingSlots = async () => {
       try {
-        // Count active/pending lifetime subscriptions at $9.99
         const subscriptions = await base44.entities.Subscription.filter({
           plan_name: 'premium',
           is_lifetime_deal: true
         });
-        const remaining = Math.max(0, 200 - (subscriptions?.length || 0));
+        const realClaimed = subscriptions?.length || 0;
+        // Add fake base so it looks like most spots are already gone
+        const totalClaimed = Math.min(200, realClaimed + FAKE_CLAIMED_BASE);
+        const remaining = Math.max(0, 200 - totalClaimed);
         setRemainingSlots(remaining);
       } catch (error) {
         console.error('Failed to fetch promo status:', error);
-        setRemainingSlots(200); // Fallback
+        setRemainingSlots(200 - FAKE_CLAIMED_BASE);
       } finally {
         setLoading(false);
       }
@@ -34,7 +39,7 @@ export default function PromoLimitedOffer({ variant = 'banner' }) {
   }, []);
 
   const percentage = loading ? 0 : Math.round(((200 - remainingSlots) / 200) * 100);
-  const isAlmostGone = remainingSlots <= 20;
+  const isAlmostGone = remainingSlots <= 60;
 
   if (variant === 'banner') {
     return (
