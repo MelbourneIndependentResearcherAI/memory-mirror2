@@ -24,7 +24,7 @@ export default function Landing() {
     if (isLoading) return; // Prevent click while loading
     if (subscriptionData?.isSubscribed) {
       navigate(createPageUrl('Home'));
-    } else if (isFreeTrial()) {
+    } else if (isFreeTrial() && !subscriptionData?.trialExpired) {
       navigate(createPageUrl('Home'));
     } else {
       setShowTrialModal(true);
