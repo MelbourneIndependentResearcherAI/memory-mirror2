@@ -352,6 +352,12 @@ export default function Landing() {
       {showDonationModal && (
         <DonationModal onClose={() => setShowDonationModal(false)} />
       )}
+      {showTrialModal && (
+        <FreeTrialRegistration 
+          onSuccess={handleTrialSuccess}
+          onClose={() => setShowTrialModal(false)}
+        />
+      )}
     </div>
   );
 }
