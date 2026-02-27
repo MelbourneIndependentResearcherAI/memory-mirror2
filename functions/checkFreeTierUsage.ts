@@ -35,11 +35,11 @@ Deno.serve(async (req) => {
 
     const currentUsage = usage[0] || {
       chat_messages_used: 0,
-      chat_messages_limit: 50,
+      chat_messages_limit: 20,
       memories_viewed: 0,
-      memories_limit: 30,
+      memories_limit: 10,
       voice_minutes_used: 0,
-      voice_minutes_limit: 60
+      voice_minutes_limit: 30
     };
 
     return Response.json({
