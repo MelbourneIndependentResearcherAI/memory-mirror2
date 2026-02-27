@@ -6,7 +6,7 @@
 import { initOfflineStorage, saveToStore, getAllFromStore, STORES } from './offlineStorage';
 import { initOfflineDB, downloadAudioForOffline, getOfflineAudioLibrary } from './offlineManager';
 import { base44 } from '@/api/base44Client';
-import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData';
+import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData.jsx';
 
 export class OfflineDownloadManager {
   constructor() {
