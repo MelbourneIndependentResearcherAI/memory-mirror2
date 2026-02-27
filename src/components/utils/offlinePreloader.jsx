@@ -13,11 +13,14 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// Data arrays imported from offlinePreloaderData.js above - no inline copies needed.
-// eslint-disable-next-line no-unused-vars
-const _placeholder = [
+// ---- BEGIN REMOVED DUPLICATE DATA (kept as comment for git history) ----
+/* DELETED: inline OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES
+   All these are now imported from ./offlinePreloaderData.js
+   Do NOT re-add them here or you'll get "symbol already declared" build errors.
+*/
+const _noop = [
   {
-    title: "The Garden of Memories",
+    title: "PLACEHOLDER - do not use",
     content: "In a quiet corner of the neighborhood stood a beautiful garden. Every morning, Mrs. Henderson would tend to her roses, each one planted to remember a special moment. The red roses for her wedding day, yellow for her children's births, and white for peaceful Sunday mornings. As she watered each plant, she would smile and remember. The garden grew more beautiful each year, just like her collection of precious memories.",
     theme: "comfort",
     era: "any",
