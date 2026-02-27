@@ -33,8 +33,8 @@ export default function Layout({ children, currentPageName }) {
   
   // Check subscription access - allow pages to render while loading
   useEffect(() => {
-    // Don't block while loading
-    if (isLoading) return;
+    // Don't block while loading or if no subscription data yet
+    if (isLoading || !subscriptionData) return;
     
     const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
@@ -44,9 +44,9 @@ export default function Layout({ children, currentPageName }) {
     // 2. User is not on a free trial (or trial expired) AND
     // 3. Accessing gated content AND
     // 4. Not an admin
-    const hasValidAccess = subscriptionData?.isSubscribed || (subscriptionData?.isOnFreeTrial && !subscriptionData?.trialExpired);
+    const hasValidAccess = subscriptionData.isSubscribed || (subscriptionData.isOnFreeTrial && !subscriptionData.trialExpired);
     
-    if (subscriptionData && !hasValidAccess && !isRestrictedPage && subscriptionData.role !== 'admin') {
+    if (!hasValidAccess && !isRestrictedPage && subscriptionData.role !== 'admin') {
       navigate('/paywall');
     }
   }, [isLoading, subscriptionData, currentPageName, navigate]);
