@@ -152,11 +152,11 @@ export default function Paywall() {
           {/* Restore Purchase */}
           <button
             onClick={() => {
-              toast.info('Your subscription will be restored from your email address');
+              navigate('/pricing');
             }}
-            className="w-full text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium py-3 transition-colors"
+            className="w-full text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium py-3 transition-colors underline"
           >
-            Restore Purchase
+            View all plans
           </button>
 
           {/* Terms */}
