@@ -39,7 +39,15 @@ import ChatHistory from '@/components/caregiver/ChatHistory';
 import CaregiverDashboardComponent from '@/components/caregiver/CaregiverDashboard';
 import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
-const featureCards = [
+const adminOnlyCards = [
+  { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF', adminOnly: true },
+  { id: 20, title: 'Audit Trail', icon: '🔍', description: 'View complete compliance audit logs (HIPAA/GDPR)', path: '/CaregiverPortal/audit-logs', background: '#DBEAFE', adminOnly: true },
+  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/CaregiverPortal/offline-test', background: '#F0FDF4', adminOnly: true },
+  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/CaregiverPortal/agents', background: '#F0FDF4', adminOnly: true },
+  { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE', adminOnly: true }
+];
+
+const regularCards = [
   { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalization profile for your loved one', path: '/UserProfile', background: '#F0F9FF' },
   { id: 33, title: 'Family Memory Library', icon: '💝', description: 'Share memories, photos, audio & collaborate with family', path: '/FamilyMemoryLibrary', background: '#FCE7F3', isNew: true },
   { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
@@ -63,13 +71,14 @@ const featureCards = [
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/FakeBankSettings', background: '#E0F2FE' },
   { id: 32, title: 'Location Safety', icon: '📍', description: 'Set up safe zones and track patient location in real-time', path: '/GeofenceTracking', background: '#D1FAE5' },
   { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/EmergencyAlerts', background: '#FEE2E2' },
-
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/ActivityReports', background: '#E0E7FF' },
   { id: 25, title: 'Offline Content', icon: '💾', description: 'Manage offline storage, sync priorities, and device content', path: '/OfflineContent', background: '#DBEAFE' },
   { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CareTeam', background: '#EFF6FF' },
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' }
 ];
+
+const getFeatureCards = (admin) => admin ? [...regularCards, ...adminOnlyCards] : regularCards;
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
