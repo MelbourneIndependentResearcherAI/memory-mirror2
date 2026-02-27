@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { isFreeTrial, hasTrialExpired } from '@/components/subscription/FreeTrialManager';
 
 const SUBSCRIPTION_CACHE_KEY = 'mm_subscription_cache';
 const SUBSCRIPTION_CACHE_TIME = 'mm_subscription_cache_time';
@@ -38,16 +39,10 @@ export function useSubscriptionStatus() {
         const user = await base44.auth.me();
         
         // Check free trial status
-        let trialStatus = { isOnFreeTrial: false, trialExpired: false };
-        try {
-          const { isFreeTrial, hasTrialExpired } = await import('./FreeTrialManager');
-          trialStatus = {
-            isOnFreeTrial: isFreeTrial(),
-            trialExpired: hasTrialExpired()
-          };
-        } catch (e) {
-          console.log('Trial check skipped');
-        }
+        const trialStatus = {
+          isOnFreeTrial: isFreeTrial(),
+          trialExpired: hasTrialExpired()
+        };
 
         if (!user) {
           // Not authenticated - try cache first
