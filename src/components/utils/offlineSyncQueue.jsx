@@ -188,11 +188,19 @@ export const syncQueue = new OfflineSyncQueue();
 
 if (typeof window !== 'undefined') {
   window.offlineSyncQueue = syncQueue;
-  syncQueue.loadQueue();
+  
+  // Initialize on app load
+  (async () => {
+    await syncQueue.loadQueue();
+    // Auto-sync if there are pending items
+    if (syncQueue.queue.length > 0 && navigator.onLine) {
+      setTimeout(() => syncQueue.processQueue(), 2000);
+    }
+  })();
 
   // Auto-sync when online
   window.addEventListener('online', () => {
     console.log('📡 Back online - attempting to sync offline changes');
-    syncQueue.processQueue();
+    setTimeout(() => syncQueue.processQueue(), 1000);
   });
 }

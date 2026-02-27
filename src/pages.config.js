@@ -60,6 +60,8 @@ import CarePlans from './pages/CarePlans';
 import CareTeam from './pages/CareTeam';
 import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverPortal from './pages/CaregiverPortal';
+import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
+import CaregiverPortalCore from './pages/CaregiverPortalCore';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatHistory from './pages/ChatHistory';
@@ -152,8 +154,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
-import CaregiverPortalCore from './pages/CaregiverPortalCore';
 import __Layout from './Layout.jsx';
 
 
@@ -171,6 +171,8 @@ export const PAGES = {
     "CareTeam": CareTeam,
     "CaregiverDashboard": CaregiverDashboard,
     "CaregiverPortal": CaregiverPortal,
+    "CaregiverPortalAdmin": CaregiverPortalAdmin,
+    "CaregiverPortalCore": CaregiverPortalCore,
     "CaregiverPortalRouter": CaregiverPortalRouter,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatHistory": ChatHistory,
@@ -263,8 +265,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "CaregiverPortalAdmin": CaregiverPortalAdmin,
-    "CaregiverPortalCore": CaregiverPortalCore,
 }
 
 export const pagesConfig = {
