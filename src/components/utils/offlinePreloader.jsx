@@ -13,11 +13,9 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// NOTE: Data arrays imported from ./offlinePreloaderData.js
-// _LEGACY_STORIES removed - use OFFLINE_STORIES from offlinePreloaderData.js
-
-// Keep this comment as placeholder
-const _unused = [
+// All data arrays are now imported from ./offlinePreloaderData.js above.
+// The inline copies below are kept only as dead code until the file is cleaned up.
+const _dead_inline_stories_start = [
   {
     title: "The Garden of Memories",
     content: "In a quiet corner of the neighborhood stood a beautiful garden. Every morning, Mrs. Henderson would tend to her roses, each one planted to remember a special moment. The red roses for her wedding day, yellow for her children's births, and white for peaceful Sunday mornings. As she watered each plant, she would smile and remember. The garden grew more beautiful each year, just like her collection of precious memories.",
