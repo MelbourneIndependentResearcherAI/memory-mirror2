@@ -163,7 +163,7 @@ export default function Landing() {
         </div>
 
         {/* Key Features - Simplified */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12 px-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
           {[
             { icon: '🔴', title: 'Quick Access', page: 'QuickAccess' },
             { icon: '🧠', title: 'AI Chat', page: 'Home' },
