@@ -280,18 +280,18 @@ export default function Landing() {
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Compassionate AI for Dementia Care
             </h2>
-            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-1">24/7</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Always Available</div>
+                <div className="text-2xl font-bold text-blue-600 mb-0.5">24/7</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Always Available</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-purple-600 mb-1">100%</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Private & Secure</div>
+                <div className="text-2xl font-bold text-purple-600 mb-0.5">100%</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Private & Secure</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-green-600 mb-1">Offline</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Works Without WiFi</div>
+                <div className="text-2xl font-bold text-green-600 mb-0.5">Offline</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Works Without WiFi</div>
               </div>
             </div>
           </div>
