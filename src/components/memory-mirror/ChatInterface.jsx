@@ -450,7 +450,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         }).catch(() => {});
       }
     };
-  }, [sendProactiveMessage, startProactiveCheckIns, evaluateAlertConditions]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sendProactiveMessage, startProactiveCheckIns]);
 
   // Keep refs in sync with latest state so the unmount cleanup can read fresh values
   useEffect(() => { conversationHistoryRef.current = conversationHistory; }, [conversationHistory]);
