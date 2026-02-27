@@ -40,10 +40,10 @@ export default function Footer() {
             <div className="flex items-center justify-center md:justify-end gap-2 text-sm text-slate-300">
               <Mail className="w-4 h-4 text-purple-400" />
               <a 
-                href="mailto:mcnamaram86@gmail.com?subject=Memory%20Mirror%20Support"
+                href="mailto:support@memorymirror.com.au?subject=Memory%20Mirror%20Support"
                 className="hover:text-purple-400 transition-colors underline decoration-purple-400/30 hover:decoration-purple-400"
               >
-                mcnamaram86@gmail.com
+                support@memorymirror.com.au
               </a>
             </div>
           </div>

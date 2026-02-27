@@ -234,7 +234,7 @@ export default function FAQ() {
               Send Feedback
             </Button>
             <a
-              href="mailto:support@memorymirror.app"
+              href="mailto:support@memorymirror.com.au"
               className="inline-flex items-center px-6 py-2 bg-white/20 hover:bg-white/30 rounded-lg transition-colors"
             >
               Email Support
