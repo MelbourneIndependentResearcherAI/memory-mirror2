@@ -68,9 +68,6 @@ export class OfflineDownloadManager {
       this.progress.currentItem = 'Storage initialized...';
       this.notify();
 
-      // Run preload in 4 explicit phases with progress between each
-      const { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } = await import('./offlinePreloaderData.js');
-
       // Phase 1: AI Responses (250 items → 5% to 65%)
       this.progress.currentItem = 'Downloading AI responses...';
       this.notify();
