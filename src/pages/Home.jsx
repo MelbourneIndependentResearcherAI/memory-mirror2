@@ -9,7 +9,6 @@ import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
 import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflectionSession';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
-import PageLoadTip from '@/components/tips/PageLoadTip';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';

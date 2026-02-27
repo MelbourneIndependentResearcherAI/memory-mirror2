@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Loader2, BookHeart, Gamepad2, Music, BookOpen, Headphones, Heart } from 'lucide-react';
+import { Mic, MicOff, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -14,12 +14,11 @@ import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import SmartHomeControls from '../smartHome/SmartHomeControls';
-import HandsFreeMode from './HandsFreeMode';
 import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { speakWithRealisticVoice, speakWithClonedVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
@@ -450,7 +449,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         }).catch(() => {});
       }
     };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [sendProactiveMessage, startProactiveCheckIns]);
 
   // Keep refs in sync with latest state so the unmount cleanup can read fresh values

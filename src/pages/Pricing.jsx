@@ -12,8 +12,6 @@ import {
   Sparkles, 
   Heart, 
   Users, 
-  Music, 
-  Calendar, 
   Shield,
   Building2,
   Copy,
@@ -21,7 +19,6 @@ import {
   Loader2
 } from 'lucide-react';
 import { toast } from 'sonner';
-import { createPageUrl } from '@/utils';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
 import IndividualToolPlans from '@/components/subscription/IndividualToolPlans';
 
