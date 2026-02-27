@@ -28,6 +28,11 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
   
+  // Debug logging
+  React.useEffect(() => {
+    console.log('Layout subscription check:', { currentPageName, isLoading, hasData: !!subscriptionData });
+  }, [isLoading, subscriptionData, currentPageName]);
+  
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
   
