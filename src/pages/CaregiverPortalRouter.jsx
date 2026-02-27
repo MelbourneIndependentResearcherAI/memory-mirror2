@@ -74,6 +74,19 @@ const featureCards = [
 function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+
+  React.useEffect(() => {
+    const checkAdmin = async () => {
+      try {
+        const user = await base44.auth.me();
+        setIsAdmin(user?.role === 'admin');
+      } catch (error) {
+        console.error('Failed to check admin status:', error);
+      }
+    };
+    checkAdmin();
+  }, []);
 
   const handleCardClick = async (card) => {
     if (card.id === 12) {
@@ -143,7 +156,7 @@ function CaregiverPortalHome() {
       <OfflineReadyIndicator />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {featureCards.map((card) => (
+        {getFeatureCards(isAdmin).map((card) => (
           <button
             key={card.id}
             onClick={() => handleCardClick(card)}
