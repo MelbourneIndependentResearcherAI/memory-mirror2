@@ -5,7 +5,7 @@
  */
 
 const CACHE_KEY = 'memoryMirror_offline_cache';
-const MAX_CACHE_SIZE = 50; // Keep last 50 interactions
+const MAX_CACHE_SIZE = 200; // Keep last 200 interactions
 
 class SimpleOfflineCache {
   getCache() {
@@ -31,8 +31,8 @@ class SimpleOfflineCache {
     try {
       const cache = this.getCache();
       cache.interactions.push({
-        userMessage: userMessage.substring(0, 500), // Limit size
-        aiResponse: aiResponse.substring(0, 500),
+        userMessage: userMessage.substring(0, 1000),
+        aiResponse: aiResponse.substring(0, 1000),
         timestamp: Date.now()
       });
       
