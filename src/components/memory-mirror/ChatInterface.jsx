@@ -25,6 +25,7 @@ import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
 import { checkRateLimit } from '@/components/RateLimitManager';
 import RateLimitAlert from '@/components/RateLimitManager';
+import FreeTierLimitAlert from '@/components/subscription/FreeTierLimitAlert';
 
 export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
