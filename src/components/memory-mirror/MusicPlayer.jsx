@@ -175,11 +175,7 @@ export default function MusicPlayer({ currentEra, onClose }) {
     setCurrentIndex(nextIdx);
     setCurrentSong(songs[nextIdx]);
     setIsPlaying(false);
-    
-    // Auto-play next song
-    setTimeout(() => {
-      playPause();
-    }, 500);
+    // Note: user must press play for next song to avoid browser autoplay policy blocks
   };
 
   if (songs.length === 0) {
