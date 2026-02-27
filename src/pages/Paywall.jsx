@@ -141,6 +141,14 @@ export default function Paywall() {
             )}
           </Button>
 
+          {/* View All Plans */}
+          <button
+            onClick={() => navigate('/pricing')}
+            className="w-full text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-medium py-3 transition-colors underline"
+          >
+            View all plans (including individual tools from $2.99/month)
+          </button>
+
           {/* Restore Purchase */}
           <button
             onClick={() => {
