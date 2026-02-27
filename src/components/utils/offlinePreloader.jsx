@@ -13,9 +13,9 @@ const ESSENTIAL_CATEGORIES = [
   'VoiceProfile'
 ];
 
-// REMOVED: Inline data arrays - now imported from offlinePreloaderData.js
-// The following was dead code - deleted.
-const _dead_inline_stories_start = [ /* intentionally empty placeholder - do not use */
+// Data arrays imported from offlinePreloaderData.js above - no inline copies needed.
+// eslint-disable-next-line no-unused-vars
+const _placeholder = [
   {
     title: "The Garden of Memories",
     content: "In a quiet corner of the neighborhood stood a beautiful garden. Every morning, Mrs. Henderson would tend to her roses, each one planted to remember a special moment. The red roses for her wedding day, yellow for her children's births, and white for peaceful Sunday mornings. As she watered each plant, she would smile and remember. The garden grew more beautiful each year, just like her collection of precious memories.",
