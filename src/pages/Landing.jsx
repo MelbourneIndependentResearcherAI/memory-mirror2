@@ -9,6 +9,8 @@ import AppTutorial from '@/components/landing/AppTutorial';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
+import FreeTrialRegistration from '@/components/subscription/FreeTrialRegistration';
+import { isFreeTrial } from '@/components/subscription/FreeTrialManager';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
