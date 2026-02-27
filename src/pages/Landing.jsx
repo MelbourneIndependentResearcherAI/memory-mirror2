@@ -302,7 +302,7 @@ export default function Landing() {
       <AppTutorial />
 
       {/* Testimonials Section */}
-      <div className="max-w-5xl mx-auto px-4 mb-12">
+      <div className="max-w-5xl mx-auto px-4 mb-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">
             Loved by Families & Caregivers
