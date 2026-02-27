@@ -62,6 +62,8 @@ export default function Pricing() {
     enabled: !!user?.email
   });
 
+  const [billingCycle, setBillingCycle] = useState('monthly');
+
   const plans = [
     {
       id: 'free',
@@ -81,10 +83,13 @@ export default function Pricing() {
     {
       id: 'premium',
       name: 'Premium',
-      price: 9.99,
-      billing: 'AUD $9.99/month (FOREVER)',
-      badge: '🔥 FOUNDER\'S PRICE - LIMITED SPOTS',
-      description: '🔥 Founder\'s Price — First 200 users lock in $9.99/month FOREVER. After 200 spots are filled, new users pay $18.99/month. Your price never increases — ever.',
+      price: billingCycle === 'yearly' ? 7.99 : 9.99,
+      yearlyTotal: 95.88,
+      billing: billingCycle === 'yearly' ? 'AUD $7.99/month, billed $95.88/year' : 'AUD $9.99/month (FOUNDER\'S PRICE)',
+      badge: billingCycle === 'yearly' ? '🎉 SAVE $24/YEAR' : '🔥 FOUNDER\'S PRICE - LIMITED SPOTS',
+      description: billingCycle === 'yearly'
+        ? '💰 Best value — Save over $24 a year compared to monthly. All premium features included.'
+        : '🔥 Founder\'s Price — First 200 users lock in $9.99/month FOREVER. After 200 spots are filled, new users pay $18.99/month.',
       features: [
         'Unlimited conversations',
         'Unlimited memory storage',
