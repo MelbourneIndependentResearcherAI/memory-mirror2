@@ -269,8 +269,8 @@ export default function Landing() {
           </div>
         </div>
 
-        {/* Quick Stats & Free Cognitive Assessment */}
-        <div className="max-w-4xl mx-auto px-4 mb-8 space-y-6">
+        {/* Quick Stats */}
+        <div className="max-w-4xl mx-auto px-4 mb-8">
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg border border-slate-200/60 dark:border-slate-700/50 text-center">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Compassionate AI for Dementia Care
@@ -289,11 +289,6 @@ export default function Landing() {
                 <div className="text-xs text-slate-600 dark:text-slate-400">Works Without WiFi</div>
               </div>
             </div>
-          </div>
-
-          {/* Subtle Free Cognitive Assessment */}
-          <div className="opacity-90 hover:opacity-100 transition-opacity">
-            <CognitiveAssessmentLink />
           </div>
         </div>
       </div>
