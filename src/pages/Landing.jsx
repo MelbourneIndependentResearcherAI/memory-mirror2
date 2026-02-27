@@ -7,6 +7,7 @@ import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import CommunityFeedbackSection from '@/components/community/CommunityFeedbackSection';
 import FeatureTutorial from '@/components/landing/FeatureTutorial';
+import AppTutorial from '@/components/landing/AppTutorial';
 import GlobalLanguageSelector from '@/components/i18n/GlobalLanguageSelector';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
