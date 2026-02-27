@@ -719,19 +719,28 @@ Now respond like their best friend who genuinely cares and listened carefully to
     }
     abortControllerRef.current = new AbortController();
     
-    // Check free tier limits and increment usage
+    // Check free tier limits BEFORE processing message
     try {
       const usageResult = await base44.functions.invoke('checkFreeTierUsage', {});
-      if (usageResult.data && !usageResult.data.isPremium && usageResult.data.isLimitExceeded?.chat) {
-        setShowFreeTierAlert(true);
-        setFreeTierUsage({ used: usageResult.data.usage.chat_messages.used, limit: usageResult.data.usage.chat_messages.limit });
-        setIsLoading(false);
-        return;
+      const usageData = usageResult.data;
+      if (usageData && !usageData.isPremium) {
+        if (usageData.isLimitExceeded?.chat) {
+          // Already exceeded — block and show alert
+          setShowFreeTierAlert(true);
+          setFreeTierUsage({ used: usageData.usage.chat_messages.used, limit: usageData.usage.chat_messages_limit || usageData.usage.chat_messages.limit });
+          setIsLoading(false);
+          return;
+        }
+        // Increment usage
+        const incrementResult = await base44.functions.invoke('incrementFreeTierUsage', { feature_type: 'chat' });
+        if (incrementResult.data?.isLimitExceeded) {
+          // Just hit the limit with this message — let it through but show warning
+          setShowFreeTierAlert(true);
+          setFreeTierUsage({ used: incrementResult.data.used, limit: incrementResult.data.limit });
+        }
       }
-      // Increment usage for free tier
-      await base44.functions.invoke('incrementFreeTierUsage', { feature_type: 'chat' }).catch(() => {});
     } catch (error) {
-      console.log('Free tier check skipped (offline mode)');
+      console.log('Free tier check skipped (offline or not logged in)');
     }
     
     // Log chat activity
