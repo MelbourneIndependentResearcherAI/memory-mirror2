@@ -768,21 +768,9 @@ export async function preloadEssentialData() {
         });
         results.music++;
         
-        // Download actual audio file if URL provided and online
-         if ((song.audio_file_url || song.audio_url) && isOnline && isOnline()) {
-           try {
-             const { downloadAudioForOffline } = await import('./offlineManager');
-             await downloadAudioForOffline({
-               ...song,
-               id: `music_${Date.now()}_${Math.random()}`,
-               type: 'music'
-             });
-             console.log(`🎵 Downloaded audio: ${song.title}`);
-           } catch (audioError) {
-             console.warn(`Audio download warning for ${song.title} (non-critical):`, audioError.message);
-             // Don't fail - audio download is optional
-           }
-         }
+        // Note: We skip binary audio download due to CORS restrictions on external URLs.
+        // The audio_file_url is stored in metadata and will stream when online.
+        // For true offline audio, caregivers should upload custom audio files.
       } catch (error) {
         console.warn('Music cache failed:', error.message || 'Unknown error');
       }
