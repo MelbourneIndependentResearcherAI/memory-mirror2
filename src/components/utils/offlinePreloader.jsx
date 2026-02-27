@@ -1,3 +1,4 @@
+/* offlinePreloader - DO NOT RENAME */
 // Complete offline functionality preloader - ensures 100% offline operation
 import { base44 } from '@/api/base44Client';
 import { saveToStore, STORES, initOfflineStorage } from './offlineStorage';
