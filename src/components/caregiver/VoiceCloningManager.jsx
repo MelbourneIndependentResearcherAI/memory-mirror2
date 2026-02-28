@@ -608,7 +608,7 @@ export default function VoiceCloningManager() {
                           variant="destructive"
                           onClick={() => {
                             if (confirm(`Delete voice profile for ${profile.name}?`)) {
-                              deleteVoiceMutation.mutate(profile.id);
+                              deleteVoiceMutation.mutate(profile);
                             }
                           }}
                           className="min-h-[40px] min-w-[40px]"
