@@ -154,6 +154,7 @@ import chat from './pages/chat';
 import phone from './pages/phone';
 import SmartHome from './pages/SmartHome';
 import MoodAutomations from './pages/MoodAutomations';
+import OfflineManager from './pages/OfflineManager';
 import __Layout from './Layout.jsx';
 
 
@@ -265,6 +266,7 @@ export const PAGES = {
     "phone": phone,
     "SmartHome": SmartHome,
     "MoodAutomations": MoodAutomations,
+    "OfflineManager": OfflineManager,
 }
 
 export const pagesConfig = {
