@@ -14,6 +14,7 @@ import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
 import PersonalizedCompanion from './PersonalizedCompanion';
+import HandsFreeMode from './HandsFreeMode';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
@@ -1471,6 +1472,14 @@ RESPOND NOW:
             onDismiss={() => setShowFreeTierAlert(false)}
           />
         </div>
+      )}
+
+      {showHandsFree && (
+        <HandsFreeMode
+          onClose={() => setShowHandsFree(false)}
+          onSendMessage={sendMessage}
+          currentEra={selectedEra === 'auto' ? detectedEra : selectedEra}
+        />
       )}
 
       {showPersonalizedCompanion && (
