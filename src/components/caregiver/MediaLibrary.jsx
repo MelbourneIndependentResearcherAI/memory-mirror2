@@ -201,7 +201,7 @@ export default function MediaLibrary({ onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('video/')) {
-      alert('Please upload a video file');
+      toast.error('Please upload a video file');
       return;
     }
     setUploading(true);
