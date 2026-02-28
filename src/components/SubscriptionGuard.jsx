@@ -130,19 +130,19 @@ export function useSubscriptionStatus() {
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
     initialData: () => {
-      // Pre-check localStorage so there's no flash redirect on page load
       const trialActive = isFreeTrial() && !hasTrialExpired();
       const freeTier = getFreeTierUser();
+      const cached = offlineHelper.getCachedSubscription();
       return {
-        isSubscribed: trialActive || freeTier,
+        isSubscribed: trialActive || freeTier || cached?.isSubscribed || false,
         isOnFreeTrial: trialActive,
         trialExpired: hasTrialExpired(),
         isFreeTier: freeTier,
-        isAdmin: false,
-        isPremium: false,
-        subscription: null,
-        subscribedTools: [],
-        hasToolAccess: () => false,
+        isAdmin: cached?.isAdmin || false,
+        isPremium: cached?.isPremium || false,
+        subscription: cached?.subscription || null,
+        subscribedTools: cached?.subscribedTools || [],
+        hasToolAccess: (toolId) => (cached?.isPremium) || (cached?.subscribedTools || []).includes(toolId),
         user: null
       };
     }
