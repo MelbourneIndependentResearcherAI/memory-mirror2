@@ -47,8 +47,11 @@ const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
 // ElevenLabs disabled - use speakWithRealisticVoice directly
 export const speakWithClonedVoice = async (text, options = {}) => {
   if (!text) return false;
-  // Skip ElevenLabs entirely, use browser TTS
-  speakWithRealisticVoice(text, options);
+  try {
+    await speakWithRealisticVoice(text, options);
+  } catch (e) {
+    console.log('Voice error (safe):', e);
+  }
   return false;
 };
 
