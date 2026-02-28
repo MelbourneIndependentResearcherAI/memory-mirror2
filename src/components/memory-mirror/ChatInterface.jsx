@@ -142,17 +142,30 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
 
   // Ref to last spoken text for replay
   const lastSpokenTextRef = useRef('');
+  const isSpeakingRef = useRef(false);
+  const lastSpokenMessageRef = useRef(null);
 
   const speakResponse = useCallback(async (text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
+    
+    // Prevent speaking the same message twice simultaneously
+    if (isSpeakingRef.current && lastSpokenMessageRef.current === text) {
+      console.log('🔇 Duplicate speak call prevented');
+      return;
+    }
+
+    isSpeakingRef.current = true;
     lastSpokenTextRef.current = text;
+    lastSpokenMessageRef.current = text;
 
     try {
+      console.log('🔊 Starting voice synthesis');
       // Use ElevenLabs (cloned voice if available, else default warm voice)
       await speakWithClonedVoice(text, {
         language: selectedLanguage,
         volume: 1.0,
         onEnd: () => {
+          isSpeakingRef.current = false;
           if (emotionalContext.onEnd) emotionalContext.onEnd();
         }
       });
@@ -165,7 +178,10 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
         cognitiveLevel: cognitiveLevel,
         language: selectedLanguage,
         userProfile: userProfile,
-        onEnd: emotionalContext.onEnd
+        onEnd: () => {
+          isSpeakingRef.current = false;
+          if (emotionalContext.onEnd) emotionalContext.onEnd();
+        }
       });
     }
   }, [selectedLanguage, cognitiveLevel, userProfile]);
