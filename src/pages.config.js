@@ -92,6 +92,7 @@ import FamilyTimeline from './pages/FamilyTimeline';
 import FamilyTree from './pages/FamilyTree';
 import FamilyTreePage from './pages/FamilyTreePage';
 import FamilyVideoCall from './pages/FamilyVideoCall';
+import FeatureLockConfig from './pages/FeatureLockConfig';
 import Feedback from './pages/Feedback';
 import GeofenceTracking from './pages/GeofenceTracking';
 import HealthCheck from './pages/HealthCheck';
@@ -155,7 +156,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import FeatureLockConfig from './pages/FeatureLockConfig';
 import __Layout from './Layout.jsx';
 
 
@@ -205,6 +205,7 @@ export const PAGES = {
     "FamilyTree": FamilyTree,
     "FamilyTreePage": FamilyTreePage,
     "FamilyVideoCall": FamilyVideoCall,
+    "FeatureLockConfig": FeatureLockConfig,
     "Feedback": Feedback,
     "GeofenceTracking": GeofenceTracking,
     "HealthCheck": HealthCheck,
@@ -268,7 +269,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "FeatureLockConfig": FeatureLockConfig,
 }
 
 export const pagesConfig = {
