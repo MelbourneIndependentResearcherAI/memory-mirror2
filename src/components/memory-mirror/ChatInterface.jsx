@@ -146,53 +146,36 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const isSpeakingRef = useRef(false);
   const lastSpokenMessageRef = useRef(null);
 
-  const speakResponse = useCallback(async (text, emotionalContext = {}) => {
+  const speakResponse = useCallback((text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
     
-    // Prevent speaking the same message twice simultaneously
-    if (isSpeakingRef.current && lastSpokenMessageRef.current === text) {
-      console.log('🔇 Duplicate speak call prevented');
+    // CRITICAL: Prevent speaking the same text twice
+    if (lastSpokenTextRef.current === text && isSpeakingRef.current) {
+      console.log('🔇 Skipping duplicate speech');
       return;
     }
 
     isSpeakingRef.current = true;
     lastSpokenTextRef.current = text;
-    lastSpokenMessageRef.current = text;
 
     try {
       console.log('🔊 Starting voice synthesis');
-      // Use ElevenLabs (cloned voice if available, else default warm voice)
-      const success = await speakWithClonedVoice(text, {
+      // Use browser TTS directly (ElevenLabs is unreliable)
+      speakWithRealisticVoice(text, {
+        emotionalState: emotionalContext.state || 'neutral',
+        anxietyLevel: emotionalContext.anxietyLevel || 0,
+        cognitiveLevel: cognitiveLevel,
         language: selectedLanguage,
-        volume: 1.0,
+        userProfile: userProfile,
         onEnd: () => {
           isSpeakingRef.current = false;
           if (emotionalContext.onEnd) emotionalContext.onEnd();
         }
       });
-      
-      // If ElevenLabs failed, success will be true (browser TTS was used)
-      if (success) {
-        console.log('✅ Voice synthesis completed');
-        return;
-      }
     } catch (error) {
       console.error('Voice synthesis error:', error);
+      isSpeakingRef.current = false;
     }
-    
-    // Fallback or if ElevenLabs returned false
-    console.log('🎧 Using browser TTS fallback');
-    speakWithRealisticVoice(text, {
-      emotionalState: emotionalContext.state || 'neutral',
-      anxietyLevel: emotionalContext.anxietyLevel || 0,
-      cognitiveLevel: cognitiveLevel,
-      language: selectedLanguage,
-      userProfile: userProfile,
-      onEnd: () => {
-        isSpeakingRef.current = false;
-        if (emotionalContext.onEnd) emotionalContext.onEnd();
-      }
-    });
   }, [selectedLanguage, cognitiveLevel, userProfile]);
 
   const translateText = useCallback(async (text, targetLang, sourceLang = null) => {
