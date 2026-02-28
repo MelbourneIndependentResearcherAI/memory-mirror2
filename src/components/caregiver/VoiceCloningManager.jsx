@@ -116,7 +116,18 @@ export default function VoiceCloningManager() {
   });
 
   const deleteVoiceMutation = useMutation({
-    mutationFn: (voiceId) => base44.entities.VoiceProfile.delete(voiceId),
+    mutationFn: async (profile) => {
+      // Delete from ElevenLabs first (best effort)
+      try {
+        await base44.functions.invoke('cloneVoice', {
+          _action: 'delete',
+          voice_id: profile.voice_id
+        });
+      } catch {
+        // Ignore ElevenLabs deletion errors - still delete locally
+      }
+      return base44.entities.VoiceProfile.delete(profile.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['voiceProfiles'] });
       toast.success('Voice profile deleted');
