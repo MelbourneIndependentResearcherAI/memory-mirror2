@@ -4,12 +4,14 @@ import { MessageCircle, Phone, Shield, Moon, Music, Cloud, Star, CreditCard, Cir
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { useLockMode } from '@/components/LockModeManager';
+import { useTabStack } from '@/components/TabStackManager';
 
 export default function BottomNav() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t } = useLanguage();
   const { isAnyModeLocked } = useLockMode();
+  const { pushTab } = useTabStack();
   
   const isActive = (path) => location.pathname === path;
 
@@ -78,6 +80,9 @@ export default function BottomNav() {
 
   const handleNavClick = (e, path) => {
     e.preventDefault();
+    
+    // Push tab to stack for back navigation
+    pushTab(path);
     
     // Determine navigation direction for smooth animation
     const currentIndex = navItems.findIndex(item => item.path === location.pathname);
