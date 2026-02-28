@@ -2,6 +2,23 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const LockModeContext = createContext();
 
+// Default PIN hash (SHA-256 of '1234')
+const DEFAULT_PIN_HASH = 'DL1j3YozA7aL0mDgWTLAJ+TXDX1/vJMAZxLVVWN9Aao=';
+
+// Hash PIN with SHA-256
+async function hashPin(pin) {
+  const encoder = new TextEncoder();
+  const data = encoder.encode(pin);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  return btoa(String.fromCharCode(...new Uint8Array(hashBuffer)));
+}
+
+// Verify PIN against stored hash
+async function verifyPin(inputPin, storedHash) {
+  const inputHash = await hashPin(inputPin);
+  return inputHash === storedHash;
+}
+
 export const useLockMode = () => {
   const context = useContext(LockModeContext);
   if (!context) {
@@ -21,14 +38,14 @@ export const LockModeProvider = ({ children }) => {
 
   const [caregiverPin, setCaregiverPin] = useState(() => {
     try {
-      return localStorage.getItem('caregiverPin') || '1234';
+      return localStorage.getItem('caregiverPin') || DEFAULT_PIN_HASH;
     } catch {
-      return '1234';
+      return DEFAULT_PIN_HASH;
     }
   });
 
   // True if caregiver has never changed the default PIN
-  const isDefaultPin = caregiverPin === '1234' && !localStorage.getItem('caregiverPinChanged');
+  const isDefaultPin = caregiverPin === DEFAULT_PIN_HASH && !localStorage.getItem('caregiverPinChanged');
 
   useEffect(() => {
     try {
@@ -46,18 +63,24 @@ export const LockModeProvider = ({ children }) => {
     setLockedMode(mode);
   };
 
-  const unlockMode = (enteredPin) => {
-    if (enteredPin === caregiverPin) {
-      setLockedMode(null);
-      return true;
+  const unlockMode = async (enteredPin) => {
+    try {
+      const success = await verifyPin(enteredPin, caregiverPin);
+      if (success) {
+        setLockedMode(null);
+      }
+      return success;
+    } catch (error) {
+      console.error('PIN verification failed:', error);
+      return false;
     }
-    return false;
   };
 
-  const updateCaregiverPin = (newPin) => {
-    setCaregiverPin(newPin);
+  const updateCaregiverPin = async (newPin) => {
     try {
-      localStorage.setItem('caregiverPin', newPin);
+      const hashedPin = await hashPin(newPin);
+      setCaregiverPin(hashedPin);
+      localStorage.setItem('caregiverPin', hashedPin);
       localStorage.setItem('caregiverPinChanged', 'true');
     } catch (e) {
       console.error('Failed to save PIN:', e);
