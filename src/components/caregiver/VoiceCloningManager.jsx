@@ -241,17 +241,24 @@ export default function VoiceCloningManager() {
 
   const testVoice = async (voiceId) => {
     try {
-      const result = await base44.functions.invoke('synthesizeClonedVoice', {
-        text: "Hello, I'm here with you. How are you feeling today?",
-        voice_id: voiceId
+      const response = await fetch(`/functions/synthesizeClonedVoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          text: "Hello, I'm here with you. How are you feeling today?",
+          voice_id: voiceId
+        })
       });
 
-      if (result.data.fallback) {
+      if (!response.ok) {
         toast.error('Voice synthesis not available');
         return;
       }
 
-      const audio = new Audio(URL.createObjectURL(new Blob([result.data])));
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
       audio.play();
     } catch {
       toast.error('Failed to test voice');
