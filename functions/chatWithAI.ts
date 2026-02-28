@@ -91,7 +91,11 @@ RESPONSE APPROACH:
 7. Reference their interests and important people when relevant
 
 CONVERSATION HISTORY:
-${conversationHistory?.slice(-10).map(m => `${m.role === 'user' ? userProfile?.preferred_name || 'User' : 'You'}: ${m.content}`).join('\n')}
+${(conversationHistory || []).slice(-10).map(m => {
+  const role = m.role === 'user' ? (userProfile?.preferred_name || 'User') : 'You';
+  const content = String(m.content || '').substring(0, 500).replace(/[\r\n]+/g, ' ');
+  return `${role}: ${content}`;
+}).join('\n')}
 
 Respond to their message with warmth, understanding, and dignity. Keep your response natural and conversational.`;
 
