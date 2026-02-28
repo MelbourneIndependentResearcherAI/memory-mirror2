@@ -52,7 +52,6 @@ const regularCards = [
   { id: 13, title: 'Activity Reminders', icon: '⏰', description: 'Set up gentle reminders for daily activities', path: '/ActivityReminders', background: '#FFFBEB' },
   { id: 14, title: 'Voice Cloning', icon: '🎤', description: 'Clone family voices for personalized comfort', path: '/VoiceCloning', background: '#FDF4FF' },
   { id: 15, title: 'AI Care Insights', icon: '✨', description: 'Personalized recommendations from intelligent analysis', path: '/AICareInsights', background: '#FAF5FF' },
-  { id: 16, title: 'Read Offline', icon: '📖', description: 'Access journals and memories without internet', path: '/CaregiverPortal/offline-read', background: '#F0FDFA' },
   { id: 18, title: 'Family Tree', icon: '🌳', description: 'Build a visual family tree with photos and memories', path: '/FamilyTree', background: '#FEF3C7' },
   { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/ContentLibrary', background: '#F3E8FF' },
   { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/FakeBankSettings', background: '#E0F2FE' },
