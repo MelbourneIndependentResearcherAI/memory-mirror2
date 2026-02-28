@@ -39,35 +39,32 @@ export const speakWithClonedVoice = async (text, options = {}) => {
   try {
     console.log('🎙️ Starting voice synthesis for:', text.substring(0, 50));
     
-    // Prefer active cloned voice, otherwise use elevenLabsTTS with default voice
-    const activeVoice = await getActiveClonedVoice();
-    const functionName = activeVoice?.voice_id ? 'synthesizeClonedVoice' : 'elevenLabsTTS';
-    const payload = activeVoice?.voice_id
-      ? { text, voice_id: activeVoice.voice_id, stability: options.stability || 0.5, similarity_boost: options.similarity_boost || 0.75 }
-      : { text, language: options.language || 'en', stability: 0.5, similarity_boost: 0.75 };
+    // ALWAYS use elevenLabsTTS first - no cloned voice check
+    console.log('📢 Calling elevenLabsTTS with text');
+    const result = await base44.functions.invoke('elevenLabsTTS', { 
+      text, 
+      language: options.language || 'en'
+    });
 
-    console.log('📢 Calling', functionName, 'with payload:', payload);
-    const result = await base44.functions.invoke(functionName, payload);
-
-    console.log('✅ Voice function response:', result?.status);
+    console.log('✅ ElevenLabs response:', result?.status);
     
     // result.data is either an ArrayBuffer (audio) or a JSON error object
     // If it's an ArrayBuffer (byteLength exists), it's valid audio
     const isAudioBuffer = result.data instanceof ArrayBuffer || 
                           (result.data && typeof result.data.byteLength === 'number');
+    
     if (isAudioBuffer) {
-      console.log('🔊 Playing audio buffer...');
+      console.log('🔊 Playing ElevenLabs audio...');
       const ok = await playAudioBuffer(result.data, options.volume || 1.0, options.onEnd);
-      if (ok !== false) return;
+      if (ok !== false) return true; // Success - don't fall through
     }
-    // If JSON with fallback flag, fall through to browser TTS
+    
+    // Check for fallback flag in response
     if (result.data?.fallback) {
-      console.log('⚠️ ElevenLabs fallback, using browser TTS');
-      // intentional fall-through
+      console.log('⚠️ ElevenLabs returned fallback flag, using browser TTS');
     }
   } catch (error) {
-    console.error('❌ Voice synthesis error:', error.message);
-    // fall through to browser TTS
+    console.error('❌ ElevenLabs error:', error.message);
   }
 
   console.log('🎧 Falling back to browser TTS');
