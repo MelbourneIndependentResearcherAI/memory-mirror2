@@ -746,8 +746,10 @@ Now respond like their best friend who genuinely cares and listened carefully to
           offlineEntities.create('CaregiverAlert', {
           alert_type: 'high_anxiety',
           severity: 'urgent',
+          patient_profile_id: userProfile?.id || null,
           message: `User expressed: "${userMessage.substring(0, 100)}..." - Anxiety level ${sentimentAnalysis.anxiety_level}/10`,
-          pattern_data: sentimentAnalysis
+          pattern_data: sentimentAnalysis,
+          timestamp: new Date().toISOString()
         }).catch(() => {});
         
         // Also create team notification for collaborative care

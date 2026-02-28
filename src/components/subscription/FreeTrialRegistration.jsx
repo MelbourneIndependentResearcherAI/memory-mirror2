@@ -25,6 +25,10 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
         trial_start_date: new Date().toISOString(),
         trial_active: true
       };
+      // Use consistent key format (email-based) to prevent multiple trials via incognito
+      const trialKey = `freeTrialUser_${email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
+      localStorage.setItem(trialKey, JSON.stringify(trialData));
+      // Also set legacy key for backward compat
       localStorage.setItem('freeTrialUser', JSON.stringify(trialData));
 
       // Also register in the backend (non-blocking)
