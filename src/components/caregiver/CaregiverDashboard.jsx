@@ -3,12 +3,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
-import { Plus, RefreshCw } from 'lucide-react';
+import { Plus, RefreshCw, Lock } from 'lucide-react';
 import { motion } from 'framer-motion';
 import PatientStatusCard from './PatientStatusCard';
 import UpcomingTasksList from './UpcomingTasksList';
 import TaskAssignmentForm from './TaskAssignmentForm';
 import RecentJournalEntries from './RecentJournalEntries';
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 export default function CaregiverDashboard({ patientProfileId }) {
   const [showTaskForm, setShowTaskForm] = useState(false);
@@ -147,6 +149,24 @@ export default function CaregiverDashboard({ patientProfileId }) {
               </div>
             </CardContent>
           </Card>
+
+          {/* Feature Lock Control */}
+          <Link to={createPageUrl('FeatureLockConfig')}>
+            <Card className="border-2 border-purple-200 hover:border-purple-300 cursor-pointer transition-colors">
+              <CardHeader className="pb-3">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Lock className="w-4 h-4 text-purple-600" />
+                  Feature Lock
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-slate-600 mb-2">Lock features & configure PIN</p>
+                <Button variant="outline" className="w-full" size="sm">
+                  Configure
+                </Button>
+              </CardContent>
+            </Card>
+          </Link>
         </motion.div>
       </div>
 
