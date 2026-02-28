@@ -64,7 +64,17 @@ Deno.serve(async (req) => {
 
     if (!ttsResponse.ok) {
       const error = await ttsResponse.text();
-      return Response.json({ error: 'TTS failed', details: error, fallback: true }, { status: ttsResponse.status });
+      let errorDetails = error;
+      let statusCode = ttsResponse.status;
+      try {
+        const parsed = JSON.parse(error);
+        // ElevenLabs unusual activity / free tier blocked
+        if (parsed?.detail?.status === 'detected_unusual_activity') {
+          statusCode = 503;
+          errorDetails = 'ElevenLabs voice service temporarily unavailable. Using browser voice instead.';
+        }
+      } catch {}
+      return Response.json({ error: 'TTS failed', details: errorDetails, fallback: true }, { status: statusCode });
     }
 
     const audioBuffer = await ttsResponse.arrayBuffer();
