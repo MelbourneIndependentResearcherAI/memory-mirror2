@@ -41,17 +41,15 @@ export default function Layout({ children, currentPageName }) {
     // Don't block while loading or if no subscription data yet
     if (isLoading || !subscriptionData) return;
     
-    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing'];
+    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing', 'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources'];
     const isRestrictedPage = restrictedPages.includes(currentPageName);
     
-    // Redirect to paywall if:
-    // 1. User has no subscription AND
-    // 2. User is not on a free trial (or trial expired) AND
-    // 3. Accessing gated content AND
-    // 4. Not an admin
-    const hasValidAccess = subscriptionData.isSubscribed || (subscriptionData.isOnFreeTrial && !subscriptionData.trialExpired);
+    // User has valid access if:
+    // - subscribed (active subscription OR free tier choice OR active free trial)
+    // - is admin
+    const hasValidAccess = subscriptionData.isSubscribed || subscriptionData.isAdmin;
     
-    if (!hasValidAccess && !isRestrictedPage && subscriptionData.role !== 'admin') {
+    if (!hasValidAccess && !isRestrictedPage) {
       navigate('/paywall');
     }
   }, [isLoading, subscriptionData, currentPageName, navigate]);
