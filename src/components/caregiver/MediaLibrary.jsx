@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Music, Image, Video, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
