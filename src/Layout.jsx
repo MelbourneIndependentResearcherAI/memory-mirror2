@@ -14,6 +14,7 @@ import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import SessionTimeoutManager from '@/components/SessionTimeoutManager';
 import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
 import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
+import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 
 // Add small delay to allow async checks
 const SUBSCRIPTION_CHECK_TIMEOUT = 100;
@@ -23,10 +24,11 @@ const SUBSCRIPTION_CHECK_TIMEOUT = 100;
  * EMERGENCY SIMPLIFIED VERSION - Removes all blocking initialization
  */
 
-export default function Layout({ children, currentPageName }) {
+function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
+  const { pushTab, getPreviousTab } = useTabStack();
   
   // (debug logging removed)
   
@@ -58,13 +60,19 @@ export default function Layout({ children, currentPageName }) {
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
   const isMainPage = mainPages.includes(currentPageName);
 
-  // Android-like back button behavior
+  // Track tab navigation for stack preservation
+  useEffect(() => {
+    const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback', 'BigButtonMode'];
+    if (mainPages.includes(currentPageName)) {
+      pushTab(location.pathname);
+    }
+  }, [location.pathname, currentPageName, pushTab]);
+
+  // Android-like back button behavior with tab stack preservation
   useEffect(() => {
     const handlePopState = (event) => {
-      // Prevent default browser behavior
       event.preventDefault();
       
-      // If on landing page, exit app (on Android WebView)
       if (currentPageName === 'Landing') {
         if (window.AndroidInterface?.exitApp) {
           window.AndroidInterface.exitApp();
@@ -72,20 +80,26 @@ export default function Layout({ children, currentPageName }) {
         return;
       }
       
-      // Navigate back with proper animation
+      // Check if we should switch to previous tab
+      const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback', 'BigButtonMode'];
+      if (mainPages.includes(currentPageName)) {
+        const previousTab = getPreviousTab();
+        if (previousTab) {
+          navigate(previousTab, { state: { direction: 'back' } });
+          return;
+        }
+      }
+      
       navigate(-1);
     };
 
-    // Handle Android hardware back button
     const handleBackButton = (event) => {
       event.preventDefault();
       
-      // If on home or landing, attempt to exit
       if (currentPageName === 'Home' || currentPageName === 'Landing') {
         if (window.AndroidInterface?.exitApp) {
           window.AndroidInterface.exitApp();
         } else {
-          // Web fallback - go to landing
           if (currentPageName === 'Home') {
             navigate('/');
           }
@@ -93,18 +107,26 @@ export default function Layout({ children, currentPageName }) {
         return;
       }
       
-      // Otherwise, navigate back
+      const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback', 'BigButtonMode'];
+      if (mainPages.includes(currentPageName)) {
+        const previousTab = getPreviousTab();
+        if (previousTab) {
+          navigate(previousTab, { state: { direction: 'back' } });
+          return;
+        }
+      }
+      
       navigate(-1);
     };
 
     window.addEventListener('popstate', handlePopState);
-    document.addEventListener('backbutton', handleBackButton); // Cordova/WebView back button
+    document.addEventListener('backbutton', handleBackButton);
 
     return () => {
       window.removeEventListener('popstate', handlePopState);
       document.removeEventListener('backbutton', handleBackButton);
     };
-  }, [currentPageName, navigate]);
+  }, [currentPageName, navigate, getPreviousTab]);
 
   // Prevent accidental navigation gestures on main app pages
   useEffect(() => {
@@ -149,12 +171,13 @@ export default function Layout({ children, currentPageName }) {
       <LanguageProvider>
         <AppStateProvider>
           <LockModeProvider>
-            <ErrorBoundary>
-              <SessionTimeoutManager />
-              <OfflineIndicator />
-              <OfflineSyncStatus />
-              <OfflineFeaturesBadge />
-              <ScrollToTop />
+            <TabStackProvider>
+              <ErrorBoundary>
+                <SessionTimeoutManager />
+                <OfflineIndicator />
+                <OfflineSyncStatus />
+                <OfflineFeaturesBadge />
+                <ScrollToTop />
               
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
@@ -210,10 +233,19 @@ export default function Layout({ children, currentPageName }) {
                 {showFooter && <Footer />}
                 {showBottomNav && <BottomNav />}
               </div>
-            </ErrorBoundary>
+              </ErrorBoundary>
+            </TabStackProvider>
           </LockModeProvider>
         </AppStateProvider>
       </LanguageProvider>
     </ThemeProvider>
+  );
+}
+
+export default function Layout({ children, currentPageName }) {
+  return (
+    <TabStackProvider>
+      <LayoutContent children={children} currentPageName={currentPageName} />
+    </TabStackProvider>
   );
 }
