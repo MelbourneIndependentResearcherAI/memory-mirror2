@@ -140,11 +140,11 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['familyVideos'], context.previousVideos);
-      alert('Failed to upload video');
+      toast.error('Failed to upload video');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyVideos'] });
-      alert('Video uploaded successfully!');
+      toast.success('Video uploaded successfully!');
     },
   });
 
