@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-console.log('Landing page loaded');
 import { MessageCircle, Brain, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
