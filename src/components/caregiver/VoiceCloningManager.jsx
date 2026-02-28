@@ -176,9 +176,12 @@ export default function VoiceCloningManager() {
     };
 
     if (duration < 60) {
-      quality.rating = 'poor';
+      quality.rating = 'needs_improvement';
       quality.message = 'Too short - need at least 1 minute';
-    } else if (duration >= 60 && duration < 180) {
+    } else if (duration >= 60 && duration < 120) {
+      quality.rating = 'fair';
+      quality.message = 'Fair quality - try to record 2+ minutes for better results';
+    } else if (duration >= 120 && duration < 180) {
       quality.rating = 'good';
       quality.message = 'Good quality - meets minimum requirements';
     } else {
