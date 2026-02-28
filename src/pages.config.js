@@ -103,7 +103,6 @@ import Landing from './pages/Landing';
 import ManualProcessing from './pages/ManualProcessing';
 import MemoryGames from './pages/MemoryGames';
 import MemorySessions from './pages/MemorySessions';
-import MoodAutomations from './pages/MoodAutomations';
 import MusicPlayer from './pages/MusicPlayer';
 import MusicTherapy from './pages/MusicTherapy';
 import MyBank from './pages/MyBank';
@@ -134,7 +133,6 @@ import SecurityMode from './pages/SecurityMode';
 import Settings from './pages/Settings';
 import SharedJournal from './pages/SharedJournal';
 import SingAlongStudio from './pages/SingAlongStudio';
-import SmartHome from './pages/SmartHome';
 import SubscriptionStatus from './pages/SubscriptionStatus';
 import SyncBackup from './pages/SyncBackup';
 import TVDashboard from './pages/TVDashboard';
@@ -214,7 +212,6 @@ export const PAGES = {
     "ManualProcessing": ManualProcessing,
     "MemoryGames": MemoryGames,
     "MemorySessions": MemorySessions,
-    "MoodAutomations": MoodAutomations,
     "MusicPlayer": MusicPlayer,
     "MusicTherapy": MusicTherapy,
     "MyBank": MyBank,
@@ -245,7 +242,6 @@ export const PAGES = {
     "Settings": Settings,
     "SharedJournal": SharedJournal,
     "SingAlongStudio": SingAlongStudio,
-    "SmartHome": SmartHome,
     "SubscriptionStatus": SubscriptionStatus,
     "SyncBackup": SyncBackup,
     "TVDashboard": TVDashboard,
