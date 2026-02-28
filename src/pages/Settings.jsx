@@ -76,6 +76,10 @@ export default function SettingsPage() {
             </Card>
           </TabsContent>
 
+          <TabsContent value="offline" className="space-y-4 mt-6">
+            <OfflineContentManager />
+          </TabsContent>
+
           <TabsContent value="help" className="space-y-4 mt-6">
             <Card>
               <CardHeader>
