@@ -133,25 +133,26 @@ export default function VoiceCloningManager() {
         setRecordingDuration(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
       
+      recordedChunksRef.current = [];
+      
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
-          setRecordedChunks(prev => [...prev, e.data]);
+          recordedChunksRef.current.push(e.data);
         }
       };
 
       recorder.onstop = () => {
         clearInterval(durationInterval);
-        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
         const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
         setSelectedFile(file);
-        analyzeAudioQuality(blob, recordingDuration);
+        analyzeAudioQuality(blob, Math.floor((Date.now() - startTime) / 1000));
         stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start();
+      recorder.start(100); // collect data every 100ms
       setMediaRecorder(recorder);
       setIsRecording(true);
-      setRecordedChunks([]);
     } catch {
       toast.error('Microphone access denied');
     }
