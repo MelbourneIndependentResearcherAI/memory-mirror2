@@ -928,7 +928,7 @@ ${memories.slice(0, 5).map(m => `- "${m.title}"`).join('\n')}`
 
       // Extract what they're specifically talking about
       const topicDetection = sentimentAnalysis?.themes?.length > 0 
-        ? `\n\nWHAT THEY'RE TALKING ABOUT: ${sentimentAnalysis.themes.join(', ')}`
+        ? `\n\nTOPICS THEY MENTIONED: ${sentimentAnalysis.themes.join(', ')}`
         : '';
 
       // Get AI response (offline-aware)
@@ -942,12 +942,13 @@ ${emotionalContext}${memoryContext}${recentMemoriesContext}
 Conversation history:
 ${newHistory.slice(-6).map(m => `${m.role === 'user' ? 'They' : 'You'}: ${m.content}`).join('\n')}
 
-RESPOND NOW:
-- Respond DIRECTLY about what they said
-- Show you listened carefully
-- Keep it 1-2 sentences max
-- Sound like their best friend
-- Make them feel understood and loved`;
+RESPOND NOW - CRITICAL:
+**You MUST respond DIRECTLY and ONLY about what they just said - their topic, their feelings, their situation.**
+- Never change the subject or talk about something else
+- Focus 100% on THEIR topic
+- Make them feel like you're really listening and care about what they're discussing
+- Keep it 1-2 sentences, warm and genuine
+- Show you understood their specific point`;
 
       console.log('Calling AI chat...');
        let response;
