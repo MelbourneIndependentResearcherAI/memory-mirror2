@@ -1010,7 +1010,15 @@ RESPOND NOW:
 
       // Ensure component is still mounted and message is valid
       if (isMountedRef.current && assistantMessage) {
-        setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
+        setMessages(prev => {
+          // Prevent duplicate messages - check if last message is identical
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg?.role === 'assistant' && lastMsg?.content === assistantMessage) {
+            console.log('Duplicate message prevented');
+            return prev;
+          }
+          return [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }];
+        });
         setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
         // Cache for offline use
         offlineCache.cacheInteraction(userMessage, assistantMessage);
