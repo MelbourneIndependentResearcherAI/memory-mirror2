@@ -41,11 +41,11 @@ export default function OfflineReadyIndicator() {
 
   const checkOfflineStatus = async () => {
     try {
-      const status = await getFromStore('metadata', 'offline_ready');
+      const status = await getFromStore('syncMeta', 'offline_ready');
       setOfflineReady(status);
       setOnline(isOnline());
     } catch (error) {
-      console.error('Failed to check offline status:', error);
+      // Silently ignore — store may not be initialised yet
     }
   };
 
