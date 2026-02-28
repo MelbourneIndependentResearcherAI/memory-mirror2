@@ -103,6 +103,7 @@ import Landing from './pages/Landing';
 import ManualProcessing from './pages/ManualProcessing';
 import MemoryGames from './pages/MemoryGames';
 import MemorySessions from './pages/MemorySessions';
+import MoodAutomations from './pages/MoodAutomations';
 import MusicPlayer from './pages/MusicPlayer';
 import MusicTherapy from './pages/MusicTherapy';
 import MyBank from './pages/MyBank';
@@ -114,6 +115,7 @@ import NightWatchPage from './pages/NightWatchPage';
 import OfflineAudio from './pages/OfflineAudio';
 import OfflineCapabilities from './pages/OfflineCapabilities';
 import OfflineContent from './pages/OfflineContent';
+import OfflineManager from './pages/OfflineManager';
 import OfflineModeDashboard from './pages/OfflineModeDashboard';
 import OfflineTest from './pages/OfflineTest';
 import PatientAccess from './pages/PatientAccess';
@@ -133,6 +135,7 @@ import SecurityMode from './pages/SecurityMode';
 import Settings from './pages/Settings';
 import SharedJournal from './pages/SharedJournal';
 import SingAlongStudio from './pages/SingAlongStudio';
+import SmartHome from './pages/SmartHome';
 import SubscriptionStatus from './pages/SubscriptionStatus';
 import SyncBackup from './pages/SyncBackup';
 import TVDashboard from './pages/TVDashboard';
@@ -152,9 +155,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import SmartHome from './pages/SmartHome';
-import MoodAutomations from './pages/MoodAutomations';
-import OfflineManager from './pages/OfflineManager';
 import __Layout from './Layout.jsx';
 
 
@@ -215,6 +215,7 @@ export const PAGES = {
     "ManualProcessing": ManualProcessing,
     "MemoryGames": MemoryGames,
     "MemorySessions": MemorySessions,
+    "MoodAutomations": MoodAutomations,
     "MusicPlayer": MusicPlayer,
     "MusicTherapy": MusicTherapy,
     "MyBank": MyBank,
@@ -226,6 +227,7 @@ export const PAGES = {
     "OfflineAudio": OfflineAudio,
     "OfflineCapabilities": OfflineCapabilities,
     "OfflineContent": OfflineContent,
+    "OfflineManager": OfflineManager,
     "OfflineModeDashboard": OfflineModeDashboard,
     "OfflineTest": OfflineTest,
     "PatientAccess": PatientAccess,
@@ -245,6 +247,7 @@ export const PAGES = {
     "Settings": Settings,
     "SharedJournal": SharedJournal,
     "SingAlongStudio": SingAlongStudio,
+    "SmartHome": SmartHome,
     "SubscriptionStatus": SubscriptionStatus,
     "SyncBackup": SyncBackup,
     "TVDashboard": TVDashboard,
@@ -264,9 +267,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "SmartHome": SmartHome,
-    "MoodAutomations": MoodAutomations,
-    "OfflineManager": OfflineManager,
 }
 
 export const pagesConfig = {

@@ -50,9 +50,6 @@ export default function Landing() {
     { icon: '🛡️', title: 'Security Scanner', desc: 'Scam detection and online safety tools to protect your loved one', page: 'Security', color: 'from-blue-600 to-indigo-600' },
     { icon: '🎤', title: 'Always-On Voice', desc: 'Hands-free wake word detection for voice-activated assistance', page: 'VoiceSetup', color: 'from-violet-500 to-purple-600' },
     { icon: '🏦', title: 'Fake Banking', desc: 'A reassuring fake bank balance view to reduce financial anxiety', page: 'MyBank', color: 'from-emerald-500 to-green-600' },
-    { icon: '👨‍👩‍👧', title: 'Family Portal', desc: 'Family members can share messages, photos and stay connected', page: 'FamilyConnect', color: 'from-pink-500 to-rose-500' },
-    { icon: '📊', title: 'Caregiver Dashboard', desc: 'At-a-glance overview of patient status, tasks and care metrics', page: 'CaregiverDashboard', color: 'from-cyan-500 to-blue-500' },
-    { icon: '📺', title: 'Smart TV Mode', desc: 'Large-screen TV interface for comfortable viewing and interaction', page: 'TVMode', color: 'from-slate-500 to-slate-700' },
   ];
 
   return (
