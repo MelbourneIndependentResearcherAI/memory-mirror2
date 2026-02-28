@@ -12,23 +12,36 @@ export const getActiveClonedVoice = async () => {
 
 // Play audio from ArrayBuffer
 const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
-  const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-  const audioUrl = URL.createObjectURL(audioBlob);
-  const audio = new Audio(audioUrl);
-  audio.volume = Math.max(0, Math.min(1, volume));
+  try {
+    if (!window.Audio) {
+      console.warn('Audio API not available');
+      return Promise.resolve(false);
+    }
+    
+    const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+    const audioUrl = URL.createObjectURL(audioBlob);
+    const audio = new Audio(audioUrl);
+    audio.volume = Math.max(0, Math.min(1, volume));
 
-  return new Promise((resolve) => {
-    audio.onended = () => {
-      URL.revokeObjectURL(audioUrl);
-      if (onEnd) onEnd();
-      resolve();
-    };
-    audio.onerror = () => {
-      URL.revokeObjectURL(audioUrl);
-      resolve(false); // signal failure
-    };
-    audio.play().catch(() => resolve(false));
-  });
+    return new Promise((resolve) => {
+      audio.onended = () => {
+        URL.revokeObjectURL(audioUrl);
+        if (onEnd) onEnd();
+        resolve(true);
+      };
+      audio.onerror = () => {
+        URL.revokeObjectURL(audioUrl);
+        resolve(false);
+      };
+      audio.play().catch(() => {
+        URL.revokeObjectURL(audioUrl);
+        resolve(false);
+      });
+    });
+  } catch (error) {
+    console.error('Audio playback error:', error);
+    return Promise.resolve(false);
+  }
 };
 
 // Synthesize speech via ElevenLabs (cloned voice if available, otherwise default EL voice)
