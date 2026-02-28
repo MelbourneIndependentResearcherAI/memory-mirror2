@@ -102,13 +102,16 @@ export default function BottomNav() {
     <nav 
       className="fixed bottom-0 left-0 right-0 bg-white dark:bg-slate-900 border-t-2 border-slate-200 dark:border-slate-700 z-50 shadow-2xl"
       style={{
-        paddingBottom: 'calc(env(safe-area-inset-bottom) + 12px)',
-        paddingTop: '12px'
+        paddingBottom: 'calc(env(safe-area-inset-bottom) + 8px)',
+        paddingTop: '8px'
       }}
       role="navigation"
       aria-label="Main navigation"
     >
-      <div className="flex justify-around items-center px-1">
+      <div 
+        className="flex items-center px-1 overflow-x-auto gap-0.5 scrollbar-hide"
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none', WebkitOverflowScrolling: 'touch' }}
+      >
         {navItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -119,9 +122,9 @@ export default function BottomNav() {
               to={item.path}
               onClick={(e) => handleNavClick(e, item.path)}
               className={`
-                group flex flex-col items-center justify-center gap-1 
-                px-2 py-2 rounded-xl transition-all duration-200
-                min-w-[60px] min-h-[72px]
+                group flex flex-col items-center justify-center gap-0.5
+                px-1.5 py-1.5 rounded-xl transition-all duration-200
+                flex-shrink-0 min-w-[52px] min-h-[60px]
                 active:scale-95 active:opacity-80
                 will-change-transform
                 ${active 
@@ -137,11 +140,11 @@ export default function BottomNav() {
               aria-current={active ? 'page' : undefined}
             >
               <Icon 
-                className={`w-7 h-7 transition-all duration-200 ${active ? item.color + ' scale-110 drop-shadow-md' : 'text-slate-500 dark:text-slate-400 group-hover:scale-105'}`} 
+                className={`w-5 h-5 transition-all duration-200 ${active ? item.color + ' scale-110 drop-shadow-md' : 'text-slate-500 dark:text-slate-400 group-hover:scale-105'}`} 
                 strokeWidth={active ? 2.5 : 2}
               />
               <span 
-                className={`text-[9px] font-extrabold uppercase tracking-wide leading-tight text-center ${
+                className={`text-[8px] font-bold uppercase tracking-wide leading-tight text-center whitespace-nowrap ${
                   active ? 'text-slate-900 dark:text-white' : 'text-slate-600 dark:text-slate-400'
                 }`}
               >

@@ -46,9 +46,17 @@ export const speakWithClonedVoice = async (text, options = {}) => {
 
     const result = await base44.functions.invoke(functionName, payload);
 
-    if (result.data && !result.data.fallback) {
+    // result.data is either an ArrayBuffer (audio) or a JSON error object
+    // If it's an ArrayBuffer (byteLength exists), it's valid audio
+    const isAudioBuffer = result.data instanceof ArrayBuffer || 
+                          (result.data && typeof result.data.byteLength === 'number');
+    if (isAudioBuffer) {
       const ok = await playAudioBuffer(result.data, options.volume || 1.0, options.onEnd);
       if (ok !== false) return;
+    }
+    // If JSON with fallback flag, fall through to browser TTS
+    if (result.data?.fallback) {
+      // intentional fall-through
     }
   } catch {
     // fall through to browser TTS
