@@ -9,13 +9,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const { audio_file_url, voice_name, voice_description } = await req.json();
-    
-    if (!audio_file_url || !voice_name) {
-      return Response.json({ 
-        error: 'Missing required fields: audio_file_url and voice_name' 
-      }, { status: 400 });
-    }
+    const body = await req.json();
+    const { audio_file_url, voice_name, voice_description, _action, voice_id } = body;
 
     const apiKey = Deno.env.get('ELEVENLABS_API_KEY');
     if (!apiKey) {
@@ -23,6 +18,21 @@ Deno.serve(async (req) => {
         error: 'ElevenLabs API key not configured. Please add ELEVENLABS_API_KEY to your environment variables.',
         setup_url: 'https://elevenlabs.io/app/settings/api-keys'
       }, { status: 500 });
+    }
+
+    // Handle delete action
+    if (_action === 'delete' && voice_id) {
+      const deleteResponse = await fetch(`https://api.elevenlabs.io/v1/voices/${voice_id}`, {
+        method: 'DELETE',
+        headers: { 'xi-api-key': apiKey }
+      });
+      return Response.json({ success: deleteResponse.ok });
+    }
+
+    if (!audio_file_url || !voice_name) {
+      return Response.json({ 
+        error: 'Missing required fields: audio_file_url and voice_name' 
+      }, { status: 400 });
     }
 
     // Fetch the audio file
@@ -45,9 +55,7 @@ Deno.serve(async (req) => {
     // Call ElevenLabs voice cloning API
     const cloneResponse = await fetch('https://api.elevenlabs.io/v1/voices/add', {
       method: 'POST',
-      headers: {
-        'xi-api-key': apiKey,
-      },
+      headers: { 'xi-api-key': apiKey },
       body: formData
     });
 
