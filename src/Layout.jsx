@@ -243,8 +243,6 @@ function LayoutContent({ children, currentPageName }) {
 
 export default function Layout({ children, currentPageName }) {
   return (
-    <TabStackProvider>
-      <LayoutContent children={children} currentPageName={currentPageName} />
-    </TabStackProvider>
+    <LayoutContent children={children} currentPageName={currentPageName} />
   );
 }
