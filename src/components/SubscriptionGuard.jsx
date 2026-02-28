@@ -114,7 +114,13 @@ export function useSubscriptionStatus() {
         console.error('Subscription check error:', error);
         const cached = offlineHelper.getCachedSubscription();
         if (cached) {
-          return { ...cached, isOnline: false, offline: true };
+          const cachedTools = cached.subscribedTools || [];
+          return { 
+            ...cached, 
+            isOnline: false, 
+            offline: true,
+            hasToolAccess: (toolId) => cached.isPremium || cachedTools.includes(toolId)
+          };
         }
         // Return default state that won't block rendering
         return { isSubscribed: false, subscription: null, user: null, error: true, isOnFreeTrial: false, trialExpired: false };
