@@ -76,6 +76,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const messagesRef = useRef([]);
   const peakAnxietyRef = useRef(0);
   const sessionEraRef = useRef('present');
+  const greetingSentRef = useRef(false);
 
   const handleRefresh = async () => {
     await queryClient.refetchQueries({ queryKey: ['safeZones'] });
