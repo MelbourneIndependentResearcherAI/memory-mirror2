@@ -169,7 +169,7 @@ export default function MediaLibrary({ onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('audio/')) {
-      alert('Please upload an audio file');
+      toast.error('Please upload an audio file');
       return;
     }
     setUploading(true);
