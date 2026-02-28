@@ -139,46 +139,33 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 15,
   });
 
+  // Ref to last spoken text for replay
+  const lastSpokenTextRef = useRef('');
+
   const speakResponse = useCallback(async (text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
-    
+    lastSpokenTextRef.current = text;
+
     try {
-      // Use advanced voice synthesis from voiceUtils
+      // Use ElevenLabs (cloned voice if available, else default warm voice)
+      await speakWithClonedVoice(text, {
+        language: selectedLanguage,
+        volume: 1.0,
+        onEnd: () => {
+          if (emotionalContext.onEnd) emotionalContext.onEnd();
+        }
+      });
+    } catch (error) {
+      console.error('Voice synthesis error:', error);
+      // Fallback to browser TTS
       speakWithRealisticVoice(text, {
         emotionalState: emotionalContext.state || 'neutral',
         anxietyLevel: emotionalContext.anxietyLevel || 0,
         cognitiveLevel: cognitiveLevel,
         language: selectedLanguage,
         userProfile: userProfile,
-        onEnd: () => {
-          if (emotionalContext.onEnd) {
-            emotionalContext.onEnd();
-          }
-        }
+        onEnd: emotionalContext.onEnd
       });
-    } catch (error) {
-      console.error('Voice synthesis error:', error);
-      
-      // Ultimate fallback - basic speech synthesis
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      utterance.onend = () => {
-        if (emotionalContext.onEnd) {
-          emotionalContext.onEnd();
-        }
-      };
-      
-      utterance.onerror = () => {
-        if (emotionalContext.onEnd) {
-          emotionalContext.onEnd();
-        }
-      };
-      
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
     }
   }, [selectedLanguage, cognitiveLevel, userProfile]);
 
