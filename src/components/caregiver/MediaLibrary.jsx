@@ -62,12 +62,12 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['musicFiles'], context.previousMusic);
-      alert('Failed to upload music');
+      toast.error('Failed to upload music');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['musicFiles'] });
       setMusicTitle('');
-      alert('Music uploaded successfully!');
+      toast.success('Music uploaded successfully!');
     },
   });
 
