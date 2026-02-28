@@ -1467,12 +1467,7 @@ RESPOND NOW:
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
-      {/* Smart Home Controls Panel */}
-      {visualResponse.show && (
-        <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
-          <SmartHomeControls mode="compact" />
-        </div>
-      )}
+
 
       {/* Feature Buttons - Caregiver Access Only */}
       {/* These buttons are hidden from patient view but available in caregiver portal */}

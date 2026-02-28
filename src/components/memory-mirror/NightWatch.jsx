@@ -1090,20 +1090,7 @@ export default function NightWatch({ onClose }) {
           </Card>
         )}
 
-        {/* Smart Home Controls */}
-        {isActive && (
-          <Card className="bg-slate-800 border-slate-700 mb-6">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Comfort Controls
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SmartHomeControls mode="compact" />
-            </CardContent>
-          </Card>
-        )}
+
 
         {/* Conversation Log */}
         {isActive && (
