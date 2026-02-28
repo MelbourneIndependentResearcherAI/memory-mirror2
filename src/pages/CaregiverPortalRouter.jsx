@@ -49,8 +49,6 @@ const regularCards = [
   { id: 7, title: 'Care Journal', icon: '📖', description: 'Document observations and changes', path: '/CareJournalPage', background: '#F0FDFA' },
   { id: 8, title: 'Night Watch Log', icon: '🌙', description: 'Review nighttime incidents and patterns', path: '/NightWatchPage', background: '#1E1B4B' },
   { id: 9, title: 'Voice Setup', icon: '🎤', description: 'Configure always-on wake word detection', path: '/VoiceSetup', background: '#EFF6FF' },
-  { id: 10, title: 'Smart Home', icon: '🏠', description: 'Manage smart devices and automations', path: '/SmartHome', background: '#F0F9FF' },
-  { id: 11, title: 'Mood Automations', icon: '🧠', description: 'Configure mood-based smart home adjustments', path: '/MoodAutomations', background: '#F5EFFF' },
   { id: 12, title: 'Activate Bad Day Mode', icon: '💜', description: 'Remotely activate calming mode for your loved one', path: null, background: '#FDF2F8' },
   { id: 13, title: 'Activity Reminders', icon: '⏰', description: 'Set up gentle reminders for daily activities', path: '/ActivityReminders', background: '#FFFBEB' },
   { id: 14, title: 'Voice Cloning', icon: '🎤', description: 'Clone family voices for personalized comfort', path: '/VoiceCloning', background: '#FDF4FF' },

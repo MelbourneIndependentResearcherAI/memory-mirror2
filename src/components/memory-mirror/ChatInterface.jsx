@@ -1053,23 +1053,6 @@ RESPOND NOW:
         console.log('Message added to chat');
       }
 
-      // Trigger mood-based device control
-      if (detectedAnxiety >= 4) {
-        try {
-          const moodControl = await offlineFunction('moodBasedDeviceControl', {
-            anxiety_level: detectedAnxiety,
-            detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
-            conversation_context: userMessageEnglish
-          });
-
-          if (moodControl.data?.applied) {
-            toast.success(`Environment adjusted: ${moodControl.data.automations_triggered.join(', ')}`);
-          }
-        } catch (error) {
-          console.error('Mood-based control failed:', error);
-        }
-      }
-
       // Show visual response if available
       if (visualSuggestions?.should_show_visuals && visualSuggestions?.suggestions?.length > 0) {
         setVisualResponse({
