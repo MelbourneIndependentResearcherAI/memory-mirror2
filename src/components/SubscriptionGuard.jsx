@@ -132,7 +132,11 @@ export function useSubscriptionStatus() {
         isOnFreeTrial: trialActive,
         trialExpired: hasTrialExpired(),
         isFreeTier: freeTier,
+        isAdmin: false,
+        isPremium: false,
         subscription: null,
+        subscribedTools: [],
+        hasToolAccess: () => false,
         user: null
       };
     }

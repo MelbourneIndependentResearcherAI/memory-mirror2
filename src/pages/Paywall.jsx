@@ -12,7 +12,7 @@ import { createPageUrl } from '@/utils';
 export default function Paywall() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const [processing, setProcessing] = useState(false);
+  // processing is derived from mutation state
   const [showBankDetails, setShowBankDetails] = useState(false);
   const [copied, setCopied] = useState(null);
   const [showTrialModal, setShowTrialModal] = useState(false);
@@ -68,19 +68,16 @@ export default function Paywall() {
       return subData;
     },
     onSuccess: () => {
-      setProcessing(false);
       queryClient.invalidateQueries({ queryKey: ['subscription'] });
       setShowBankDetails(true);
       toast.success('Subscription registered! Complete your bank transfer to activate.');
     },
     onError: (error) => {
-      setProcessing(false);
       toast.error(error.message || 'Failed to register subscription');
     }
   });
 
   const handleSubscribe = () => {
-    setProcessing(true);
     subscriptionMutation.mutate();
   };
 
@@ -180,10 +177,10 @@ export default function Paywall() {
           {!showBankDetails ? (
             <Button
               onClick={handleSubscribe}
-              disabled={processing}
+              disabled={subscriptionMutation.isPending}
               className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold py-4 text-base rounded-xl mb-3 min-h-[52px]"
             >
-              {processing
+              {subscriptionMutation.isPending
                 ? <><Loader2 className="w-5 h-5 mr-2 animate-spin" />Processing...</>
                 : 'Subscribe Now — $9.99/month'}
             </Button>

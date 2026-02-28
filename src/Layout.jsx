@@ -28,10 +28,7 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
   
-  // Debug logging
-  React.useEffect(() => {
-    console.log('Layout subscription check:', { currentPageName, isLoading, hasData: !!subscriptionData });
-  }, [isLoading, subscriptionData, currentPageName]);
+  // (debug logging removed)
   
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
@@ -41,15 +38,18 @@ export default function Layout({ children, currentPageName }) {
     // Don't block while loading or if no subscription data yet
     if (isLoading || !subscriptionData) return;
     
-    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing', 'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources'];
-    const isRestrictedPage = restrictedPages.includes(currentPageName);
-    
-    // User has valid access if:
-    // - subscribed (active subscription OR free tier choice OR active free trial)
-    // - is admin
-    const hasValidAccess = subscriptionData.isSubscribed || subscriptionData.isAdmin;
-    
-    if (!hasValidAccess && !isRestrictedPage) {
+    // Pages that are always accessible regardless of subscription
+    const openPages = [
+      'Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing',
+      'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources', 'SubscriptionStatus',
+      'AccessibilityStatement', 'DiagnosticTest'
+    ];
+    const isOpenPage = openPages.includes(currentPageName);
+
+    // User has valid access if subscribed (covers trial, free tier, paid) OR admin
+    const hasValidAccess = subscriptionData?.isSubscribed || subscriptionData?.isAdmin;
+
+    if (!hasValidAccess && !isOpenPage) {
       navigate('/paywall');
     }
   }, [isLoading, subscriptionData, currentPageName, navigate]);
