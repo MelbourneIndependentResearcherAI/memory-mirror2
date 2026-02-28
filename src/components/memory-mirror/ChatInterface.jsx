@@ -1027,19 +1027,31 @@ RESPOND NOW:
 
       // Ensure component is still mounted and message is valid
       if (isMountedRef.current && assistantMessage) {
+        let messageAdded = false;
         setMessages(prev => {
           // Prevent duplicate messages - check if last message is identical
           const lastMsg = prev[prev.length - 1];
           if (lastMsg?.role === 'assistant' && lastMsg?.content === assistantMessage) {
-            console.log('Duplicate message prevented');
+            console.log('❌ Duplicate message prevented - already in chat');
             return prev;
           }
+          // Also check the last 3 messages to catch triple posts
+          const recent = prev.slice(-3);
+          const isDuplicate = recent.filter(m => m?.role === 'assistant' && m?.content === assistantMessage).length > 0;
+          if (isDuplicate) {
+            console.log('❌ Duplicate detected in recent messages - prevented');
+            return prev;
+          }
+          console.log('✅ Message added to chat:', assistantMessage.substring(0, 50));
+          messageAdded = true;
           return [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }];
         });
-        setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-        // Cache for offline use
-        offlineCache.cacheInteraction(userMessage, assistantMessage);
-        console.log('Message added to chat');
+
+        if (messageAdded) {
+          setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+          // Cache for offline use
+          offlineCache.cacheInteraction(userMessage, assistantMessage);
+        }
       }
 
       // Show visual response if available
