@@ -10,9 +10,7 @@ import MemorySessionLauncher from '../components/memory/MemorySessionLauncher';
 import InsightsDashboard from '../components/caregiver/InsightsDashboard';
 import NightWatchLog from '../components/caregiver/NightWatchLog';
 import AlwaysOnVoice from '../components/memory-mirror/AlwaysOnVoice';
-import SmartDeviceManager from '../components/smartHome/SmartDeviceManager';
-import SmartHomeRoutineBuilder from '../components/smartHome/SmartHomeRoutineBuilder';
-import MoodAutomationConfig from '../components/smartHome/MoodAutomationConfig';
+
 import ReminderManager from '../components/caregiver/ReminderManager';
 import VoiceCloningManager from '../components/caregiver/VoiceCloningManager';
 import AICareInsights from '../components/caregiver/AICareInsights';
