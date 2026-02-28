@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Lock, Shield, HelpCircle } from 'lucide-react';
+import { Settings, Lock, Shield, HelpCircle, Download } from 'lucide-react';
 import PrivacySettings from '@/components/PrivacySettings';
+import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('privacy');
