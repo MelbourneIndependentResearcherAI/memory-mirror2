@@ -7,7 +7,6 @@ import { useQueryClient } from '@tanstack/react-query';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import AppTutorial from '@/components/landing/AppTutorial';
-import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
 import FreeTrialRegistration from '@/components/subscription/FreeTrialRegistration';
