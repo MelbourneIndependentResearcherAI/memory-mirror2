@@ -17,7 +17,7 @@ import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { speakWithClonedVoice, speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
