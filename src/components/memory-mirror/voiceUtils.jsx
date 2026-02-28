@@ -10,63 +10,51 @@ export const getActiveClonedVoice = async () => {
   }
 };
 
-// Synthesize with cloned voice if available, fallback to system voice
+// Play audio from ArrayBuffer
+const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
+  const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
+  const audioUrl = URL.createObjectURL(audioBlob);
+  const audio = new Audio(audioUrl);
+  audio.volume = Math.max(0, Math.min(1, volume));
+
+  return new Promise((resolve) => {
+    audio.onended = () => {
+      URL.revokeObjectURL(audioUrl);
+      if (onEnd) onEnd();
+      resolve();
+    };
+    audio.onerror = () => {
+      URL.revokeObjectURL(audioUrl);
+      resolve(false); // signal failure
+    };
+    audio.play().catch(() => resolve(false));
+  });
+};
+
+// Synthesize speech via ElevenLabs (cloned voice if available, otherwise default EL voice)
+// Falls back to browser TTS only if ElevenLabs is unavailable
 export const speakWithClonedVoice = async (text, options = {}) => {
-  if (!text || typeof text !== 'string') {
-    console.warn('Invalid text for voice synthesis');
-    return;
-  }
+  if (!text || typeof text !== 'string') return;
 
   try {
-    console.log('Attempting cloned voice synthesis...');
+    // Prefer active cloned voice, otherwise use elevenLabsTTS with default voice
     const activeVoice = await getActiveClonedVoice();
-    
-    if (activeVoice?.voice_id) {
-      try {
-        // Try ElevenLabs cloned voice
-        const result = await base44.functions.invoke('synthesizeClonedVoice', {
-          text: text.substring(0, 5000),
-          voice_id: activeVoice.voice_id,
-          stability: options.stability || 0.75,
-          similarity_boost: options.similarity_boost || 0.75
-        });
-        
-        if (result.data && !result.data.fallback) {
-          // Play cloned voice audio
-          const audioBlob = new Blob([result.data], { type: 'audio/mpeg' });
-          const audioUrl = URL.createObjectURL(audioBlob);
-          const audio = new Audio(audioUrl);
-          audio.volume = Math.max(0, Math.min(1, options.volume || 1.0));
-          
-          return new Promise((resolve) => {
-            audio.onended = () => {
-              URL.revokeObjectURL(audioUrl);
-              if (options.onEnd) options.onEnd();
-              resolve();
-            };
-            audio.onerror = (_err) => {
-              console.log('Audio playback error, falling back to system voice');
-              URL.revokeObjectURL(audioUrl);
-              speakWithRealisticVoice(text, options);
-              resolve();
-            };
-            audio.play().catch(err => {
-              console.log('Audio play failed:', err);
-              speakWithRealisticVoice(text, options);
-              resolve();
-            });
-          });
-        }
-      } catch (clonedError) {
-        console.log('Cloned voice synthesis failed:', clonedError.message);
-      }
+    const functionName = activeVoice?.voice_id ? 'synthesizeClonedVoice' : 'elevenLabsTTS';
+    const payload = activeVoice?.voice_id
+      ? { text, voice_id: activeVoice.voice_id, stability: options.stability || 0.5, similarity_boost: options.similarity_boost || 0.75 }
+      : { text, stability: 0.5, similarity_boost: 0.75 };
+
+    const result = await base44.functions.invoke(functionName, payload);
+
+    if (result.data && !result.data.fallback) {
+      const ok = await playAudioBuffer(result.data, options.volume || 1.0, options.onEnd);
+      if (ok !== false) return;
     }
-  } catch (error) {
-    console.log('Cloned voice initialization failed:', error.message);
+  } catch {
+    // fall through to browser TTS
   }
-  
-  // Fallback to system voice
-  console.log('Falling back to system voice');
+
+  // Fallback to browser TTS
   return speakWithRealisticVoice(text, options);
 };
 
