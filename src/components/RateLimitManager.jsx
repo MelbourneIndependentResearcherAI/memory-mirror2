@@ -5,6 +5,8 @@ import { AlertCircle } from 'lucide-react';
 const MAX_MESSAGES_PER_MINUTE = 10;
 const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
 
+// Store per-session timestamps so each page load starts fresh
+// but persists across re-renders (module-level singleton)
 const messageTimestamps = [];
 
 export function checkRateLimit() {
@@ -15,6 +17,7 @@ export function checkRateLimit() {
     messageTimestamps.shift();
   }
   
+  // Check BEFORE pushing — don't push if we're at the limit
   if (messageTimestamps.length >= MAX_MESSAGES_PER_MINUTE) {
     return {
       limited: true,
