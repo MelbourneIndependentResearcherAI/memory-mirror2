@@ -44,9 +44,12 @@ const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
   }
 };
 
-// UNUSED - ElevenLabs is unreliable. Browser TTS only.
+// ElevenLabs disabled - use speakWithRealisticVoice directly
 export const speakWithClonedVoice = async (text, options = {}) => {
-  return false; // Use speakWithRealisticVoice directly in UI
+  if (!text) return false;
+  // Skip ElevenLabs entirely, use browser TTS
+  speakWithRealisticVoice(text, options);
+  return false;
 };
 
 // Get user's preferred voice from localStorage
