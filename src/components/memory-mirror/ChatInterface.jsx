@@ -1042,36 +1042,33 @@ RESPOND NOW - CRITICAL:
 
       // Ensure component is still mounted and message is valid
       if (isMountedRef.current && assistantMessage) {
-        // Prevent duplicate messages - check BEFORE adding
-        const lastMsg = messagesRef.current[messagesRef.current.length - 1];
-        if (lastMsg?.role === 'assistant' && lastMsg?.content === assistantMessage) {
-          console.log('❌ Duplicate message prevented - already in chat');
-        } else {
-          // Also check the last 3 messages to catch triple posts
-          const recent = messagesRef.current.slice(-3);
-          const isDuplicate = recent.filter(m => m?.role === 'assistant' && m?.content === assistantMessage).length > 0;
-          if (isDuplicate) {
-            console.log('❌ Duplicate detected in recent messages - prevented');
-          } else {
-            console.log('✅ Message added to chat:', assistantMessage.substring(0, 50));
-            setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
-            setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-            // Cache for offline use
-            offlineCache.cacheInteraction(userMessage, assistantMessage);
-            
-            // Speak the response with proper voice synthesis
-            const emotionalState = detectedAnxiety >= 8 ? 'soothing' :
-                                   detectedAnxiety >= 7 ? 'reassuring' :
-                                   detectedAnxiety >= 5 ? 'calm' :
-                                   detectedAnxiety >= 3 ? 'warm' :
-                                   detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
-            console.log('🔊 Speaking response with state:', emotionalState);
-            speakResponse(assistantMessage, { 
-              state: emotionalState,
-              anxietyLevel: detectedAnxiety
-            });
-          }
+        // CRITICAL: Check FIRST if this exact message is already in the last 5 messages
+        const allMsgs = messagesRef.current;
+        const isDuplicateInRecent = allMsgs.slice(-5).some(m => 
+          m?.role === 'assistant' && m?.content === assistantMessage
+        );
+        
+        if (isDuplicateInRecent) {
+          console.log('❌ BLOCKED DUPLICATE: Message already exists in recent history');
+          return; // EXIT - DO NOT PROCESS THIS MESSAGE AGAIN
         }
+        
+        console.log('✅ Message is UNIQUE - adding to chat:', assistantMessage.substring(0, 50));
+        setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
+        setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+        offlineCache.cacheInteraction(userMessage, assistantMessage);
+        
+        // Speak ONLY ONCE with proper voice synthesis
+        const emotionalState = detectedAnxiety >= 8 ? 'soothing' :
+                               detectedAnxiety >= 7 ? 'reassuring' :
+                               detectedAnxiety >= 5 ? 'calm' :
+                               detectedAnxiety >= 3 ? 'warm' :
+                               detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
+        console.log('🔊 Speaking response with state:', emotionalState);
+        speakResponse(assistantMessage, { 
+          state: emotionalState,
+          anxietyLevel: detectedAnxiety
+        });
       }
 
       // Show visual response if available
