@@ -31,9 +31,6 @@ import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const adminOnlyCards = [
   { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF', adminOnly: true },
-  { id: 26, title: 'Test Offline System', icon: '🧪', description: 'Run diagnostics to verify offline functionality', path: '/CaregiverPortal/offline-test', background: '#F0FDF4', adminOnly: true },
-  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/CaregiverPortal/agents', background: '#F0FDF4', adminOnly: true },
-  { id: 23, title: 'Patient Registration', icon: '📋', description: 'Register patients and track their email addresses & usage', path: '/CaregiverPortal/patient-registration', background: '#DBEAFE', adminOnly: true }
 ];
 
 const regularCards = [
