@@ -1,38 +1,28 @@
 {
   "navigationFallback": {
     "rewrite": "/index.html",
-    "exclude": ["/assets/*", "/*.{js,css,png,jpg,jpeg,gif,svg,ico,woff,woff2,ttf,eot}", "/health", "/sitemap.xml", "/robots.txt"]
+    "exclude": ["/assets/*", "/*.{js,css,png,jpg,jpeg,gif,svg,ico,woff,woff2,ttf,eot}"]
   },
   "responseOverrides": {
     "404": {
-      "rewrite": "/404.html",
-      "statusCode": 404
+      "rewrite": "/index.html",
+      "statusCode": 200
     }
   },
   "routes": [
     {
       "route": "/index.html",
       "headers": {
-        "cache-control": "no-cache, no-store, must-revalidate"
+        "cache-control": "no-cache"
       }
     },
     {
       "route": "/assets/*",
       "headers": {
-        "cache-control": "public, max-age=31536000, immutable",
-        "vary": "Accept-Encoding"
-      }
-    },
-    {
-      "route": "/health",
-      "headers": {
-        "cache-control": "no-cache, no-store, must-revalidate"
+        "cache-control": "public, max-age=31536000, immutable"
       }
     }
   ],
-  "globalHeaders": {
-    "vary": "Accept-Encoding"
-  },
   "mimeTypes": {
     ".json": "application/json"
   }
