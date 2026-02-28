@@ -48,6 +48,14 @@ export default function Paywall() {
       const user = await base44.auth.me();
       if (!user?.email) throw new Error('Please sign in to subscribe');
 
+      // Check for existing pending subscription to prevent duplicates
+      const existingSubs = await base44.entities.Subscription.filter({ user_email: user.email });
+      const existingPending = existingSubs.find(s => s.status === 'pending' && s.plan_name === 'premium');
+      if (existingPending) {
+        // Return existing pending subscription instead of creating a new one
+        return existingPending;
+      }
+
       const paymentRef = `SUB-${user.email.split('@')[0].toUpperCase()}-${Date.now()}`;
       const nextBillingDate = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
 

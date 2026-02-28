@@ -117,20 +117,32 @@ META: {"era": "present", "anxiety": 3, "suggestedMemory": null}`
     let recallSuggestion = null;
     let cleanResponse = responseText;
 
-    // Extract meta-data
-    const eraMatch = responseText.match(/\[ERA:(1940s|1960s|1980s|present)\]/);
+    // Strip META block (JSON format: META: {...})
+    const metaJsonMatch = cleanResponse.match(/\n?META:\s*(\{[^}]+\})/);
+    if (metaJsonMatch) {
+      try {
+        const meta = JSON.parse(metaJsonMatch[1]);
+        if (meta.era) detectedResponseEra = meta.era;
+        if (meta.anxiety >= 7) anxietyDetected = true;
+        if (meta.suggestedMemory) recallSuggestion = meta.suggestedMemory;
+      } catch {}
+      cleanResponse = cleanResponse.replace(/\n?META:\s*\{[^}]+\}/g, '').trim();
+    }
+
+    // Also strip legacy bracket-style tags
+    const eraMatch = cleanResponse.match(/\[ERA:(1940s|1960s|1980s|present)\]/);
     if (eraMatch) {
       detectedResponseEra = eraMatch[1];
       cleanResponse = cleanResponse.replace(/\[ERA:[^\]]+\]/g, '').trim();
     }
 
-    const anxietyMatch = responseText.match(/\[ANXIETY:HIGH\]/);
+    const anxietyMatch = cleanResponse.match(/\[ANXIETY:HIGH\]/);
     if (anxietyMatch) {
       anxietyDetected = true;
       cleanResponse = cleanResponse.replace(/\[ANXIETY:HIGH\]/g, '').trim();
     }
 
-    const recallMatch = responseText.match(/\[RECALL:([^\]]+)\]/);
+    const recallMatch = cleanResponse.match(/\[RECALL:([^\]]+)\]/);
     if (recallMatch) {
       recallSuggestion = recallMatch[1];
       cleanResponse = cleanResponse.replace(/\[RECALL:[^\]]+\]/g, '').trim();
