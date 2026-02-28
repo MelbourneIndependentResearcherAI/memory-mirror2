@@ -12,10 +12,10 @@ export default function UnlockModal({ isOpen, onUnlock, onCancel: _onCancel, mod
   const [pinChanged, setPinChanged] = useState(false);
   const { isDefaultPin, updateCaregiverPin } = useLockMode();
 
-  const handleChangePinSubmit = (e) => {
+  const handleChangePinSubmit = async (e) => {
     e.preventDefault();
     if (newPin.length === 4) {
-      updateCaregiverPin(newPin);
+      await updateCaregiverPin(newPin);
       setPinChanged(true);
       setShowChangePinMode(false);
       setNewPin('');
@@ -23,9 +23,9 @@ export default function UnlockModal({ isOpen, onUnlock, onCancel: _onCancel, mod
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = onUnlock(pin);
+    const success = await onUnlock(pin);
     if (success) {
       setPin('');
       setError(false);
