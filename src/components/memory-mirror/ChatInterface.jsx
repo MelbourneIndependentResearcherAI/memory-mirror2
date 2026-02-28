@@ -1042,30 +1042,35 @@ RESPOND NOW - CRITICAL:
 
       // Ensure component is still mounted and message is valid
       if (isMountedRef.current && assistantMessage) {
-        let messageAdded = false;
-        setMessages(prev => {
-          // Prevent duplicate messages - check if last message is identical
-          const lastMsg = prev[prev.length - 1];
-          if (lastMsg?.role === 'assistant' && lastMsg?.content === assistantMessage) {
-            console.log('❌ Duplicate message prevented - already in chat');
-            return prev;
-          }
+        // Prevent duplicate messages - check BEFORE adding
+        const lastMsg = messagesRef.current[messagesRef.current.length - 1];
+        if (lastMsg?.role === 'assistant' && lastMsg?.content === assistantMessage) {
+          console.log('❌ Duplicate message prevented - already in chat');
+        } else {
           // Also check the last 3 messages to catch triple posts
-          const recent = prev.slice(-3);
+          const recent = messagesRef.current.slice(-3);
           const isDuplicate = recent.filter(m => m?.role === 'assistant' && m?.content === assistantMessage).length > 0;
           if (isDuplicate) {
             console.log('❌ Duplicate detected in recent messages - prevented');
-            return prev;
+          } else {
+            console.log('✅ Message added to chat:', assistantMessage.substring(0, 50));
+            setMessages(prev => [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }]);
+            setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
+            // Cache for offline use
+            offlineCache.cacheInteraction(userMessage, assistantMessage);
+            
+            // Speak the response with proper voice synthesis
+            const emotionalState = detectedAnxiety >= 8 ? 'soothing' :
+                                   detectedAnxiety >= 7 ? 'reassuring' :
+                                   detectedAnxiety >= 5 ? 'calm' :
+                                   detectedAnxiety >= 3 ? 'warm' :
+                                   detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
+            console.log('🔊 Speaking response with state:', emotionalState);
+            speakResponse(assistantMessage, { 
+              state: emotionalState,
+              anxietyLevel: detectedAnxiety
+            });
           }
-          console.log('✅ Message added to chat:', assistantMessage.substring(0, 50));
-          messageAdded = true;
-          return [...prev, { role: 'assistant', content: assistantMessage, hasVoice: true, language: selectedLanguage }];
-        });
-
-        if (messageAdded) {
-          setConversationHistory(prev => [...prev, { role: 'assistant', content: assistantMessage }]);
-          // Cache for offline use
-          offlineCache.cacheInteraction(userMessage, assistantMessage);
         }
       }
 
@@ -1075,25 +1080,6 @@ RESPOND NOW - CRITICAL:
           show: true,
           suggestions: visualSuggestions.suggestions
         });
-      }
-      
-      // Determine emotional state for voice adaptation with nuanced transitions
-      const emotionalState = detectedAnxiety >= 8 ? 'soothing' :
-                           detectedAnxiety >= 7 ? 'reassuring' :
-                           detectedAnxiety >= 5 ? 'calm' :
-                           detectedAnxiety >= 3 ? 'warm' :
-                           detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
-      
-      // Speak the response with proper voice synthesis
-      // ONLY speak if message was actually added (not duplicate)
-      if (assistantMessage && isMountedRef.current && messageAdded) {
-        console.log('🔊 Speaking response with state:', emotionalState);
-        speakResponse(assistantMessage, { 
-          state: emotionalState,
-          anxietyLevel: detectedAnxiety
-        });
-      } else if (assistantMessage && !messageAdded) {
-        console.log('⏭️ Message was duplicate - not speaking');
       }
 
       // Show anxiety alert if needed
