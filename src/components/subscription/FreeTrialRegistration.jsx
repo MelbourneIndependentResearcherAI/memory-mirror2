@@ -31,8 +31,14 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
       // Also set legacy key for backward compat
       localStorage.setItem('freeTrialUser', JSON.stringify(trialData));
 
-      // Also register in the backend (non-blocking)
-      base44.functions.invoke('registerFreeTrial', { name, email }).catch(() => {});
+      // Verify with backend (server-side duplicate check)
+      const result = await base44.functions.invoke('registerFreeTrial', { name, email });
+      if (result?.data?.expired) {
+        // Remove the optimistic localStorage entry
+        localStorage.removeItem(trialKey);
+        localStorage.removeItem('freeTrialUser');
+        throw new Error('Your free trial has already been used. Please subscribe to continue.');
+      }
 
       onSuccess?.();
     } catch (err) {
