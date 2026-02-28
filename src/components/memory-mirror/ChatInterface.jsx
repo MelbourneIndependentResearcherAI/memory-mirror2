@@ -396,7 +396,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     
     // Initial greeting after 1 second - also SPEAK it
     const greetingTimeout = setTimeout(() => {
-      if (isMountedRef.current && messages.length === 0) {
+      if (isMountedRef.current && messages.length === 0 && !greetingSentRef.current) {
+        greetingSentRef.current = true;
         sendProactiveMessage('greeting');
       }
     }, 1000);
