@@ -38,11 +38,11 @@ Deno.serve(async (req) => {
         user_email: user.email,
         date: today,
         chat_messages_used: 0,
-        chat_messages_limit: 20,
+        chat_messages_limit: 5,
         memories_viewed: 0,
         memories_limit: 10,
         voice_minutes_used: 0,
-        voice_minutes_limit: 30
+        voice_minutes_limit: 15
       });
     }
 
