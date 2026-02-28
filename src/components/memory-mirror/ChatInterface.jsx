@@ -1647,8 +1647,19 @@ RESPOND NOW:
           </Button>
         </div>
 
-        {/* Voice Button */}
+        {/* Voice Button + Replay */}
         <div className="flex flex-col items-center gap-4">
+          {/* Replay last response */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => { if (lastSpokenTextRef.current) speakResponse(lastSpokenTextRef.current); }}
+            disabled={!lastSpokenTextRef.current || isLoading}
+            className="rounded-full flex items-center gap-2 text-slate-600 border-slate-300"
+          >
+            <Volume2 className="w-4 h-4" /> Replay
+          </Button>
+
           <Button
             size="lg"
             onClick={isListening ? stopVoiceInput : startVoiceInput}
