@@ -40,7 +40,8 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
         throw new Error('Your free trial has already been used. Please subscribe to continue.');
       }
 
-      onSuccess?.();
+      // Only navigate on success (not if expired)
+      onSuccess?.({ name, email });
     } catch (err) {
       setError(err.message || 'Failed to register for free trial');
     } finally {
