@@ -102,14 +102,14 @@ export function useSubscriptionStatus() {
           isFreeTier: isFreeTierUser,
           subscription: activeSubscription || pendingSubscription || null,
           subscribedTools,
-          hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId),
           user,
           isOnline: true,
           ...trialStatus
         };
 
+        // Save serializable result (functions can't be cached)
         offlineHelper.saveSubscription(result);
-        return result;
+        return { ...result, hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId) };
       } catch (error) {
         console.error('Subscription check error:', error);
         const cached = offlineHelper.getCachedSubscription();
