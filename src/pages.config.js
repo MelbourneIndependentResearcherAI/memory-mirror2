@@ -155,6 +155,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
+import FeatureLockConfig from './pages/FeatureLockConfig';
 import __Layout from './Layout.jsx';
 
 
@@ -267,6 +268,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
+    "FeatureLockConfig": FeatureLockConfig,
 }
 
 export const pagesConfig = {
