@@ -162,7 +162,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     try {
       console.log('🔊 Starting voice synthesis');
       // Use ElevenLabs (cloned voice if available, else default warm voice)
-      await speakWithClonedVoice(text, {
+      const success = await speakWithClonedVoice(text, {
         language: selectedLanguage,
         volume: 1.0,
         onEnd: () => {
@@ -170,21 +170,29 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
           if (emotionalContext.onEnd) emotionalContext.onEnd();
         }
       });
+      
+      // If ElevenLabs failed, success will be true (browser TTS was used)
+      if (success) {
+        console.log('✅ Voice synthesis completed');
+        return;
+      }
     } catch (error) {
       console.error('Voice synthesis error:', error);
-      // Fallback to browser TTS
-      speakWithRealisticVoice(text, {
-        emotionalState: emotionalContext.state || 'neutral',
-        anxietyLevel: emotionalContext.anxietyLevel || 0,
-        cognitiveLevel: cognitiveLevel,
-        language: selectedLanguage,
-        userProfile: userProfile,
-        onEnd: () => {
-          isSpeakingRef.current = false;
-          if (emotionalContext.onEnd) emotionalContext.onEnd();
-        }
-      });
     }
+    
+    // Fallback or if ElevenLabs returned false
+    console.log('🎧 Using browser TTS fallback');
+    speakWithRealisticVoice(text, {
+      emotionalState: emotionalContext.state || 'neutral',
+      anxietyLevel: emotionalContext.anxietyLevel || 0,
+      cognitiveLevel: cognitiveLevel,
+      language: selectedLanguage,
+      userProfile: userProfile,
+      onEnd: () => {
+        isSpeakingRef.current = false;
+        if (emotionalContext.onEnd) emotionalContext.onEnd();
+      }
+    });
   }, [selectedLanguage, cognitiveLevel, userProfile]);
 
   const translateText = useCallback(async (text, targetLang, sourceLang = null) => {
@@ -415,7 +423,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       
       // Stop proactive check-ins
       if (proactiveIntervalRef.current) {
-        clearInterval(proactiveIntervalRef.current);
+        clearTimeout(proactiveIntervalRef.current);
       }
       
       // Cancel any pending requests
