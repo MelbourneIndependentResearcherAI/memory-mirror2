@@ -13,7 +13,6 @@ import SingAlongPlayer from '../music/SingAlongPlayer';
 import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
-import SmartHomeControls from '../smartHome/SmartHomeControls';
 import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
