@@ -6,8 +6,8 @@ export default function OfflineModeDashboardPage() {
   const navigate = useNavigate();
 
   const offlineOptions = [
-    { id: 1, title: 'Audio Library', icon: '🎵', description: 'Download audio for offline access', path: '/OfflineAudio', background: '#1E40AF' },
-    { id: 2, title: 'Content Manager', icon: '📦', description: 'Manage offline content and media', path: '/OfflineContent', background: '#7C2D12' },
+    { id: 1, title: 'Offline Manager', icon: '📥', description: 'Download photos, music, stories & memories for offline use', path: '/OfflineManager', background: '#1E40AF' },
+    { id: 2, title: 'Audio Library', icon: '🎵', description: 'Download audio for offline access', path: '/OfflineAudio', background: '#7C2D12' },
     { id: 3, title: 'Sync & Backup', icon: '🔄', description: 'Sync data and backup to cloud', path: '/SyncBackup', background: '#0E7490' },
     { id: 4, title: 'Offline Capabilities', icon: '⚙️', description: 'Check features and storage usage', path: '/OfflineCapabilities', background: '#059669' }
   ];
