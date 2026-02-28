@@ -394,13 +394,9 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       } catch {}
     }
     
-    // Initial greeting after 1 second - also SPEAK it
-    const greetingTimeout = setTimeout(() => {
-      if (isMountedRef.current && messages.length === 0 && !greetingSentRef.current) {
-        greetingSentRef.current = true;
-        sendProactiveMessage('greeting');
-      }
-    }, 1000);
+    // Greeting disabled - was causing duplicates
+    // User will speak first or be prompted manually
+    const greetingTimeout = null;
     
     // Start proactive check-ins (every 5-10 minutes)
     startProactiveCheckIns();
