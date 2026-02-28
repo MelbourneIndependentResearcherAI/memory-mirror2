@@ -1037,14 +1037,7 @@ RESPOND NOW:
         console.log('🔊 Speaking response with state:', emotionalState);
         speakResponse(assistantMessage, { 
           state: emotionalState,
-          anxietyLevel: detectedAnxiety,
-          onEnd: () => {
-            // Auto-start listening after speaking for natural conversation flow
-            if (isMountedRef.current && !isLoading) {
-              console.log('🎤 Your turn - listening...');
-              setTimeout(() => startVoiceInput(), 600);
-            }
-          }
+          anxietyLevel: detectedAnxiety
         });
       }
 
