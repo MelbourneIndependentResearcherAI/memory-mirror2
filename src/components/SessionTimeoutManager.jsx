@@ -12,6 +12,9 @@ export default function SessionTimeoutManager() {
   const warningTimeoutRef = useRef(null);
   const [showWarning, setShowWarning] = React.useState(false);
 
+  // Don't auto-logout patient sessions — they can't re-login themselves
+  const isPatientSession = !!sessionStorage.getItem('patientSession');
+
   const resetTimeout = () => {
     // Clear existing timeouts
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -44,6 +47,9 @@ export default function SessionTimeoutManager() {
   };
 
   useEffect(() => {
+    // Skip session timeout for patient sessions
+    if (isPatientSession) return;
+
     resetTimeout();
 
     // Activity listeners
