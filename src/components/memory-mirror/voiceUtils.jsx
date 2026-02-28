@@ -37,6 +37,8 @@ export const speakWithClonedVoice = async (text, options = {}) => {
   if (!text || typeof text !== 'string') return;
 
   try {
+    console.log('🎙️ Starting voice synthesis for:', text.substring(0, 50));
+    
     // Prefer active cloned voice, otherwise use elevenLabsTTS with default voice
     const activeVoice = await getActiveClonedVoice();
     const functionName = activeVoice?.voice_id ? 'synthesizeClonedVoice' : 'elevenLabsTTS';
@@ -44,24 +46,31 @@ export const speakWithClonedVoice = async (text, options = {}) => {
       ? { text, voice_id: activeVoice.voice_id, stability: options.stability || 0.5, similarity_boost: options.similarity_boost || 0.75 }
       : { text, language: options.language || 'en', stability: 0.5, similarity_boost: 0.75 };
 
+    console.log('📢 Calling', functionName, 'with payload:', payload);
     const result = await base44.functions.invoke(functionName, payload);
 
+    console.log('✅ Voice function response:', result?.status);
+    
     // result.data is either an ArrayBuffer (audio) or a JSON error object
     // If it's an ArrayBuffer (byteLength exists), it's valid audio
     const isAudioBuffer = result.data instanceof ArrayBuffer || 
                           (result.data && typeof result.data.byteLength === 'number');
     if (isAudioBuffer) {
+      console.log('🔊 Playing audio buffer...');
       const ok = await playAudioBuffer(result.data, options.volume || 1.0, options.onEnd);
       if (ok !== false) return;
     }
     // If JSON with fallback flag, fall through to browser TTS
     if (result.data?.fallback) {
+      console.log('⚠️ ElevenLabs fallback, using browser TTS');
       // intentional fall-through
     }
-  } catch {
+  } catch (error) {
+    console.error('❌ Voice synthesis error:', error.message);
     // fall through to browser TTS
   }
 
+  console.log('🎧 Falling back to browser TTS');
   // Fallback to browser TTS
   return speakWithRealisticVoice(text, options);
 };
