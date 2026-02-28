@@ -1033,6 +1033,9 @@ RESPOND NOW - CRITICAL:
         
         if (isDuplicateInRecent) {
           console.log('❌ BLOCKED DUPLICATE: Message already exists in recent history');
+          if (isMountedRef.current) {
+            setIsLoading(false);
+          }
           return; // EXIT - DO NOT PROCESS THIS MESSAGE AGAIN
         }
         
