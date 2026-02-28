@@ -42,7 +42,7 @@ export const speakWithClonedVoice = async (text, options = {}) => {
     const functionName = activeVoice?.voice_id ? 'synthesizeClonedVoice' : 'elevenLabsTTS';
     const payload = activeVoice?.voice_id
       ? { text, voice_id: activeVoice.voice_id, stability: options.stability || 0.5, similarity_boost: options.similarity_boost || 0.75 }
-      : { text, stability: 0.5, similarity_boost: 0.75 };
+      : { text, language: options.language || 'en', stability: 0.5, similarity_boost: 0.75 };
 
     const result = await base44.functions.invoke(functionName, payload);
 
