@@ -411,7 +411,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     return () => {
       clearInterval(alertCheckInterval);
       isMountedRef.current = false;
-      clearTimeout(greetingTimeout);
+      if (greetingTimeout) clearTimeout(greetingTimeout);
       
       // Stop proactive check-ins
       if (proactiveIntervalRef.current) {
