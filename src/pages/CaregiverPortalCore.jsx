@@ -76,31 +76,7 @@ export default function CaregiverPortalCore({ userProfile }) {
           </div>
         </ErrorBoundary>
       } />
-      <Route path="smart-home" element={
-        <ErrorBoundary>
-          <div className="space-y-8">
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-                <ArrowLeft className="w-5 h-5" />Back to Portal
-              </button>
-              <SmartDeviceManager />
-            </div>
-            <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-              <SmartHomeRoutineBuilder />
-            </div>
-          </div>
-        </ErrorBoundary>
-      } />
-      <Route path="mood-automations" element={
-        <ErrorBoundary>
-          <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-            <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 mb-6 min-h-[44px]">
-              <ArrowLeft className="w-5 h-5" />Back to Portal
-            </button>
-            <MoodAutomationConfig />
-          </div>
-        </ErrorBoundary>
-      } />
+
       <Route path="reminders" element={
         <ErrorBoundary>
           <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
