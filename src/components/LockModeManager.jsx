@@ -21,11 +21,14 @@ export const LockModeProvider = ({ children }) => {
 
   const [caregiverPin, setCaregiverPin] = useState(() => {
     try {
-      return localStorage.getItem('caregiverPin') || '1234'; // Default PIN
+      return localStorage.getItem('caregiverPin') || '1234';
     } catch {
       return '1234';
     }
   });
+
+  // True if caregiver has never changed the default PIN
+  const isDefaultPin = caregiverPin === '1234' && !localStorage.getItem('caregiverPinChanged');
 
   useEffect(() => {
     try {
@@ -55,6 +58,7 @@ export const LockModeProvider = ({ children }) => {
     setCaregiverPin(newPin);
     try {
       localStorage.setItem('caregiverPin', newPin);
+      localStorage.setItem('caregiverPinChanged', 'true');
     } catch (e) {
       console.error('Failed to save PIN:', e);
     }
@@ -77,7 +81,8 @@ export const LockModeProvider = ({ children }) => {
         updateCaregiverPin,
         isLocked,
         isAnyModeLocked,
-        caregiverPin
+        caregiverPin,
+        isDefaultPin
       }}
     >
       {children}
