@@ -55,10 +55,11 @@ export default function VoiceCloningManager() {
         });
       });
 
-      // Determine quality rating
-      let qualityRating = 'fair';
+      // Determine quality rating (must match entity enum: excellent, good, fair, needs_improvement)
+      let qualityRating = 'needs_improvement';
       if (audioQuality?.rating === 'excellent') qualityRating = 'excellent';
       else if (audioQuality?.rating === 'good') qualityRating = 'good';
+      else if (audioQuality?.rating === 'fair') qualityRating = 'fair';
 
       setCloningProgress(90);
 
