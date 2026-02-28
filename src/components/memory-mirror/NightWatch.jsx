@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Moon, AlertTriangle, Phone, X, Volume2, Loader2, Zap, Lightbulb, Thermometer, Video } from 'lucide-react';
+import { Moon, AlertTriangle, Phone, X, Volume2, Loader2, Zap, Thermometer, Video } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
-import SmartHomeControls from '../smartHome/SmartHomeControls';
 import RemoteCheckIn from '../caregiver/RemoteCheckIn';
 import { speakWithRealisticVoice } from './voiceUtils';
 
@@ -1091,20 +1090,7 @@ export default function NightWatch({ onClose }) {
           </Card>
         )}
 
-        {/* Smart Home Controls */}
-        {isActive && (
-          <Card className="bg-slate-800 border-slate-700 mb-6">
-            <CardHeader>
-              <CardTitle className="text-white flex items-center gap-2">
-                <Lightbulb className="w-5 h-5" />
-                Comfort Controls
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <SmartHomeControls mode="compact" />
-            </CardContent>
-          </Card>
-        )}
+
 
         {/* Conversation Log */}
         {isActive && (

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Mic, MicOff, Loader2 } from 'lucide-react';
+import { Mic, MicOff, Loader2, Volume2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ChatMessage from './ChatMessage';
 import VoiceSetup from './VoiceSetup';
@@ -13,12 +13,11 @@ import SingAlongPlayer from '../music/SingAlongPlayer';
 import StoryTeller from './StoryTeller';
 import SmartMemoryRecall from './SmartMemoryRecall';
 import VisualResponse from './VisualResponse';
-import SmartHomeControls from '../smartHome/SmartHomeControls';
 import PersonalizedCompanion from './PersonalizedCompanion';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { speakWithClonedVoice, speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
@@ -42,6 +41,8 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const [showStory, setShowStory] = useState(false);
   const [showHandsFree, setShowHandsFree] = useState(false);
   const [showPersonalizedCompanion, setShowPersonalizedCompanion] = useState(false);
+  const [voiceTypingMode, setVoiceTypingMode] = useState(false);
+  const [textInput, setTextInput] = useState('');
   const [smartRecall, setSmartRecall] = useState({ show: false, photos: [], memories: [] });
   const [visualResponse, setVisualResponse] = useState({ show: false, suggestions: [] });
   const [conversationTopics, setConversationTopics] = useState([]);
@@ -138,46 +139,33 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
     staleTime: 1000 * 60 * 15,
   });
 
+  // Ref to last spoken text for replay
+  const lastSpokenTextRef = useRef('');
+
   const speakResponse = useCallback(async (text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
-    
+    lastSpokenTextRef.current = text;
+
     try {
-      // Use advanced voice synthesis from voiceUtils
+      // Use ElevenLabs (cloned voice if available, else default warm voice)
+      await speakWithClonedVoice(text, {
+        language: selectedLanguage,
+        volume: 1.0,
+        onEnd: () => {
+          if (emotionalContext.onEnd) emotionalContext.onEnd();
+        }
+      });
+    } catch (error) {
+      console.error('Voice synthesis error:', error);
+      // Fallback to browser TTS
       speakWithRealisticVoice(text, {
         emotionalState: emotionalContext.state || 'neutral',
         anxietyLevel: emotionalContext.anxietyLevel || 0,
         cognitiveLevel: cognitiveLevel,
         language: selectedLanguage,
         userProfile: userProfile,
-        onEnd: () => {
-          if (emotionalContext.onEnd) {
-            emotionalContext.onEnd();
-          }
-        }
+        onEnd: emotionalContext.onEnd
       });
-    } catch (error) {
-      console.error('Voice synthesis error:', error);
-      
-      // Ultimate fallback - basic speech synthesis
-      const utterance = new SpeechSynthesisUtterance(text);
-      utterance.rate = 0.95;
-      utterance.pitch = 1.0;
-      utterance.volume = 1.0;
-      
-      utterance.onend = () => {
-        if (emotionalContext.onEnd) {
-          emotionalContext.onEnd();
-        }
-      };
-      
-      utterance.onerror = () => {
-        if (emotionalContext.onEnd) {
-          emotionalContext.onEnd();
-        }
-      };
-      
-      window.speechSynthesis.cancel();
-      window.speechSynthesis.speak(utterance);
     }
   }, [selectedLanguage, cognitiveLevel, userProfile]);
 
@@ -1052,23 +1040,6 @@ RESPOND NOW:
         console.log('Message added to chat');
       }
 
-      // Trigger mood-based device control
-      if (detectedAnxiety >= 4) {
-        try {
-          const moodControl = await offlineFunction('moodBasedDeviceControl', {
-            anxiety_level: detectedAnxiety,
-            detected_mood: detectedAnxiety >= 7 ? 'anxious' : detectedAnxiety >= 4 ? 'calm' : 'peaceful',
-            conversation_context: userMessageEnglish
-          });
-
-          if (moodControl.data?.applied) {
-            toast.success(`Environment adjusted: ${moodControl.data.automations_triggered.join(', ')}`);
-          }
-        } catch (error) {
-          console.error('Mood-based control failed:', error);
-        }
-      }
-
       // Show visual response if available
       if (visualSuggestions?.should_show_visuals && visualSuggestions?.suggestions?.length > 0) {
         setVisualResponse({
@@ -1310,6 +1281,12 @@ RESPOND NOW:
           
           console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
           
+          // In voice typing mode, show text in real-time
+          if (voiceTypingMode) {
+            setTextInput(transcript.trim());
+            return;
+          }
+          
           // Wait for user to fully finish their thought
           if (lastResult.isFinal) {
             const finalSpeech = transcript.trim();
@@ -1460,12 +1437,7 @@ RESPOND NOW:
       
       <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
-      {/* Smart Home Controls Panel */}
-      {visualResponse.show && (
-        <div className="border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 p-3">
-          <SmartHomeControls mode="compact" />
-        </div>
-      )}
+
 
       {/* Feature Buttons - Caregiver Access Only */}
       {/* These buttons are hidden from patient view but available in caregiver portal */}
@@ -1617,8 +1589,77 @@ RESPOND NOW:
         </div>
       </PullToRefresh>
 
-      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950">
+      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 space-y-4">
+        {/* Mode Toggle */}
+        <div className="flex gap-2 justify-center">
+          <Button
+            size="sm"
+            variant={!voiceTypingMode ? "default" : "outline"}
+            onClick={() => {
+              if (isListening) stopVoiceInput();
+              setVoiceTypingMode(false);
+            }}
+            className="rounded-full"
+          >
+            Voice Chat
+          </Button>
+          <Button
+            size="sm"
+            variant={voiceTypingMode ? "default" : "outline"}
+            onClick={() => {
+              if (isListening) stopVoiceInput();
+              setVoiceTypingMode(true);
+            }}
+            className="rounded-full"
+          >
+            Voice Typing
+          </Button>
+        </div>
+
+        {/* Text Input for Hands-Free & Text Mode */}
+        <div className="flex gap-2 items-end">
+          <input
+            type="text"
+            placeholder="Type here or tap the mic..."
+            value={textInput}
+            onChange={(e) => setTextInput(e.target.value)}
+            onKeyPress={(e) => {
+              if (e.key === 'Enter' && textInput.trim()) {
+                sendMessage(textInput.trim());
+                setTextInput('');
+              }
+            }}
+            disabled={isLoading}
+            className="flex-1 px-4 py-3 rounded-lg border-2 border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none focus:border-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <Button
+            size="lg"
+            onClick={() => {
+              if (textInput.trim()) {
+                sendMessage(textInput.trim());
+                setTextInput('');
+              }
+            }}
+            disabled={isLoading}
+            className="bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg"
+          >
+            Send
+          </Button>
+        </div>
+
+        {/* Voice Button + Replay */}
         <div className="flex flex-col items-center gap-4">
+          {/* Replay last response */}
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => { if (lastSpokenTextRef.current) speakResponse(lastSpokenTextRef.current); }}
+            disabled={!lastSpokenTextRef.current || isLoading}
+            className="rounded-full flex items-center gap-2 text-slate-600 border-slate-300"
+          >
+            <Volume2 className="w-4 h-4" /> Replay
+          </Button>
+
           <Button
             size="lg"
             onClick={isListening ? stopVoiceInput : startVoiceInput}
@@ -1642,10 +1683,16 @@ RESPOND NOW:
           </Button>
           <div className="text-center">
             <p className="text-lg font-bold text-slate-900 dark:text-white mb-1">
-              {isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk'}
+              {voiceTypingMode 
+                ? (isListening ? 'Transcribing...' : isLoading ? 'Thinking...' : 'Tap to Type by Voice')
+                : (isListening ? 'Listening...' : isLoading ? 'Thinking...' : 'Tap to Talk')
+              }
             </p>
             <p className="text-sm text-slate-600 dark:text-slate-400">
-              {isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Press the button to start'}
+              {voiceTypingMode
+                ? (isListening ? 'Speaking converts to text above' : 'Edit text before sending')
+                : (isListening ? 'Speak clearly and I\'ll listen' : isLoading ? 'Processing your message' : 'Or type below and press Enter')
+              }
             </p>
           </div>
         </div>

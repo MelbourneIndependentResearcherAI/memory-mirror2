@@ -1,5 +1,14 @@
 import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
+import { isFreeTrial, hasTrialExpired } from '@/components/subscription/FreeTrialManager';
+
+function getFreeTierUser() {
+  try {
+    return localStorage.getItem('mm_free_tier_user') === 'true';
+  } catch {
+    return false;
+  }
+}
 
 const SUBSCRIPTION_CACHE_KEY = 'mm_subscription_cache';
 const SUBSCRIPTION_CACHE_TIME = 'mm_subscription_cache_time';
@@ -36,10 +45,24 @@ export function useSubscriptionStatus() {
     queryFn: async () => {
       try {
         const user = await base44.auth.me();
+        
+        // Check free trial + free tier status
+        const isFreeTierUser = getFreeTierUser();
+        const trialStatus = {
+          isOnFreeTrial: isFreeTrial(),
+          trialExpired: hasTrialExpired()
+        };
+
         if (!user) {
           // Not authenticated - try cache first
           const cached = offlineHelper.getCachedSubscription();
-          return cached || { isSubscribed: false, subscription: null, user: null };
+          return cached || { 
+            isSubscribed: (trialStatus.isOnFreeTrial && !trialStatus.trialExpired) || isFreeTierUser, 
+            isFreeTier: isFreeTierUser,
+            subscription: null, 
+            user: null,
+            ...trialStatus
+          };
         }
 
         // User is authenticated - fetch fresh subscription data
@@ -68,16 +91,21 @@ export function useSubscriptionStatus() {
         // Admin users bypass paywall entirely
         const isAdmin = user.role === 'admin';
 
+        // User is subscribed if: admin OR has active subscription OR on active free trial OR chose free tier
+        const isSubscribed = isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0 || (trialStatus.isOnFreeTrial && !trialStatus.trialExpired) || isFreeTierUser;
+
         const result = {
-          isSubscribed: isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0,
+          isSubscribed,
           isPremium: isAdmin || !!activeSubscription,
           isAdmin,
           isPending: !!pendingSubscription,
+          isFreeTier: isFreeTierUser,
           subscription: activeSubscription || pendingSubscription || null,
           subscribedTools,
           hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId),
           user,
-          isOnline: true
+          isOnline: true,
+          ...trialStatus
         };
 
         offlineHelper.saveSubscription(result);
@@ -89,12 +117,28 @@ export function useSubscriptionStatus() {
           return { ...cached, isOnline: false, offline: true };
         }
         // Return default state that won't block rendering
-        return { isSubscribed: false, subscription: null, user: null, error: true };
+        return { isSubscribed: false, subscription: null, user: null, error: true, isOnFreeTrial: false, trialExpired: false };
       }
     },
     retry: 1,
     staleTime: 5 * 60 * 1000,
     gcTime: 10 * 60 * 1000,
-    initialData: { isSubscribed: false, subscription: null, user: null, isLoading: true }
+    initialData: () => {
+      // Pre-check localStorage so there's no flash redirect on page load
+      const trialActive = isFreeTrial() && !hasTrialExpired();
+      const freeTier = getFreeTierUser();
+      return {
+        isSubscribed: trialActive || freeTier,
+        isOnFreeTrial: trialActive,
+        trialExpired: hasTrialExpired(),
+        isFreeTier: freeTier,
+        isAdmin: false,
+        isPremium: false,
+        subscription: null,
+        subscribedTools: [],
+        hasToolAccess: () => false,
+        user: null
+      };
+    }
   });
 }

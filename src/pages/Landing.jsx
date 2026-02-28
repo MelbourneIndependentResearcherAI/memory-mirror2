@@ -3,15 +3,20 @@ import { MessageCircle, Brain, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import AppTutorial from '@/components/landing/AppTutorial';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import PromoLimitedOffer from '@/components/subscription/PromoLimitedOffer';
+import FreeTrialRegistration from '@/components/subscription/FreeTrialRegistration';
+import { isFreeTrial } from '@/components/subscription/FreeTrialManager';
+import CognitiveAssessmentLink from '@/components/cognitive/CognitiveAssessmentLink';
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
+  const [showTrialModal, setShowTrialModal] = useState(false);
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
 
@@ -20,9 +25,16 @@ export default function Landing() {
     if (isLoading) return; // Prevent click while loading
     if (subscriptionData?.isSubscribed) {
       navigate(createPageUrl('Home'));
+    } else if (isFreeTrial() && !subscriptionData?.trialExpired) {
+      navigate(createPageUrl('Home'));
     } else {
-      navigate('/paywall');
+      setShowTrialModal(true);
     }
+  };
+
+  const handleTrialSuccess = () => {
+    setShowTrialModal(false);
+    navigate(createPageUrl('Home'));
   };
 
   const featureCards = [
@@ -38,36 +50,15 @@ export default function Landing() {
     { icon: '🛡️', title: 'Security Scanner', desc: 'Scam detection and online safety tools to protect your loved one', page: 'Security', color: 'from-blue-600 to-indigo-600' },
     { icon: '🎤', title: 'Always-On Voice', desc: 'Hands-free wake word detection for voice-activated assistance', page: 'VoiceSetup', color: 'from-violet-500 to-purple-600' },
     { icon: '🏦', title: 'Fake Banking', desc: 'A reassuring fake bank balance view to reduce financial anxiety', page: 'MyBank', color: 'from-emerald-500 to-green-600' },
-    { icon: '👨‍👩‍👧', title: 'Family Portal', desc: 'Family members can share messages, photos and stay connected', page: 'FamilyConnect', color: 'from-pink-500 to-rose-500' },
-    { icon: '📊', title: 'Caregiver Dashboard', desc: 'At-a-glance overview of patient status, tasks and care metrics', page: 'CaregiverDashboard', color: 'from-cyan-500 to-blue-500' },
-    { icon: '📺', title: 'Smart TV Mode', desc: 'Large-screen TV interface for comfortable viewing and interaction', page: 'TVMode', color: 'from-slate-500 to-slate-700' },
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950 pb-8">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950">
       <QuickAccessCheck />
-      {/* Top Navigation Bar */}
-      <div className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-700 shadow-sm">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between max-w-7xl">
-          <div className="flex items-center gap-3">
-            <Heart className="w-7 h-7 text-blue-500" />
-            <span className="text-xl font-bold text-slate-900 dark:text-white">Memory Mirror</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              onClick={() => navigateTo('CaregiverPortal')}
-              className="min-h-[44px] text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-blue-600"
-            >
-              👨‍⚕️ Caregiver Portal
-            </Button>
-          </div>
-        </div>
-      </div>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 py-16 md:py-24 max-w-5xl">
-        <div className="text-center max-w-3xl mx-auto mb-12">
+      <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl">
+        <div className="text-center max-w-3xl mx-auto mb-8">
           <div className="inline-flex items-center gap-2.5 bg-white/60 dark:bg-slate-900/60 backdrop-blur-md px-5 py-2.5 rounded-full shadow-sm mb-6 border border-blue-200/50 dark:border-blue-700/50">
             <Heart className="w-4 h-4 text-blue-500 animate-pulse" />
             <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Compassionate Care at Home</span>
@@ -85,7 +76,7 @@ export default function Landing() {
         </div>
 
         {/* Quick Access - Big Red Button inspired by "Be My Eyes" */}
-        <div className="flex justify-center mb-10 px-4">
+        <div className="flex justify-center mb-8 px-4">
           <button
             onClick={() => navigateTo('QuickAccess')}
             className="w-full max-w-sm bg-gradient-to-br from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 active:from-red-700 active:to-red-800 text-white font-bold rounded-full shadow-2xl transition-all duration-200 active:scale-95 flex flex-col items-center justify-center gap-3 border-8 border-white"
@@ -99,7 +90,7 @@ export default function Landing() {
         </div>
 
         {/* Dual Access Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-12 px-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto mb-8 px-4">
           {/* Patient Access */}
           <button
             onClick={() => navigateTo('PatientAccess')}
@@ -169,31 +160,31 @@ export default function Landing() {
           </button>
         </div>
 
-        {/* Key Features - Simplified */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-12 px-4">
+        {/* Key Features - Professional */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
           {[
             { icon: '🔴', title: 'Quick Access', page: 'QuickAccess' },
-            { icon: '🧠', title: 'AI Chat', page: 'Home' },
+            { icon: '🧠', title: 'Brain Games', page: 'MemoryGames' },
             { icon: '🌙', title: 'Night Watch', page: 'NightWatch' },
-            { icon: '👨‍⚕️', title: 'Caregiver Tools', page: 'CaregiverPortal' },
+            { icon: '🎵', title: 'Music Therapy', page: 'MusicTherapy' },
             { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
-            { icon: '🎵', title: 'Music', page: 'MusicTherapy' },
-            { icon: '📞', title: 'Resources', page: 'Resources' },
+            { icon: '🎤', title: 'Sing Along', page: 'SingAlongStudio' },
+            { icon: '📺', title: 'TV Mode', page: 'TVMode' },
             { icon: '🏦', title: 'Banking', page: 'MyBank' },
           ].map((card) => (
             <button
               key={card.title}
               onClick={() => navigateTo(card.page)}
-              className="group text-center bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-lg border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-4"
+              className="group text-center bg-white dark:bg-slate-900 rounded-xl shadow-sm hover:shadow-lg border border-slate-200/60 dark:border-slate-700/40 hover:border-blue-300 dark:hover:border-blue-600 transition-all duration-300 p-4 min-h-[120px] flex flex-col items-center justify-center"
             >
-              <div className="text-3xl mb-2">{card.icon}</div>
+              <div className="text-4xl mb-2">{card.icon}</div>
               <h3 className="text-sm font-semibold text-slate-800 dark:text-slate-100">{card.title}</h3>
             </button>
           ))}
         </div>
 
         {/* Individual Tool Pricing Teaser */}
-        <div className="max-w-4xl mx-auto px-4 mb-10">
+        <div className="max-w-4xl mx-auto px-4 mb-8">
           <div className="bg-white dark:bg-slate-900 rounded-3xl border border-purple-200 dark:border-purple-800 shadow-lg overflow-hidden">
             <div className="bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-4 text-center">
               <h2 className="text-xl font-bold text-white">🛠️ Only Need One Feature? Pay for Just That.</h2>
@@ -235,15 +226,15 @@ export default function Landing() {
         <PromoLimitedOffer variant="banner" />
 
         {/* CTA Buttons */}
-        <div className="flex flex-col gap-4 items-center px-4 max-w-md mx-auto mb-8">
+        <div className="flex flex-col gap-3 items-center px-4 max-w-md mx-auto mb-8">
           <InstallAppButton />
           <Button
             size="lg"
             disabled={isLoading}
-            className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold disabled:opacity-50"
+            className="px-8 py-5 text-base md:text-xl rounded-xl bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 shadow-lg hover:shadow-xl transition-all duration-300 w-full min-h-[60px] font-bold disabled:opacity-50"
             onClick={handleGetStarted}
           >
-            {isLoading ? 'Loading...' : subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : '🔥 Get Founder\'s Price → $9.99/month'}
+            {isLoading ? 'Loading...' : subscriptionData?.isSubscribed ? 'Go to Memory Mirror →' : '✨ Start 3-Day Free Trial'}
           </Button>
           <div className="flex gap-4 justify-center flex-wrap">
             <button
@@ -251,6 +242,13 @@ export default function Landing() {
               className="text-sm text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors font-medium"
             >
               💳 View Pricing
+            </button>
+            <span className="text-slate-300">•</span>
+            <button
+              onClick={() => navigateTo('Paywall')}
+              className="text-sm text-slate-500 dark:text-slate-400 hover:text-amber-600 dark:hover:text-amber-400 transition-colors font-medium"
+            >
+              🧪 Test Paywall
             </button>
             <span className="text-slate-300">•</span>
             <button
@@ -270,23 +268,23 @@ export default function Landing() {
         </div>
 
         {/* Quick Stats */}
-        <div className="max-w-4xl mx-auto px-4 mb-12">
+        <div className="max-w-4xl mx-auto px-4 mb-8">
           <div className="bg-white dark:bg-slate-900 rounded-2xl p-8 shadow-lg border border-slate-200/60 dark:border-slate-700/50 text-center">
             <h2 className="text-2xl font-bold text-slate-900 dark:text-slate-100 mb-4">
               Compassionate AI for Dementia Care
             </h2>
-            <div className="grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+            <div className="grid grid-cols-3 gap-4 max-w-2xl mx-auto">
               <div>
-                <div className="text-3xl font-bold text-blue-600 mb-1">24/7</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Always Available</div>
+                <div className="text-2xl font-bold text-blue-600 mb-0.5">24/7</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Always Available</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-purple-600 mb-1">100%</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Private & Secure</div>
+                <div className="text-2xl font-bold text-purple-600 mb-0.5">100%</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Private & Secure</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-green-600 mb-1">Offline</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Works Without WiFi</div>
+                <div className="text-2xl font-bold text-green-600 mb-0.5">Offline</div>
+                <div className="text-xs text-slate-600 dark:text-slate-400">Works Without WiFi</div>
               </div>
             </div>
           </div>
@@ -297,7 +295,7 @@ export default function Landing() {
       <AppTutorial />
 
       {/* Testimonials Section */}
-      <div className="max-w-5xl mx-auto px-4 mb-12">
+      <div className="max-w-5xl mx-auto px-4 mb-8">
         <div className="text-center mb-8">
           <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-white mb-3">
             Loved by Families & Caregivers
@@ -340,10 +338,20 @@ export default function Landing() {
         </div>
       </div>
 
+      {/* Free Cognitive Assessment */}
+      <div className="max-w-4xl mx-auto px-4 mb-8">
+        <CognitiveAssessmentLink />
+      </div>
+
       {/* Footer */}
-      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12">
+      <div className="text-center px-4 mx-4 rounded-2xl bg-gradient-to-br from-slate-800 to-slate-900 py-12 border-t-4 border-blue-600">
         <p className="text-slate-200 text-sm font-semibold">Memory Mirror — Compassionate AI for Dementia Care</p>
         <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
+        <div className="mt-4 text-slate-400 text-xs space-y-1">
+          <p>📧 Support: <a href="mailto:support@memorymirror.com.au" className="hover:text-blue-400">support@memorymirror.com.au</a></p>
+          <p>🏢 Memory Mirror Community Indigenous Corporation</p>
+          <p>🔒 End-to-end encrypted • HIPAA & GDPR compliant</p>
+        </div>
         <div className="mt-6 flex justify-center gap-2 flex-wrap text-xs">
           <Link to={createPageUrl('FAQ')} className="text-slate-400 hover:text-slate-300 transition-colors">FAQ</Link>
           <span className="text-slate-600">•</span>
@@ -359,6 +367,12 @@ export default function Landing() {
 
       {showDonationModal && (
         <DonationModal onClose={() => setShowDonationModal(false)} />
+      )}
+      {showTrialModal && (
+        <FreeTrialRegistration 
+          onSuccess={handleTrialSuccess}
+          onClose={() => setShowTrialModal(false)}
+        />
       )}
     </div>
   );

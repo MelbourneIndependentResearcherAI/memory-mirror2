@@ -16,7 +16,7 @@ export default function VoiceCloningManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
+  const recordedChunksRef = React.useRef([]);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [cloningProgress, setCloningProgress] = useState(0);
   const [audioQuality, setAudioQuality] = useState(null);
@@ -55,10 +55,11 @@ export default function VoiceCloningManager() {
         });
       });
 
-      // Determine quality rating
-      let qualityRating = 'fair';
+      // Determine quality rating (must match entity enum: excellent, good, fair, needs_improvement)
+      let qualityRating = 'needs_improvement';
       if (audioQuality?.rating === 'excellent') qualityRating = 'excellent';
       else if (audioQuality?.rating === 'good') qualityRating = 'good';
+      else if (audioQuality?.rating === 'fair') qualityRating = 'fair';
 
       setCloningProgress(90);
 
@@ -115,7 +116,18 @@ export default function VoiceCloningManager() {
   });
 
   const deleteVoiceMutation = useMutation({
-    mutationFn: (voiceId) => base44.entities.VoiceProfile.delete(voiceId),
+    mutationFn: async (profile) => {
+      // Delete from ElevenLabs first (best effort)
+      try {
+        await base44.functions.invoke('cloneVoice', {
+          _action: 'delete',
+          voice_id: profile.voice_id
+        });
+      } catch {
+        // Ignore ElevenLabs deletion errors - still delete locally
+      }
+      return base44.entities.VoiceProfile.delete(profile.id);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['voiceProfiles'] });
       toast.success('Voice profile deleted');
@@ -133,25 +145,26 @@ export default function VoiceCloningManager() {
         setRecordingDuration(Math.floor((Date.now() - startTime) / 1000));
       }, 1000);
       
+      recordedChunksRef.current = [];
+      
       recorder.ondataavailable = (e) => {
         if (e.data.size > 0) {
-          setRecordedChunks(prev => [...prev, e.data]);
+          recordedChunksRef.current.push(e.data);
         }
       };
 
       recorder.onstop = () => {
         clearInterval(durationInterval);
-        const blob = new Blob(recordedChunks, { type: 'audio/webm' });
+        const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
         const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
         setSelectedFile(file);
-        analyzeAudioQuality(blob, recordingDuration);
+        analyzeAudioQuality(blob, Math.floor((Date.now() - startTime) / 1000));
         stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start();
+      recorder.start(100); // collect data every 100ms
       setMediaRecorder(recorder);
       setIsRecording(true);
-      setRecordedChunks([]);
     } catch {
       toast.error('Microphone access denied');
     }
@@ -174,9 +187,12 @@ export default function VoiceCloningManager() {
     };
 
     if (duration < 60) {
-      quality.rating = 'poor';
+      quality.rating = 'needs_improvement';
       quality.message = 'Too short - need at least 1 minute';
-    } else if (duration >= 60 && duration < 180) {
+    } else if (duration >= 60 && duration < 120) {
+      quality.rating = 'fair';
+      quality.message = 'Fair quality - try to record 2+ minutes for better results';
+    } else if (duration >= 120 && duration < 180) {
       quality.rating = 'good';
       quality.message = 'Good quality - meets minimum requirements';
     } else {
@@ -240,17 +256,24 @@ export default function VoiceCloningManager() {
 
   const testVoice = async (voiceId) => {
     try {
-      const result = await base44.functions.invoke('synthesizeClonedVoice', {
-        text: "Hello, I'm here with you. How are you feeling today?",
-        voice_id: voiceId
+      const response = await fetch(`/functions/synthesizeClonedVoice`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          text: "Hello, I'm here with you. How are you feeling today?",
+          voice_id: voiceId
+        })
       });
 
-      if (result.data.fallback) {
+      if (!response.ok) {
         toast.error('Voice synthesis not available');
         return;
       }
 
-      const audio = new Audio(URL.createObjectURL(new Blob([result.data])));
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
       audio.play();
     } catch {
       toast.error('Failed to test voice');
@@ -585,7 +608,7 @@ export default function VoiceCloningManager() {
                           variant="destructive"
                           onClick={() => {
                             if (confirm(`Delete voice profile for ${profile.name}?`)) {
-                              deleteVoiceMutation.mutate(profile.id);
+                              deleteVoiceMutation.mutate(profile);
                             }
                           }}
                           className="min-h-[40px] min-w-[40px]"

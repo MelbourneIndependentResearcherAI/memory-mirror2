@@ -12,6 +12,8 @@ import BottomNav from '@/components/BottomNav';
 import ScrollToTop from '@/components/ScrollToTop';
 import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
 import SessionTimeoutManager from '@/components/SessionTimeoutManager';
+import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
+import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
 
 // Add small delay to allow async checks
 const SUBSCRIPTION_CHECK_TIMEOUT = 100;
@@ -26,19 +28,28 @@ export default function Layout({ children, currentPageName }) {
   const navigate = useNavigate();
   const { data: subscriptionData, isLoading } = useSubscriptionStatus();
   
+  // (debug logging removed)
+  
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
   
   // Check subscription access - allow pages to render while loading
   useEffect(() => {
-    // Don't block while loading
-    if (isLoading) return;
+    // Don't block while loading or if no subscription data yet
+    if (isLoading || !subscriptionData) return;
     
-    const restrictedPages = ['Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing'];
-    const isRestrictedPage = restrictedPages.includes(currentPageName);
-    
-    // Only redirect if data loaded AND user not subscribed AND accessing gated content
-    if (subscriptionData && !subscriptionData.isSubscribed && !isRestrictedPage) {
+    // Pages that are always accessible regardless of subscription
+    const openPages = [
+      'Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing',
+      'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources', 'SubscriptionStatus',
+      'AccessibilityStatement', 'DiagnosticTest'
+    ];
+    const isOpenPage = openPages.includes(currentPageName);
+
+    // User has valid access if subscribed (covers trial, free tier, paid) OR admin
+    const hasValidAccess = subscriptionData?.isSubscribed || subscriptionData?.isAdmin;
+
+    if (!hasValidAccess && !isOpenPage) {
       navigate('/paywall');
     }
   }, [isLoading, subscriptionData, currentPageName, navigate]);
@@ -141,12 +152,14 @@ export default function Layout({ children, currentPageName }) {
             <ErrorBoundary>
               <SessionTimeoutManager />
               <OfflineIndicator />
+              <OfflineSyncStatus />
+              <OfflineFeaturesBadge />
               <ScrollToTop />
               
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
                 style={{
-                  paddingTop: '60px',
+                  paddingTop: '0px',
                   paddingBottom: showBottomNav ? '160px' : '20px',
                   overscrollBehaviorY: 'none'
                 }}
@@ -154,7 +167,7 @@ export default function Layout({ children, currentPageName }) {
               >
                 <main 
                   id="main-content" 
-                  className="flex-1 relative overflow-hidden"
+                  className="flex-1 relative overflow-auto"
                   role="main"
                   aria-label="Main content"
                 >

@@ -62,6 +62,8 @@ export default function Pricing() {
     enabled: !!user?.email
   });
 
+  const [billingCycle, setBillingCycle] = useState('monthly');
+
   const plans = [
     {
       id: 'free',
@@ -81,10 +83,13 @@ export default function Pricing() {
     {
       id: 'premium',
       name: 'Premium',
-      price: 9.99,
-      billing: 'AUD $9.99/month (FOREVER)',
-      badge: '🔥 FOUNDER\'S PRICE - LIMITED SPOTS',
-      description: '🔥 Founder\'s Price — First 200 users lock in $9.99/month FOREVER. After 200 spots are filled, new users pay $18.99/month. Your price never increases — ever.',
+      price: billingCycle === 'yearly' ? 7.99 : 9.99,
+      yearlyTotal: 95.88,
+      billing: billingCycle === 'yearly' ? 'AUD $7.99/month, billed $95.88/year' : 'AUD $9.99/month (FOUNDER\'S PRICE)',
+      badge: billingCycle === 'yearly' ? '🎉 SAVE $24/YEAR' : '🔥 FOUNDER\'S PRICE - LIMITED SPOTS',
+      description: billingCycle === 'yearly'
+        ? '💰 Best value — Save over $24 a year compared to monthly. All premium features included.'
+        : '🔥 Founder\'s Price — First 200 users lock in $9.99/month FOREVER. After 200 spots are filled, new users pay $18.99/month.',
       features: [
         'Unlimited conversations',
         'Unlimited memory storage',
@@ -123,7 +128,7 @@ export default function Pricing() {
 
   const handleSelectPlan = (plan) => {
    if (plan.id === 'free') {
-     toast.info('Free plan is already active');
+     navigate('/home');
      return;
    }
    setSelectedPlan(plan);
@@ -162,9 +167,9 @@ export default function Pricing() {
      start_date: new Date().toISOString(),
      next_billing_date: nextBillingDate.toISOString(),
      payment_reference: paymentRef,
-     notes: 'Payment awaiting bank transfer verification. Include payment reference in transfer.',
-     is_lifetime_deal: selectedPlan.id === 'premium', // Lock in lifetime pricing for premium tier
-     promo_slot_number: selectedPlan.id === 'premium' ? Date.now() : null // Timestamp as slot identifier
+     notes: `Payment awaiting bank transfer verification. Billing: ${billingCycle}. Include payment reference in transfer.`,
+     is_lifetime_deal: selectedPlan.id === 'premium' && billingCycle === 'monthly',
+     promo_slot_number: selectedPlan.id === 'premium' ? Date.now() : null
    };
 
    // Cache subscription locally for offline support
@@ -213,9 +218,26 @@ export default function Pricing() {
           <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4">
             Choose Your Plan
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-            Start with our free plan or unlock premium features to support your loved one's memory journey
+          <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-0">
+          Start with our free plan or unlock premium features to support your loved one's memory journey
           </p>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4 mt-6">
+            <button
+              onClick={() => setBillingCycle('monthly')}
+              className={`px-5 py-2 rounded-full font-semibold text-sm transition-all ${billingCycle === 'monthly' ? 'bg-purple-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
+            >
+              Monthly
+            </button>
+            <button
+              onClick={() => setBillingCycle('yearly')}
+              className={`px-5 py-2 rounded-full font-semibold text-sm transition-all flex items-center gap-2 ${billingCycle === 'yearly' ? 'bg-purple-600 text-white shadow' : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300'}`}
+            >
+              Yearly
+              <span className="bg-green-500 text-white text-xs px-2 py-0.5 rounded-full">Save 20%</span>
+            </button>
+          </div>
           <div className="mt-4 max-w-3xl mx-auto bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg p-3">
             <p className="text-xs text-slate-600 dark:text-slate-400">
               <strong>Payment Notice:</strong> Payments are processed externally via bank transfer. This is a subscription to our healthcare companion service, not an in-app digital purchase. You are subscribing to access our AI dementia care platform and related services.
@@ -455,7 +477,9 @@ export default function Pricing() {
                     Processing Payment...
                   </>
                 ) : (
-                  `Complete Subscription - ${formatCurrency(selectedPlan.price)}/month`
+                  billingCycle === 'yearly' && selectedPlan.id === 'premium'
+                   ? `Complete Subscription - ${formatCurrency(selectedPlan.yearlyTotal)}/year (${formatCurrency(selectedPlan.price)}/mo)`
+                   : `Complete Subscription - ${formatCurrency(selectedPlan.price)}/month`
                 )}
               </Button>
 

@@ -41,25 +41,14 @@ export default function Home() {
   };
 
   useEffect(() => {
-    // Check authentication on mount - but allow guest access too
-    const checkAuth = async () => {
-      try {
-        const isAuth = await base44.auth.isAuthenticated();
-        if (!isAuth) {
-          // Allow guest access for patient use - don't force redirect
-          console.log('Guest mode - limited features available');
-        }
-      } catch (error) {
-        console.error('Auth check failed:', error);
-      }
-    };
-    
-    checkAuth();
-    
     // Load voices for speech synthesis
     if ('speechSynthesis' in window) {
-      speechSynthesis.getVoices();
-      window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+      try {
+        speechSynthesis.getVoices();
+        window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
+      } catch (e) {
+        console.warn('Speech synthesis unavailable');
+      }
     }
   }, []);
 

@@ -60,6 +60,8 @@ import CarePlans from './pages/CarePlans';
 import CareTeam from './pages/CareTeam';
 import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverPortal from './pages/CaregiverPortal';
+import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
+import CaregiverPortalCore from './pages/CaregiverPortalCore';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatHistory from './pages/ChatHistory';
@@ -113,6 +115,7 @@ import NightWatchPage from './pages/NightWatchPage';
 import OfflineAudio from './pages/OfflineAudio';
 import OfflineCapabilities from './pages/OfflineCapabilities';
 import OfflineContent from './pages/OfflineContent';
+import OfflineManager from './pages/OfflineManager';
 import OfflineModeDashboard from './pages/OfflineModeDashboard';
 import OfflineTest from './pages/OfflineTest';
 import PatientAccess from './pages/PatientAccess';
@@ -169,6 +172,8 @@ export const PAGES = {
     "CareTeam": CareTeam,
     "CaregiverDashboard": CaregiverDashboard,
     "CaregiverPortal": CaregiverPortal,
+    "CaregiverPortalAdmin": CaregiverPortalAdmin,
+    "CaregiverPortalCore": CaregiverPortalCore,
     "CaregiverPortalRouter": CaregiverPortalRouter,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatHistory": ChatHistory,
@@ -222,6 +227,7 @@ export const PAGES = {
     "OfflineAudio": OfflineAudio,
     "OfflineCapabilities": OfflineCapabilities,
     "OfflineContent": OfflineContent,
+    "OfflineManager": OfflineManager,
     "OfflineModeDashboard": OfflineModeDashboard,
     "OfflineTest": OfflineTest,
     "PatientAccess": PatientAccess,

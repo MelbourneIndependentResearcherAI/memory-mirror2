@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Upload, Music, Image, Video, Trash2, ArrowLeft, Loader2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -62,12 +63,12 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['musicFiles'], context.previousMusic);
-      alert('Failed to upload music');
+      toast.error('Failed to upload music');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['musicFiles'] });
       setMusicTitle('');
-      alert('Music uploaded successfully!');
+      toast.success('Music uploaded successfully!');
     },
   });
 
@@ -102,12 +103,12 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['familyPhotos'], context.previousPhotos);
-      alert('Failed to upload photo');
+      toast.error('Failed to upload photo');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyPhotos'] });
       setPhotoCaption('');
-      alert('Photo uploaded successfully!');
+      toast.success('Photo uploaded successfully!');
     },
   });
 
@@ -140,11 +141,11 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['familyVideos'], context.previousVideos);
-      alert('Failed to upload video');
+      toast.error('Failed to upload video');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyVideos'] });
-      alert('Video uploaded successfully!');
+      toast.success('Video uploaded successfully!');
     },
   });
 
@@ -169,7 +170,7 @@ export default function MediaLibrary({ onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('audio/')) {
-      alert('Please upload an audio file');
+      toast.error('Please upload an audio file');
       return;
     }
     setUploading(true);
@@ -185,7 +186,7 @@ export default function MediaLibrary({ onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+      toast.error('Please upload an image file');
       return;
     }
     setUploading(true);
@@ -201,7 +202,7 @@ export default function MediaLibrary({ onBack }) {
     const file = e.target.files?.[0];
     if (!file) return;
     if (!file.type.startsWith('video/')) {
-      alert('Please upload a video file');
+      toast.error('Please upload a video file');
       return;
     }
     setUploading(true);

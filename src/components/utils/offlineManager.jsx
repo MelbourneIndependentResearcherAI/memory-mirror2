@@ -1,12 +1,8 @@
 /**
- * Offline Manager - Handles offline functionality, caching, and pre-recorded audio responses
+ * Unified Offline Manager - All offline functionality through single database
  */
 
-const DB_NAME = 'MemoryMirrorOfflineDB';
-const RESPONSES_STORE = 'offlineResponses';
-const AUDIO_STORE = 'audioCache';
-const AUDIO_LIBRARY_STORE = 'audioLibrary';
-const METADATA_STORE = 'metadata';
+import { initOfflineStorage, saveToStore, getAllFromStore, STORES } from './offlineStorage';
 
 // Pre-recorded common responses
 const COMMON_OFFLINE_RESPONSES = {
@@ -33,357 +29,218 @@ const COMMON_OFFLINE_RESPONSES = {
   goodbye: {
     text: "Thank you for talking with me. Rest well, and I'll be here whenever you need me.",
     keywords: ['bye', 'goodbye', 'sleep', 'rest', 'quit', 'exit']
-  },
-  phone_default: {
-    text: "Hello, emergency operator here. I'm listening. How can I help you?",
-    keywords: []
-  },
-  security_check: {
-    text: "Let me check your doors and windows. Everything looks secure and safe.",
-    keywords: []
-  },
-  night_watch: {
-    text: "I'm here keeping watch over you. You're safe. Try to rest.",
-    keywords: []
   }
 };
 
-let db = null;
-
-// Initialize IndexedDB
+// Initialize offline DB (uses unified offlineStorage)
 export const initOfflineDB = async () => {
-  if (db) return db; // Return existing connection
-
-  return new Promise((resolve, reject) => {
-    const timeout = setTimeout(() => {
-      reject(new Error('Offline DB initialization timeout after 10 seconds'));
-    }, 10000);
-
-    try {
-      const request = indexedDB.open(DB_NAME, 1);
-
-      request.onerror = () => {
-        clearTimeout(timeout);
-        reject(request.error || new Error('IndexedDB open failed'));
-      };
-      
-      request.onsuccess = () => {
-        clearTimeout(timeout);
-        db = request.result;
-        
-        // Error handler for connection issues
-        db.onerror = (event) => {
-          console.error('Offline DB connection error:', event);
-        };
-        
-        resolve(db);
-      };
-
-      request.onupgradeneeded = (event) => {
-        clearTimeout(timeout);
-        const database = event.target.result;
-        
-        try {
-          if (!database.objectStoreNames.contains(RESPONSES_STORE)) {
-            database.createObjectStore(RESPONSES_STORE, { keyPath: 'id', autoIncrement: true });
-          }
-          if (!database.objectStoreNames.contains(AUDIO_STORE)) {
-            database.createObjectStore(AUDIO_STORE, { keyPath: 'id' });
-          }
-          if (!database.objectStoreNames.contains(AUDIO_LIBRARY_STORE)) {
-            database.createObjectStore(AUDIO_LIBRARY_STORE, { keyPath: 'id' });
-          }
-          if (!database.objectStoreNames.contains(METADATA_STORE)) {
-            database.createObjectStore(METADATA_STORE, { keyPath: 'key' });
-          }
-        } catch (storeError) {
-          console.error('Error creating stores:', storeError);
-        }
-      };
-    } catch (error) {
-      clearTimeout(timeout);
-      reject(error);
-    }
-  });
+  return await initOfflineStorage();
 };
 
-// Cache AI response for offline use
+// Cache AI response
 export const cacheOfflineResponse = async (userInput, aiResponse, audioUrl = null) => {
-  if (!db) await initOfflineDB();
-
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([RESPONSES_STORE], 'readwrite');
-    const store = transaction.objectStore(RESPONSES_STORE);
-
-    const data = {
-      userInput: userInput.toLowerCase(),
-      aiResponse,
-      audioUrl,
-      timestamp: new Date().toISOString(),
-      mode: 'general'
-    };
-
-    const request = store.add(data);
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve(request.result);
+  return await saveToStore(STORES.aiResponses, {
+    userInput: userInput.toLowerCase(),
+    aiResponse,
+    audioUrl,
+    timestamp: new Date().toISOString(),
+    mode: 'general'
   });
 };
 
 // Get best matching offline response
 export const getOfflineResponse = async (userInput) => {
-  if (!db) await initOfflineDB();
+  const responses = await getAllFromStore(STORES.aiResponses);
+  const lowerInput = userInput.toLowerCase();
 
-  return new Promise((resolve) => {
-    const transaction = db.transaction([RESPONSES_STORE], 'readonly');
-    const store = transaction.objectStore(RESPONSES_STORE);
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      const responses = request.result;
-      const lowerInput = userInput.toLowerCase();
-
-      // First, try exact keyword matches from common responses
-      for (const [key, response] of Object.entries(COMMON_OFFLINE_RESPONSES)) {
-        if (response.keywords.some(kw => lowerInput.includes(kw))) {
-          resolve({
-            text: response.text,
-            isCommon: true,
-            type: key
-          });
-          return;
-        }
-      }
-
-      // Then try cached responses
-      if (responses.length > 0) {
-        const matches = responses.filter(r =>
-          lowerInput.includes(r.userInput) || r.userInput.includes(lowerInput)
-        );
-
-        if (matches.length > 0) {
-          resolve({
-            text: matches[0].aiResponse,
-            audioUrl: matches[0].audioUrl,
-            isCommon: false
-          });
-          return;
-        }
-      }
-
-      // Final fallback
-      resolve({
-        text: "I'm here with you. Tell me more about how you're feeling.",
+  // First, try exact keyword matches
+  for (const [key, response] of Object.entries(COMMON_OFFLINE_RESPONSES)) {
+    if (response.keywords.some(kw => lowerInput.includes(kw))) {
+      return {
+        text: response.text,
         isCommon: true,
-        type: 'greeting'
-      });
-    };
+        type: key
+      };
+    }
+  }
 
-    request.onerror = () => {
-      resolve({
-        text: "I'm here with you. Tell me more about how you're feeling.",
-        isCommon: true,
-        type: 'greeting'
-      });
-    };
-  });
+  // Then try cached responses
+  if (responses.length > 0) {
+    const matches = responses.filter(r =>
+      lowerInput.includes(r.userInput) || r.userInput.includes(lowerInput)
+    );
+
+    if (matches.length > 0) {
+      return {
+        text: matches[0].aiResponse,
+        audioUrl: matches[0].audioUrl,
+        isCommon: false
+      };
+    }
+  }
+
+  // Fallback
+  return {
+    text: "I'm here with you. Tell me more about how you're feeling.",
+    isCommon: true,
+    type: 'greeting'
+  };
 };
 
-// Check if device is online
+// Check online status
 export const isOnline = () => {
   return navigator.onLine;
 };
 
-// Download and cache audio file for offline use
-export const downloadAudioForOffline = async (audioItem) => {
-  if (!db) await initOfflineDB();
-
-  try {
-    // Support multiple audio URL formats
-    const audioUrl = audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url;
-    if (!audioUrl) {
-      throw new Error('Missing audio URL (audio_url, audio_file_url, or youtube_url required)');
-    }
-    
-    // Validate URL format
-    try {
-      new URL(audioUrl);
-    } catch {
-      throw new Error('Invalid audio URL format');
-    }
-    
-    // Fetch with timeout
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-    
-    const response = await fetch(audioUrl, { 
-      method: 'GET',
-      headers: { 'Accept': 'audio/*' },
-      credentials: 'same-origin',
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
-    
-    const blob = await response.blob();
-    if (blob.size === 0) {
-      throw new Error('Audio file is empty');
-    }
-    
-    // Store in IndexedDB with full error handling
-    return new Promise((resolve, reject) => {
-      try {
-        const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readwrite');
-        const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-
-        const data = {
-          id: audioItem.id || `audio_${Date.now()}_${Math.random()}`,
-          title: audioItem.title || audioItem.name || 'Untitled Audio',
-          type: audioItem.type || 'audio',
-          audio_blob: blob,
-          source_url: audioUrl,
-          metadata: audioItem.metadata || {
-            artist: audioItem.artist || 'Unknown',
-            era: audioItem.era || 'present',
-            genre: audioItem.genre || 'unknown'
-          },
-          downloaded_at: new Date().toISOString(),
-          storage_size: blob.size,
-          offline_ready: true
-        };
-
-        const request = store.put(data);
-        
-        request.onerror = () => {
-          console.error('❌ IndexedDB store error:', request.error);
-          reject(new Error(`Storage error: ${request.error?.message || 'Unknown'}`));
-        };
-        
-        request.onsuccess = () => {
-          console.log(`✅ Audio cached: ${data.title} (${(data.storage_size / 1024).toFixed(2)}KB)`);
-          resolve({ id: data.id, size: data.storage_size });
-        };
-        
-        transaction.onerror = () => {
-          reject(new Error('Transaction failed'));
-        };
-      } catch (error) {
-        reject(error);
-      }
-    });
-  } catch (error) {
-    console.error('❌ Audio download failed:', error.message);
-    // Don't re-throw - allow app to continue with missing audio
-    return { success: false, error: error.message };
+// Download and cache audio file with retry logic
+export const downloadAudioForOffline = async (audioItem, maxRetries = 3) => {
+  const audioUrl = audioItem.audio_url || audioItem.audio_file_url || audioItem.youtube_url;
+  if (!audioUrl) {
+    throw new Error('Missing audio URL');
   }
+
+  // Validate URL
+  try {
+    new URL(audioUrl);
+  } catch {
+    throw new Error('Invalid audio URL format');
+  }
+
+  let lastError;
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000);
+      
+      const response = await fetch(audioUrl, {
+        method: 'GET',
+        headers: { 'Accept': 'audio/*' },
+        credentials: 'same-origin',
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
+      
+      const blob = await response.blob();
+      if (blob.size === 0) {
+        throw new Error('Empty audio file');
+      }
+
+      // Store in IndexedDB
+      const audioData = {
+        id: audioItem.id || `audio_${Date.now()}_${Math.random()}`,
+        title: audioItem.title || audioItem.name || 'Untitled',
+        type: audioItem.type || 'audio',
+        audio_blob: blob,
+        source_url: audioUrl,
+        metadata: {
+          artist: audioItem.artist || 'Unknown',
+          era: audioItem.era || 'present',
+          genre: audioItem.genre || 'unknown'
+        },
+        downloadedAt: new Date().toISOString(),
+        storage_size: blob.size,
+        offline_ready: true
+      };
+
+      await saveToStore(STORES.audioLibrary, audioData);
+      console.log(`✅ Audio cached: ${audioData.title} (${(blob.size / 1024).toFixed(2)}KB)`);
+      
+      return { id: audioData.id, size: blob.size };
+    } catch (error) {
+      lastError = error;
+      console.warn(`❌ Audio download attempt ${attempt}/${maxRetries} failed:`, error.message);
+      
+      if (attempt < maxRetries) {
+        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+      }
+    }
+  }
+
+  throw lastError || new Error('Audio download failed');
 };
 
 // Get offline audio library
 export const getOfflineAudioLibrary = async () => {
-  if (!db) await initOfflineDB();
-
-  return new Promise((resolve) => {
-    const timeout = setTimeout(() => {
-      resolve([]); // Timeout fallback
-    }, 5000);
-
-    try {
-      const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readonly');
-      const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-      const request = store.getAll();
-
-      request.onsuccess = () => {
-        clearTimeout(timeout);
-        const items = request.result?.map(item => ({
-          id: item.id,
-          title: item.title,
-          type: item.type,
-          downloaded_at: item.downloaded_at,
-          storage_size: item.storage_size
-        })) || [];
-        resolve(items);
-      };
-
-      request.onerror = () => {
-        clearTimeout(timeout);
-        resolve([]);
-      };
-      
-      transaction.onerror = () => {
-        clearTimeout(timeout);
-        resolve([]);
-      };
-    } catch (error) {
-      clearTimeout(timeout);
-      resolve([]);
-    }
-  });
-};
-
-// Get audio blob for playback
-export const getOfflineAudioBlob = async (audioId) => {
-  if (!db) await initOfflineDB();
-
-  return new Promise((resolve) => {
-    const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readonly');
-    const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-    const request = store.get(audioId);
-
-    request.onsuccess = () => {
-      const item = request.result;
-      if (item?.audio_blob) {
-        const url = URL.createObjectURL(item.audio_blob);
-        resolve({ url, title: item.title, type: item.type });
-      } else {
-        resolve(null);
-      }
-    };
-
-    request.onerror = () => resolve(null);
-  });
+  try {
+    const items = await getAllFromStore(STORES.audioLibrary);
+    return items.map(item => ({
+      id: item.id,
+      title: item.title,
+      type: item.type,
+      downloadedAt: item.downloadedAt,
+      storage_size: item.storage_size
+    }));
+  } catch (error) {
+    console.error('Failed to get audio library:', error);
+    return [];
+  }
 };
 
 // Remove audio from offline library
 export const removeOfflineAudio = async (audioId) => {
-  if (!db) await initOfflineDB();
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction([STORES.audioLibrary], 'readwrite');
+      const store = tx.objectStore(STORES.audioLibrary);
+      const request = store.delete(audioId);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('Failed to remove audio:', error);
+    throw error;
+  }
+};
 
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readwrite');
-    const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-    const request = store.delete(audioId);
+// Get audio blob for playback
+export const getOfflineAudioBlob = async (audioId) => {
+  try {
+    const db = await initOfflineStorage();
+    return new Promise((resolve) => {
+      const tx = db.transaction([STORES.audioLibrary], 'readonly');
+      const store = tx.objectStore(STORES.audioLibrary);
+      const request = store.get(audioId);
 
-    request.onerror = () => reject(request.error);
-    request.onsuccess = () => resolve();
-  });
+      request.onsuccess = () => {
+        const item = request.result;
+        if (item?.audio_blob) {
+          const url = URL.createObjectURL(item.audio_blob);
+          resolve({ url, title: item.title, type: item.type });
+        } else {
+          resolve(null);
+        }
+      };
+
+      request.onerror = () => resolve(null);
+    });
+  } catch (error) {
+    console.error('Failed to get audio blob:', error);
+    return null;
+  }
 };
 
 // Get total offline storage usage
 export const getOfflineStorageUsage = async () => {
-  if (!db) await initOfflineDB();
-
-  return new Promise((resolve) => {
-    const transaction = db.transaction([AUDIO_LIBRARY_STORE], 'readonly');
-    const store = transaction.objectStore(AUDIO_LIBRARY_STORE);
-    const request = store.getAll();
-
-    request.onsuccess = () => {
-      const items = request.result;
-      const totalSize = items.reduce((sum, item) => sum + (item.storage_size || 0), 0);
-      resolve({
-        total_items: items.length,
-        total_size_bytes: totalSize,
-        total_size_mb: (totalSize / 1024 / 1024).toFixed(2)
-      });
+  try {
+    const items = await getAllFromStore(STORES.audioLibrary);
+    const totalSize = items.reduce((sum, item) => sum + (item.storage_size || 0), 0);
+    return {
+      total_items: items.length,
+      total_size_bytes: totalSize,
+      total_size_mb: (totalSize / 1024 / 1024).toFixed(2)
     };
-
-    request.onerror = () => resolve({ total_items: 0, total_size_bytes: 0, total_size_mb: 0 });
-  });
+  } catch (error) {
+    return { total_items: 0, total_size_bytes: 0, total_size_mb: 0 };
+  }
 };
 
-// Set up online/offline listeners
+// Setup online/offline listeners
 export const setupOfflineListeners = (onlineCallback, offlineCallback) => {
   window.addEventListener('online', onlineCallback);
   window.addEventListener('offline', offlineCallback);

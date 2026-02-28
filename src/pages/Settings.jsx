@@ -2,8 +2,9 @@ import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings, Lock, Shield, HelpCircle } from 'lucide-react';
+import { Settings, Lock, Shield, HelpCircle, Download } from 'lucide-react';
 import PrivacySettings from '@/components/PrivacySettings';
+import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('privacy');
@@ -17,7 +18,7 @@ export default function SettingsPage() {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="privacy" className="flex items-center gap-2">
               <Lock className="w-4 h-4" />
               <span className="hidden sm:inline">Privacy</span>
@@ -25,6 +26,10 @@ export default function SettingsPage() {
             <TabsTrigger value="security" className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
               <span className="hidden sm:inline">Security</span>
+            </TabsTrigger>
+            <TabsTrigger value="offline" className="flex items-center gap-2">
+              <Download className="w-4 h-4" />
+              <span className="hidden sm:inline">Offline</span>
             </TabsTrigger>
             <TabsTrigger value="help" className="flex items-center gap-2">
               <HelpCircle className="w-4 h-4" />
@@ -69,6 +74,10 @@ export default function SettingsPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="offline" className="space-y-4 mt-6">
+            <OfflineContentManager />
           </TabsContent>
 
           <TabsContent value="help" className="space-y-4 mt-6">
