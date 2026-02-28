@@ -15,6 +15,7 @@ import SessionTimeoutManager from '@/components/SessionTimeoutManager';
 import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
 import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
 import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
+import { FeatureLockProvider } from '@/components/FeatureLockManager';
 
 // Add small delay to allow async checks
 const SUBSCRIPTION_CHECK_TIMEOUT = 100;
@@ -171,8 +172,9 @@ function LayoutContent({ children, currentPageName }) {
       <LanguageProvider>
         <AppStateProvider>
           <LockModeProvider>
-            <TabStackProvider>
-              <ErrorBoundary>
+            <FeatureLockProvider>
+              <TabStackProvider>
+                <ErrorBoundary>
                 <SessionTimeoutManager />
                 <OfflineIndicator />
                 <OfflineSyncStatus />
@@ -234,7 +236,8 @@ function LayoutContent({ children, currentPageName }) {
                 {showBottomNav && <BottomNav />}
               </div>
               </ErrorBoundary>
-            </TabStackProvider>
+              </TabStackProvider>
+            </FeatureLockProvider>
           </LockModeProvider>
         </AppStateProvider>
       </LanguageProvider>
