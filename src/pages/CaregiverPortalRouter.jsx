@@ -57,6 +57,8 @@ const regularCards = [
   { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/ActivityReports', background: '#E0E7FF' },
   { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CareTeam', background: '#EFF6FF' },
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
+  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
+  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' }
 ];
 
