@@ -94,9 +94,13 @@ function CaregiverPortalHome() {
           details: { trigger: 'caregiver_activated_bad_day_mode', severity: 'medium' },
           anxiety_level: 6
         });
-        alert('Bad Day Mode activated remotely. Your loved one will receive gentle comfort and support.');
+        // Use toast instead of alert for better UX
+        const { toast } = await import('sonner');
+        toast.success('💜 Bad Day Mode activated! Your loved one will receive gentle comfort and support.');
       } catch (error) {
         console.error('Failed to activate:', error);
+        const { toast } = await import('sonner');
+        toast.error('Failed to activate Bad Day Mode. Please try again.');
       }
       setTimeout(() => setBadDayActivated(false), 3000);
       return;
