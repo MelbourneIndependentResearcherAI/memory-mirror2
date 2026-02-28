@@ -44,61 +44,9 @@ const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
   }
 };
 
-// Synthesize speech via ElevenLabs (cloned voice if available, otherwise default EL voice)
-// Falls back to browser TTS only if ElevenLabs is unavailable
+// UNUSED - ElevenLabs is unreliable. Browser TTS only.
 export const speakWithClonedVoice = async (text, options = {}) => {
-  if (!text || typeof text !== 'string') {
-    console.log('⚠️ Invalid text for voice synthesis');
-    return false;
-  }
-
-  try {
-    console.log('🎙️ Starting ElevenLabs voice synthesis:', text.substring(0, 50));
-    
-    // ALWAYS use elevenLabsTTS first
-    const result = await base44.functions.invoke('elevenLabsTTS', { 
-      text, 
-      language: options.language || 'en'
-    });
-
-    console.log('✅ ElevenLabs response received, status:', result?.status);
-    
-    // Check if we got actual audio data (ArrayBuffer)
-    if (result?.data instanceof ArrayBuffer) {
-      console.log('🔊 Got ArrayBuffer from ElevenLabs, playing audio...');
-      const success = await playAudioBuffer(result.data, options.volume || 1.0, options.onEnd);
-      console.log('Audio playback result:', success ? 'SUCCESS' : 'FAILED');
-      return true; // ElevenLabs path taken
-    }
-    
-    // Check response object for errors or fallback flag
-    if (result?.data?.fallback) {
-      console.log('⚠️ ElevenLabs returned fallback flag');
-      throw new Error('ElevenLabs unavailable');
-    }
-    
-    if (result?.data?.error) {
-      console.log('❌ ElevenLabs error in response:', result.data.error);
-      throw new Error(result.data.error);
-    }
-    
-    console.log('⚠️ Unexpected response format from ElevenLabs');
-    throw new Error('Invalid response format');
-    
-  } catch (error) {
-    console.error('❌ ElevenLabs failed:', error.message);
-    console.log('🎧 Falling back to browser TTS');
-    
-    // Fallback to browser TTS
-    try {
-      speakWithRealisticVoice(text, options);
-      return false; // Browser TTS path taken
-    } catch (fallbackError) {
-      console.error('❌ Both TTS systems failed:', fallbackError);
-      if (options.onEnd) options.onEnd();
-      return false;
-    }
-  }
+  return false; // Use speakWithRealisticVoice directly in UI
 };
 
 // Get user's preferred voice from localStorage
