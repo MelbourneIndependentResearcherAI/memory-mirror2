@@ -16,23 +16,21 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
     setLoading(true);
 
     try {
-      const response = await base44.functions.invoke('registerFreeTrial', {
+      // Set trial data in localStorage immediately (optimistic) so access is granted right away
+      const trialEndDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
+      const trialData = {
         name,
-        email
-      });
+        email,
+        trial_end_date: trialEndDate.toISOString(),
+        trial_start_date: new Date().toISOString(),
+        trial_active: true
+      };
+      localStorage.setItem('freeTrialUser', JSON.stringify(trialData));
 
-      if (response.data.success) {
-         // Store trial info in localStorage with correct field names
-         localStorage.setItem('freeTrialUser', JSON.stringify({
-           name,
-           email,
-           trial_end_date: response.data.trialEndDate,
-           trial_start_date: new Date().toISOString(),
-           trial_active: true
-         }));
+      // Also register in the backend (non-blocking)
+      base44.functions.invoke('registerFreeTrial', { name, email }).catch(() => {});
 
-         onSuccess?.();
-       }
+      onSuccess?.();
     } catch (err) {
       setError(err.message || 'Failed to register for free trial');
     } finally {
