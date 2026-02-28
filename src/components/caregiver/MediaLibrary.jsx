@@ -102,12 +102,12 @@ export default function MediaLibrary({ onBack }) {
     },
     onError: (_, __, context) => {
       queryClient.setQueryData(['familyPhotos'], context.previousPhotos);
-      alert('Failed to upload photo');
+      toast.error('Failed to upload photo');
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['familyPhotos'] });
       setPhotoCaption('');
-      alert('Photo uploaded successfully!');
+      toast.success('Photo uploaded successfully!');
     },
   });
 
