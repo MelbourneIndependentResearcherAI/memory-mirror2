@@ -14,9 +14,12 @@ Deno.serve(async (req) => {
     
     const userText = message || userMessage;
 
-    if (!userText) {
+    if (!userText || typeof userText !== 'string') {
       return Response.json({ error: 'Message is required' }, { status: 400 });
     }
+
+    // Sanitize input length
+    const sanitizedText = userText.trim().substring(0, 2000);
 
     // Fetch user profile for personalization
     const profiles = await base44.asServiceRole.entities.UserProfile.list();
@@ -96,7 +99,7 @@ Respond to their message with warmth, understanding, and dignity. Keep your resp
     const aiResponse = await base44.integrations.Core.InvokeLLM({
       prompt: `${systemPrompt}
 
-Current message from ${userProfile?.preferred_name || 'them'}: "${userText}"
+Current message from ${userProfile?.preferred_name || 'them'}: "${sanitizedText}"
 
 Respond naturally and compassionately in 1-3 sentences maximum.
 
