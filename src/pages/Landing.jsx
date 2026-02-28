@@ -54,6 +54,7 @@ export default function Landing() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-cyan-50 dark:from-slate-950 dark:via-blue-950 dark:to-cyan-950">
+      <QuickAccessCheck />
 
       {/* Hero Section */}
       <div className="container mx-auto px-4 py-12 md:py-20 max-w-5xl">
