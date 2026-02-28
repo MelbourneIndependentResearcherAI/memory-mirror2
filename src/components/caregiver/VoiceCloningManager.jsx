@@ -16,7 +16,7 @@ export default function VoiceCloningManager() {
   const [isUploading, setIsUploading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [recordedChunks, setRecordedChunks] = useState([]);
+  const recordedChunksRef = React.useRef([]);
   const [recordingDuration, setRecordingDuration] = useState(0);
   const [cloningProgress, setCloningProgress] = useState(0);
   const [audioQuality, setAudioQuality] = useState(null);
