@@ -278,35 +278,46 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
       }
       
       if (isMountedRef.current) {
-        setMessages(prev => [...prev, { 
-          role: 'assistant', 
-          content: message, 
-          hasVoice: true, 
-          language: selectedLanguage,
-          isProactive: true
-        }]);
-        
-        setConversationHistory(prev => [...prev, { 
-          role: 'assistant', 
-          content: message 
-        }]);
-        
-        // Speak the proactive message BUT DO NOT auto-start listening for proactive check-ins
-        // Only auto-listen after conversational replies (handled elsewhere)
-        speakResponse(message, { 
-          state: 'warm', 
-          anxietyLevel: 0
+        let messageAdded = false;
+        setMessages(prev => {
+          // Check for duplicates even in proactive messages
+          const lastMsg = prev[prev.length - 1];
+          if (lastMsg?.role === 'assistant' && lastMsg?.content === message && lastMsg?.isProactive) {
+            console.log('🚫 Proactive message duplicate prevented');
+            return prev;
+          }
+          messageAdded = true;
+          return [...prev, { 
+            role: 'assistant', 
+            content: message, 
+            hasVoice: true, 
+            language: selectedLanguage,
+            isProactive: true
+          }];
         });
         
-        // Log proactive interaction
-        offlineEntities.create('ActivityLog', {
-          activity_type: 'chat',
-          details: { 
-            proactive: true, 
-            type: type,
-            language: selectedLanguage 
-          }
-        }).catch(() => {});
+        if (messageAdded) {
+          setConversationHistory(prev => [...prev, { 
+            role: 'assistant', 
+            content: message 
+          }]);
+          
+          // Only speak if message was actually added
+          speakResponse(message, { 
+            state: 'warm', 
+            anxietyLevel: 0
+          });
+          
+          // Log proactive interaction
+          offlineEntities.create('ActivityLog', {
+            activity_type: 'chat',
+            details: { 
+              proactive: true, 
+              type: type,
+              language: selectedLanguage 
+            }
+          }).catch(() => {});
+        }
       }
     } catch (error) {
       console.error('Proactive message error:', error);
