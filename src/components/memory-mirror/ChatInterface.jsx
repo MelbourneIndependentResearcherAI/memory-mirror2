@@ -1070,12 +1070,15 @@ RESPOND NOW:
                            detectedAnxiety <= 2 ? 'upbeat' : 'neutral';
       
       // Speak the response with proper voice synthesis
-      if (assistantMessage && isMountedRef.current) {
+      // ONLY speak if message was actually added (not duplicate)
+      if (assistantMessage && isMountedRef.current && messageAdded) {
         console.log('🔊 Speaking response with state:', emotionalState);
         speakResponse(assistantMessage, { 
           state: emotionalState,
           anxietyLevel: detectedAnxiety
         });
+      } else if (assistantMessage && !messageAdded) {
+        console.log('⏭️ Message was duplicate - not speaking');
       }
 
       // Show anxiety alert if needed
