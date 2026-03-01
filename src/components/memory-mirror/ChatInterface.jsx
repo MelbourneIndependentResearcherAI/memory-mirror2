@@ -1601,7 +1601,7 @@ RESPOND NOW - CRITICAL:
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' && !e.repeat && textInput.trim() && !isLoading) {
+              if (e.key === 'Enter' && !e.repeat && textInput.trim() && !isLoading && !isSendingRef.current) {
                 e.preventDefault();
                 const msg = textInput.trim();
                 setTextInput('');
