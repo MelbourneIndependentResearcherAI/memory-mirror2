@@ -32,7 +32,7 @@ export default function Paywall() {
   const bankDetails = {
     bsb: '633123',
     account: '166572719',
-    payid: 'mcnamaram86@gmail.com',
+    payid: 'mickiimac@up.me',
     accountName: 'Memory Mirror Operations',
   };
 

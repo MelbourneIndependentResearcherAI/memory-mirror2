@@ -45,7 +45,7 @@ function LayoutContent({ children, currentPageName }) {
     const openPages = [
       'Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing',
       'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources', 'SubscriptionStatus',
-      'AccessibilityStatement', 'DiagnosticTest'
+      'AccessibilityStatement', 'DiagnosticTest', 'AdminSubscriptions'
     ];
     const isOpenPage = openPages.includes(currentPageName);
 
