@@ -335,7 +335,7 @@ export default function Landing() {
         <p className="mt-2 text-slate-400 text-xs">Designed with input from caregivers and dementia care specialists</p>
         <div className="mt-4 text-slate-400 text-xs space-y-1">
           <p>📧 Support: <a href="mailto:support@memorymirror.com.au" className="hover:text-blue-400">support@memorymirror.com.au</a></p>
-          <p>🏢 Memory Mirror Community Indigenous Corporation</p>
+          <p>🏢 Memory Mirror Technologies & Community Indigenous Corporation</p>
           <p>🔒 End-to-end encrypted • HIPAA & GDPR compliant</p>
         </div>
         <div className="mt-6 flex justify-center gap-2 flex-wrap text-xs">
