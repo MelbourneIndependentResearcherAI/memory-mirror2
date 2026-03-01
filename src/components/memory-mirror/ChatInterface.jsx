@@ -694,6 +694,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
 
     isSendingRef.current = true; // LOCK
     lastMessageTimeRef.current = now;
+    lastSentMessageRef.current = userMessage;
 
     // Length validation
     if (userMessage.length > 1000) {
