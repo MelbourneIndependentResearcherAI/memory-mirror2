@@ -46,7 +46,8 @@ Deno.serve(async (req) => {
         last_payment_date: sub.last_payment_date,
         payment_reference: sub.payment_reference,
         plan_price: sub.plan_price,
-        created_date: sub.created_date
+        created_date: sub.created_date,
+        subscribed_tools: sub.subscribed_tools || []
       }))
     });
   } catch (error) {

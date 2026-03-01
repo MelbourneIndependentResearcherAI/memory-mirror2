@@ -15,8 +15,17 @@ Deno.serve(async (req) => {
     });
 
     const activeSubscription = subscriptions.find(sub => sub.status === 'active');
-    
-    if (!activeSubscription) {
+    const activePremium = activeSubscription?.plan_name === 'premium' ? activeSubscription : null;
+
+    // Collect all active tool subscriptions
+    const activeToolSubscriptions = subscriptions.filter(
+      sub => sub.plan_name === 'tool_subscription' && sub.status === 'active'
+    );
+    const subscribedTools: string[] = activeToolSubscriptions.flatMap(
+      (sub: Record<string, unknown>) => (sub.subscribed_tools as string[]) || []
+    );
+
+    if (!activePremium && activeToolSubscriptions.length === 0) {
       // User is on free tier
       return Response.json({
         plan: 'free',
@@ -33,25 +42,48 @@ Deno.serve(async (req) => {
       });
     }
 
-    // User has premium subscription
+    if (activePremium) {
+      // User has premium subscription
+      return Response.json({
+        plan: activePremium.plan_name,
+        status: activePremium.status,
+        subscription_id: activePremium.id,
+        start_date: activePremium.start_date,
+        next_billing_date: activePremium.next_billing_date,
+        price: activePremium.plan_price,
+        features: {
+          conversation_limit: null, // unlimited
+          memory_storage_limit: null, // unlimited
+          voice_enabled: true,
+          offline_mode: true,
+          family_sharing: true,
+          priority_support: true,
+          advanced_analytics: true,
+          voice_cloning: true,
+          smart_home_integration: true,
+          night_watch: true
+        }
+      });
+    }
+
+    // User has individual tool subscriptions only
     return Response.json({
-      plan: activeSubscription.plan_name,
-      status: activeSubscription.status,
-      subscription_id: activeSubscription.id,
-      start_date: activeSubscription.start_date,
-      next_billing_date: activeSubscription.next_billing_date,
-      price: activeSubscription.plan_price,
+      plan: 'tool_subscription',
+      status: 'active',
+      subscribed_tools: subscribedTools,
       features: {
-        conversation_limit: null, // unlimited
-        memory_storage_limit: null, // unlimited
+        conversation_limit: subscribedTools.includes('ai_chat') ? null : 10,
+        memory_storage_limit: 5,
         voice_enabled: true,
-        offline_mode: true,
-        family_sharing: true,
-        priority_support: true,
-        advanced_analytics: true,
-        voice_cloning: true,
-        smart_home_integration: true,
-        night_watch: true
+        offline_mode: false,
+        family_sharing: false,
+        priority_support: false,
+        advanced_analytics: false,
+        night_watch: subscribedTools.includes('night_watch'),
+        music_therapy: subscribedTools.includes('music'),
+        fake_banking: subscribedTools.includes('banking'),
+        gps_safety: subscribedTools.includes('gps_safety'),
+        caregiver_tools: subscribedTools.includes('caregiver_tools')
       }
     });
   } catch (error) {
