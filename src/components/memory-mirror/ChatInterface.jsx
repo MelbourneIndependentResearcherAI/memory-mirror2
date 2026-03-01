@@ -1600,10 +1600,12 @@ RESPOND NOW - CRITICAL:
             placeholder="Type here or tap the mic..."
             value={textInput}
             onChange={(e) => setTextInput(e.target.value)}
-            onKeyPress={(e) => {
-              if (e.key === 'Enter' && textInput.trim()) {
-                sendMessage(textInput.trim());
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.repeat && textInput.trim() && !isLoading) {
+                e.preventDefault();
+                const msg = textInput.trim();
                 setTextInput('');
+                sendMessage(msg);
               }
             }}
             disabled={isLoading}
@@ -1612,12 +1614,13 @@ RESPOND NOW - CRITICAL:
           <Button
             size="lg"
             onClick={() => {
-              if (textInput.trim()) {
-                sendMessage(textInput.trim());
+              if (textInput.trim() && !isLoading) {
+                const msg = textInput.trim();
                 setTextInput('');
+                sendMessage(msg);
               }
             }}
-            disabled={isLoading}
+            disabled={isLoading || !textInput.trim()}
             className="bg-gradient-to-br from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white rounded-lg"
           >
             Send
