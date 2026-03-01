@@ -651,48 +651,40 @@ Now respond like their best friend who genuinely cares and listened carefully to
     }
   }, [anxietyState.level, userProfile]);
 
+  const isSendingRef = useRef(false);
+
   const sendMessage = useCallback(async (transcribedText) => {
-    // Validation
-    if (!transcribedText || typeof transcribedText !== 'string') {
-      console.error('Invalid message input:', transcribedText);
-      // Don't tell them about error - just be ready to listen again
-      console.log('Invalid input detected, ready to listen again');
+    // CRITICAL: Hard lock to prevent concurrent calls
+    if (isSendingRef.current) {
+      console.log('🔒 sendMessage locked — already processing');
       return;
     }
+
+    if (!transcribedText || typeof transcribedText !== 'string') return;
 
     const userMessage = transcribedText.trim();
-    if (!userMessage) {
-      // Silently ready to listen again - don't make them feel bad for silence
-      console.log('Empty message, listening again');
-      return;
-    }
+    if (!userMessage) return;
 
     if (isLoading) {
-      // Let them know we're still thinking - never ignore them
       console.log('Still processing previous message');
       return;
     }
 
-    if (!isMountedRef.current) {
-      console.log('Component unmounted, skipping message');
+    if (!isMountedRef.current) return;
+
+    // Rate limiting: prevent spam (max 1 message per 2 seconds)
+    const now = Date.now();
+    if (now - lastMessageTimeRef.current < 2000) {
+      console.log('Rate limited — too fast');
       return;
     }
 
     // Check rate limit
     const rateCheckResult = checkRateLimit();
     setRateLimitStatus(rateCheckResult);
-    if (rateCheckResult.limited) {
-      return;
-    }
+    if (rateCheckResult.limited) return;
 
-    console.log('Processing message:', userMessage);
-
-    // Rate limiting: prevent spam (max 1 message per 2 seconds)
-    const now = Date.now();
-    if (now - lastMessageTimeRef.current < 2000) {
-      toast.error('Please wait a moment before sending another message');
-      return;
-    }
+    isSendingRef.current = true; // LOCK
     lastMessageTimeRef.current = now;
 
     // Length validation
