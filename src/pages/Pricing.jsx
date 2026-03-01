@@ -35,7 +35,7 @@ export default function Pricing() {
   const bankDetails = {
     bsb: '633123',
     account: '166572719',
-    payid: 'mcnamaram86@gmail.com',
+    payid: 'mickiimac@up.me',
     account_name: 'Memory Mirror Operations'
   };
 
