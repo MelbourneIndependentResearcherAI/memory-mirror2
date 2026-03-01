@@ -18,7 +18,7 @@ import HandsFreeMode from './HandsFreeMode';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'sonner';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { speakWithClonedVoice, speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
+import { speakWithRealisticVoice, detectAnxiety, getCalmingRedirect } from './voiceUtils';
 import { offlineCache } from '@/components/utils/simpleOfflineCache';
 import { offlineStatus } from '@/components/utils/offlineStatusManager';
 import { offlineEntities, offlineFunction } from '@/components/utils/offlineHelpers';
@@ -1477,11 +1477,36 @@ RESPOND NOW - CRITICAL:
       )}
 
       {showHandsFree && (
-        <HandsFreeMode
-          onClose={() => setShowHandsFree(false)}
-          onSendMessage={sendMessage}
-          currentEra={selectedEra === 'auto' ? detectedEra : selectedEra}
-        />
+        <div className="absolute inset-0 z-50 bg-white dark:bg-slate-900 overflow-y-auto">
+          <div className="sticky top-0 z-10 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 p-4">
+            <Button
+              variant="ghost"
+              onClick={() => setShowHandsFree(false)}
+              className="mb-2"
+            >
+              ← Back to Chat
+            </Button>
+            <h2 className="text-xl font-bold">Hands-Free Mode</h2>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Speak naturally — no buttons needed</p>
+          </div>
+          <div className="p-4">
+            <HandsFreeMode
+              onMessage={(transcript) => {
+                setMessages(prev => [...prev, { role: 'user', content: transcript, language: selectedLanguage }]);
+                setConversationHistory(prev => [...prev, { role: 'user', content: transcript }]);
+              }}
+              onAIResponse={(response) => {
+                setMessages(prev => [...prev, { role: 'assistant', content: response, hasVoice: true, language: selectedLanguage }]);
+                setConversationHistory(prev => [...prev, { role: 'assistant', content: response }]);
+              }}
+              selectedLanguage={selectedLanguage}
+              systemPrompt={getSystemPrompt()}
+              conversationHistory={conversationHistory}
+              cognitiveLevel={cognitiveLevel}
+              userProfile={userProfile}
+            />
+          </div>
+        </div>
       )}
 
       {showPersonalizedCompanion && (
@@ -1580,7 +1605,7 @@ RESPOND NOW - CRITICAL:
 
       <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 space-y-4">
         {/* Mode Toggle */}
-        <div className="flex gap-2 justify-center">
+        <div className="flex gap-2 gap-y-2 justify-center flex-wrap">
           <Button
             size="sm"
             variant={!voiceTypingMode ? "default" : "outline"}
@@ -1602,6 +1627,17 @@ RESPOND NOW - CRITICAL:
             className="rounded-full"
           >
             Voice Typing
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => {
+              if (isListening) stopVoiceInput();
+              setShowHandsFree(true);
+            }}
+            className="rounded-full bg-green-50 border-green-400 text-green-700 hover:bg-green-100 dark:bg-green-950/30 dark:border-green-600 dark:text-green-400"
+          >
+            🎤 Hands-Free
           </Button>
         </div>
 

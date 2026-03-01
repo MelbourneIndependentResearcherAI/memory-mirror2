@@ -29,6 +29,11 @@ export default function HandsFreeMode({
   const lastTranscriptRef = useRef('');
   const speechEndTimeoutRef = useRef(null);
   const isRestartingRef = useRef(false);
+  // Refs mirror the corresponding state so recognition event-handler closures
+  // always see the latest value even after React re-renders.
+  const isActiveRef = useRef(false);
+  const isSpeakingRef = useRef(false);
+  const isProcessingRef = useRef(false);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -86,6 +91,7 @@ export default function HandsFreeMode({
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognition) {
       toast.error('Voice not supported. Please use Chrome, Edge, or Safari.');
+      isActiveRef.current = false;
       setIsActive(false);
       return;
     }
@@ -107,6 +113,7 @@ export default function HandsFreeMode({
       } catch {
         console.error('❌ Mic permission denied');
         toast.error('Please allow microphone access', { duration: 5000 });
+        isActiveRef.current = false;
         setIsActive(false);
         setStatusMessage('Microphone access required');
         return;
@@ -138,7 +145,7 @@ export default function HandsFreeMode({
 
       // ON RESULT - CRITICAL: Always listening, never blocking legitimate user input
       recognitionRef.current.onresult = (event) => {
-        if (!isMountedRef.current || !isActive) {
+        if (!isMountedRef.current || !isActiveRef.current) {
           console.log('⏹️ Ignoring - not mounted or not active');
           return;
         }
@@ -173,7 +180,7 @@ export default function HandsFreeMode({
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
 
-            if (finalSpeech.length > 3 && isMountedRef.current && isActive) {
+            if (finalSpeech.length > 3 && isMountedRef.current && isActiveRef.current) {
               console.log('✅ USER FINISHED SPEAKING - Processing:', finalSpeech);
 
               // Prevent duplicates
@@ -201,6 +208,7 @@ export default function HandsFreeMode({
         // Critical errors - stop completely
         if (['audio-capture', 'not-allowed', 'service-not-allowed'].includes(event.error)) {
           toast.error('Microphone error - please check settings', { duration: 5000 });
+          isActiveRef.current = false;
           setIsActive(false);
           return;
         }
@@ -214,6 +222,7 @@ export default function HandsFreeMode({
           restartRecognition(500); // Faster recovery
         } else {
           toast.warning('Too many errors. Please restart hands-free mode.');
+          isActiveRef.current = false;
           setIsActive(false);
         }
       };
@@ -226,10 +235,10 @@ export default function HandsFreeMode({
         setIsListening(false);
         
         // CRITICAL: Always auto-restart for true hands-free (unless processing/speaking)
-        if (isActive && !isRestartingRef.current) {
-          if (isSpeaking) {
+        if (isActiveRef.current && !isRestartingRef.current) {
+          if (isSpeakingRef.current) {
             console.log('🔇 AI speaking - will restart after speech ends');
-          } else if (isProcessing) {
+          } else if (isProcessingRef.current) {
             console.log('⏳ Processing - will restart after response');
           } else {
             console.log('🔄 IMMEDIATE AUTO-RESTART for continuous listening');
@@ -246,13 +255,14 @@ export default function HandsFreeMode({
       console.error('Start error:', error);
       if (isMountedRef.current) {
         toast.error('Could not start voice recognition');
+        isActiveRef.current = false;
         setIsActive(false);
       }
     }
-  }, [isActive, selectedLanguage, errorCount, isProcessing, isSpeaking]);
+  }, [selectedLanguage, errorCount]);
 
   const restartRecognition = useCallback((delay = 500) => {
-    if (!isMountedRef.current || !isActive || isRestartingRef.current) return;
+    if (!isMountedRef.current || !isActiveRef.current || isRestartingRef.current) return;
     
     isRestartingRef.current = true;
     
@@ -262,14 +272,14 @@ export default function HandsFreeMode({
     
     console.log(`⏰ Restart in ${delay}ms`);
     restartTimeoutRef.current = setTimeout(() => {
-      if (isMountedRef.current && isActive && !isProcessing && !isSpeaking) {
+      if (isMountedRef.current && isActiveRef.current && !isProcessingRef.current && !isSpeakingRef.current) {
         isRestartingRef.current = false;
         startRecognition();
       } else {
         isRestartingRef.current = false;
       }
     }, delay);
-  }, [isActive, isProcessing, isSpeaking, startRecognition]);
+  }, [startRecognition]);
 
   const handleUserSpeech = useCallback(async (transcript) => {
     if (!transcript || !isMountedRef.current) {
@@ -298,6 +308,7 @@ export default function HandsFreeMode({
     }
     setIsListening(false);
     setIsProcessing(true);
+    isProcessingRef.current = true;
     setStatusMessage(`💭 Thinking about: "${transcript.substring(0, 30)}..."`);
 
     // Extra safety: clear any pending speech timeouts
@@ -359,7 +370,9 @@ export default function HandsFreeMode({
 
         // CRITICAL: Set speaking state BEFORE starting TTS to block echo
         setIsSpeaking(true);
-        setIsProcessing(false); // Not processing anymore, just speaking
+        isSpeakingRef.current = true;
+        setIsProcessing(false);
+        isProcessingRef.current = false;
         
         await speakWithRealisticVoice(aiMessage, {
             rate: 0.92,
@@ -371,15 +384,17 @@ export default function HandsFreeMode({
             userProfile: userProfile,
             onEnd: () => {
               console.log('✅ AI FINISHED SPEAKING - Immediately resuming listening');
-              if (isMountedRef.current && isActive) {
+              if (isMountedRef.current && isActiveRef.current) {
                 setIsSpeaking(false);
+                isSpeakingRef.current = false;
                 setIsProcessing(false);
+                isProcessingRef.current = false;
                 setStatusMessage('✅ Ready - Listening...');
                 lastTranscriptRef.current = '';
 
                 // Resume immediately with minimal delay
                 setTimeout(() => {
-                  if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                  if (isMountedRef.current && isActiveRef.current && !isSpeakingRef.current && !isProcessingRef.current) {
                     console.log('🔄 RESUMING LISTENING immediately');
                     startRecognition();
                   }
@@ -402,20 +417,24 @@ export default function HandsFreeMode({
         }
         
         setIsSpeaking(true);
+        isSpeakingRef.current = true;
         setIsProcessing(false);
+        isProcessingRef.current = false;
         speakWithRealisticVoice(fallback, {
           emotionalState: 'reassuring',
           rate: 0.9,
           language: selectedLanguage,
           onEnd: () => {
             console.log('✅ Fallback speech done');
-            if (isMountedRef.current && isActive) {
+            if (isMountedRef.current && isActiveRef.current) {
               setIsSpeaking(false);
+              isSpeakingRef.current = false;
               setIsProcessing(false);
+              isProcessingRef.current = false;
               lastTranscriptRef.current = '';
 
               setTimeout(() => {
-                if (isMountedRef.current && isActive && !isSpeaking && !isProcessing) {
+                if (isMountedRef.current && isActiveRef.current && !isSpeakingRef.current && !isProcessingRef.current) {
                   console.log('🔄 Resuming after fallback');
                   startRecognition();
                 }
@@ -425,7 +444,7 @@ export default function HandsFreeMode({
         });
       }
     }
-  }, [isActive, onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, isProcessing, startRecognition]);
+  }, [onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, startRecognition]);
 
   const startHandsFreeMode = async () => {
     console.log('🚀 START HANDS-FREE MODE');
@@ -435,9 +454,11 @@ export default function HandsFreeMode({
 
     toast.success('🎤 Hands-free activated!', { duration: 2000 });
 
-    // CRITICAL: Set speaking BEFORE TTS starts
+    // CRITICAL: Set speaking BEFORE TTS starts; sync refs immediately
     setIsSpeaking(true);
+    isSpeakingRef.current = true;
     setIsActive(true);
+    isActiveRef.current = true;
 
     const greeting = "Hands-free mode activated. I'm ready to listen.";
     speakWithRealisticVoice(greeting, {
@@ -447,6 +468,7 @@ export default function HandsFreeMode({
       onEnd: () => {
         console.log('✅ Greeting finished - waiting before listening');
         setIsSpeaking(false);
+        isSpeakingRef.current = false;
         if (isMountedRef.current) {
           // Wait 2 seconds AFTER greeting to ensure no echo
           setTimeout(() => {
@@ -460,6 +482,9 @@ export default function HandsFreeMode({
 
   const stopHandsFreeMode = () => {
     console.log('🛑 STOP HANDS-FREE');
+    isActiveRef.current = false;
+    isSpeakingRef.current = false;
+    isProcessingRef.current = false;
     setIsActive(false);
     setIsListening(false);
     setIsProcessing(false);
