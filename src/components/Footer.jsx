@@ -52,7 +52,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="pt-6 border-t border-slate-700/50 text-center space-y-2">
           <p className="text-xs text-slate-400">
-            © {new Date().getFullYear()} Memory Mirror. Created by <span className="font-semibold text-purple-400">MM AI Technologies</span>.
+            © {new Date().getFullYear()} Memory Mirror Technologies & Community Indigenous Corporation.
           </p>
           <p className="text-xs text-slate-500">
             ABN 22366098626 • All rights reserved
