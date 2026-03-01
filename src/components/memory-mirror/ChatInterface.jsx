@@ -1147,6 +1147,7 @@ RESPOND NOW - CRITICAL:
         setIsLoading(false);
       }
       abortControllerRef.current = null;
+      isSendingRef.current = false; // UNLOCK
     }
   }, [isLoading, selectedLanguage, conversationHistory, selectedEra, detectedEra, conversationTopics, cognitiveLevel, lastAssessment, userProfile, safeZones, memories, speakResponse, translateText, onEraChange, queryClient]);
 
