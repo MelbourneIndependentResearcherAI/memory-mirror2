@@ -281,18 +281,10 @@ export async function speakWithRealisticVoice(text, options = {}) {
     utterance.pitch = finalPitch;
     utterance.volume = finalVolume;
 
-    // Get voices — if not loaded yet, wait briefly then proceed
+    // Get voices — use whatever is available now
     let voices = speechSynthesis.getVoices();
     if (!voices.length) {
-      console.warn('Voices not loaded yet, waiting...');
-      await new Promise((resolve) => {
-        const timeout = setTimeout(resolve, 300);
-        speechSynthesis.onvoiceschanged = () => {
-          clearTimeout(timeout);
-          resolve();
-        };
-      });
-      voices = speechSynthesis.getVoices();
+      console.warn('Voices not loaded yet, will use default');
     }
     
     const userPreference = getUserVoicePreference();
