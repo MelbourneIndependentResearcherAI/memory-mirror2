@@ -179,6 +179,13 @@ export default function Pricing() {
      console.error('Failed to cache subscription:', e);
    }
 
+   // Store collected email
+   try {
+     await base44.entities.CollectedEmail.create({ email, source: 'subscription' });
+   } catch {
+     // Non-blocking
+   }
+
    createSubscriptionMutation.mutate(subscriptionData);
   };
 
