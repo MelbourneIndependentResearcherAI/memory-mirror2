@@ -16,6 +16,7 @@ export default function UserProfileSetup({ onBack }) {
   const [formData, setFormData] = useState({
     loved_one_name: '',
     preferred_name: '',
+    greeting_name: '',
     birth_year: '',
     interests: '',
     favorite_era: '1940s',
