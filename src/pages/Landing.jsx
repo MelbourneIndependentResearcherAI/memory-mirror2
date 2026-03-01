@@ -3,7 +3,6 @@ import { MessageCircle, Brain, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import DonationModal from '@/components/DonationModal';
 import InstallAppButton from '@/components/InstallAppButton';
 import AppTutorial from '@/components/landing/AppTutorial';
@@ -38,18 +37,14 @@ export default function Landing() {
   };
 
   const featureCards = [
-    { icon: '🔴', title: 'Quick Access Button', desc: 'ONE BIG RED BUTTON for instant access - inspired by "Be My Eyes"', page: 'QuickAccess', color: 'from-red-500 to-rose-600' },
-    { icon: '🎯', title: 'Big Button Mode', desc: 'Extra-large buttons for all features', page: 'BigButtonMode', color: 'from-orange-500 to-red-600' },
-    { icon: '🧠', title: 'AI Chat Companion', desc: 'Warm, empathetic conversation that adapts to each person\'s era and memories', page: 'Home', color: 'from-blue-500 to-cyan-500' },
-    { icon: '❤️', title: 'Health Monitor', desc: 'Track emotional state, anxiety levels and wellbeing patterns over time', page: 'HealthMonitor', color: 'from-red-500 to-pink-500' },
-    { icon: '🎵', title: 'Music Therapy', desc: 'Era-specific songs and playlists to comfort and stimulate memory', page: 'MusicTherapy', color: 'from-purple-500 to-indigo-500' },
-    { icon: '🌙', title: 'Night Watch', desc: 'AI-powered overnight monitoring with emergency alert detection', page: 'NightWatch', color: 'from-slate-600 to-indigo-700' },
-    { icon: '📸', title: 'Photo Library', desc: 'Cherished photos and memories with voice-activated recall', page: 'PhotoLibrary', color: 'from-amber-500 to-orange-500' },
-    { icon: '👨‍⚕️', title: 'Caregiver Portal', desc: 'Full dashboard with insights, care journal and activity reports', page: 'CaregiverPortal', color: 'from-teal-500 to-emerald-500' },
     { icon: '📱', title: 'Phone Mode', desc: 'Simplified large-button phone interface for easy calling', page: 'PhoneMode', color: 'from-green-500 to-teal-500' },
     { icon: '🛡️', title: 'Security Scanner', desc: 'Scam detection and online safety tools to protect your loved one', page: 'Security', color: 'from-blue-600 to-indigo-600' },
+    { icon: '🌙', title: 'Night Watch', desc: 'AI-powered overnight monitoring with emergency alert detection', page: 'NightWatch', color: 'from-slate-600 to-indigo-700' },
     { icon: '🎤', title: 'Always-On Voice', desc: 'Hands-free wake word detection for voice-activated assistance', page: 'VoiceSetup', color: 'from-violet-500 to-purple-600' },
     { icon: '🏦', title: 'Fake Banking', desc: 'A reassuring fake bank balance view to reduce financial anxiety', page: 'MyBank', color: 'from-emerald-500 to-green-600' },
+    { icon: '👨‍👩‍👦', title: 'Family Portal', desc: 'Keep the whole family connected and informed', page: 'FamilyConnect', color: 'from-pink-500 to-rose-500' },
+    { icon: '👨‍⚕️', title: 'Caregiver Dashboard', desc: 'Full dashboard with insights, care journal and activity reports', page: 'CaregiverDashboard', color: 'from-teal-500 to-emerald-500' },
+    { icon: '📺', title: 'Smart TV Mode', desc: 'Large-screen experience optimised for TV viewing', page: 'TVMode', color: 'from-indigo-500 to-blue-600' },
   ];
 
   return (
@@ -162,16 +157,7 @@ export default function Landing() {
 
         {/* Key Features - Professional */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto mb-8 px-4">
-          {[
-            { icon: '🔴', title: 'Quick Access', page: 'QuickAccess' },
-            { icon: '🧠', title: 'Brain Games', page: 'MemoryGames' },
-            { icon: '🌙', title: 'Night Watch', page: 'NightWatch' },
-            { icon: '🎵', title: 'Music Therapy', page: 'MusicTherapy' },
-            { icon: '📍', title: 'GPS Safety', page: 'GeofenceTracking' },
-            { icon: '🎤', title: 'Sing Along', page: 'SingAlongStudio' },
-            { icon: '📺', title: 'TV Mode', page: 'TVMode' },
-            { icon: '🏦', title: 'Banking', page: 'MyBank' },
-          ].map((card) => (
+          {featureCards.map((card) => (
             <button
               key={card.title}
               onClick={() => navigateTo(card.page)}
