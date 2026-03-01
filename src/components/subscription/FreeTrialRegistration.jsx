@@ -42,6 +42,13 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
         // Backend check failed — localStorage trial still valid, continue
       }
 
+      // Store email in CollectedEmail entity
+      try {
+        await base44.entities.CollectedEmail.create({ email, name, source: 'free_trial' });
+      } catch {
+        // Non-blocking — don't fail the trial if this errors
+      }
+
       onSuccess?.({ name, email });
     } catch (err) {
       setError(err.message || 'Failed to register for free trial');
