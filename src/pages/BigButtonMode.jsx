@@ -4,10 +4,11 @@ import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import FakeBankInterface from '@/components/banking/FakeBankInterface';
 
 export default function BigButtonMode() {
   const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState('menu');
+  const [showBank, setShowBank] = useState(false);
 
   const buttons = [
     { icon: MessageCircle, label: 'AI Chat', color: 'from-blue-500 to-cyan-500', page: 'Home' },
@@ -22,6 +23,10 @@ export default function BigButtonMode() {
   const handleNavigation = (page) => {
     navigate(createPageUrl(page));
   };
+
+  if (showBank) {
+    return <FakeBankInterface onClose={() => setShowBank(false)} />;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-cyan-50 to-teal-50 dark:from-slate-950 dark:via-blue-950 dark:to-teal-950 p-6 pb-32">
@@ -53,6 +58,17 @@ export default function BigButtonMode() {
               </motion.button>
             );
           })}
+
+          {/* Banking Button */}
+          <motion.button
+            whileHover={{ scale: 1.05, y: -5 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowBank(true)}
+            className="bg-gradient-to-br from-blue-700 to-indigo-800 hover:shadow-2xl transition-all duration-300 text-white rounded-3xl shadow-xl border-8 border-white/30 flex flex-col items-center justify-center gap-4 p-8 min-h-[200px]"
+          >
+            <CreditCard className="w-16 h-16 drop-shadow-lg" />
+            <span className="text-3xl font-bold text-center">My Bank</span>
+          </motion.button>
         </div>
 
         {/* Additional Options */}

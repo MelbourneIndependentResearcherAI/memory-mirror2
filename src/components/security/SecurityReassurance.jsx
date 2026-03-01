@@ -183,22 +183,6 @@ Important: Be extremely reassuring and calm. This is for someone who may be anxi
         </Button>
       </div>
 
-      {/* Emergency Contact */}
-      <Card className="bg-red-50 border-red-200">
-        <CardContent className="pt-6">
-          <Button
-            onClick={() => {
-              window.location.href = 'tel:911';
-            }}
-            size="lg"
-            className="w-full bg-red-600 hover:bg-red-700 h-20 text-xl"
-          >
-            <Phone className="w-8 h-8 mr-3" />
-            Emergency Call
-          </Button>
-        </CardContent>
-      </Card>
-
       {/* Comforting Message */}
       <Card className="bg-gradient-to-r from-purple-100 to-pink-100">
         <CardContent className="pt-6">
