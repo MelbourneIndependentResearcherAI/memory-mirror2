@@ -21,7 +21,8 @@ export default function QuickAccess() {
         const user = await base44.auth.me();
         const profiles = await base44.entities.UserProfile.list();
         if (profiles.length > 0) {
-          setUserName(profiles[0].preferred_name || profiles[0].loved_one_name || user.full_name);
+          const p = profiles[0];
+          setUserName(p.greeting_name || p.preferred_name || p.loved_one_name || user.full_name);
         } else {
           setUserName(user.full_name || 'there');
         }
