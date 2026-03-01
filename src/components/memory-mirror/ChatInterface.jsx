@@ -1213,11 +1213,10 @@ RESPOND NOW - CRITICAL:
       // Create new recognition instance
       recognitionRef.current = new SpeechRecognition();
       
-      // Configure for natural conversation - let user finish their thought
-      recognitionRef.current.continuous = true;           // Keep listening for complete thoughts
-      recognitionRef.current.interimResults = true;       // Show what they're saying
-      recognitionRef.current.maxAlternatives = 5;         // Better detection - improved accuracy
-      recognitionRef.current.abortOnError = false;        // Don't stop on errors - stay engaged
+      // Single utterance mode — stops after user finishes speaking, prevents duplicate sends
+      recognitionRef.current.continuous = false;
+      recognitionRef.current.interimResults = false;
+      recognitionRef.current.maxAlternatives = 1;
       
       // CRITICAL: Maximize microphone sensitivity for all speech levels
       if (recognitionRef.current.audioTrack !== undefined) {
