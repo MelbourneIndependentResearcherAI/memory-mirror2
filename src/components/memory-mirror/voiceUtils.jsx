@@ -152,13 +152,60 @@ export const getAvailableVoices = () => {
   return voicesByCategory;
 };
 
+// Pick the best available voice for the given language
+function pickVoice(language) {
+  const voices = speechSynthesis.getVoices();
+  if (!voices.length) return null;
+
+  const langMap = {
+    en: ['en-AU', 'en-GB', 'en-US', 'en'],
+    es: ['es-ES', 'es-MX', 'es'],
+    fr: ['fr-FR', 'fr-CA', 'fr'],
+    de: ['de-DE', 'de'],
+    it: ['it-IT', 'it'],
+    pt: ['pt-PT', 'pt-BR', 'pt'],
+    zh: ['zh-CN', 'zh-TW', 'zh'],
+    ja: ['ja-JP', 'ja'],
+    ko: ['ko-KR', 'ko'],
+    ar: ['ar-SA', 'ar'],
+    hi: ['hi-IN', 'hi'],
+    ru: ['ru-RU', 'ru'],
+    nl: ['nl-NL', 'nl'],
+    pl: ['pl-PL', 'pl'],
+    tr: ['tr-TR', 'tr'],
+    vi: ['vi-VN', 'vi'],
+    th: ['th-TH', 'th'],
+    sv: ['sv-SE', 'sv'],
+    no: ['nb-NO', 'no'],
+    da: ['da-DK', 'da']
+  };
+
+  const userPreference = getUserVoicePreference();
+  const targetLangs = langMap[language] || ['en-AU', 'en-US', 'en'];
+
+  // Respect user preference
+  if (userPreference !== 'auto') {
+    const pref = voices.find(v => v.name === userPreference);
+    if (pref) return pref;
+  }
+
+  const langVoices = voices.filter(v => targetLangs.some(l => v.lang.startsWith(l)));
+  if (!langVoices.length) return voices[0];
+
+  // Prefer natural/neural/premium voices
+  return langVoices.find(v =>
+    v.name.includes('Natural') || v.name.includes('Neural') ||
+    v.name.includes('Premium') || v.name.includes('Online') ||
+    v.name.includes('Samantha') || v.name.includes('Karen') ||
+    v.name.includes('Aria') || v.name.includes('Jenny')
+  ) || langVoices[0];
+}
+
 // Enhanced voice synthesis with cognitive, emotional, and profile-based adaptation
 export function speakWithRealisticVoice(text, options = {}) {
-  if (!text || typeof text !== 'string') {
-    console.warn('Invalid text for voice synthesis:', text);
-    return;
-  }
-  
+  if (!text || typeof text !== 'string') return;
+  if (!('speechSynthesis' in window)) return;
+
   const {
     rate = 0.95,
     pitch = 1.0,
@@ -167,258 +214,78 @@ export function speakWithRealisticVoice(text, options = {}) {
     anxietyLevel = 0,
     cognitiveLevel = 'mild',
     language = 'en',
-    userProfile = null,
     onEnd = null
   } = options;
 
-  if (!('speechSynthesis' in window)) {
-    console.warn('Speech synthesis not supported');
-    return;
-  }
+  // Cancel any current speech
+  try { speechSynthesis.cancel(); } catch {}
 
-  try {
-    // Ensure any previous speech is stopped
+  const doSpeak = () => {
     try {
-      speechSynthesis.cancel();
-    } catch (e) {
-      console.log('Cancel previous speech:', e.message);
-    }
+      const voices = speechSynthesis.getVoices();
 
-    // Cognitive level adaptations - adjust speaking style based on dementia progression
-    const cognitiveAdaptations = {
-      'mild': { 
-        rateBase: 0.95, 
-        pitchBase: 1.05, 
-        pauseMultiplier: 1.0,
-        emphasis: 'normal'
-      },
-      'moderate': { 
-        rateBase: 0.88, 
-        pitchBase: 1.08, 
-        pauseMultiplier: 1.3,
-        emphasis: 'gentle'
-      },
-      'advanced': { 
-        rateBase: 0.80, 
-        pitchBase: 1.10, 
-        pauseMultiplier: 1.6,
-        emphasis: 'very gentle'
-      },
-      'severe': { 
-        rateBase: 0.75, 
-        pitchBase: 1.12, 
-        pauseMultiplier: 2.0,
-        emphasis: 'extremely gentle'
+      // Rate adjustments
+      const cogRates = { mild: 1.0, moderate: 0.9, advanced: 0.82, severe: 0.75 };
+      const emoRates = { calm: 0.95, warm: 1.0, upbeat: 1.05, neutral: 1.0, soothing: 0.9, reassuring: 0.88, anxious: 0.92 };
+      const anxRate = anxietyLevel >= 7 ? 0.88 : anxietyLevel >= 5 ? 0.94 : 1.0;
+
+      const finalRate = Math.max(0.5, Math.min(1.8,
+        rate * (cogRates[cognitiveLevel] || 1.0) * (emoRates[emotionalState] || 1.0) * anxRate
+      ));
+      const finalPitch = Math.max(0.8, Math.min(1.3, pitch));
+      const finalVolume = Math.max(0.5, Math.min(1.0, volume));
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = finalRate;
+      utterance.pitch = finalPitch;
+      utterance.volume = finalVolume;
+
+      const voice = pickVoice(language);
+      if (voice) {
+        utterance.voice = voice;
+        utterance.lang = voice.lang;
+      } else {
+        utterance.lang = language === 'en' ? 'en-AU' : language;
       }
-    };
-    
-    const cognitiveAdapt = cognitiveAdaptations[cognitiveLevel] || cognitiveAdaptations.mild;
-    
-    // Emotional state adjustments - layered on top of cognitive base
-    const emotionalAdjustments = {
-      'calm': { rateMultiplier: 0.95, pitchMultiplier: 1.02, volumeMultiplier: 0.95 },
-      'warm': { rateMultiplier: 1.0, pitchMultiplier: 1.05, volumeMultiplier: 1.0 },
-      'upbeat': { rateMultiplier: 1.08, pitchMultiplier: 1.08, volumeMultiplier: 1.0 },
-      'neutral': { rateMultiplier: 1.0, pitchMultiplier: 1.0, volumeMultiplier: 1.0 },
-      'anxious': { rateMultiplier: 0.90, pitchMultiplier: 0.98, volumeMultiplier: 0.9 },
-      'soothing': { rateMultiplier: 0.88, pitchMultiplier: 1.02, volumeMultiplier: 0.92 },
-      'reassuring': { rateMultiplier: 0.85, pitchMultiplier: 1.08, volumeMultiplier: 0.95 }
-    };
-    
-    const emotionalAdapt = emotionalAdjustments[emotionalState] || emotionalAdjustments.neutral;
-    
-    // Anxiety-based adjustments - slower and more soothing for high anxiety
-    const anxietyAdjustment = anxietyLevel >= 7 ? 0.85 : 
-                              anxietyLevel >= 5 ? 0.92 : 
-                              anxietyLevel >= 3 ? 0.97 : 1.0;
-    
-    // User profile personalization - mimic preferred communication style
-    let profileAdjustment = { rate: 1.0, pitch: 1.0 };
-    if (userProfile?.communication_style) {
-      const styleAdjustments = {
-        'formal': { rate: 0.92, pitch: 0.98 },
-        'casual': { rate: 1.05, pitch: 1.05 },
-        'warm': { rate: 0.98, pitch: 1.08 },
-        'gentle': { rate: 0.88, pitch: 1.10 }
+
+      let ended = false;
+      const finish = () => {
+        if (!ended) {
+          ended = true;
+          if (onEnd) onEnd();
+        }
       };
-      profileAdjustment = styleAdjustments[userProfile.communication_style] || { rate: 1.0, pitch: 1.0 };
-    }
 
-    // Add natural pauses for better comprehension at higher cognitive decline levels
-    let processedText = text;
-    if (cognitiveAdapt.pauseMultiplier > 1.2) {
-      // Add pauses after sentences and key phrases
-      processedText = text
-        .replace(/\. /g, '... ')
-        .replace(/\? /g, '?.. ')
-        .replace(/! /g, '!.. ')
-        .replace(/,([A-Z])/g, ',.. $1'); // Pause after comma before capital letter
-    }
-    
-    const utterance = new SpeechSynthesisUtterance(processedText);
-    
-    // Combine all adjustments for final speech parameters
-    const finalRate = Math.max(0.5, Math.min(2.0, 
-      rate * 
-      cognitiveAdapt.rateBase * 
-      emotionalAdapt.rateMultiplier * 
-      anxietyAdjustment *
-      profileAdjustment.rate
-    ));
-    
-    const finalPitch = Math.max(0.5, Math.min(2.0, 
-      pitch * 
-      cognitiveAdapt.pitchBase * 
-      emotionalAdapt.pitchMultiplier *
-      profileAdjustment.pitch
-    ));
-    
-    const finalVolume = Math.max(0.1, Math.min(1.0, 
-      volume * emotionalAdapt.volumeMultiplier
-    ));
-    
-    utterance.rate = finalRate;
-    utterance.pitch = finalPitch;
-    utterance.volume = finalVolume;
-
-    // Get voices — use whatever is available now
-    let voices = speechSynthesis.getVoices();
-    if (!voices.length) {
-      console.warn('Voices not loaded yet, will use default');
-    }
-    
-    const userPreference = getUserVoicePreference();
-    let selectedVoice = null;
-    
-    // Map language codes to voice language codes
-    const langMap = {
-      en: ['en-US', 'en-GB', 'en-AU', 'en'],
-      es: ['es-ES', 'es-MX', 'es-US', 'es'],
-      fr: ['fr-FR', 'fr-CA', 'fr'],
-      de: ['de-DE', 'de-AT', 'de'],
-      it: ['it-IT', 'it'],
-      pt: ['pt-PT', 'pt-BR', 'pt'],
-      zh: ['zh-CN', 'zh-TW', 'zh-HK', 'zh'],
-      ja: ['ja-JP', 'ja'],
-      ko: ['ko-KR', 'ko'],
-      ar: ['ar-SA', 'ar-EG', 'ar'],
-      hi: ['hi-IN', 'hi'],
-      ru: ['ru-RU', 'ru'],
-      nl: ['nl-NL', 'nl-BE', 'nl'],
-      pl: ['pl-PL', 'pl'],
-      tr: ['tr-TR', 'tr'],
-      vi: ['vi-VN', 'vi'],
-      th: ['th-TH', 'th'],
-      sv: ['sv-SE', 'sv'],
-      no: ['nb-NO', 'no'],
-      da: ['da-DK', 'da']
-    };
-    
-    const targetLangs = langMap[language] || ['en-US', 'en'];
-    
-    // Use user's preferred voice if set and matches language
-    if (userPreference !== 'auto') {
-      const preferredVoice = voices.find(v => v.name === userPreference);
-      if (preferredVoice && targetLangs.some(lang => preferredVoice.lang.startsWith(lang))) {
-        selectedVoice = preferredVoice;
-      }
-    }
-    
-    // Auto-select best voice for the target language
-    if (!selectedVoice) {
-      const languageVoices = voices.filter(v => 
-        targetLangs.some(lang => v.lang.startsWith(lang))
-      );
-      
-      if (languageVoices.length > 0) {
-        // Select voice based on emotional state and cognitive level
-        let preferredGender = null;
-        if (anxietyLevel >= 7 || cognitiveLevel === 'advanced' || cognitiveLevel === 'severe') {
-          preferredGender = 'female'; // Calm, soothing voices for comfort
-        } else if (emotionalState === 'upbeat') {
-          preferredGender = 'female';
-        }
-        
-        if (preferredGender) {
-          const genderVoices = languageVoices.filter(v => {
-            const name = v.name.toLowerCase();
-            return preferredGender === 'female' 
-              ? (name.includes('female') || name.includes('woman') || 
-                 !name.includes('male') && !name.includes('man'))
-              : (name.includes('male') || name.includes('man'));
-          });
-          
-          if (genderVoices.length > 0) {
-            selectedVoice = genderVoices.find(v => 
-              v.name.includes('Natural') || v.name.includes('Neural') || 
-              v.name.includes('Premium') || v.name.includes('Online')
-            ) || genderVoices[0];
-          }
-        }
-        
-        if (!selectedVoice) {
-          selectedVoice = languageVoices.find(v => 
-            v.name.includes('Natural') || v.name.includes('Neural') || 
-            v.name.includes('Premium') || v.name.includes('Online')
-          ) || languageVoices[0];
-        }
-      } else if (language === 'en') {
-        const voicesByCategory = getAvailableVoices();
-        
-        let preferredCategory = 'warmComforting';
-        if (anxietyLevel >= 7 || emotionalState === 'anxious') {
-          preferredCategory = 'calm';
-        } else if (emotionalState === 'upbeat') {
-          preferredCategory = 'upbeat';
-        }
-        
-        const categoriesInOrder = [
-          preferredCategory,
-          'warmComforting',
-          'calm',
-          'upbeat',
-          'british',
-          'american',
-          'australian'
-        ];
-        
-        for (const category of categoriesInOrder) {
-          if (voicesByCategory[category]?.length > 0) {
-            selectedVoice = voicesByCategory[category][0].voice;
-            break;
-          }
-        }
-      }
-      
-      if (!selectedVoice) {
-        selectedVoice = voices[0];
-      }
-    }
-
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-      utterance.lang = selectedVoice.lang;
-    } else {
-      utterance.lang = targetLangs[0];
-    }
-
-    // Handle end callback BEFORE speaking
-    if (onEnd) {
-      utterance.onend = onEnd;
-      utterance.onerror = () => {
-        console.log('Speech error, calling onEnd');
-        if (onEnd) onEnd();
+      utterance.onend = finish;
+      utterance.onerror = (e) => {
+        console.warn('Speech error:', e.error);
+        finish();
       };
-    }
 
-    console.log('Speaking with voice:', selectedVoice?.name || 'default', 'Rate:', finalRate, 'Pitch:', finalPitch);
-    speechSynthesis.speak(utterance);
-    
-    return utterance;
-    
-  } catch (error) {
-    console.error('Voice synthesis error:', error);
-  }
+      // Watchdog: Chrome/Android can get stuck — resume if paused
+      const watchdog = setInterval(() => {
+        if (speechSynthesis.paused) {
+          speechSynthesis.resume();
+        }
+        if (!speechSynthesis.speaking || ended) {
+          clearInterval(watchdog);
+        }
+      }, 5000);
+
+      utterance.onend = () => { clearInterval(watchdog); finish(); };
+      utterance.onerror = (e) => { clearInterval(watchdog); console.warn('Speech error:', e.error); finish(); };
+
+      speechSynthesis.speak(utterance);
+      console.log('🔊 Speaking:', text.substring(0, 60), '| Voice:', voice?.name || 'default', '| Rate:', finalRate.toFixed(2));
+      return utterance;
+    } catch (err) {
+      console.error('Voice synthesis error:', err);
+      if (onEnd) onEnd();
+    }
+  };
+
+  // Small delay after cancel to let the browser settle (critical on mobile)
+  setTimeout(doSpeak, 150);
 }
 
 // Detect anxiety/distress in user text
