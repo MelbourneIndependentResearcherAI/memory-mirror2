@@ -17,9 +17,6 @@ import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadg
 import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 import { FeatureLockProvider } from '@/components/FeatureLockManager';
 
-// Add small delay to allow async checks
-const SUBSCRIPTION_CHECK_TIMEOUT = 100;
-
 /**
  * Memory Mirror - AI Companion for Dementia Care
  * EMERGENCY SIMPLIFIED VERSION - Removes all blocking initialization

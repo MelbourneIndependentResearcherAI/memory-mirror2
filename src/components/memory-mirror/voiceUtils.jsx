@@ -10,40 +10,6 @@ export const getActiveClonedVoice = async () => {
   }
 };
 
-// Play audio from ArrayBuffer
-const playAudioBuffer = (arrayBuffer, volume = 1.0, onEnd = null) => {
-  try {
-    if (!window.Audio) {
-      console.warn('Audio API not available');
-      return Promise.resolve(false);
-    }
-    
-    const audioBlob = new Blob([arrayBuffer], { type: 'audio/mpeg' });
-    const audioUrl = URL.createObjectURL(audioBlob);
-    const audio = new Audio(audioUrl);
-    audio.volume = Math.max(0, Math.min(1, volume));
-
-    return new Promise((resolve) => {
-      audio.onended = () => {
-        URL.revokeObjectURL(audioUrl);
-        if (onEnd) onEnd();
-        resolve(true);
-      };
-      audio.onerror = () => {
-        URL.revokeObjectURL(audioUrl);
-        resolve(false);
-      };
-      audio.play().catch(() => {
-        URL.revokeObjectURL(audioUrl);
-        resolve(false);
-      });
-    });
-  } catch (error) {
-    console.error('Audio playback error:', error);
-    return Promise.resolve(false);
-  }
-};
-
 // ElevenLabs disabled - use speakWithRealisticVoice directly
 export const speakWithClonedVoice = async (text, options = {}) => {
   if (!text) return false;
@@ -222,8 +188,6 @@ export function speakWithRealisticVoice(text, options = {}) {
 
   const doSpeak = () => {
     try {
-      const voices = speechSynthesis.getVoices();
-
       // Rate adjustments
       const cogRates = { mild: 1.0, moderate: 0.9, advanced: 0.82, severe: 0.75 };
       const emoRates = { calm: 0.95, warm: 1.0, upbeat: 1.05, neutral: 1.0, soothing: 0.9, reassuring: 0.88, anxious: 0.92 };

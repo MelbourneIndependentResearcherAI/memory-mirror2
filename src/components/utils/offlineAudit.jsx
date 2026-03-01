@@ -108,7 +108,7 @@ function openDBWithTimeout(dbName, version, timeoutMs = 5000) {
       resolve(request.result);
     };
 
-    request.onupgradeneeded = (event) => {
+    request.onupgradeneeded = () => {
       clearTimeout(timeoutHandle);
       // Upgrade happens, we'll wait for onsuccess
     };

@@ -84,7 +84,7 @@ export default function MusicTherapy() {
     if (videoRef.current) videoRef.current.value = '';
   };
 
-  const handleFileChange = (e, type) => {
+  const handleFileChange = (e, _type) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setPreviewUrl(URL.createObjectURL(file));

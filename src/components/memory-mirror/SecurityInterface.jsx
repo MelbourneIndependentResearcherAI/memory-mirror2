@@ -178,11 +178,6 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
     setIsLoading(false);
   };
 
-  const contactFamily = () => {
-    alert("Calling your family member now...\n\nIn a real deployment, this would immediately call or text the designated caregiver/family member.");
-    speakResponse("Calling your family now. They'll be with you shortly.");
-  };
-
   return (
     <PullToRefresh onRefresh={handleRefresh} className="bg-slate-900 dark:bg-black min-h-screen">
       <div className="max-w-2xl mx-auto p-4 sm:p-6">

@@ -107,7 +107,7 @@ export default function LiveLocationTracker() {
               const battery = await navigator.getBattery();
               batteryLevel = battery.level * 100;
             }
-          } catch (batteryError) {
+          } catch {
             console.log('Battery API not available');
           }
 

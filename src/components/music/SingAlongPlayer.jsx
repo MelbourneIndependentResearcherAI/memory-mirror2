@@ -14,7 +14,7 @@ export default function SingAlongPlayer({
 }) {
   const [isSinging, setIsSinging] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
-  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [, setCurrentLineIndex] = useState(0);
   const [highlightedLine, setHighlightedLine] = useState(0);
   const utteranceRef = useRef(null);
   const timeoutRef = useRef(null);
