@@ -149,10 +149,15 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const speakResponse = useCallback((text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
     
-    // CRITICAL: Prevent speaking the same text twice
+    // Only block if currently speaking the exact same text
     if (lastSpokenTextRef.current === text && isSpeakingRef.current) {
-      console.log('🔇 Skipping duplicate speech');
+      console.log('🔇 Skipping duplicate speech (already speaking)');
       return;
+    }
+
+    // Stop any current speech before starting new one
+    if (window.speechSynthesis) {
+      window.speechSynthesis.cancel();
     }
 
     isSpeakingRef.current = true;
