@@ -719,6 +719,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
           setShowFreeTierAlert(true);
           setFreeTierUsage({ used: usageData.usage.chat_messages.used, limit: usageData.usage.chat_messages_limit || usageData.usage.chat_messages.limit });
           setIsLoading(false);
+          isSendingRef.current = false; // UNLOCK
           return;
         }
         // Increment usage
