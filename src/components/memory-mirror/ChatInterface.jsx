@@ -666,6 +666,13 @@ Now respond like their best friend who genuinely cares and listened carefully to
     const userMessage = transcribedText.trim();
     if (!userMessage) return;
 
+    // Block exact same message sent within 3 seconds
+    const now2 = Date.now();
+    if (userMessage === lastSentMessageRef.current && (now2 - lastMessageTimeRef.current) < 3000) {
+      console.log('🚫 Duplicate typed message blocked');
+      return;
+    }
+
     if (isLoading) {
       console.log('Still processing previous message');
       return;
