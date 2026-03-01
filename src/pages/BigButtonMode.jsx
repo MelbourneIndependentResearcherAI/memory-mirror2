@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Music, Gamepad2, Map, Moon, Home, Settings, LogOut, CreditCard } from 'lucide-react';
+import { MessageCircle, Music, Gamepad2, Map, Moon, Home, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
