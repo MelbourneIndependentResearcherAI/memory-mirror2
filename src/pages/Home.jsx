@@ -1,6 +1,6 @@
 import React, { useState, useEffect, Suspense } from 'react';
 import { MessageCircle, Settings, HeartCrack, MapPin } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '@/components/i18n/LanguageContext';
 import { motion } from 'framer-motion';
@@ -23,9 +23,7 @@ export default function Home() {
   const [wakeWordActive, setWakeWordActive] = useState(false);
   const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [showReflection, setShowReflection] = useState(false);
-  const [showOfflineDownload, setShowOfflineDownload] = useState(false);
   const [showSingAlong, setShowSingAlong] = useState(false);
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { t } = useLanguage();
 
@@ -46,7 +44,7 @@ export default function Home() {
       try {
         speechSynthesis.getVoices();
         window.speechSynthesis.onvoiceschanged = () => speechSynthesis.getVoices();
-      } catch (e) {
+      } catch {
         console.warn('Speech synthesis unavailable');
       }
     }

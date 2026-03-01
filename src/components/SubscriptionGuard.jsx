@@ -33,7 +33,7 @@ const offlineHelper = {
       if (age > CACHE_DURATION) return null;
 
       return JSON.parse(cached);
-    } catch (e) {
+    } catch {
       return null;
     }
   }

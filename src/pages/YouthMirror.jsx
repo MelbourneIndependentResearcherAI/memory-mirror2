@@ -26,7 +26,7 @@ function MemoryJournal({ onBack }) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
 
-  const { data: entries = [], isLoading } = useQuery({
+  const { data: entries = [] } = useQuery({
     queryKey: ['youthJournal'],
     queryFn: () => base44.entities.CareJournal.list('-created_date', 30).catch(() => []),
   });

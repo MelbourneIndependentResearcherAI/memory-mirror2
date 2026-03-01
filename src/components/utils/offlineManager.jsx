@@ -235,7 +235,7 @@ export const getOfflineStorageUsage = async () => {
       total_size_bytes: totalSize,
       total_size_mb: (totalSize / 1024 / 1024).toFixed(2)
     };
-  } catch (error) {
+  } catch {
     return { total_items: 0, total_size_bytes: 0, total_size_mb: 0 };
   }
 };

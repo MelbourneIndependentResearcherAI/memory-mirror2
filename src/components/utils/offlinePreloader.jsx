@@ -27,7 +27,7 @@ export async function preloadEssentialData() {
     try {
       await saveToStore(STORES.aiResponses, { prompt: resp.prompt, response: resp.response, category: resp.category, timestamp: Date.now(), offline: true });
       results.aiResponses++;
-    } catch (e) { /* skip */ }
+    } catch { /* skip */ }
   }
 
   // 2. Stories
@@ -35,7 +35,7 @@ export async function preloadEssentialData() {
     try {
       await saveToStore(STORES.stories, { ...story, offline_preloaded: true });
       results.stories++;
-    } catch (e) { /* skip */ }
+    } catch { /* skip */ }
   }
 
   // 3. Music metadata
@@ -43,7 +43,7 @@ export async function preloadEssentialData() {
     try {
       await saveToStore(STORES.music, { ...song, offline_preloaded: true, is_downloaded: true });
       results.music++;
-    } catch (e) { /* skip */ }
+    } catch { /* skip */ }
   }
 
   // 4. Memory Exercises
@@ -51,7 +51,7 @@ export async function preloadEssentialData() {
     try {
       await saveToStore(STORES.activityLog, { activity_type: 'memory_exercise', exercise_id: exercise.id, details: exercise, offline_preloaded: true, created_date: new Date().toISOString() });
       results.exercises++;
-    } catch (e) { /* skip */ }
+    } catch { /* skip */ }
   }
 
   // 5. Entity data (online only)
@@ -61,7 +61,7 @@ export async function preloadEssentialData() {
         const data = await base44.entities[entityName].list();
         let savedCount = 0;
         for (const item of data) {
-          try { await saveToStore(entityName.toLowerCase(), item); savedCount++; } catch (e) { /* skip */ }
+          try { await saveToStore(entityName.toLowerCase(), item); savedCount++; } catch { /* skip */ }
         }
         results.entities[entityName] = savedCount;
       } catch (error) {
@@ -73,7 +73,7 @@ export async function preloadEssentialData() {
   // Mark complete
   try {
     await saveToStore(STORES.syncMeta, { key: 'offline_ready', timestamp: new Date().toISOString(), version: '5.0', ...results });
-  } catch (e) { /* skip */ }
+  } catch { /* skip */ }
 
   console.log(`✅ Offline preload complete: ${results.aiResponses} AI, ${results.stories} stories, ${results.music} music, ${results.exercises} exercises`);
   return results;

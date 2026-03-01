@@ -44,7 +44,7 @@ export default function OfflineReadyIndicator() {
       const status = await getFromStore('syncMeta', 'offline_ready');
       setOfflineReady(status);
       setOnline(isOnline());
-    } catch (error) {
+    } catch {
       // Silently ignore — store may not be initialised yet
     }
   };
