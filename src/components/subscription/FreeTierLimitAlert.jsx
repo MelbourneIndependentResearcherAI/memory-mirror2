@@ -24,9 +24,11 @@ export default function FreeTierLimitAlert({ featureType, used, limit, onDismiss
         <div className="flex items-start gap-3">
           <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <h4 className="font-semibold text-blue-900 dark:text-blue-200">Daily Limit: {used}/{limit} {featureName}</h4>
+            <h4 className="font-semibold text-blue-900 dark:text-blue-200">
+              {remaining === 0 ? 'Daily limit reached' : `Only ${remaining} spot${remaining === 1 ? '' : 's'} left today`}
+            </h4>
             <p className="text-sm text-blue-800 dark:text-blue-300 mt-1">
-              You have <strong>{remaining}</strong> {featureName} remaining today.
+              {remaining === 0 ? 'Upgrade to keep the conversation going.' : `You've used ${used} of ${limit} free ${featureName} today.`}
             </p>
           </div>
         </div>
