@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Music, Gamepad2, Map, Moon, Home, Settings, CreditCard } from 'lucide-react';
+import { MessageCircle, Music, Gamepad2, Map, Moon, Home, Settings, LogOut, CreditCard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
@@ -16,6 +16,7 @@ export default function BigButtonMode() {
     { icon: Gamepad2, label: 'Games', color: 'from-orange-500 to-red-500', page: 'MemoryGames' },
     { icon: Map, label: 'GPS Safety', color: 'from-green-500 to-emerald-500', page: 'GeofenceTracking' },
     { icon: Moon, label: 'Night Watch', color: 'from-slate-600 to-indigo-700', page: 'NightWatch' },
+    { icon: CreditCard, label: 'Banking', color: 'from-blue-600 to-indigo-600', page: 'MyBank' },
     { icon: Home, label: 'Home', color: 'from-yellow-500 to-orange-500', page: 'Home' },
   ];
 
