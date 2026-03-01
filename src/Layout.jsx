@@ -173,8 +173,7 @@ function LayoutContent({ children, currentPageName }) {
         <AppStateProvider>
           <LockModeProvider>
             <FeatureLockProvider>
-              <TabStackProvider>
-                <ErrorBoundary>
+              <ErrorBoundary>
                 <SessionTimeoutManager />
                 <OfflineIndicator />
                 <OfflineSyncStatus />
@@ -236,7 +235,6 @@ function LayoutContent({ children, currentPageName }) {
                 {showBottomNav && <BottomNav />}
               </div>
               </ErrorBoundary>
-              </TabStackProvider>
             </FeatureLockProvider>
           </LockModeProvider>
         </AppStateProvider>
