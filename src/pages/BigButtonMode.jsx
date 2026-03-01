@@ -72,21 +72,12 @@ export default function BigButtonMode() {
         </div>
 
         {/* Additional Options */}
-        <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => navigate(createPageUrl('Settings'))}
-            className="bg-gradient-to-br from-slate-600 to-slate-700 hover:shadow-lg text-white rounded-2xl shadow-lg border-4 border-white/20 flex flex-col items-center justify-center gap-2 p-6 min-h-[120px]"
-          >
-            <Settings className="w-10 h-10" />
-            <span className="text-xl font-bold">Settings</span>
-          </motion.button>
+        <div className="flex justify-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => navigate(createPageUrl('QuickAccess'))}
-            className="bg-gradient-to-br from-red-500 to-red-600 hover:shadow-lg text-white rounded-2xl shadow-lg border-4 border-white/20 flex flex-col items-center justify-center gap-2 p-6 min-h-[120px]"
+            className="bg-gradient-to-br from-red-500 to-red-600 hover:shadow-lg text-white rounded-2xl shadow-lg border-4 border-white/20 flex flex-col items-center justify-center gap-2 p-6 min-h-[120px] w-48"
           >
             <span className="text-4xl">🔴</span>
             <span className="text-xl font-bold">Quick</span>
