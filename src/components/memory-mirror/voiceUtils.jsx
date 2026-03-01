@@ -153,7 +153,7 @@ export const getAvailableVoices = () => {
 };
 
 // Enhanced voice synthesis with cognitive, emotional, and profile-based adaptation
-export async function speakWithRealisticVoice(text, options = {}) {
+export function speakWithRealisticVoice(text, options = {}) {
   if (!text || typeof text !== 'string') {
     console.warn('Invalid text for voice synthesis:', text);
     return;
