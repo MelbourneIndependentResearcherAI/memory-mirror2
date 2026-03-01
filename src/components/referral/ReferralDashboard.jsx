@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Copy, Share2, CheckCircle2, Heart } from 'lucide-react';
+import { Copy, Share2, CheckCircle2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function ReferralDashboard() {

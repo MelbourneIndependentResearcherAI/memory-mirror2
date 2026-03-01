@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { Users, Heart, Share2, MessageCircle, Plus } from 'lucide-react';
+import { Heart, Share2, MessageCircle, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'framer-motion';

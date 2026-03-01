@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Lock, AlertTriangle } from 'lucide-react';
 
 export default function FeatureLockModal({ isOpen, onClose, onUnlock, featureName, isNightGuard = false }) {

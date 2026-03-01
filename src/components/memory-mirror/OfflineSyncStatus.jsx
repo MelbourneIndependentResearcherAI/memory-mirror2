@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { RefreshCw, CheckCircle, AlertCircle, Wifi, WifiOff, Clock } from 'lucide-react';
+import { RefreshCw, CheckCircle, AlertCircle, WifiOff, Clock } from 'lucide-react';
 import { syncQueue } from '@/components/utils/offlineSyncQueue';
 
 export default function OfflineSyncStatus() {

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Music, Play, Pause } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { base44 } from '@/api/base44Client';
 import { useQuery } from '@tanstack/react-query';
