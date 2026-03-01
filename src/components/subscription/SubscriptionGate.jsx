@@ -15,7 +15,7 @@ import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
  * required='any' — allows any logged-in/trial/free-tier user
  */
 export default function SubscriptionGate({ 
-  feature, 
+  feature,   // optional tool id e.g. 'ai_chat', 'night_watch'
   required = 'premium',
   children 
 }) {
@@ -30,6 +30,10 @@ export default function SubscriptionGate({
   const isPremium = subscriptionData?.isPremium || subscriptionData?.isAdmin;
   // Has any valid access (trial, free tier, or paid)
   const hasAnyAccess = subscriptionData?.isSubscribed;
+  // Has tool-level access for this specific feature
+  const hasToolAccess = feature 
+    ? (isPremium || (subscriptionData?.subscribedTools || []).includes(feature))
+    : isPremium;
 
   // required='any' — just needs to be past the paywall
   if (required === 'any') {
@@ -49,9 +53,8 @@ export default function SubscriptionGate({
     return <>{children}</>;
   }
 
-  // required='premium' — needs paid subscription (trial & free-tier see upgrade prompt)
-  if (required === 'premium' && !isPremium) {
-    // Show free-tier limit notice with upgrade CTA
+  // required='premium' — needs paid subscription or tool access
+  if (required === 'premium' && !hasToolAccess) {
     return (
       <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-2 border-purple-200 dark:border-purple-800">
         <div className="text-center space-y-4">
@@ -61,7 +64,7 @@ export default function SubscriptionGate({
             <p className="text-sm text-purple-800 dark:text-purple-300 mt-2">
               {subscriptionData?.isOnFreeTrial
                 ? 'This feature requires a Premium subscription. Your trial gives you limited access.'
-                : 'Upgrade to Premium for unlimited access to all Memory Mirror features.'}
+                : 'Upgrade to Premium or subscribe to this individual tool to get access.'}
             </p>
           </div>
           <Button
