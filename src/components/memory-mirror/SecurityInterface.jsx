@@ -265,13 +265,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
             <MessageCircle className="w-5 h-5 sm:w-6 sm:h-6" />
             <span className="font-semibold">Talk to Guard</span>
           </Button>
-          <Button
-            onClick={contactFamily}
-            className="col-span-2 bg-red-900 hover:bg-red-800 border-2 border-red-600 text-white p-4 sm:p-5 min-h-[64px] sm:min-h-[72px] flex items-center justify-center gap-3 text-base sm:text-lg font-bold touch-manipulation"
-          >
-            <AlertTriangle className="w-6 h-6 sm:w-7 sm:h-7" />
-            Call Family
-          </Button>
+
         </div>
       </div>
     </PullToRefresh>
