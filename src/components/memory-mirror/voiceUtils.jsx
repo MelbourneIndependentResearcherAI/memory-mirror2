@@ -281,49 +281,18 @@ export function speakWithRealisticVoice(text, options = {}) {
     utterance.pitch = finalPitch;
     utterance.volume = finalVolume;
 
-    // Get voices
+    // Get voices — if not loaded yet, wait briefly then proceed
     let voices = speechSynthesis.getVoices();
     if (!voices.length) {
-      console.warn('No voices available, waiting for voices to load...');
-      // Wait for voices to load
-      return new Promise((resolve) => {
-        const loadVoices = () => {
-          voices = speechSynthesis.getVoices();
-          if (voices.length) {
-            speechSynthesis.onvoiceschanged = null;
-            
-            // Select voice and speak
-            const targetLangs = langMap[language] || ['en-US', 'en'];
-            const languageVoices = voices.filter(v => 
-              targetLangs.some(lang => v.lang.startsWith(lang))
-            );
-            
-            let selectedVoice = null;
-            if (languageVoices.length > 0) {
-              selectedVoice = languageVoices.find(v => 
-                v.name.includes('Natural') || v.name.includes('Neural') || 
-                v.name.includes('Premium') || v.name.includes('Online')
-              ) || languageVoices[0];
-            } else if (voices.length > 0) {
-              selectedVoice = voices[0];
-            }
-            
-            if (selectedVoice) {
-              utterance.voice = selectedVoice;
-              utterance.lang = selectedVoice.lang;
-            }
-            
-            if (onEnd) {
-              utterance.onend = onEnd;
-              utterance.onerror = onEnd;
-            }
-            
-            speechSynthesis.speak(utterance);
-            resolve();
-          }
+      console.warn('Voices not loaded yet, waiting...');
+      await new Promise((resolve) => {
+        const timeout = setTimeout(resolve, 300);
+        speechSynthesis.onvoiceschanged = () => {
+          clearTimeout(timeout);
+          resolve();
         };
-        speechSynthesis.onvoiceschanged = loadVoices;
       });
+      voices = speechSynthesis.getVoices();
     }
     
     const userPreference = getUserVoicePreference();
