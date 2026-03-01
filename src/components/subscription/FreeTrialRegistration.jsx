@@ -16,7 +16,6 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
     setLoading(true);
 
     try {
-      // Set trial data in localStorage immediately (optimistic) so access is granted right away
       const trialEndDate = new Date(Date.now() + 3 * 24 * 60 * 60 * 1000);
       const trialData = {
         name,
@@ -25,22 +24,24 @@ export default function FreeTrialRegistration({ onClose, onSuccess }) {
         trial_start_date: new Date().toISOString(),
         trial_active: true
       };
-      // Use consistent key format (email-based) to prevent multiple trials via incognito
       const trialKey = `freeTrialUser_${email.toLowerCase().replace(/[^a-z0-9]/g, '_')}`;
       localStorage.setItem(trialKey, JSON.stringify(trialData));
-      // Also set legacy key for backward compat
       localStorage.setItem('freeTrialUser', JSON.stringify(trialData));
 
-      // Verify with backend (server-side duplicate check)
-      const result = await base44.functions.invoke('registerFreeTrial', { name, email });
-      if (result?.data?.expired) {
-        // Remove the optimistic localStorage entry
-        localStorage.removeItem(trialKey);
-        localStorage.removeItem('freeTrialUser');
-        throw new Error('Your free trial has already been used. Please subscribe to continue.');
+      // Try backend verification — but only block if explicitly expired
+      try {
+        const result = await base44.functions.invoke('registerFreeTrial', { name, email });
+        if (result?.data?.expired) {
+          localStorage.removeItem(trialKey);
+          localStorage.removeItem('freeTrialUser');
+          setError('Your free trial has already been used. Please subscribe to continue.');
+          setLoading(false);
+          return;
+        }
+      } catch {
+        // Backend check failed — localStorage trial still valid, continue
       }
 
-      // Only navigate on success (not if expired)
       onSuccess?.({ name, email });
     } catch (err) {
       setError(err.message || 'Failed to register for free trial');
