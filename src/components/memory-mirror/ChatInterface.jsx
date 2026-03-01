@@ -699,6 +699,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
     // Length validation
     if (userMessage.length > 1000) {
       toast.error('Message is too long. Please keep it under 1000 characters.');
+      isSendingRef.current = false; // UNLOCK
       return;
     }
 
