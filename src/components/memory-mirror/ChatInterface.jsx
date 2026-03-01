@@ -1103,18 +1103,8 @@ RESPOND NOW - CRITICAL:
          stack: error.stack
        });
       
-      // Exponential backoff retry logic (but not for user input errors)
-      if (retryCountRef.current < 3 && error.name !== 'AbortError' && error.message.indexOf('Empty') === -1) {
-        retryCountRef.current++;
-        const delay = Math.min(1000 * Math.pow(2, retryCountRef.current), 5000);
-        
-        setTimeout(() => {
-          if (isMountedRef.current) {
-            sendMessage(userMessage);
-          }
-        }, delay);
-        return;
-      }
+      // No auto-retry — retrying causes duplicate messages
+      retryCountRef.current = 0;
       
       retryCountRef.current = 0;
       
