@@ -1244,64 +1244,57 @@ RESPOND NOW - CRITICAL:
       recognitionRef.current.lang = langMap[selectedLanguage] || 'en-US';
       
       const _speechEndTimeoutRef = { current: null };
+      const _messageSentRef = { current: false }; // CRITICAL: prevent duplicate sends
 
       recognitionRef.current.onstart = () => {
-        console.log('Speech recognition started - Listening patiently for full thought');
+        console.log('Speech recognition started');
+        _messageSentRef.current = false;
         if (isMountedRef.current) {
           setIsListening(true);
-          // Subtle toast - don't interrupt their flow
           toast.success('Listening...');
         }
       };
       
       recognitionRef.current.onresult = (event) => {
         if (!isMountedRef.current) return;
+        if (_messageSentRef.current) return; // Already sent — ignore further results
         
         try {
-          // Get only the LATEST result to avoid duplicates
-          const lastResultIndex = event.results.length - 1;
-          const lastResult = event.results[lastResultIndex];
-          const transcript = lastResult[0].transcript;
+          // Accumulate all final results into one transcript
+          let finalTranscript = '';
+          for (let i = 0; i < event.results.length; i++) {
+            if (event.results[i].isFinal) {
+              finalTranscript += event.results[i][0].transcript;
+            }
+          }
           
-          console.log('📝 Captured:', transcript, '| Final:', lastResult.isFinal);
-          
-          // In voice typing mode, show text in real-time
+          // In voice typing mode, show interim text in real-time
           if (voiceTypingMode) {
-            setTextInput(transcript.trim());
+            const lastResult = event.results[event.results.length - 1];
+            setTextInput(lastResult[0].transcript.trim());
             return;
           }
           
-          // Wait for user to fully finish their thought
-          if (lastResult.isFinal) {
-            const finalSpeech = transcript.trim();
+          if (finalTranscript.trim().length > 0) {
+            const finalSpeech = finalTranscript.trim();
+            console.log('✅ Final transcript:', finalSpeech);
             
-            if (finalSpeech.length > 0 && isMountedRef.current) {
-              console.log('✅ User finished thought:', finalSpeech);
-              
-              // CRITICAL: Don't interrupt - wait a moment to ensure they're done
-              // This gives them time to add more without being cut off
-              if (_speechEndTimeoutRef.current) {
-                clearTimeout(_speechEndTimeoutRef.current);
-              }
-              
-              _speechEndTimeoutRef.current = setTimeout(() => {
-                if (isMountedRef.current) {
-                  // Stop listening
-                  if (recognitionRef.current) {
-                    try {
-                      recognitionRef.current.stop();
-                    } catch (e) {
-                      console.log('Stop error (safe):', e.message);
-                    }
-                  }
-                  
-                  setIsListening(false);
-                  
-                  // Natural pause before responding (like human conversation)
-                  setTimeout(() => sendMessage(finalSpeech), 300);
-                }
-              }, 1200); // Wait 1.2 seconds of silence to ensure they're truly done
+            if (_speechEndTimeoutRef.current) {
+              clearTimeout(_speechEndTimeoutRef.current);
             }
+            
+            _speechEndTimeoutRef.current = setTimeout(() => {
+              if (isMountedRef.current && !_messageSentRef.current) {
+                _messageSentRef.current = true; // Lock — prevent any further sends
+                
+                if (recognitionRef.current) {
+                  try { recognitionRef.current.stop(); } catch {}
+                }
+                
+                setIsListening(false);
+                setTimeout(() => sendMessage(finalSpeech), 300);
+              }
+            }, 1200);
           }
         } catch (error) {
           console.error('Recognition result error:', error);
