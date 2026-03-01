@@ -52,6 +52,7 @@ import AICareInsights from './pages/AICareInsights';
 import AccessibilityStatement from './pages/AccessibilityStatement';
 import ActivityReminders from './pages/ActivityReminders';
 import ActivityReports from './pages/ActivityReports';
+import AdminSubscriptions from './pages/AdminSubscriptions';
 import AdminUserTracking from './pages/AdminUserTracking';
 import AuditTrail from './pages/AuditTrail';
 import BigButtonMode from './pages/BigButtonMode';
@@ -165,6 +166,7 @@ export const PAGES = {
     "AccessibilityStatement": AccessibilityStatement,
     "ActivityReminders": ActivityReminders,
     "ActivityReports": ActivityReports,
+    "AdminSubscriptions": AdminSubscriptions,
     "AdminUserTracking": AdminUserTracking,
     "AuditTrail": AuditTrail,
     "BigButtonMode": BigButtonMode,

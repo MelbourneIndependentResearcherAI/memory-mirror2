@@ -70,18 +70,18 @@ export function useSubscriptionStatus() {
           user_email: user.email
         });
 
-        // Check for active premium subscription
-        const activeSubscription = subscriptions.find(
-          (sub) => sub.plan_name === 'premium' && sub.status === 'active'
+        // Check for active or pending premium subscription
+        const validSubscription = subscriptions.find(
+          (sub) => sub.plan_name === 'premium' && (sub.status === 'active' || sub.status === 'pending')
         );
 
-        // Check for active tool subscriptions
-        const activeToolSubscriptions = subscriptions.filter(
-          (sub) => sub.plan_name === 'tool_subscription' && sub.status === 'active'
+        // Check for active or pending tool subscriptions
+        const validToolSubscriptions = subscriptions.filter(
+          (sub) => sub.plan_name === 'tool_subscription' && (sub.status === 'active' || sub.status === 'pending')
         );
 
         // Collect all subscribed tools across tool subscriptions
-        const subscribedTools = activeToolSubscriptions.flatMap(sub => sub.subscribed_tools || []);
+        const subscribedTools = validToolSubscriptions.flatMap(sub => sub.subscribed_tools || []);
 
         // Also check for pending (to show payment required)
         const pendingSubscription = subscriptions.find(
@@ -91,16 +91,16 @@ export function useSubscriptionStatus() {
         // Admin users bypass paywall entirely
         const isAdmin = user.role === 'admin';
 
-        // User is subscribed if: admin OR has active subscription OR on active free trial OR chose free tier
-        const isSubscribed = isAdmin || !!activeSubscription || activeToolSubscriptions.length > 0 || (trialStatus.isOnFreeTrial && !trialStatus.trialExpired) || isFreeTierUser;
+        // User is subscribed if: admin OR has active/pending subscription OR on active free trial OR chose free tier
+        const isSubscribed = isAdmin || !!validSubscription || validToolSubscriptions.length > 0 || (trialStatus.isOnFreeTrial && !trialStatus.trialExpired) || isFreeTierUser;
 
         const result = {
           isSubscribed,
-          isPremium: isAdmin || !!activeSubscription,
+          isPremium: isAdmin || !!validSubscription,
           isAdmin,
           isPending: !!pendingSubscription,
           isFreeTier: isFreeTierUser,
-          subscription: activeSubscription || pendingSubscription || null,
+          subscription: validSubscription || pendingSubscription || null,
           subscribedTools,
           user,
           isOnline: true,
@@ -109,7 +109,7 @@ export function useSubscriptionStatus() {
 
         // Save serializable result (functions can't be cached)
         offlineHelper.saveSubscription(result);
-        return { ...result, hasToolAccess: (toolId) => !!activeSubscription || subscribedTools.includes(toolId) };
+        return { ...result, hasToolAccess: (toolId) => !!validSubscription || subscribedTools.includes(toolId) };
       } catch (error) {
         console.error('Subscription check error:', error);
         const cached = offlineHelper.getCachedSubscription();
