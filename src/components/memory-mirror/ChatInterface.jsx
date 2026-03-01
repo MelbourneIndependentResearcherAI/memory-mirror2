@@ -882,6 +882,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
       setAnxietyState({ level: anxietyLevel, suggestedMode: 'phone' });
       setShowAnxietyAlert(true);
       setIsLoading(false);
+      isSendingRef.current = false; // UNLOCK
       return;
     }
 
