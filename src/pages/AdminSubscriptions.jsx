@@ -169,6 +169,11 @@ export default function AdminSubscriptions() {
                       <p className="text-sm text-slate-600 dark:text-slate-400 capitalize">
                         {sub.plan_name} — ${sub.plan_price}/mo
                       </p>
+                      {sub.plan_name === 'tool_subscription' && sub.subscribed_tools?.length > 0 && (
+                        <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">
+                          Tools: {sub.subscribed_tools.map(t => t.replace(/_/g, ' ')).join(', ')}
+                        </p>
+                      )}
                       {sub.payment_reference && (
                         <p className="text-xs font-mono text-slate-500 dark:text-slate-400 mt-1">
                           Ref: {sub.payment_reference}
@@ -234,7 +239,14 @@ export default function AdminSubscriptions() {
                     {subscriptions.map((sub) => (
                       <tr key={sub.id} className="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50">
                         <td className="py-3 px-3 text-slate-900 dark:text-white max-w-[200px] truncate">{sub.user_email}</td>
-                        <td className="py-3 px-3 text-slate-600 dark:text-slate-400 capitalize">{sub.plan_name}</td>
+                        <td className="py-3 px-3 text-slate-600 dark:text-slate-400 capitalize">
+                          {sub.plan_name}
+                          {sub.plan_name === 'tool_subscription' && sub.subscribed_tools?.length > 0 && (
+                            <span className="block text-xs text-purple-600 dark:text-purple-400">
+                              {sub.subscribed_tools.map(t => t.replace(/_/g, ' ')).join(', ')}
+                            </span>
+                          )}
+                        </td>
                         <td className="py-3 px-3">{getStatusBadge(sub.status)}</td>
                         <td className="py-3 px-3 text-slate-600 dark:text-slate-400">${sub.plan_price}/mo</td>
                         <td className="py-3 px-3 text-slate-600 dark:text-slate-400">{new Date(sub.start_date).toLocaleDateString()}</td>

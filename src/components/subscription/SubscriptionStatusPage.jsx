@@ -106,14 +106,14 @@ export default function SubscriptionStatusPage() {
               <div className="grid md:grid-cols-3 gap-4">
                 <div>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Plan</p>
-                  <p className="text-lg font-semibold text-slate-900 dark:text-white">
-                    {subscriptionData.currentPlan || 'Free'}
+                  <p className="text-lg font-semibold text-slate-900 dark:text-white capitalize">
+                    {subscriptionData.plan || 'Free'}
                   </p>
                 </div>
                 <div>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-1">Status</p>
-                  <Badge className={getStatusColor(subscriptionData.status || 'none')}>
-                    {subscriptionData.status || 'None'}
+                  <Badge className={getStatusColor(subscriptionData.subscription?.status || 'none')}>
+                    {subscriptionData.subscription?.status || 'None'}
                   </Badge>
                 </div>
                 <div>
@@ -123,6 +123,18 @@ export default function SubscriptionStatusPage() {
                   </p>
                 </div>
               </div>
+              {subscriptionData.subscribedTools?.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">Active Individual Tools</p>
+                  <div className="flex flex-wrap gap-2">
+                    {subscriptionData.subscribedTools.map(tool => (
+                      <Badge key={tool} className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 capitalize">
+                        {tool.replace(/_/g, ' ')}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -185,6 +197,18 @@ export default function SubscriptionStatusPage() {
                           <p className="font-mono text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-800 p-2 rounded">
                             {sub.payment_reference}
                           </p>
+                        </div>
+                      )}
+                      {sub.plan_name === 'tool_subscription' && sub.subscribed_tools?.length > 0 && (
+                        <div className="md:col-span-2">
+                          <p className="text-slate-600 dark:text-slate-400 mb-1">Subscribed Tools</p>
+                          <div className="flex flex-wrap gap-2">
+                            {sub.subscribed_tools.map(tool => (
+                              <Badge key={tool} className="bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-400 capitalize">
+                                {tool.replace(/_/g, ' ')}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       )}
                     </div>
