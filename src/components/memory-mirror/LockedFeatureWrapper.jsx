@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useFeatureLock } from '@/components/FeatureLockManager';
 import FeatureLockModal from '@/components/FeatureLockModal';
-import { Lock, AlertCircle } from 'lucide-react';
+import { Lock } from 'lucide-react';
 
 /**
  * Wraps a feature component to enforce feature lock restrictions

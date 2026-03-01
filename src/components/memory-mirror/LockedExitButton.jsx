@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ChevronLeft, Lock, AlertTriangle } from 'lucide-react';
+import { ChevronLeft, Lock } from 'lucide-react';
 import { useFeatureLock } from '@/components/FeatureLockManager';
 import FeatureLockModal from '@/components/FeatureLockModal';
 

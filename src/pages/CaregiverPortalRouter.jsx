@@ -13,21 +13,9 @@ import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer'
 import AgentSupport from '@/components/caregiver/AgentSupport';
 
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
-import ContentUploader from '@/components/caregiver/ContentUploader';
 
-import BankSettingsManager from '@/components/caregiver/BankSettingsManager';
-import EmergencyAlertSystem from '@/components/caregiver/EmergencyAlertSystem';
-import PatientRegistration from '@/components/caregiver/PatientRegistration';
-import CaregiverReports from '@/components/caregiver/CaregiverReports';
-import OfflineContentManager from '@/components/caregiver/OfflineContentManager';
 
-import CaregiverTeamManager from '@/components/caregiver/CaregiverTeamManager';
-import CaregiverNotificationCenter from '@/components/caregiver/CaregiverNotificationCenter';
-import SharedJournal from '@/components/caregiver/SharedJournal';
 
-import ChatHistory from '@/components/caregiver/ChatHistory';
-import CaregiverDashboardComponent from '@/components/caregiver/CaregiverDashboard';
-import ChatHistoryViewer from '@/components/caregiver/ChatHistoryViewer';
 
 const adminOnlyCards = [
   { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF', adminOnly: true },
@@ -59,7 +47,6 @@ const regularCards = [
   { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
-  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' }
 ];
 
 const getFeatureCards = (admin) => admin ? [...regularCards, ...adminOnlyCards] : regularCards;

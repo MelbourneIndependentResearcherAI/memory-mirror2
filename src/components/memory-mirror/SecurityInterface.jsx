@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Shield, Search, Lock, Lightbulb, MessageCircle, AlertTriangle, Loader2, BookHeart } from 'lucide-react';
+import { Shield, Search, Lock, Lightbulb, MessageCircle, Loader2, BookHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import CameraView from './CameraView';

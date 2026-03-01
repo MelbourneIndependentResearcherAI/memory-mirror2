@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Shield, Lock, Camera, CheckCircle, Phone, Home, Heart } from 'lucide-react';
+import { Shield, Lock, Camera, CheckCircle, Home, Heart } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { toast } from 'react-hot-toast';
 

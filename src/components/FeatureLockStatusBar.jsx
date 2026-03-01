@@ -1,6 +1,6 @@
 import React from 'react';
 import { useFeatureLock } from '@/components/FeatureLockManager';
-import { Lock, Moon, AlertTriangle } from 'lucide-react';
+import { Lock, AlertTriangle } from 'lucide-react';
 
 /**
  * Displays lock status indicator at top of screen
