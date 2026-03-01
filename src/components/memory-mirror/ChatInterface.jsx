@@ -709,23 +709,15 @@ Now respond like their best friend who genuinely cares and listened carefully to
     }
     abortControllerRef.current = new AbortController();
     
-    // Check free tier limits BEFORE processing message
+    // Check free tier limits BEFORE processing message (non-blocking — always let message through)
     try {
       const usageResult = await base44.functions.invoke('checkFreeTierUsage', {});
       const usageData = usageResult.data;
       if (usageData && !usageData.isPremium) {
-        if (usageData.isLimitExceeded?.chat) {
-          // Already exceeded — block and show alert
-          setShowFreeTierAlert(true);
-          setFreeTierUsage({ used: usageData.usage.chat_messages.used, limit: usageData.usage.chat_messages_limit || usageData.usage.chat_messages.limit });
-          setIsLoading(false);
-          isSendingRef.current = false; // UNLOCK
-          return;
-        }
-        // Increment usage
+        // Increment usage regardless — never block the conversation
         const incrementResult = await base44.functions.invoke('incrementFreeTierUsage', { feature_type: 'chat' });
         if (incrementResult.data?.isLimitExceeded) {
-          // Just hit the limit with this message — let it through but show warning
+          // Show soft warning but DO NOT block
           setShowFreeTierAlert(true);
           setFreeTierUsage({ used: incrementResult.data.used, limit: incrementResult.data.limit });
         }
