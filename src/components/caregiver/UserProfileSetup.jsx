@@ -37,6 +37,7 @@ export default function UserProfileSetup({ onBack }) {
       setFormData({
         loved_one_name: profile.loved_one_name || '',
         preferred_name: profile.preferred_name || '',
+        greeting_name: profile.greeting_name || '',
         birth_year: profile.birth_year || '',
         interests: profile.interests?.join(', ') || '',
         favorite_era: profile.favorite_era || '1940s',
