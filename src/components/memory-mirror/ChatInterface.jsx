@@ -652,6 +652,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
   }, [anxietyState.level, userProfile]);
 
   const isSendingRef = useRef(false);
+  const lastSentMessageRef = useRef('');
 
   const sendMessage = useCallback(async (transcribedText) => {
     // CRITICAL: Hard lock to prevent concurrent calls
