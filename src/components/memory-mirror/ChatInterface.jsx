@@ -148,24 +148,19 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
 
   const speakResponse = useCallback((text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
-    
-    // Only block if currently speaking the exact same text
-    if (lastSpokenTextRef.current === text && isSpeakingRef.current) {
-      console.log('🔇 Skipping duplicate speech (already speaking)');
-      return;
-    }
 
-    // Stop any current speech before starting new one
-    if (window.speechSynthesis) {
-      window.speechSynthesis.cancel();
-    }
+    // Always cancel any currently playing speech first
+    try {
+      if (window.speechSynthesis) {
+        window.speechSynthesis.cancel();
+      }
+    } catch {}
 
-    isSpeakingRef.current = true;
     lastSpokenTextRef.current = text;
+    isSpeakingRef.current = true;
 
     try {
-      console.log('🔊 Starting voice synthesis');
-      // Use browser TTS directly (ElevenLabs is unreliable)
+      console.log('🔊 Speaking:', text.substring(0, 60));
       speakWithRealisticVoice(text, {
         emotionalState: emotionalContext.state || 'neutral',
         anxietyLevel: emotionalContext.anxietyLevel || 0,
