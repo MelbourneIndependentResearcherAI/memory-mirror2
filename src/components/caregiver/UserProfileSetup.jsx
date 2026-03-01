@@ -186,6 +186,16 @@ export default function UserProfileSetup({ onBack }) {
                   />
                 </div>
                 <div>
+                  <label className="text-sm font-medium mb-2 block">Big Button Greeting Name</label>
+                  <Input
+                    placeholder="e.g., Fred, Dad, Grandpa (shown on the big red button screen)"
+                    value={formData.greeting_name}
+                    onChange={(e) => setFormData({...formData, greeting_name: e.target.value})}
+                    className="min-h-[44px]"
+                  />
+                  <p className="text-xs text-slate-500 mt-1">This is the name displayed on the big start button screen. Leave blank to use their preferred name.</p>
+                </div>
+                <div>
                   <label className="text-sm font-medium mb-2 block">Birth Year</label>
                   <Input
                     type="number"
