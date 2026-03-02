@@ -247,6 +247,9 @@ export default function HandsFreeMode({
         }
       };
 
+      // Reset result tracking index for the new session
+      lastResultIndexRef.current = 0;
+
       // START
       console.log('▶️ Starting recognition...');
       recognitionRef.current.start();
