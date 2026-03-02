@@ -18,7 +18,7 @@ const activityIcons = {
 export default function DailyRoutineReminder({ 
   routine, 
   onActivityCompleted,
-  upcomingReminders 
+  _upcomingReminders 
 }) {
   const [currentTime, setCurrentTime] = useState(new Date());
   const [completedActivities, setCompletedActivities] = useState(new Set());

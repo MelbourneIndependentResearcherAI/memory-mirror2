@@ -1,5 +1,4 @@
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-import { useLocation } from 'react-router-dom';
 
 const TabStackContext = createContext();
 
@@ -16,7 +15,6 @@ export const TabStackProvider = ({ children }) => {
   const [tabStacks, setTabStacks] = useState({});
   // Tracks the current tab
   const currentTabRef = useRef(null);
-  const location = useLocation();
 
   const pushTab = useCallback((tabPath) => {
     currentTabRef.current = tabPath;

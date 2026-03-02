@@ -9,13 +9,12 @@ import { AlertTriangle, Lock, Unlock, Moon } from 'lucide-react';
  * Only carers can activate/deactivate this
  */
 export default function NightGuardLockControl() {
-  const { activateNightGuardLock, deactivateNightGuardLock, isNightGuardActive, hasNightGuardLock } = useFeatureLock();
+  const { activateNightGuardLock, deactivateNightGuardLock, isNightGuardActive } = useFeatureLock();
   const [loading, setLoading] = useState(false);
   const [pin, setPin] = useState('');
   const [showPinForDeactivate, setShowPinForDeactivate] = useState(false);
 
   const active = isNightGuardActive();
-  const nightWatchLocked = hasNightGuardLock('NightWatch');
 
   const handleActivate = () => {
     setLoading(true);

@@ -6,7 +6,7 @@ import { X, Mic, MicOff, Video, VideoOff, Phone, Copy, Check } from 'lucide-reac
 import { motion } from 'framer-motion';
 import { toast } from 'sonner';
 
-export default function SecureVideoCall({ callId, roomId, accessToken, participants, onClose }) {
+export default function SecureVideoCall({ callId, roomId, _accessToken, participants, onClose }) {
   const [isAudioEnabled, setIsAudioEnabled] = useState(true);
   const [isVideoEnabled, setIsVideoEnabled] = useState(true);
   const [callDuration, setCallDuration] = useState(0);

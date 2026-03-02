@@ -45,7 +45,7 @@ export default function Settings() {
           window.location.reload();
         }, 1500);
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to save setting');
     }
   };

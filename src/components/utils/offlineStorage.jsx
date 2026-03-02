@@ -272,7 +272,7 @@ export async function getStorageInfo() {
         count: data.length,
         size: new Blob([JSON.stringify(data)]).size
       };
-    } catch (error) {
+    } catch {
       info[store] = { count: 0, size: 0 };
     }
   }

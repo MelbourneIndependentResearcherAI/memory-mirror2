@@ -122,7 +122,7 @@ function ConversationCard({ conversation }) {
   );
 }
 
-export default function ChatHistory({ onBack }) {
+export default function ChatHistory({ _onBack }) {
   const [filter, setFilter] = useState('all');
 
   const { data: conversations = [], isLoading } = useQuery({

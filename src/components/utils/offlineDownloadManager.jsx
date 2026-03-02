@@ -7,7 +7,6 @@ import { initOfflineStorage, saveToStore, getAllFromStore, STORES, getStorageInf
 import { downloadAudioForOffline, getOfflineAudioLibrary } from './offlineManager';
 import { OFFLINE_STORIES, OFFLINE_MUSIC, MEMORY_EXERCISES, COMPREHENSIVE_OFFLINE_RESPONSES } from './offlinePreloaderData.jsx';
 
-const MAX_STORAGE_MB = 500; // 500MB max for offline content
 const DOWNLOAD_RETRY_ATTEMPTS = 3;
 
 export class OfflineDownloadManager {

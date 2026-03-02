@@ -5,8 +5,6 @@
 
 import { initOfflineStorage, saveToStore, getAllFromStore, STORES } from './offlineStorage';
 
-const SYNC_QUEUE_STORE = 'syncQueue';
-
 export class OfflineSyncQueue {
   constructor() {
     this.queue = [];

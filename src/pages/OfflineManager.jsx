@@ -202,7 +202,7 @@ export default function OfflineManagerPage() {
       toast.success('Removed offline copy');
       await loadCachedIds();
       await loadStorageInfo();
-    } catch (e) {
+    } catch {
       toast.error('Could not remove item');
     }
   };
@@ -219,7 +219,7 @@ export default function OfflineManagerPage() {
         if (type.key === 'music')  await downloadMusicForOffline(item);
         if (type.key === 'story')  await downloadStoryForOffline(item);
         if (type.key === 'memory') await downloadMemoryForOffline(item);
-      } catch (_) { /* skip failed */ }
+      } catch { /* skip failed */ }
     }
     setDownloading(null);
     await loadCachedIds();

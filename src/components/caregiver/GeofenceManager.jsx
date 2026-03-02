@@ -11,7 +11,7 @@ import { MapContainer, TileLayer, Circle, Marker, useMapEvents } from 'react-lea
 import 'leaflet/dist/leaflet.css';
 
 function LocationPicker({ position, setPosition, radius }) {
-  const map = useMapEvents({
+  useMapEvents({
     click: (e) => {
       setPosition({ lat: e.latlng.lat, lng: e.latlng.lng });
     }

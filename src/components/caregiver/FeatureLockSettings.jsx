@@ -15,15 +15,15 @@ const AVAILABLE_FEATURES = [
 ];
 
 export default function FeatureLockSettings() {
-  const { lockConfigs, lockFeature, unlockFeature, activateNightGuardLock, updateCaregiverPin } = useFeatureLock();
-  const [selectedFeature, setSelectedFeature] = useState(null);
+  const { lockConfigs, lockFeature, unlockFeature, updateCaregiverPin } = useFeatureLock();
+  const [_selectedFeature, setSelectedFeature] = useState(null);
   const [newPin, setNewPin] = useState('');
   const [confirmPin, setConfirmPin] = useState('');
   const [pinError, setPinError] = useState('');
   const [pinSuccess, setPinSuccess] = useState(false);
-  const [whitelistedScreens, setWhitelistedScreens] = useState({});
+  const [whitelistedScreens] = useState({});
 
-  const handleLockFeature = (featureId) => {
+  const _handleLockFeature = (featureId) => {
     const screens = whitelistedScreens[featureId] || [];
     lockFeature(featureId, screens);
     setSelectedFeature(null);
@@ -57,7 +57,7 @@ export default function FeatureLockSettings() {
       setConfirmPin('');
       setPinError('');
       setTimeout(() => setPinSuccess(false), 3000);
-    } catch (e) {
+    } catch {
       setPinError('Failed to save PIN');
     }
   };

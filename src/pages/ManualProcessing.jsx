@@ -39,7 +39,7 @@ export default function ManualProcessing() {
       try {
         const records = await base44.entities.ManualTransaction.list('-created_date', 50);
         return records;
-      } catch (error) {
+      } catch {
         return [];
       }
     }
@@ -56,7 +56,7 @@ export default function ManualProcessing() {
       setManualTransaction({ sender_name: '', amount: '', reference: '', notes: '' });
       setProcessing(false);
     },
-    onError: (error) => {
+    onError: () => {
       toast.error('Failed to record transaction');
       setProcessing(false);
     }

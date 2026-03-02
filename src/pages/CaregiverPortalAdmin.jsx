@@ -19,7 +19,7 @@ export default function CaregiverPortalAdmin() {
 
   return (
     <Routes>
-      {adminRoutes.map(({ path, title, component: Component }) => (
+      {adminRoutes.map(({ path, component: Component }) => (
         <Route
           key={path}
           path={path}

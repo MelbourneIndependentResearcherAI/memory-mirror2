@@ -26,7 +26,7 @@ import { checkRateLimit } from '@/components/RateLimitManager';
 import RateLimitAlert from '@/components/RateLimitManager';
 import FreeTierLimitAlert from '@/components/subscription/FreeTierLimitAlert';
 
-export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalleryOpen }) {
+export default function ChatInterface({ onEraChange, onModeSwitch, _onMemoryGalleryOpen }) {
   const queryClient = useQueryClient();
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -76,7 +76,6 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   const messagesRef = useRef([]);
   const peakAnxietyRef = useRef(0);
   const sessionEraRef = useRef('present');
-  const greetingSentRef = useRef(false);
 
   const handleRefresh = async () => {
     await queryClient.refetchQueries({ queryKey: ['safeZones'] });
@@ -144,7 +143,6 @@ export default function ChatInterface({ onEraChange, onModeSwitch, onMemoryGalle
   // Ref to last spoken text for replay
   const lastSpokenTextRef = useRef('');
   const isSpeakingRef = useRef(false);
-  const lastSpokenMessageRef = useRef(null);
 
   const speakResponse = useCallback((text, emotionalContext = {}) => {
     if (!text || !isMountedRef.current) return;
@@ -730,7 +728,7 @@ Now respond like their best friend who genuinely cares and listened carefully to
           setFreeTierUsage({ used: incrementResult.data.used, limit: incrementResult.data.limit });
         }
       }
-    } catch (error) {
+    } catch {
       console.log('Free tier check skipped (offline or not logged in)');
     }
     
@@ -997,7 +995,7 @@ RESPOND NOW - CRITICAL:
       if (selectedLanguage !== 'en') {
         try {
           assistantMessage = await translateText(assistantMessage, selectedLanguage, 'en');
-        } catch (e) {
+        } catch {
           console.log('Translation failed, using original response');
         }
       }
@@ -1097,7 +1095,7 @@ RESPOND NOW - CRITICAL:
            activity_type: 'error',
            details: { error: error.message, function: 'sendMessage' }
          }).catch(() => {});
-       } catch (e) {
+       } catch {
          console.log('Error logging failed');
        }
 
@@ -1139,7 +1137,7 @@ RESPOND NOW - CRITICAL:
         if (selectedLanguage !== 'en') {
           fallback = await translateText(fallback, selectedLanguage, 'en');
         }
-      } catch (translateError) {
+      } catch {
         console.log('Translation skipped, using caring English response');
       }
       
@@ -1232,7 +1230,7 @@ RESPOND NOW - CRITICAL:
       if (window.SpeechRecognition && window.SpeechRecognition.prototype.setAudioSource) {
         try {
           recognitionRef.current.setAudioSource('microphone');
-        } catch (e) {
+        } catch {
           console.log('Audio source setting not available');
         }
       }

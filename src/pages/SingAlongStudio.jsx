@@ -8,7 +8,6 @@ import { motion } from 'framer-motion';
 export default function SingAlongStudio() {
   const [selectedSong, setSelectedSong] = useState(null);
   const [currentLineIndex, setCurrentLineIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const { data: songs = [], isLoading } = useQuery({
     queryKey: ['singAlongSongs'],

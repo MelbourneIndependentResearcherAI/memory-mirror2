@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useFeatureLock } from '@/components/FeatureLockManager';
 import FeatureLockModal from '@/components/FeatureLockModal';
 import { Lock } from 'lucide-react';
@@ -14,9 +13,7 @@ export default function LockedFeatureWrapper({
   onExitAttempt = null 
 }) {
   const { isFeatureLocked, isScreenAccessibleInLock, unlockFeature, hasNightGuardLock } = useFeatureLock();
-  const navigate = useNavigate();
   const [showLockModal, setShowLockModal] = useState(false);
-  const [lockModalMode, setLockModalMode] = useState('unlock'); // 'unlock' or 'nightguard'
 
   const locked = isFeatureLocked(featureName);
   const nightGuardLocked = hasNightGuardLock(featureName);
@@ -26,9 +23,8 @@ export default function LockedFeatureWrapper({
   useEffect(() => {
     if (locked && !screenAccessible) {
       setShowLockModal(true);
-      setLockModalMode(nightGuardLocked ? 'nightguard' : 'unlock');
     }
-  }, [locked, screenAccessible, nightGuardLocked]);
+  }, [locked, screenAccessible]);
 
   const handleUnlockAttempt = async (pin) => {
     const success = await unlockFeature(featureName, pin);
@@ -44,7 +40,6 @@ export default function LockedFeatureWrapper({
         onExitAttempt();
       } else {
         setShowLockModal(true);
-        setLockModalMode(nightGuardLocked ? 'nightguard' : 'unlock');
       }
       return false;
     }

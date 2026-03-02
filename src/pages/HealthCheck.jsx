@@ -50,7 +50,7 @@ export default function HealthCheck() {
 
     // 5. Check validatePayment function
     try {
-      const result = await base44.functions.invoke('validatePayment', {
+      await base44.functions.invoke('validatePayment', {
         payment_reference: 'TEST-REF',
         amount: 18.99
       });

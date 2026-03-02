@@ -8,7 +8,7 @@ import { toast } from 'sonner';
 export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated: _onBadDayActivated }) {
   const [showMemoryGallery, setShowMemoryGallery] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
-  const [wakeWordActive, _setWakeWordActive] = useState(true);
+  const [_wakeWordActive, _setWakeWordActive] = useState(true);
   const { isFeatureLocked, unlockFeature, hasNightGuardLock } = useFeatureLock();
   const [showLockModal, setShowLockModal] = useState(false);
 
@@ -20,7 +20,7 @@ export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated:
     if (onEraChange) onEraChange(era);
   };
 
-  const handleWakeWord = () => {
+  const _handleWakeWord = () => {
     console.log('🔊 Wake word detected!');
     toast.success('Hey Mirror activated!');
   };

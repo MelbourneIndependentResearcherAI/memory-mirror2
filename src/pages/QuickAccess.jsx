@@ -26,7 +26,7 @@ export default function QuickAccess() {
         } else {
           setUserName(user.full_name || 'there');
         }
-      } catch (error) {
+      } catch {
         setUserName('there');
       }
     };
@@ -47,7 +47,7 @@ export default function QuickAccess() {
         eventName: 'quick_access_button_pressed',
         properties: { success: true }
       });
-    } catch (error) {
+    } catch {
       console.log('Analytics not available');
     }
 
