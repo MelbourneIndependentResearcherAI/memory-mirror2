@@ -376,7 +376,7 @@ Respond naturally in 1-2 sentences, directly addressing what they said.`;
         new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 20000))
       ]);
 
-      let aiMessage = typeof response === 'string' ? response : response?.text || response;
+      let aiMessage = typeof response === 'string' ? response : (response?.text || response?.response || JSON.stringify(response));
 
       if (aiMessage) {
         aiMessage = aiMessage.replace(/META:.*$/s, '').trim().substring(0, 1000); // Longer responses for lengthier conversations
