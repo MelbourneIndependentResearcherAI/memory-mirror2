@@ -319,14 +319,15 @@ export default function HandsFreeMode({
 
     try {
       // Build prompt
-      const contextMessages = conversationHistory.slice(-6);
+      const contextMessages = conversationHistoryRef.current.slice(-6);
 
       // Get voice adaptation recommendations
       const voiceAdaptations = voicePatternAnalyzer.getAdaptations();
 
-      const prompt = systemPrompt 
-        ? `${systemPrompt}\n\nVoice Profile - Emotional baseline: ${voiceAdaptations.toneToUse}. Topics to avoid: ${voiceAdaptations.topicsToAvoid.join(', ') || 'none'}. Topics to encourage: ${voiceAdaptations.topicsToEncourage.join(', ') || 'any'}.\n\nRecent:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser's emotional state: ${voiceAdaptations.toneToUse}. User: "${transcript}"\n\nRespond warmly and naturally, matching their emotional state.`
-        : `Compassionate companion. Current emotional tone: ${voiceAdaptations.toneToUse}. User: "${transcript}". Respond warmly in 1-3 sentences.`;
+      const currentSystemPrompt = systemPromptRef.current;
+      const prompt = currentSystemPrompt 
+        ? `${currentSystemPrompt}\n\nVoice Profile - Emotional baseline: ${voiceAdaptations.toneToUse}. Topics to avoid: ${voiceAdaptations.topicsToAvoid.join(', ') || 'none'}. Topics to encourage: ${voiceAdaptations.topicsToEncourage.join(', ') || 'any'}.\n\nRecent:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser's emotional state: ${voiceAdaptations.toneToUse}. User: "${transcript}"\n\nRespond warmly and naturally, matching their emotional state.`
+        : `You are a warm, compassionate AI companion for someone with dementia. The user just said: "${transcript}". Respond warmly and naturally in 1-3 short sentences.`;
 
       setStatusMessage('🤖 Getting response...');
       
