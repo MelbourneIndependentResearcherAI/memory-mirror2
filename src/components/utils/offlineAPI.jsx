@@ -137,15 +137,6 @@ export async function offlineAIChat(prompt, options = {}) {
         ...options
       });
       
-      // Cache for future offline use
-      await saveToStore(STORES.aiResponses, {
-        id: `cached_${Date.now()}`,
-        prompt: lowerPrompt.substring(0, 100),
-        response,
-        timestamp: Date.now(),
-        offline: false
-      });
-      
       return response;
     } catch (error) {
       console.log('Online AI failed, using fallback:', error.message);
