@@ -324,7 +324,7 @@ export default function HandsFreeMode({
 
     try {
       // Build prompt
-      const contextMessages = conversationHistoryRef.current.slice(-6);
+      const contextMessages = conversationHistoryRef.current.slice(-10);
 
       // Get voice adaptation recommendations
       const voiceAdaptations = voicePatternAnalyzer.getAdaptations();
@@ -332,17 +332,42 @@ export default function HandsFreeMode({
       const currentSystemPrompt = systemPromptRef.current;
 
       // Build adaptive style block from learned patterns
-      const styleLines = [
-        `Emotional baseline: ${voiceAdaptations.toneToUse}.`,
-        voiceAdaptations.responseStyleHint || 'Respond in 2 to 3 short, warm sentences.',
-        voiceAdaptations.topicsToAvoid.length ? `Avoid these topics: ${voiceAdaptations.topicsToAvoid.join(', ')}.` : '',
-        voiceAdaptations.topicsToEncourage.length ? `Gently weave in these preferred topics when natural: ${voiceAdaptations.topicsToEncourage.join(', ')}.` : '',
-        voiceAdaptations.sessionCount > 5 ? `You have spoken with this person ${voiceAdaptations.sessionCount} times before — maintain continuity and warmth.` : '',
-      ].filter(Boolean).join(' ');
+      const styleHint = voiceAdaptations.responseStyleHint || 'Respond in 1 to 2 short, warm sentences.';
+      const avoidLine = voiceAdaptations.topicsToAvoid.length
+        ? `Do NOT discuss: ${voiceAdaptations.topicsToAvoid.join(', ')}.`
+        : '';
+      const encourageLine = voiceAdaptations.topicsToEncourage.length
+        ? `Preferred topics: ${voiceAdaptations.topicsToEncourage.join(', ')}.`
+        : '';
 
-      const prompt = currentSystemPrompt
-        ? `${currentSystemPrompt}\n\n[Adaptive Voice Profile — learned from ${voiceAdaptations.sessionCount} sessions]\n${styleLines}\n\nRecent conversation:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser just said: "${transcript}"\n\nRespond naturally, matching their emotional state (${voiceAdaptations.toneToUse}).`
-        : `You are a warm, compassionate AI companion for someone with dementia.\n\n[Adaptive Voice Profile]\n${styleLines}\n\nThe user just said: "${transcript}". Respond warmly and naturally.`;
+      // Anti-repetition: remind AI of last response
+      const antiRepeat = lastAIResponseRef.current
+        ? `IMPORTANT: Your last response was: "${lastAIResponseRef.current.substring(0, 120)}..." — Do NOT repeat this or say anything similar. Give a fresh, different response.`
+        : '';
+
+      const baseSystemPrompt = currentSystemPrompt ||
+        `You are a warm, compassionate AI voice companion for someone who may have dementia. 
+CRITICAL RULES:
+- You are an AI assistant, NOT a family member. Never pretend to be their son, daughter, mum, dad, or any relative.
+- Always respond directly to what the user just said — stay on topic.
+- Never invent shared memories or pretend you were there ("remember when we...").
+- Keep responses grounded, gentle, and conversational.
+- If the user corrects you or says something unexpected, acknowledge it warmly.`;
+
+      const recentContext = contextMessages.length
+        ? `\nRecent conversation:\n${contextMessages.map(m => `${m.role === 'user' ? 'User' : 'AI'}: ${m.content}`).join('\n')}`
+        : '';
+
+      const prompt = `${baseSystemPrompt}
+
+[Adaptive style — ${voiceAdaptations.sessionCount} sessions learned]
+${styleHint} ${encourageLine} ${avoidLine}
+${antiRepeat}
+${recentContext}
+
+User just said: "${transcript}"
+
+Respond naturally in 1-2 sentences, directly addressing what they said.`;
 
       setStatusMessage('🤖 Getting response...');
       
