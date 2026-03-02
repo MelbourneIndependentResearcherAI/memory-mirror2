@@ -11,15 +11,11 @@ import {
 } from './offlineStorage';
 import { isOnline } from './offlineManager';
 
-// Initialize storage and clear stale AI response cache on load
-initOfflineStorage().then(async () => {
-  try {
-    const { clearStore } = await import('./offlineStorage');
-    if (typeof clearStore === 'function') {
-      await clearStore(STORES.aiResponses);
-    }
-  } catch {}
-});
+// Initialize storage
+initOfflineStorage();
+
+// Clear stale AI response cache immediately
+clearStore(STORES.aiResponses).catch(() => {});
 
 // Offline-aware entity operations
 export const offlineEntities = {
