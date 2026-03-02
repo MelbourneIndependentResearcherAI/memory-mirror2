@@ -105,6 +105,41 @@ export default function OnboardingPreferences({ data, onUpdate, onNext, onBack }
           </div>
         </div>
 
+        {/* Cultural Background */}
+        <div>
+          <label className="block text-sm font-semibold text-slate-700 mb-1">
+            Cultural background <span className="text-slate-400 font-normal">(optional — helps us personalise care)</span>
+          </label>
+          <p className="text-xs text-slate-500 mb-2">This helps Memory Mirror provide culturally safe and respectful support.</p>
+          <div className="grid grid-cols-1 gap-2">
+            {CULTURAL_BACKGROUNDS.map(bg => (
+              <button
+                key={bg.id}
+                onClick={() => onUpdate({ culturalBackground: bg.id })}
+                className={`p-3 rounded-xl border-2 text-left transition-all ${
+                  data.culturalBackground === bg.id
+                    ? 'border-amber-400 bg-amber-50'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+                }`}
+              >
+                <span className="text-base font-medium text-slate-800">{bg.emoji} {bg.label}</span>
+                {bg.desc && <p className="text-xs text-slate-500 mt-0.5">{bg.desc}</p>}
+              </button>
+            ))}
+          </div>
+          {(data.culturalBackground === 'aboriginal' || data.culturalBackground === 'torres_strait_islander' || data.culturalBackground === 'both') && (
+            <div className="mt-3">
+              <Input
+                placeholder="Country or mob (optional, e.g. Wiradjuri, Mer Island)"
+                value={data.countryOrMob || ''}
+                onChange={e => onUpdate({ countryOrMob: e.target.value })}
+                className="text-sm"
+              />
+              <p className="text-xs text-slate-400 mt-1">This helps the AI speak respectfully about your family's Country.</p>
+            </div>
+          )}
+        </div>
+
         {/* Primary Concern */}
         <div>
           <label className="block text-sm font-semibold text-slate-700 mb-2">
