@@ -358,11 +358,10 @@ export default function HandsFreeMode({
 
       if (!aiMessage) throw new Error('Empty response');
 
-      // Update voice pattern learning with response context
+      // Update learned voice profile then persist
       voicePatternAnalyzer.updateUserProfile({
-        commonPhrases: transcript.split(' ').filter(w => w.length > 3),
-        comfortTopic: voiceAnalysis.predictedEmotion === 'happy' || voiceAnalysis.predictedEmotion === 'nostalgic' ? transcript : null,
-        anxietyTopic: voiceAnalysis.detectedStress?.stressLevel > 5 ? transcript : null
+        comfortTopic: ['happy', 'nostalgic', 'calm'].includes(voiceAnalysis.predictedEmotion) ? transcript : null,
+        anxietyTopic: voiceAnalysis.detectedStress?.stressLevel > 5 ? transcript : null,
       });
       voicePatternAnalyzer.persistPatterns();
       
