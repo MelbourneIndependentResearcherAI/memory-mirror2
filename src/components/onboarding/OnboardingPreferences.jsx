@@ -2,6 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { CULTURAL_BACKGROUNDS } from '@/components/cultural/CulturalSafetyGuide';
 
 const ERAS = [
   { id: '1940s', label: '1940s', desc: 'WWII era, big band, classic radio' },
