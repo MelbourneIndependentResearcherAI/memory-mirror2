@@ -101,7 +101,7 @@ CURRENT CONTEXT:
 
 SAFE TOPICS:
 ${safeZones.map(z => `- ${z.title}: ${z.description}`).join('\n')}
-
+${culturalContext}
 RESPONSE APPROACH:
 1. Listen for emotional state (anxiety, confusion, fear, joy, nostalgia)
 2. If anxious/distressed: offer comfort, redirect to safe topics, validate feelings
