@@ -88,6 +88,15 @@ export default function OnboardingWelcome({ user, onNext }) {
           Let's get started <ArrowRight className="w-5 h-5" />
         </Button>
       </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.0 }}
+        className="mt-8 text-xs text-slate-400 italic text-center leading-relaxed"
+      >
+        Dedicated to the families who taught me love, patience, and strength — A+E Cooper & V. Smith
+      </motion.p>
     </div>
   );
 }
