@@ -34,6 +34,11 @@ export default function HandsFreeMode({
   const isActiveRef = useRef(false);
   const isSpeakingRef = useRef(false);
   const isProcessingRef = useRef(false);
+  // Keep latest props in refs to avoid stale closures
+  const conversationHistoryRef = useRef(conversationHistory);
+  const systemPromptRef = useRef(systemPrompt);
+  useEffect(() => { conversationHistoryRef.current = conversationHistory; }, [conversationHistory]);
+  useEffect(() => { systemPromptRef.current = systemPrompt; }, [systemPrompt]);
 
   // Cleanup on unmount
   useEffect(() => {
