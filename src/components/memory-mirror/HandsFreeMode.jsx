@@ -329,9 +329,19 @@ export default function HandsFreeMode({
       const voiceAdaptations = voicePatternAnalyzer.getAdaptations();
 
       const currentSystemPrompt = systemPromptRef.current;
-      const prompt = currentSystemPrompt 
-        ? `${currentSystemPrompt}\n\nVoice Profile - Emotional baseline: ${voiceAdaptations.toneToUse}. Topics to avoid: ${voiceAdaptations.topicsToAvoid.join(', ') || 'none'}. Topics to encourage: ${voiceAdaptations.topicsToEncourage.join(', ') || 'any'}.\n\nRecent:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser's emotional state: ${voiceAdaptations.toneToUse}. User: "${transcript}"\n\nRespond warmly and naturally, matching their emotional state.`
-        : `You are a warm, compassionate AI companion for someone with dementia. The user just said: "${transcript}". Respond warmly and naturally in 1-3 short sentences.`;
+
+      // Build adaptive style block from learned patterns
+      const styleLines = [
+        `Emotional baseline: ${voiceAdaptations.toneToUse}.`,
+        voiceAdaptations.responseStyleHint || 'Respond in 2 to 3 short, warm sentences.',
+        voiceAdaptations.topicsToAvoid.length ? `Avoid these topics: ${voiceAdaptations.topicsToAvoid.join(', ')}.` : '',
+        voiceAdaptations.topicsToEncourage.length ? `Gently weave in these preferred topics when natural: ${voiceAdaptations.topicsToEncourage.join(', ')}.` : '',
+        voiceAdaptations.sessionCount > 5 ? `You have spoken with this person ${voiceAdaptations.sessionCount} times before — maintain continuity and warmth.` : '',
+      ].filter(Boolean).join(' ');
+
+      const prompt = currentSystemPrompt
+        ? `${currentSystemPrompt}\n\n[Adaptive Voice Profile — learned from ${voiceAdaptations.sessionCount} sessions]\n${styleLines}\n\nRecent conversation:\n${contextMessages.map(m => `${m.role}: ${m.content}`).join('\n')}\n\nUser just said: "${transcript}"\n\nRespond naturally, matching their emotional state (${voiceAdaptations.toneToUse}).`
+        : `You are a warm, compassionate AI companion for someone with dementia.\n\n[Adaptive Voice Profile]\n${styleLines}\n\nThe user just said: "${transcript}". Respond warmly and naturally.`;
 
       setStatusMessage('🤖 Getting response...');
       
