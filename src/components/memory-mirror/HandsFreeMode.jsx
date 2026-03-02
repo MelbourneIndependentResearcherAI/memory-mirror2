@@ -657,38 +657,55 @@ Respond naturally in 1-2 sentences, directly addressing what they said.`;
 
           {/* Instructions */}
           {!isActive && (
-            <div className="p-6 bg-blue-50 dark:bg-blue-950/30 rounded-xl border-2 border-blue-300">
-              <div className="flex gap-4">
-                <AlertCircle className="w-7 h-7 text-blue-600 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="font-bold text-lg mb-3">🎤 100% Hands-Free Healthcare Voice</p>
-                  <ul className="space-y-2">
-                    <li className="flex gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <span><strong>Always Listening</strong> - No buttons, just speak</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <span><strong>Instant Response</strong> - AI answers immediately</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <span><strong>Echo Prevention</strong> - Won't hear itself</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <span><strong>Auto-Recovery</strong> - Never stops working</span>
-                    </li>
-                    <li className="flex gap-2">
-                      <span className="text-green-600 font-bold">✓</span>
-                      <span><strong>Healthcare Grade</strong> - Built for reliability</span>
-                    </li>
-                  </ul>
-                  <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
-                    <p className="text-xs font-medium">💡 Use Chrome or Edge for best results</p>
+            <div className="space-y-3">
+              <div className="p-6 bg-blue-50 dark:bg-blue-950/30 rounded-xl border-2 border-blue-300">
+                <div className="flex gap-4">
+                  <AlertCircle className="w-7 h-7 text-blue-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="font-bold text-lg mb-3">🎤 100% Hands-Free Healthcare Voice</p>
+                    <ul className="space-y-2">
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span><strong>Always Listening</strong> - No buttons, just speak</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span><strong>Instant Response</strong> - AI answers immediately</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span><strong>Echo Prevention</strong> - Won't hear itself</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span><strong>Auto-Recovery</strong> - Never stops working</span>
+                      </li>
+                      <li className="flex gap-2">
+                        <span className="text-green-600 font-bold">✓</span>
+                        <span><strong>Healthcare Grade</strong> - Built for reliability</span>
+                      </li>
+                    </ul>
+                    <div className="mt-4 p-3 bg-blue-100 dark:bg-blue-900/30 rounded-lg">
+                      <p className="text-xs font-medium">💡 Use Chrome or Edge for best results</p>
+                    </div>
                   </div>
                 </div>
               </div>
+
+              {/* Voice Training CTA */}
+              <button
+                onClick={() => setShowTraining(true)}
+                className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50 dark:bg-purple-950/20 hover:bg-purple-100 dark:hover:bg-purple-950/30 transition-colors text-left"
+              >
+                <div className="p-2 rounded-full bg-purple-100 dark:bg-purple-900">
+                  <GraduationCap className="w-5 h-5 text-purple-600" />
+                </div>
+                <div className="flex-1">
+                  <p className="font-semibold text-purple-800 dark:text-purple-300 text-sm">Improve Recognition Accuracy</p>
+                  <p className="text-xs text-purple-600 dark:text-purple-400">Optional: Run a 2-min voice training session to teach the AI your accent</p>
+                </div>
+                <span className="text-purple-400 text-xs font-medium">Optional →</span>
+              </button>
             </div>
           )}
         </div>
