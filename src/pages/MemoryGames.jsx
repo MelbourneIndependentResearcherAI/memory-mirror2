@@ -7,6 +7,7 @@ import NameThatFace from '../components/games/NameThatFace';
 import WordMemory from '../components/games/WordMemory';
 import SequenceMemory from '../components/games/SequenceMemory';
 import WhatDayIsIt from '../components/games/WhatDayIsIt';
+import BingoGame from '../components/games/BingoGame';
 
 const games = [
   {
@@ -40,6 +41,14 @@ const games = [
     icon: '📅',
     difficulty: 'Easy',
     color: 'from-green-500 to-emerald-500'
+  },
+  {
+    id: 'bingo',
+    title: 'Memory Bingo',
+    description: 'Fun bingo with animals, colours, food & nature',
+    icon: '🎰',
+    difficulty: 'Easy',
+    color: 'from-yellow-500 to-orange-500'
   }
 ];
 
@@ -48,6 +57,7 @@ const GAME_COMPONENTS = {
   'word-memory': WordMemory,
   'sequence-memory': SequenceMemory,
   'what-day-is-it': WhatDayIsIt,
+  'bingo': BingoGame,
 };
 
 export default function MemoryGames() {
