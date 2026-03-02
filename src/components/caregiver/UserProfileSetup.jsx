@@ -76,7 +76,9 @@ export default function UserProfileSetup({ onBack }) {
           }
           return { name: p.trim(), relationship: 'family' };
         }),
-        birth_year: parseInt(data.birth_year) || null
+        birth_year: parseInt(data.birth_year) || null,
+        cultural_background: data.cultural_background || undefined,
+        country_or_mob: data.country_or_mob || undefined
       };
 
       if (profiles.length > 0) {
