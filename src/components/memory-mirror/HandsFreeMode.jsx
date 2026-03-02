@@ -29,6 +29,7 @@ export default function HandsFreeMode({
   const lastTranscriptRef = useRef('');
   const speechEndTimeoutRef = useRef(null);
   const isRestartingRef = useRef(false);
+  const lastAIResponseRef = useRef('');
   // Refs mirror the corresponding state so recognition event-handler closures
   // always see the latest value even after React re-renders.
   const isActiveRef = useRef(false);
