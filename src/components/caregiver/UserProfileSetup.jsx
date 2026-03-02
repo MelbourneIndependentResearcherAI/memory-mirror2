@@ -46,7 +46,9 @@ export default function UserProfileSetup({ onBack }) {
         life_experiences: profile.life_experiences?.map(exp => `${exp.title}: ${exp.description}`).join('\n') || '',
         favorite_music: profile.favorite_music?.join(', ') || '',
         important_people: profile.important_people?.map(p => `${p.name} (${p.relationship})`).join(', ') || '',
-        communication_style: profile.communication_style || 'warm'
+        communication_style: profile.communication_style || 'warm',
+        cultural_background: profile.cultural_background || '',
+        country_or_mob: profile.country_or_mob || ''
       });
     }
   }, [profiles]);
