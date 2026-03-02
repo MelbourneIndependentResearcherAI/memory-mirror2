@@ -326,8 +326,8 @@ export default function HandsFreeMode({
       setStatusMessage('🤖 Getting response...');
       
       const response = await Promise.race([
-        offlineAIChat(prompt, { add_context_from_internet: false }),
-        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 15000))
+        offlineAIChat(prompt, { add_context_from_internet: true }),
+        new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 20000))
       ]);
 
       let aiMessage = typeof response === 'string' ? response : response?.text || response;
