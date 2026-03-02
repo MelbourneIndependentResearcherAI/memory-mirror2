@@ -34,6 +34,8 @@ export default function HandsFreeMode({
   const isActiveRef = useRef(false);
   const isSpeakingRef = useRef(false);
   const isProcessingRef = useRef(false);
+  // Track the index of results already processed to avoid re-processing
+  const lastResultIndexRef = useRef(0);
   // Keep latest props in refs to avoid stale closures
   const conversationHistoryRef = useRef(conversationHistory);
   const systemPromptRef = useRef(systemPrompt);
