@@ -253,17 +253,50 @@ export default function UserProfileSetup({ onBack }) {
                   </Select>
                 </div>
                 <div>
-                  <label className="text-sm font-medium mb-2 block">Interests &amp; Hobbies</label>
-                  <Input
-                    placeholder="e.g., gardening, knitting, reading, cooking (comma separated)"
-                    value={formData.interests}
-                    onChange={(e) => setFormData({...formData, interests: e.target.value})}
-                    className="min-h-[44px]"
-                  />
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                   <label className="text-sm font-medium mb-2 block">Interests &amp; Hobbies</label>
+                   <Input
+                     placeholder="e.g., gardening, knitting, reading, cooking (comma separated)"
+                     value={formData.interests}
+                     onChange={(e) => setFormData({...formData, interests: e.target.value})}
+                     className="min-h-[44px]"
+                   />
+                 </div>
+
+                 {/* Cultural Background */}
+                 <div>
+                   <label className="text-sm font-medium mb-1 block">Cultural Background <span className="text-slate-400 font-normal text-xs">(optional)</span></label>
+                   <p className="text-xs text-slate-500 mb-2">Helps Memory Mirror provide culturally safe and respectful support.</p>
+                   <div className="space-y-2">
+                     {CULTURAL_BACKGROUNDS.map(bg => (
+                       <button
+                         type="button"
+                         key={bg.id}
+                         onClick={() => setFormData({...formData, cultural_background: bg.id})}
+                         className={`w-full text-left px-3 py-2 rounded-xl border-2 text-sm font-medium transition-all ${
+                           formData.cultural_background === bg.id
+                             ? 'border-amber-400 bg-amber-50 text-amber-900'
+                             : 'border-slate-200 bg-white text-slate-700 hover:border-slate-300'
+                         }`}
+                       >
+                         {bg.emoji} {bg.label}
+                       </button>
+                     ))}
+                   </div>
+                   {isIndigenousBackground(formData.cultural_background) && (
+                     <div className="mt-3 space-y-2">
+                       <Input
+                         placeholder="Country or mob (e.g. Wiradjuri, Mer Island)"
+                         value={formData.country_or_mob}
+                         onChange={(e) => setFormData({...formData, country_or_mob: e.target.value})}
+                         className="text-sm min-h-[44px]"
+                       />
+                       <IndigenousContentSuggestions countryOrMob={formData.country_or_mob} />
+                     </div>
+                   )}
+                 </div>
+                </CardContent>
+                </Card>
+                </TabsContent>
 
           <TabsContent value="life">
             <Card>
