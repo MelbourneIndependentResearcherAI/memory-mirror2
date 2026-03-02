@@ -159,6 +159,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import AdminDashboard from './pages/AdminDashboard';
+import Onboarding from './pages/Onboarding';
 import __Layout from './Layout.jsx';
 
 
@@ -275,6 +276,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "AdminDashboard": AdminDashboard,
+    "Onboarding": Onboarding,
 }
 
 export const pagesConfig = {
