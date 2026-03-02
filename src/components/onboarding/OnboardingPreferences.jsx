@@ -11,7 +11,7 @@ const ERAS = [
   { id: 'present', label: 'Present', desc: 'Current era, modern music' },
 ];
 
-const INTERESTS = ['Music', 'Gardening', 'Cooking', 'Sports', 'Family stories', 'Nature', 'Travel', 'Reading', 'Religion/Faith', 'Crafts'];
+const INTERESTS = ['Music', 'Gardening', 'Cooking', 'Sports', 'Family stories', 'Nature', 'Travel', 'Reading', 'Religion/Faith', 'Crafts', 'Country & Land', 'Community', 'Art & Painting'];
 
 const CONCERNS = [
   { id: 'loneliness', label: '😔 Loneliness & isolation' },
