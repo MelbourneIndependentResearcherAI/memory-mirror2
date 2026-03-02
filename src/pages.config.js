@@ -55,6 +55,7 @@ import ActivityReports from './pages/ActivityReports';
 import AdminSubscriptions from './pages/AdminSubscriptions';
 import AdminUserTracking from './pages/AdminUserTracking';
 import AuditTrail from './pages/AuditTrail';
+import BigButtonMode from './pages/BigButtonMode';
 import CareJournalPage from './pages/CareJournalPage';
 import CarePlans from './pages/CarePlans';
 import CareTeam from './pages/CareTeam';
@@ -62,6 +63,7 @@ import CaregiverDashboard from './pages/CaregiverDashboard';
 import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
 import CaregiverPortalCore from './pages/CaregiverPortalCore';
+import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatHistory from './pages/ChatHistory';
 import ChatMode from './pages/ChatMode';
@@ -73,8 +75,10 @@ import EmergencyAlerts from './pages/EmergencyAlerts';
 import FAQ from './pages/FAQ';
 import FakeBankSettings from './pages/FakeBankSettings';
 import FamilyAIInsights from './pages/FamilyAIInsights';
+import FamilyAdminPortal from './pages/FamilyAdminPortal';
 import FamilyCalendar from './pages/FamilyCalendar';
 import FamilyChatRoom from './pages/FamilyChatRoom';
+import FamilyConnect from './pages/FamilyConnect';
 import FamilyContacts from './pages/FamilyContacts';
 import FamilyMediaAlbum from './pages/FamilyMediaAlbum';
 import FamilyMemoryLibrary from './pages/FamilyMemoryLibrary';
@@ -133,6 +137,7 @@ import Security from './pages/Security';
 import SecurityMode from './pages/SecurityMode';
 import Settings from './pages/Settings';
 import SharedJournal from './pages/SharedJournal';
+import SingAlongStudio from './pages/SingAlongStudio';
 import SmartHome from './pages/SmartHome';
 import SubscriptionStatus from './pages/SubscriptionStatus';
 import SyncBackup from './pages/SyncBackup';
@@ -153,11 +158,7 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import BigButtonMode from './pages/BigButtonMode';
-import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
-import FamilyConnect from './pages/FamilyConnect';
-import SingAlongStudio from './pages/SingAlongStudio';
-import FamilyAdminPortal from './pages/FamilyAdminPortal';
+import AdminDashboard from './pages/AdminDashboard';
 import __Layout from './Layout.jsx';
 
 
@@ -170,6 +171,7 @@ export const PAGES = {
     "AdminSubscriptions": AdminSubscriptions,
     "AdminUserTracking": AdminUserTracking,
     "AuditTrail": AuditTrail,
+    "BigButtonMode": BigButtonMode,
     "CareJournalPage": CareJournalPage,
     "CarePlans": CarePlans,
     "CareTeam": CareTeam,
@@ -177,6 +179,7 @@ export const PAGES = {
     "CaregiverPortal": CaregiverPortal,
     "CaregiverPortalAdmin": CaregiverPortalAdmin,
     "CaregiverPortalCore": CaregiverPortalCore,
+    "CaregiverPortalRouter": CaregiverPortalRouter,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatHistory": ChatHistory,
     "ChatMode": ChatMode,
@@ -188,8 +191,10 @@ export const PAGES = {
     "FAQ": FAQ,
     "FakeBankSettings": FakeBankSettings,
     "FamilyAIInsights": FamilyAIInsights,
+    "FamilyAdminPortal": FamilyAdminPortal,
     "FamilyCalendar": FamilyCalendar,
     "FamilyChatRoom": FamilyChatRoom,
+    "FamilyConnect": FamilyConnect,
     "FamilyContacts": FamilyContacts,
     "FamilyMediaAlbum": FamilyMediaAlbum,
     "FamilyMemoryLibrary": FamilyMemoryLibrary,
@@ -248,6 +253,7 @@ export const PAGES = {
     "SecurityMode": SecurityMode,
     "Settings": Settings,
     "SharedJournal": SharedJournal,
+    "SingAlongStudio": SingAlongStudio,
     "SmartHome": SmartHome,
     "SubscriptionStatus": SubscriptionStatus,
     "SyncBackup": SyncBackup,
@@ -268,11 +274,7 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "BigButtonMode": BigButtonMode,
-    "CaregiverPortalRouter": CaregiverPortalRouter,
-    "FamilyConnect": FamilyConnect,
-    "SingAlongStudio": SingAlongStudio,
-    "FamilyAdminPortal": FamilyAdminPortal,
+    "AdminDashboard": AdminDashboard,
 }
 
 export const pagesConfig = {
