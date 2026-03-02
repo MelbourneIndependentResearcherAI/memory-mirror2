@@ -48,6 +48,8 @@ export default function Onboarding() {
         favorite_era: data.era || 'present',
         interests: data.interests,
         communication_style: data.communicationStyle,
+        cultural_background: data.culturalBackground || 'prefer_not_to_say',
+        country_or_mob: data.countryOrMob || '',
       });
     }
     navigate(createPageUrl('Home'));

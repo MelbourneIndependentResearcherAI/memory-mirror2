@@ -52,6 +52,7 @@ import AICareInsights from './pages/AICareInsights';
 import AccessibilityStatement from './pages/AccessibilityStatement';
 import ActivityReminders from './pages/ActivityReminders';
 import ActivityReports from './pages/ActivityReports';
+import AdminDashboard from './pages/AdminDashboard';
 import AdminSubscriptions from './pages/AdminSubscriptions';
 import AdminUserTracking from './pages/AdminUserTracking';
 import AuditTrail from './pages/AuditTrail';
@@ -121,6 +122,7 @@ import OfflineContent from './pages/OfflineContent';
 import OfflineManager from './pages/OfflineManager';
 import OfflineModeDashboard from './pages/OfflineModeDashboard';
 import OfflineTest from './pages/OfflineTest';
+import Onboarding from './pages/Onboarding';
 import PatientAccess from './pages/PatientAccess';
 import PatientRegistration from './pages/PatientRegistration';
 import PaymentIntegrationTest from './pages/PaymentIntegrationTest';
@@ -158,8 +160,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import AdminDashboard from './pages/AdminDashboard';
-import Onboarding from './pages/Onboarding';
 import __Layout from './Layout.jsx';
 
 
@@ -169,6 +169,7 @@ export const PAGES = {
     "AccessibilityStatement": AccessibilityStatement,
     "ActivityReminders": ActivityReminders,
     "ActivityReports": ActivityReports,
+    "AdminDashboard": AdminDashboard,
     "AdminSubscriptions": AdminSubscriptions,
     "AdminUserTracking": AdminUserTracking,
     "AuditTrail": AuditTrail,
@@ -238,6 +239,7 @@ export const PAGES = {
     "OfflineManager": OfflineManager,
     "OfflineModeDashboard": OfflineModeDashboard,
     "OfflineTest": OfflineTest,
+    "Onboarding": Onboarding,
     "PatientAccess": PatientAccess,
     "PatientRegistration": PatientRegistration,
     "PaymentIntegrationTest": PaymentIntegrationTest,
@@ -275,8 +277,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "AdminDashboard": AdminDashboard,
-    "Onboarding": Onboarding,
 }
 
 export const pagesConfig = {
