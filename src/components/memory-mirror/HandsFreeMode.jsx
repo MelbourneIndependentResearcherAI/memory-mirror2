@@ -382,7 +382,10 @@ Respond naturally in 1-2 sentences, directly addressing what they said.`;
         aiMessage = aiMessage.replace(/META:.*$/s, '').trim().substring(0, 1000); // Longer responses for lengthier conversations
       }
 
-      if (!aiMessage) throw new Error('Empty response');
+      if (!aiMessage || typeof aiMessage !== 'string' || aiMessage.trim().length < 3) throw new Error('Empty response');
+
+      // Store for anti-repetition next turn
+      lastAIResponseRef.current = aiMessage.trim();
 
       // Update learned voice profile then persist
       voicePatternAnalyzer.updateUserProfile({
