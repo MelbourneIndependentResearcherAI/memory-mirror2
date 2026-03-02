@@ -48,6 +48,7 @@ const regularCards = [
   { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
   { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
   { id: 34, title: 'Family Admin Portal', icon: '👨‍👩‍👧', description: 'Manage family member permissions, care goals, shared documents & activity reports', path: '/FamilyAdminPortal', background: '#FAF5FF', isNew: true },
+  { id: 35, title: 'Carer Messaging', icon: '💬', description: 'Send quick messages, voice notes & manage contacts — one tap communication', path: '/CarerMessaging', background: '#ECFDF5', isNew: true },
 ];
 
 const getFeatureCards = (admin) => admin ? [...regularCards, ...adminOnlyCards] : regularCards;
