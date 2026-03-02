@@ -287,12 +287,6 @@ export default function HandsFreeMode({
       return;
     }
 
-    // Prevent duplicate processing
-    if (transcript.toLowerCase() === lastTranscriptRef.current.toLowerCase()) {
-      console.log('🚫 Duplicate speech - ignored');
-      return;
-    }
-
     console.log('🎯 PROCESSING USER SPEECH:', transcript);
 
     // Analyze voice pattern for learning
