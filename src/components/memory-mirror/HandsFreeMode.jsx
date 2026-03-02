@@ -150,12 +150,12 @@ export default function HandsFreeMode({
         setErrorCount(0);
       };
 
+      // Reset result index when recognition starts fresh
+      lastResultIndexRef.current = 0;
+
       // ON RESULT - CRITICAL: Always listening, never blocking legitimate user input
       recognitionRef.current.onresult = (event) => {
-        if (!isMountedRef.current || !isActiveRef.current) {
-          console.log('⏹️ Ignoring - not mounted or not active');
-          return;
-        }
+        if (!isMountedRef.current || !isActiveRef.current) return;
 
         // Clear speech end timeout
         if (speechEndTimeoutRef.current) {
@@ -164,38 +164,37 @@ export default function HandsFreeMode({
         }
 
         try {
-          let finalText = '';
+          let newFinalText = '';
           let interimText = '';
-          
-          for (let i = 0; i < event.results.length; i++) {
+
+          // Only process NEW results since last time
+          for (let i = lastResultIndexRef.current; i < event.results.length; i++) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
-              finalText += transcript + ' ';
+              newFinalText += transcript + ' ';
+              lastResultIndexRef.current = i + 1; // Advance past final results
             } else {
               interimText += transcript + ' ';
             }
           }
-          
-          const completeSpeech = (finalText + interimText).trim();
-          
+
+          const completeSpeech = (newFinalText + interimText).trim();
+
           if (completeSpeech.length > 0) {
-            console.log('📝 Hearing:', completeSpeech.substring(0, 60));
             setStatusMessage(`👂 "${completeSpeech.substring(0, 50)}..."`);
           }
-          
-          // Wait for user to finish speaking (2s silence = done speaking)
+
+          // Wait for silence then process
           speechEndTimeoutRef.current = setTimeout(() => {
-            const finalSpeech = (finalText + interimText).trim();
-
-            if (finalSpeech.length > 3 && isMountedRef.current && isActiveRef.current && !isProcessingRef.current && !isSpeakingRef.current) {
-              console.log('✅ USER FINISHED SPEAKING - Processing:', finalSpeech);
-              lastTranscriptRef.current = finalSpeech;
-              handleUserSpeech(finalSpeech);
-            }
-
             speechEndTimeoutRef.current = null;
+            // Use the accumulated new final text + any remaining interim
+            const toProcess = (newFinalText + interimText).trim();
+            if (toProcess.length > 3 && isMountedRef.current && isActiveRef.current && !isProcessingRef.current && !isSpeakingRef.current) {
+              console.log('✅ USER FINISHED SPEAKING - Processing:', toProcess);
+              handleUserSpeech(toProcess);
+            }
           }, 2000);
-          
+
         } catch (error) {
           console.error('Result error:', error);
         }
