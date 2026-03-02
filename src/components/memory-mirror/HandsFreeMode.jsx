@@ -438,7 +438,7 @@ export default function HandsFreeMode({
         });
       }
     }
-  }, [onMessage, onAIResponse, systemPrompt, conversationHistory, cognitiveLevel, selectedLanguage, userProfile, startRecognition]);
+  }, [onMessage, onAIResponse, cognitiveLevel, selectedLanguage, userProfile, startRecognition]);
 
   const startHandsFreeMode = async () => {
     console.log('🚀 START HANDS-FREE MODE');
