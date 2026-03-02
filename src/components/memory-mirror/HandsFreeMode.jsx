@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { Mic, Volume2, Power, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { Mic, Volume2, Power, AlertCircle, CheckCircle2, Loader2, GraduationCap } from 'lucide-react';
+import VoiceTrainingModule from './VoiceTrainingModule';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { speakWithRealisticVoice } from './voiceUtils';
