@@ -545,6 +545,14 @@ Respond naturally in 1-2 sentences, directly addressing what they said.`;
 
   return (
     <>
+      {/* Voice Training Module */}
+      {showTraining && (
+        <VoiceTrainingModule
+          onClose={() => setShowTraining(false)}
+          onComplete={startHandsFreeMode}
+        />
+      )}
+
       {/* Floating Status Indicator */}
       {isActive && (
         <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
