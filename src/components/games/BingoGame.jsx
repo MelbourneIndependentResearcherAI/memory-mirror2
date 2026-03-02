@@ -91,7 +91,6 @@ function shuffle(arr) {
 }
 
 function checkBingo(marked, size = 3) {
-  const total = size * size;
   // rows
   for (let r = 0; r < size; r++) {
     if (Array.from({ length: size }, (_, c) => r * size + c).every(i => marked.has(i))) return true;
@@ -182,7 +181,7 @@ function BingoCell({ item, index, isMarked, isNew, onClick, disabled }) {
 }
 
 // ─── Caller Panel ────────────────────────────────────────────────────────────
-function CallerPanel({ currentCall, onCallNext, isAutoMode, calledItems, totalItems, isFinished }) {
+function CallerPanel({ currentCall, onCallNext, calledItems, totalItems, isFinished }) {
   const handleSpeak = () => {
     if (currentCall) speakWithRealisticVoice(`${currentCall.word}! ${currentCall.word}!`);
   };
