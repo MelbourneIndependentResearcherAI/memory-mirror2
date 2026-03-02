@@ -125,32 +125,7 @@ export async function offlineAIChat(prompt, options = {}) {
   const allResponses = await getAllFromStore(STORES.aiResponses);
   const offlineResponses = allResponses.filter(r => r.offline);
   
-  // Try intelligent matching with preloaded responses
-  if (offlineResponses.length > 0) {
-    let bestMatch = null;
-    let bestScore = 0;
-    
-    for (const cached of offlineResponses) {
-      if (cached.prompt) {
-        const keywords = cached.prompt.split(',').map(k => k.trim().toLowerCase());
-        const matchCount = keywords.filter(kw => lowerPrompt.includes(kw)).length;
-        const score = matchCount / keywords.length;
-        
-        if (score > bestScore) {
-          bestScore = score;
-          bestMatch = cached;
-        }
-      }
-    }
-    
-    // If good match found (>30% keywords match), use it
-    if (bestMatch && bestScore > 0.3) {
-      console.log(`✅ Offline AI: Matched response (${Math.round(bestScore * 100)}% confidence)`);
-      return bestMatch.response + '\n\nMETA: {"era": "present", "anxiety": 3, "suggestedMemory": null}';
-    }
-  }
-  
-  // Try online AI if available
+  // Try online AI first if available
   if (isOnline()) {
     try {
       const response = await base44.integrations.Core.InvokeLLM({
