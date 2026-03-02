@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import IndigenousContentSuggestions from '@/components/cultural/IndigenousContentSuggestions';
+import { CULTURAL_BACKGROUNDS, isIndigenousBackground } from '@/components/cultural/CulturalSafetyGuide';
 import { User, Heart, Music, Users, Book, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
