@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
 import IndigenousContentSuggestions from '@/components/cultural/IndigenousContentSuggestions';
 import { CULTURAL_BACKGROUNDS, isIndigenousBackground } from '@/components/cultural/CulturalSafetyGuide';
 import { User, Heart, Music, Users, Book, ArrowLeft } from 'lucide-react';
