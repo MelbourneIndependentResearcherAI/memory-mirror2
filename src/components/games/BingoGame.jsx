@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Trophy, Volume2, RefreshCw, Star } from 'lucide-react';
-import { speakWithRealisticVoice } from '@/components/memory-mirror/voiceUtils';
+import { speakWithRealisticVoice } from '../memory-mirror/voiceUtils';
 import { base44 } from '@/api/base44Client';
 
 // ─── Dementia-friendly categories ──────────────────────────────────────────
