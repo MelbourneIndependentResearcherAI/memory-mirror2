@@ -441,10 +441,183 @@ export default function Resources() {
           </CardContent>
         </Card>
 
+        {/* ── Safety & Daily Living Section (from Alzheimer's Care Hub) ── */}
+        <div className="mt-2 mb-4">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="p-2 bg-orange-100 dark:bg-orange-900/40 rounded-xl">
+              <Shield className="w-6 h-6 text-orange-600" />
+            </div>
+            <div>
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Safety & Daily Living</h2>
+              <p className="text-sm text-slate-500">Practical tools to keep your loved one safe at home — while preserving dignity and independence</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Safety Checklists */}
+        <Card className="mb-6 border-orange-200 dark:border-orange-900 bg-orange-50 dark:bg-orange-950/20">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-orange-700 dark:text-orange-400">
+              <CheckSquare className="w-6 h-6" />
+              Free Safety Checklists
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                { emoji: '🚗', title: 'Driving Safety Checklist', desc: 'Know when it\'s no longer safe for your loved one to drive. Highlights early warning signs and compassionate next steps.', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+                { emoji: '🏠', title: 'Home Safety & Living Alone', desc: 'Recognise early warning signs, create a safer home, and plan next steps with confidence. Printable format.', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+                { emoji: '🏥', title: 'Medicare GUIDE Program (US)', desc: 'A Medicare-supported program for dementia care coordination to keep loved ones safely at home longer.', url: 'https://www.cms.gov/priorities/innovation/innovation-models/guide' },
+              ].map((item, i) => (
+                <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+                  className="p-4 bg-white dark:bg-slate-800 rounded-xl border border-orange-200 dark:border-orange-800 hover:shadow-md transition-all group">
+                  <div className="text-3xl mb-3">{item.emoji}</div>
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-2 group-hover:text-orange-600 transition-colors">{item.title}</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+                  <div className="mt-3 flex items-center gap-1 text-orange-600 text-sm font-medium">
+                    <ExternalLink className="w-3 h-3" /> View resource
+                  </div>
+                </a>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Wandering Prevention & GPS Safety */}
+        <Card className="mb-6 border-red-200 dark:border-red-900">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-red-700 dark:text-red-400">
+              <MapPin className="w-6 h-6" />
+              Wandering Prevention & GPS Safety
+            </CardTitle>
+            <p className="text-sm text-slate-500 mt-1">Tools to prevent wandering and locate loved ones quickly if they go missing</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { emoji: '🪪', title: 'MedicAlert Membership', desc: 'Medical ID + 24/7 emergency response. First responders can access critical info if a loved one is found disoriented.', url: 'https://www.medicalert.org.au' },
+                { emoji: '⌚', title: 'GPS Smartwatches', desc: 'Wearable devices with real-time location tracking, SOS buttons, and caregiver alerts. Theora Connect is well-regarded.', url: 'https://theoracare.com/theora-connect/' },
+                { emoji: '🚪', title: 'Door & Window Sensors', desc: 'Get instant alerts when doors open at night. Prevents wandering while maintaining dignity at home.', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+                { emoji: '📍', title: 'Life360 Family Locator', desc: 'Free app that shares real-time location with family members. Set geofence alerts for extra peace of mind.', url: 'https://www.life360.com' },
+                { emoji: '👟', title: 'GPS Shoe Insoles', desc: 'Discreet tracking using shoe inserts with compatible GPS devices. Helpful for those who won\'t wear a watch.', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+                { emoji: '🚗', title: 'Car GPS Trackers', desc: 'Track vehicles in real-time. Find them instantly if they get confused while driving or park in the wrong location.', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+              ].map((item, i) => (
+                <a key={i} href={item.url} target="_blank" rel="noopener noreferrer"
+                  className="p-4 bg-red-50 dark:bg-red-950/20 rounded-xl border border-red-200 dark:border-red-800 hover:shadow-md transition-all group flex gap-3">
+                  <div className="text-2xl flex-shrink-0">{item.emoji}</div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-1 group-hover:text-red-600 transition-colors">{item.title}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Everyday Home Safety */}
+        <Card className="mb-6 border-green-200 dark:border-green-900">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-green-700 dark:text-green-400">
+              <Home className="w-6 h-6" />
+              Everyday Home Safety Helpers
+            </CardTitle>
+            <p className="text-sm text-slate-500 mt-1">Simple modifications that make daily life safer without taking away independence</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                { emoji: '🕐', title: 'Day/Night Clocks', desc: 'Large displays that clearly show "morning", "afternoon", "evening", or "night" — reduces confusion and sundowning anxiety.' },
+                { emoji: '🔥', title: 'Stove Shut-Off Devices', desc: 'Automatically turns off the stove if left on too long. Prevents kitchen fires — one of the most common home hazards.' },
+                { emoji: '💡', title: 'Motion-Activated Lights', desc: 'Prevents nighttime falls with automatic illumination along hallways and to the bathroom. No switches needed.' },
+                { emoji: '📺', title: 'Simplified TV Remote', desc: 'Dementia-friendly remote with large buttons and limited functions — reduces frustration and accidental changes.' },
+                { emoji: '🔊', title: 'Voice Assistants', desc: 'Set medication reminders with voice commands. Family can "drop in" remotely to check in without calling.' },
+                { emoji: '👓', title: 'Eyeglass & Item Trackers', desc: 'Bluetooth trackers for glasses, keys, wallets, remotes — attach them and locate from any phone in seconds.' },
+              ].map((item, i) => (
+                <div key={i} className="p-4 bg-green-50 dark:bg-green-950/20 rounded-xl border border-green-200 dark:border-green-800 flex gap-3">
+                  <div className="text-2xl flex-shrink-0">{item.emoji}</div>
+                  <div>
+                    <h3 className="font-semibold text-slate-900 dark:text-white mb-1">{item.title}</h3>
+                    <p className="text-sm text-slate-600 dark:text-slate-400">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 p-4 bg-green-100 dark:bg-green-900/30 rounded-xl border border-green-300 dark:border-green-700">
+              <p className="text-sm text-green-800 dark:text-green-300 font-medium">💡 For a full room-by-room home safety evaluation, visit:</p>
+              <a href="https://alzheimerscarehub.com/guides/home-safety-evaluation" target="_blank" rel="noopener noreferrer"
+                className="text-sm text-green-700 dark:text-green-400 hover:underline flex items-center gap-1 mt-1">
+                <ExternalLink className="w-3 h-3" /> alzheimerscarehub.com — Home Safety Evaluation Guide
+              </a>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Safety Tips from the Hub */}
+        <Card className="mb-6 bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-950/20 dark:to-blue-950/20 border-indigo-200 dark:border-indigo-900">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-3 text-indigo-700 dark:text-indigo-400">
+              <Lightbulb className="w-6 h-6" />
+              Key Safety Tips for Carers
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-4 bg-white dark:bg-slate-800 rounded-xl">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">⚠️ Common Safety Risks</h3>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc list-inside">
+                  <li>Falls — especially at night going to the bathroom</li>
+                  <li>Wandering — particularly in the late afternoon</li>
+                  <li>Kitchen accidents — stove left on, hot water burns</li>
+                  <li>Medication errors — taking too much or forgetting</li>
+                  <li>Driving when no longer safe to do so</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-white dark:bg-slate-800 rounded-xl">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">✅ Simple Adjustments That Help</h3>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc list-inside">
+                  <li>Install motion-sensor night lights along the hallway</li>
+                  <li>Use a pill organiser or smart medication dispenser</li>
+                  <li>Add door alarms to alert if someone leaves at night</li>
+                  <li>Remove or lock away hazardous chemicals</li>
+                  <li>Label rooms and key items with large, clear text</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-white dark:bg-slate-800 rounded-xl">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">💜 Preserving Dignity</h3>
+                <ul className="text-sm text-slate-600 dark:text-slate-400 space-y-1 list-disc list-inside">
+                  <li>Involve the person in decisions where possible</li>
+                  <li>Introduce safety changes gradually</li>
+                  <li>Frame changes as helping, not restricting</li>
+                  <li>Use discreet technology that doesn't feel like surveillance</li>
+                </ul>
+              </div>
+              <div className="p-4 bg-white dark:bg-slate-800 rounded-xl">
+                <h3 className="font-semibold text-slate-900 dark:text-white mb-2">🔗 Further Reading</h3>
+                <ul className="text-sm space-y-2">
+                  {[
+                    { label: 'Anxiety & Sundowning Guide', url: 'https://alzheimerscarehub.com/guides/anxiety-sundowning-agitation' },
+                    { label: 'Home Safety Evaluation', url: 'https://alzheimerscarehub.com/guides/home-safety-evaluation' },
+                    { label: 'Full Safety & Daily Living Guide', url: 'https://alzheimerscarehub.com/guides/safety-daily-living' },
+                  ].map((link, i) => (
+                    <li key={i}>
+                      <a href={link.url} target="_blank" rel="noopener noreferrer"
+                        className="text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-1">
+                        <ExternalLink className="w-3 h-3 flex-shrink-0" /> {link.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Disclaimer */}
         <div className="text-center text-sm text-slate-500 dark:text-slate-400 mt-8">
           <p>⚠️ In case of emergency, always call your local emergency number</p>
           <p className="mt-2">Information provided is for reference only. Please verify with local authorities.</p>
+          <p className="mt-1">Safety product information sourced from <a href="https://alzheimerscarehub.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">alzheimerscarehub.com</a></p>
         </div>
       </div>
 
