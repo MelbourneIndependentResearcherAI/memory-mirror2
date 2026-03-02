@@ -161,6 +161,7 @@ import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
 import BigClock from './pages/BigClock';
+import CarerMessaging from './pages/CarerMessaging';
 import __Layout from './Layout.jsx';
 
 
@@ -279,6 +280,7 @@ export const PAGES = {
     "chat": chat,
     "phone": phone,
     "BigClock": BigClock,
+    "CarerMessaging": CarerMessaging,
 }
 
 export const pagesConfig = {
