@@ -29,6 +29,27 @@ Deno.serve(async (req) => {
     const assessments = await base44.asServiceRole.entities.CognitiveAssessment.list('-assessment_date', 1);
     const latestAssessment = assessments[0] || null;
 
+    // Cultural safety context
+    const culturalBg = userProfile?.cultural_background || '';
+    const countryOrMob = userProfile?.country_or_mob || '';
+    const isIndigenous = ['aboriginal', 'torres_strait_islander', 'both'].includes(culturalBg);
+    const mobContext = countryOrMob ? `Their family's Country or mob is: ${countryOrMob}. ` : '';
+
+    const culturalContext = isIndigenous ? `
+CULTURAL CONTEXT — ABORIGINAL AND/OR TORRES STRAIT ISLANDER PERSON:
+${mobContext}
+CULTURAL SAFETY PRINCIPLES (follow strictly):
+- Show deep respect for connection to Country, family, community and spirituality
+- Family, mob, and community are central to wellbeing — honour these connections
+- Do NOT make assumptions about specific beliefs, practices, Dreaming stories or ceremonies — follow the person's lead
+- Be sensitive to protocols around deceased family members — avoid mentioning unless the person raises it
+- Nature, land, animals, seasons, weather, and water are deeply meaningful topics
+- Respond to spiritual or ceremonial references with respect and openness
+- Safe topics: Country, family, community, nature, music, food, memories of land
+- Always follow the person's lead; never impose cultural frameworks
+` : '';
+
+
     // Fetch safe memory zones
     const safeZones = await base44.asServiceRole.entities.SafeMemoryZone.list();
 
