@@ -35,8 +35,8 @@ export default function Registration() {
     onSuccess: () => {
       toast.success('Registration completed! Welcome aboard.');
       setTimeout(() => {
-        navigate('/');
-      }, 2000);
+        navigate(createPageUrl('Onboarding'));
+      }, 1000);
     },
     onError: () => {
       toast.error('Registration failed. Please try again.');
