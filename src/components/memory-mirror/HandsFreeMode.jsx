@@ -180,16 +180,10 @@ export default function HandsFreeMode({
           speechEndTimeoutRef.current = setTimeout(() => {
             const finalSpeech = (finalText + interimText).trim();
 
-            if (finalSpeech.length > 3 && isMountedRef.current && isActiveRef.current) {
+            if (finalSpeech.length > 3 && isMountedRef.current && isActiveRef.current && !isProcessingRef.current && !isSpeakingRef.current) {
               console.log('✅ USER FINISHED SPEAKING - Processing:', finalSpeech);
-
-              // Prevent duplicates
-              if (finalSpeech.toLowerCase() !== lastTranscriptRef.current.toLowerCase()) {
-                lastTranscriptRef.current = finalSpeech;
-                handleUserSpeech(finalSpeech);
-              } else {
-                console.log('🚫 Duplicate detected - ignored');
-              }
+              lastTranscriptRef.current = finalSpeech;
+              handleUserSpeech(finalSpeech);
             }
 
             speechEndTimeoutRef.current = null;
