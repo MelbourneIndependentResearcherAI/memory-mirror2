@@ -293,29 +293,27 @@ function WinCelebration({ onPlayAgain, onChangeCategory }) {
   );
 }
 
+const GRID_SIZE = 3;
+const NEEDED = GRID_SIZE * GRID_SIZE - 1;
+const FREE_INDEX = Math.floor(NEEDED / 2); // centre = index 4
+
+function makeCard(items) {
+  const picks = shuffle(items).slice(0, NEEDED);
+  picks.splice(FREE_INDEX, 0, FREE_CELL);
+  return picks;
+}
+
+function makePool(items) {
+  return shuffle(items);
+}
+
 // ─── Main Bingo Board ────────────────────────────────────────────────────────
 function BingoBoard({ category, onChangeCategory }) {
-  const GRID_SIZE = 3; // 3×3 = 9 cells, free centre = 8 unique items needed
-  const NEEDED = GRID_SIZE * GRID_SIZE - 1;
-
-  const buildCard = useCallback(() => {
-    const picks = shuffle(category.items).slice(0, NEEDED);
-    const cells = [...picks];
-    // Insert FREE in centre (index 4 for 3×3)
-    cells.splice(Math.floor(NEEDED / 2), 0, FREE_CELL);
-    return cells;
-  }, [category]);
-
-  const buildPool = useCallback(() => {
-    // Call pool = items NOT on player card (from same category shuffled)
-    return shuffle(category.items);
-  }, [category]);
-
-  const [card, setCard] = useState(buildCard);
-  const [pool, setPool] = useState(buildPool);
+  const [card, setCard] = useState(() => makeCard(category.items));
+  const [pool, setPool] = useState(() => makePool(category.items));
   const [calledItems, setCalledItems] = useState([]);
   const [currentCall, setCurrentCall] = useState(null);
-  const [marked, setMarked] = useState(new Set([Math.floor(NEEDED / 2)])); // free centre pre-marked
+  const [marked, setMarked] = useState(() => new Set([FREE_INDEX]));
   const [lastMarked, setLastMarked] = useState(null);
   const [hasBingo, setHasBingo] = useState(false);
   const [showWin, setShowWin] = useState(false);
@@ -333,7 +331,6 @@ function BingoBoard({ category, onChangeCategory }) {
   const markCell = (index) => {
     if (marked.has(index)) return;
     const cellItem = card[index];
-    // Only allow marking if this item has been called
     const isCalled = calledItems.some(c => c.word === cellItem.word);
     if (!isCalled) {
       speakWithRealisticVoice("That one hasn't been called yet! Listen carefully.");
@@ -352,14 +349,12 @@ function BingoBoard({ category, onChangeCategory }) {
   };
 
   const resetGame = () => {
-    const newCard = buildCard();
-    const newPool = buildPool();
-    setCard(newCard);
-    setPool(newPool);
+    setCard(makeCard(category.items));
+    setPool(makePool(category.items));
     setPoolIndex(0);
     setCalledItems([]);
     setCurrentCall(null);
-    setMarked(new Set([Math.floor(NEEDED / 2)]));
+    setMarked(new Set([FREE_INDEX]));
     setLastMarked(null);
     setHasBingo(false);
     setShowWin(false);
