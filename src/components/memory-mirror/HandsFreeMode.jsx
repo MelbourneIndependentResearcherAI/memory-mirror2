@@ -23,6 +23,7 @@ export default function HandsFreeMode({
   const [isProcessing, setIsProcessing] = useState(false);
   const [statusMessage, setStatusMessage] = useState('Ready to start');
   const [errorCount, setErrorCount] = useState(0);
+  const [showTraining, setShowTraining] = useState(false);
   
   const recognitionRef = useRef(null);
   const isMountedRef = useRef(true);
