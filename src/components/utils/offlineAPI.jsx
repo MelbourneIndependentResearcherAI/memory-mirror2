@@ -6,6 +6,7 @@ import {
   getAllFromStore, 
   getFromStore,
   deleteFromStore,
+  clearStore,
   queueOperation,
   STORES 
 } from './offlineStorage';
