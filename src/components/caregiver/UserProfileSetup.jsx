@@ -25,7 +25,9 @@ export default function UserProfileSetup({ onBack }) {
     life_experiences: '',
     favorite_music: '',
     important_people: '',
-    communication_style: 'warm'
+    communication_style: 'warm',
+    cultural_background: '',
+    country_or_mob: ''
   });
 
   const { data: profiles = [] } = useQuery({
