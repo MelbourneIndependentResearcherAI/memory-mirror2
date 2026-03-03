@@ -179,7 +179,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 lang="en"
               >
-                <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || subscriptionData?.isAdmin || isFreeTierUser}>
+                <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || subscriptionData?.isAdmin || isFreeTierUser || false}>
                 <main 
                   id="main-content" 
                   className="flex-1 relative overflow-auto"
