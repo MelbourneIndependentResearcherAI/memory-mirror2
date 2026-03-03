@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { ThemeProvider } from 'next-themes';
-import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
-import Footer from '@/components/Footer';
 import { AppStateProvider } from '@/components/AppStateManager';
 import { LockModeProvider } from '@/components/LockModeManager';
-import OfflineIndicator from '@/components/OfflineIndicator';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLocation, useNavigate } from 'react-router-dom';
-import BottomNav from '@/components/BottomNav';
-import ScrollToTop from '@/components/ScrollToTop';
-import { useSubscriptionStatus } from '@/components/SubscriptionGuard';
-import SessionTimeoutManager from '@/components/SessionTimeoutManager';
-import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
-import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
 import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 import { FeatureLockProvider } from '@/components/FeatureLockManager';
-import AppTrialGate from '@/components/AppTrialGate';
+
+// Lazy load non-critical layout components to prevent them crashing the render tree
+const ErrorBoundary = lazy(() => import('@/components/ErrorBoundary'));
+const Footer = lazy(() => import('@/components/Footer'));
+const BottomNav = lazy(() => import('@/components/BottomNav'));
+const ScrollToTop = lazy(() => import('@/components/ScrollToTop'));
+const SessionTimeoutManager = lazy(() => import('@/components/SessionTimeoutManager'));
+const OfflineIndicator = lazy(() => import('@/components/OfflineIndicator'));
+const OfflineSyncStatus = lazy(() => import('@/components/memory-mirror/OfflineSyncStatus'));
+const OfflineFeaturesBadge = lazy(() => import('@/components/memory-mirror/OfflineFeaturesBadge'));
+const AppTrialGate = lazy(() => import('@/components/AppTrialGate'));
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
