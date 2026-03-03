@@ -175,6 +175,7 @@ function CaregiverPortalHome() {
         ))}
       </div>
     </>
+    </CaregiverTrialGate>
   );
 }
 
