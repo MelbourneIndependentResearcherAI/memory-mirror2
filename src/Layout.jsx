@@ -181,52 +181,48 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 lang="en"
               >
-                <Suspense fallback={<>{children}</>}>
-                  <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || isFreeTierUser}>
-                    <main 
-                      id="main-content" 
-                      className="flex-1 relative overflow-auto"
-                      role="main"
-                      aria-label="Main content"
-                    >
-                      <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
-                        {isMainPage ? (
-                          <motion.div
-                            key={location.pathname}
-                            custom={location.state?.direction}
-                            initial={(custom) => ({
-                              x: custom === 'back' ? -300 : 300,
-                              opacity: 0
-                            })}
-                            animate={{ x: 0, opacity: 1 }}
-                            exit={(custom) => ({
-                              x: custom === 'back' ? 300 : -300,
-                              opacity: 0
-                            })}
-                            transition={{ 
-                              type: 'tween', 
-                              duration: 0.25, 
-                              ease: [0.4, 0.0, 0.2, 1]
-                            }}
-                            className="absolute inset-0"
-                          >
-                            {children}
-                          </motion.div>
-                        ) : (
-                          <motion.div
-                            key={location.pathname}
-                            initial={{ opacity: 0, scale: 0.98 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            exit={{ opacity: 0, scale: 0.98 }}
-                            transition={{ duration: 0.2 }}
-                          >
-                            {children}
-                          </motion.div>
-                        )}
-                      </AnimatePresence>
-                    </main>
-                  </AppTrialGate>
-                </Suspense>
+                <main 
+                  id="main-content" 
+                  className="flex-1 relative overflow-auto"
+                  role="main"
+                  aria-label="Main content"
+                >
+                  <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
+                    {isMainPage ? (
+                      <motion.div
+                        key={location.pathname}
+                        custom={location.state?.direction}
+                        initial={(custom) => ({
+                          x: custom === 'back' ? -300 : 300,
+                          opacity: 0
+                        })}
+                        animate={{ x: 0, opacity: 1 }}
+                        exit={(custom) => ({
+                          x: custom === 'back' ? 300 : -300,
+                          opacity: 0
+                        })}
+                        transition={{ 
+                          type: 'tween', 
+                          duration: 0.25, 
+                          ease: [0.4, 0.0, 0.2, 1]
+                        }}
+                        className="absolute inset-0"
+                      >
+                        {children}
+                      </motion.div>
+                    ) : (
+                      <motion.div
+                        key={location.pathname}
+                        initial={{ opacity: 0, scale: 0.98 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.98 }}
+                        transition={{ duration: 0.2 }}
+                      >
+                        {children}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </main>
                 <Suspense fallback={null}>
                   {showFooter && <Footer />}
                   {showBottomNav && <BottomNav />}
