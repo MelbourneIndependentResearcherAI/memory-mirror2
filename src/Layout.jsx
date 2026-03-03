@@ -26,7 +26,6 @@ const AppTrialGate = lazy(() => import('@/components/AppTrialGate'));
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(false);
   const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
 
   const { pushTab, getPreviousTab } = useTabStack();
