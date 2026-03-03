@@ -123,7 +123,7 @@ export default function QuickAccess() {
         
         <MessageCircle className="w-20 h-20 md:w-28 md:h-28 text-red-600 drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" strokeWidth={3} />
         <div className="text-center">
-          <div className="text-6xl md:text-7xl lg:text-8xl font-black text-red-600 leading-none mb-3 tracking-tighter" style={{
+          <div className="text-4xl md:text-5xl font-black text-red-600 leading-none mb-2 tracking-tighter" style={{
             textShadow: '0 4px 15px rgba(220,38,38,0.3)'
           }}>
             START
