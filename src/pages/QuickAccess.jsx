@@ -128,7 +128,7 @@ export default function QuickAccess() {
           }}>
             START
           </div>
-          <div className="text-3xl md:text-4xl font-bold text-red-500">
+          <div className="text-xl md:text-2xl font-bold text-red-500">
             Memory Mirror
           </div>
         </div>
