@@ -29,19 +29,7 @@ function LayoutContent({ children, currentPageName }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
 
-  const [subscriptionData, setSubscriptionData] = useState(null);
-
   const { pushTab, getPreviousTab } = useTabStack();
-
-  useEffect(() => {
-    import('@/api/base44Client').then(({ base44 }) => {
-      base44.auth.me().then(user => {
-        if (user?.role === 'admin') setIsAdmin(true);
-      }).catch(() => {});
-    });
-    // Load subscription in background - non-blocking
-    import('@/components/SubscriptionGuard').catch(() => {});
-  }, []);
   
   // (debug logging removed)
   
