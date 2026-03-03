@@ -120,7 +120,7 @@ export default function FamilyMemorySharing() {
         shared_by_email: user?.email || '',
         people_involved: formData.people_involved.split(',').map(p => p.trim()).filter(Boolean),
         tags: formData.tags.split(',').map(t => t.trim()).filter(Boolean),
-        shared_with: teamMembers.map(m => m.caregiver_email)
+        shared_with: getPrivateShareList(),
       };
 
       await uploadMutation.mutateAsync(memoryData);
