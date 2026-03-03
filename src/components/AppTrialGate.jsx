@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { base44 } from "@/api/base44Client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createPageUrl } from "@/utils";
+import { supabase } from "@/components/utils/supabaseClient";
 
 const OPEN_PAGES = ["Landing", "Pricing", "Login", "Register", "Home", "QuickAccess", "BigButtonMode"];
 const FREE_TIER_KEY = "mm_free_tier_user";
