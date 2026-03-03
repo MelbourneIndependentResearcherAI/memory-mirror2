@@ -100,7 +100,10 @@ function CaregiverPortalHome() {
     }
   };
 
+  if (!adminChecked) return null;
+
   return (
+    <CaregiverTrialGate isAdmin={isAdmin}>
     <>
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 mb-6">
         <div className="flex items-center gap-4 mb-4">
