@@ -22,9 +22,14 @@ export default function QuickAccess() {
         const profiles = await base44.entities.UserProfile.list();
         if (profiles.length > 0) {
           const p = profiles[0];
-          setUserName(p.greeting_name || p.preferred_name || p.loved_one_name || user.full_name);
+          // Use the first name from the user's account as the most reliable source,
+          // falling back to profile fields. Avoid using relationship words like "mom/dad".
+          const relationshipWords = ['mom', 'dad', 'grandma', 'grandpa', 'nan', 'pop', 'nana', 'oma', 'opa'];
+          const candidates = [p.greeting_name, p.preferred_name, user.full_name?.split(' ')[0], p.loved_one_name];
+          const name = candidates.find(n => n && !relationshipWords.includes(n.toLowerCase().trim()));
+          setUserName(name || user.full_name || 'there');
         } else {
-          setUserName(user.full_name || 'there');
+          setUserName(user.full_name?.split(' ')[0] || 'there');
         }
       } catch {
         setUserName('there');
