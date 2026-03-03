@@ -9,7 +9,8 @@ const FREE_TIER_KEY = "mm_free_tier_user";
 const TRIAL_KEY = "mm_trial_registered";
 
 export default function AppTrialGate({ children, currentPageName, isAdmin }) {
-  const [status, setStatus] = useState("loading");
+  // Default to open to prevent blank screen — will gate only if check fails
+  const [status, setStatus] = useState("open");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -17,7 +18,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
 
   useEffect(() => {
     checkAccess();
-  }, [currentPageName, isAdmin]);
+  }, [currentPageName]);
 
   async function checkAccess() {
     // Open pages never blocked
@@ -26,8 +27,8 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
       return;
     }
 
-    // Admin or free-tier user always allowed
-    if (isAdmin || localStorage.getItem(FREE_TIER_KEY) === "true") {
+    // Free-tier user always allowed
+    if (localStorage.getItem(FREE_TIER_KEY) === "true") {
       setStatus("open");
       return;
     }
@@ -60,7 +61,9 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
           return;
         }
       } catch (_) {
-        // If error, fall through to show form
+        // If error checking trial, keep open to avoid blocking
+        setStatus("open");
+        return;
       }
     }
 
