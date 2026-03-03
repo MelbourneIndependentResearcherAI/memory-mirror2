@@ -6,12 +6,12 @@ const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 let supabase = null;
 
-try {
-  if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+if (SUPABASE_URL && SUPABASE_ANON_KEY) {
+  try {
     supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (err) {
+    console.warn('Failed to initialize Supabase:', err.message);
   }
-} catch (err) {
-  console.warn('Failed to initialize Supabase:', err.message);
 }
 
 export { supabase };
