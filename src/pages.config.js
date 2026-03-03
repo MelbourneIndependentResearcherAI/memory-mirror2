@@ -57,6 +57,7 @@ import AdminSubscriptions from './pages/AdminSubscriptions';
 import AdminUserTracking from './pages/AdminUserTracking';
 import AuditTrail from './pages/AuditTrail';
 import BigButtonMode from './pages/BigButtonMode';
+import BigClock from './pages/BigClock';
 import CareJournalPage from './pages/CareJournalPage';
 import CarePlans from './pages/CarePlans';
 import CareTeam from './pages/CareTeam';
@@ -65,6 +66,7 @@ import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
 import CaregiverPortalCore from './pages/CaregiverPortalCore';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
+import CarerMessaging from './pages/CarerMessaging';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatHistory from './pages/ChatHistory';
 import ChatMode from './pages/ChatMode';
@@ -160,8 +162,6 @@ import VoiceUsageAnalytics from './pages/VoiceUsageAnalytics';
 import YouthMirror from './pages/YouthMirror';
 import chat from './pages/chat';
 import phone from './pages/phone';
-import BigClock from './pages/BigClock';
-import CarerMessaging from './pages/CarerMessaging';
 import __Layout from './Layout.jsx';
 
 
@@ -176,6 +176,7 @@ export const PAGES = {
     "AdminUserTracking": AdminUserTracking,
     "AuditTrail": AuditTrail,
     "BigButtonMode": BigButtonMode,
+    "BigClock": BigClock,
     "CareJournalPage": CareJournalPage,
     "CarePlans": CarePlans,
     "CareTeam": CareTeam,
@@ -184,6 +185,7 @@ export const PAGES = {
     "CaregiverPortalAdmin": CaregiverPortalAdmin,
     "CaregiverPortalCore": CaregiverPortalCore,
     "CaregiverPortalRouter": CaregiverPortalRouter,
+    "CarerMessaging": CarerMessaging,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatHistory": ChatHistory,
     "ChatMode": ChatMode,
@@ -279,8 +281,6 @@ export const PAGES = {
     "YouthMirror": YouthMirror,
     "chat": chat,
     "phone": phone,
-    "BigClock": BigClock,
-    "CarerMessaging": CarerMessaging,
 }
 
 export const pagesConfig = {

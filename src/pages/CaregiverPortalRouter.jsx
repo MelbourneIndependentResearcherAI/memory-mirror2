@@ -13,6 +13,7 @@ import OfflineMemoryViewer from '@/components/memory-mirror/OfflineMemoryViewer'
 import AgentSupport from '@/components/caregiver/AgentSupport';
 
 import FamilyTreeBuilder from '@/components/family/FamilyTreeBuilder';
+import CaregiverTrialGate from '@/components/caregiver/CaregiverTrialGate';
 
 
 
