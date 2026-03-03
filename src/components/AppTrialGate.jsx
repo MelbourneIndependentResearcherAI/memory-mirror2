@@ -4,14 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createPageUrl } from "@/utils";
 
-const OPEN_PAGES = ["Landing", "Pricing", "Login", "Register", "Home"];
+const OPEN_PAGES = ["Landing", "Pricing", "Login", "Register", "Home", "QuickAccess", "BigButtonMode"];
 const FREE_TIER_KEY = "mm_free_tier_user";
 const TRIAL_KEY = "mm_trial_registered";
 
 export default function AppTrialGate({ children, currentPageName, isAdmin }) {
-  // Start as "open" for open pages immediately to avoid blank screen flash
-  const initialStatus = OPEN_PAGES.includes(currentPageName) ? "open" : "loading";
-  const [status, setStatus] = useState(initialStatus);
+  const [status, setStatus] = useState("loading");
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -19,7 +17,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
 
   useEffect(() => {
     checkAccess();
-  }, [currentPageName]);
+  }, [currentPageName, isAdmin]);
 
   async function checkAccess() {
     // Open pages never blocked
@@ -34,7 +32,18 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
       return;
     }
 
-    // Check if already registered for trial
+    // Check if user is authenticated — logged-in users always get access
+    try {
+      const user = await base44.auth.me();
+      if (user) {
+        setStatus("open");
+        return;
+      }
+    } catch (_) {
+      // Not authenticated, continue to trial check
+    }
+
+    // Check if already registered for trial via local storage
     const savedEmail = localStorage.getItem(TRIAL_KEY);
     if (savedEmail) {
       try {
@@ -50,8 +59,8 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
           }
           return;
         }
-      } catch (e) {
-        // If error, show form to re-register
+      } catch (_) {
+        // If error, fall through to show form
       }
     }
 
@@ -67,7 +76,6 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
     setSubmitting(true);
     setError("");
     try {
-      // Check if already registered
       const existing = await base44.entities.FreeTrialUser.filter({ email: email.trim() });
       let trial;
       if (existing.length > 0) {
@@ -82,7 +90,6 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
           trial_end_date: end.toISOString(),
           trial_active: true,
         });
-        // Also collect email
         try {
           await base44.entities.CollectedEmail.create({
             email: email.trim(),
@@ -101,7 +108,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
       } else {
         setStatus("expired");
       }
-    } catch (e) {
+    } catch (_) {
       setError("Something went wrong. Please try again.");
     }
     setSubmitting(false);
@@ -157,7 +164,9 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
             </Button>
           </form>
           <p className="text-xs text-gray-400 mt-4">
-            Already subscribed?{" "}
+            Already have an account?{" "}
+            <a href={createPageUrl("Landing")} className="text-purple-600 underline">Sign in</a>
+            {" · "}
             <a href={createPageUrl("Pricing")} className="text-purple-600 underline">View plans</a>
           </p>
         </div>
