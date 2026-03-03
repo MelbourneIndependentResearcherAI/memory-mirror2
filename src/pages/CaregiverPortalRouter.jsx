@@ -184,6 +184,8 @@ export default function CaregiverPortalRouter() {
   const _location = useLocation();
   const [userProfile, setUserProfile] = React.useState(null);
   const [showOfflineOptions, setShowOfflineOptions] = React.useState(false);
+  const [isAdmin, setIsAdmin] = React.useState(false);
+  const [adminChecked, setAdminChecked] = React.useState(false);
 
   React.useEffect(() => {
     const loadProfile = async () => {
@@ -194,51 +196,63 @@ export default function CaregiverPortalRouter() {
         console.error('Profile load failed:', error);
       }
     };
+    const checkAdmin = async () => {
+      try {
+        const user = await base44.auth.me();
+        setIsAdmin(user?.role === 'admin');
+      } catch {}
+      setAdminChecked(true);
+    };
     loadProfile();
+    checkAdmin();
   }, []);
 
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">
-      <div className="max-w-7xl mx-auto">
-        <Routes>
-           <Route index element={<CaregiverPortalHome />} />
-           <Route path="/*" element={<CaregiverPortalCore userProfile={userProfile} />} />
-           <Route path="admin/*" element={
-             <ErrorBoundary>
-               <CaregiverPortalAdmin />
-             </ErrorBoundary>
-           } />
+  if (!adminChecked) return null;
 
-          <Route path="family-tree" element={
-            <ErrorBoundary>
-              <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
-                <FamilyTreeBuilder onBack={() => navigate('/CaregiverPortal')} />
-              </div>
-            </ErrorBoundary>
-          } />
-          <Route path="offline-read" element={
-            <ErrorBoundary>
-              <div className="space-y-6">
-                <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 min-h-[44px]">
-                  <ArrowLeft className="w-5 h-5" />Back to Portal
-                </button>
-                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8">
-                  <div className="grid md:grid-cols-2 gap-4 mb-6">
-                    <button onClick={() => setShowOfflineOptions(false)} className={`p-6 rounded-xl font-semibold transition-all min-h-[44px] ${!showOfflineOptions ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'}`}>
-                      📖 Journal Entries
-                    </button>
-                    <button onClick={() => setShowOfflineOptions(true)} className={`p-6 rounded-xl font-semibold transition-all min-h-[44px] ${showOfflineOptions ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'}`}>
-                      ✨ Memories
-                    </button>
-                  </div>
-                  {!showOfflineOptions ? <OfflineJournalReader onBack={() => navigate('/CaregiverPortal')} /> : <OfflineMemoryViewer onBack={() => navigate('/CaregiverPortal')} />}
+  return (
+    <CaregiverTrialGate isAdmin={isAdmin}>
+      <div className="min-h-screen bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800 p-4 md:p-6 pb-16">
+        <div className="max-w-7xl mx-auto">
+          <Routes>
+             <Route index element={<CaregiverPortalHome />} />
+             <Route path="/*" element={<CaregiverPortalCore userProfile={userProfile} />} />
+             <Route path="admin/*" element={
+               <ErrorBoundary>
+                 <CaregiverPortalAdmin />
+               </ErrorBoundary>
+             } />
+
+            <Route path="family-tree" element={
+              <ErrorBoundary>
+                <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8">
+                  <FamilyTreeBuilder onBack={() => navigate('/CaregiverPortal')} />
                 </div>
-              </div>
-            </ErrorBoundary>
-          } />
-        </Routes>
+              </ErrorBoundary>
+            } />
+            <Route path="offline-read" element={
+              <ErrorBoundary>
+                <div className="space-y-6">
+                  <button onClick={() => navigate('/CaregiverPortal')} className="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:text-blue-700 min-h-[44px]">
+                    <ArrowLeft className="w-5 h-5" />Back to Portal
+                  </button>
+                  <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-8">
+                    <div className="grid md:grid-cols-2 gap-4 mb-6">
+                      <button onClick={() => setShowOfflineOptions(false)} className={`p-6 rounded-xl font-semibold transition-all min-h-[44px] ${!showOfflineOptions ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'}`}>
+                        📖 Journal Entries
+                      </button>
+                      <button onClick={() => setShowOfflineOptions(true)} className={`p-6 rounded-xl font-semibold transition-all min-h-[44px] ${showOfflineOptions ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400' : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-400'}`}>
+                        ✨ Memories
+                      </button>
+                    </div>
+                    {!showOfflineOptions ? <OfflineJournalReader onBack={() => navigate('/CaregiverPortal')} /> : <OfflineMemoryViewer onBack={() => navigate('/CaregiverPortal')} />}
+                  </div>
+                </div>
+              </ErrorBoundary>
+            } />
+          </Routes>
+        </div>
+        <AgentSupport />
       </div>
-      <AgentSupport />
-    </div>
+    </CaregiverTrialGate>
   );
 }
