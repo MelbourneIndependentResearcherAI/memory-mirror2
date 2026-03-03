@@ -85,26 +85,43 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
     setSubmitting(true);
     setError("");
     try {
-      const existing = await base44.entities.FreeTrialUser.filter({ email: email.trim() });
+      const { data: existing, error: fetchError } = await supabase
+        .from('FreeTrialUser')
+        .select('*')
+        .eq('email', email.trim());
+
+      if (fetchError) throw fetchError;
+
       let trial;
-      if (existing.length > 0) {
+      if (existing && existing.length > 0) {
         trial = existing[0];
       } else {
         const now = new Date();
         const end = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
-        trial = await base44.entities.FreeTrialUser.create({
-          name: name.trim(),
-          email: email.trim(),
-          trial_start_date: now.toISOString(),
-          trial_end_date: end.toISOString(),
-          trial_active: true,
-        });
-        try {
-          await base44.entities.CollectedEmail.create({
-            email: email.trim(),
+        
+        const { data: newTrial, error: createError } = await supabase
+          .from('FreeTrialUser')
+          .insert({
             name: name.trim(),
-            source: "free_trial",
-          });
+            email: email.trim(),
+            trial_start_date: now.toISOString(),
+            trial_end_date: end.toISOString(),
+            trial_active: true,
+          })
+          .select()
+          .single();
+
+        if (createError) throw createError;
+        trial = newTrial;
+
+        try {
+          await supabase
+            .from('CollectedEmail')
+            .insert({
+              email: email.trim(),
+              name: name.trim(),
+              source: "free_trial",
+            });
         } catch (_) {}
       }
 
