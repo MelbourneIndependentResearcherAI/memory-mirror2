@@ -31,15 +31,26 @@ export default function FamilyMemorySharing() {
     queryFn: () => base44.auth.me(),
   });
 
+  // Only fetch memories created by this user OR shared with them — RLS enforces this server-side
   const { data: sharedMemories = [], isLoading } = useQuery({
-    queryKey: ['sharedMemories'],
+    queryKey: ['sharedMemories', user?.email],
     queryFn: () => base44.entities.SharedMemory.list('-created_date'),
+    enabled: !!user,
   });
 
+  // Get linked family members for this user's family group
   const { data: teamMembers = [] } = useQuery({
     queryKey: ['caregiverTeam'],
     queryFn: () => base44.entities.CaregiverTeam.list(),
   });
+
+  // Build the private share list: only people linked to the same patient
+  const getPrivateShareList = () => {
+    const emails = teamMembers.map(m => m.caregiver_email).filter(Boolean);
+    // Always include the sharer themselves so they can always see it
+    if (user?.email && !emails.includes(user.email)) emails.push(user.email);
+    return emails;
+  };
 
   const uploadMutation = useMutation({
     mutationFn: async (memoryData) => base44.entities.SharedMemory.create(memoryData),
