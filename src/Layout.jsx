@@ -179,13 +179,13 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 lang="en"
               >
+                <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || subscriptionData?.isAdmin || isFreeTierUser}>
                 <main 
                   id="main-content" 
                   className="flex-1 relative overflow-auto"
                   role="main"
                   aria-label="Main content"
                 >
-                  <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || subscriptionData?.isAdmin || isFreeTierUser}>
                   <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
                     {isMainPage ? (
                       <motion.div
@@ -221,8 +221,8 @@ function LayoutContent({ children, currentPageName }) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  </AppTrialGate>
                 </main>
+                </AppTrialGate>
                 {showFooter && <Footer />}
                 {showBottomNav && <BottomNav />}
               </div>
