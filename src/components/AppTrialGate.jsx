@@ -35,7 +35,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
 
     // Check if user is authenticated — logged-in users always get access
     try {
-      const user = await base44.auth.me();
+      const { data: { user } } = await supabase.auth.getUser();
       if (user) {
         setStatus("open");
         return;
