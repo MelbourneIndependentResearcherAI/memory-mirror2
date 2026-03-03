@@ -185,6 +185,7 @@ function LayoutContent({ children, currentPageName }) {
                   role="main"
                   aria-label="Main content"
                 >
+                  <AppTrialGate currentPageName={currentPageName} isAdmin={isAdmin || subscriptionData?.isAdmin || isFreeTierUser}>
                   <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
                     {isMainPage ? (
                       <motion.div
