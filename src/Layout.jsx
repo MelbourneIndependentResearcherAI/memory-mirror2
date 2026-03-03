@@ -9,7 +9,6 @@ import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 import { FeatureLockProvider } from '@/components/FeatureLockManager';
 
 // Lazy load non-critical layout components to prevent them crashing the render tree
-const ErrorBoundary = lazy(() => import('@/components/ErrorBoundary'));
 const Footer = lazy(() => import('@/components/Footer'));
 const BottomNav = lazy(() => import('@/components/BottomNav'));
 const ScrollToTop = lazy(() => import('@/components/ScrollToTop'));
