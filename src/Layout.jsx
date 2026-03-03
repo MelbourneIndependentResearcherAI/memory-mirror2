@@ -221,6 +221,7 @@ function LayoutContent({ children, currentPageName }) {
                       </motion.div>
                     )}
                   </AnimatePresence>
+                  </AppTrialGate>
                 </main>
                 {showFooter && <Footer />}
                 {showBottomNav && <BottomNav />}
