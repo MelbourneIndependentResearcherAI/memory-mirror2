@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ThemeProvider } from 'next-themes';
 import ErrorBoundary from '@/components/ErrorBoundary';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
@@ -16,6 +16,7 @@ import OfflineSyncStatus from '@/components/memory-mirror/OfflineSyncStatus';
 import OfflineFeaturesBadge from '@/components/memory-mirror/OfflineFeaturesBadge';
 import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 import { FeatureLockProvider } from '@/components/FeatureLockManager';
+import AppTrialGate from '@/components/AppTrialGate';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
