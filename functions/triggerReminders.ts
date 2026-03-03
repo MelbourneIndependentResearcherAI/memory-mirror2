@@ -36,7 +36,6 @@ Deno.serve(async (req) => {
           voice_prompt: reminder.voice_prompt || reminder.title
         });
         
-        // Log to activity
         await base44.asServiceRole.entities.ActivityLog.create({
           activity_type: 'reminder_triggered',
           details: {
