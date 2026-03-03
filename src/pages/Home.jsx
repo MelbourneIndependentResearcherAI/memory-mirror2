@@ -9,7 +9,7 @@ import WakeWordListener from '@/components/memory-mirror/WakeWordListener';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
 import MemoryReflectionSession from '@/components/memory-mirror/MemoryReflectionSession';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/components/utils/supabaseClient';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import LanguageSelector from '@/components/LanguageSelector';
@@ -29,7 +29,13 @@ export default function Home() {
 
   const { data: userProfiles = [] } = useQuery({
     queryKey: ['userProfile'],
-    queryFn: () => base44.entities.UserProfile.list()
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('UserProfile')
+        .select('*');
+      if (error) throw error;
+      return data || [];
+    }
   });
 
   const handleRefresh = async () => {
