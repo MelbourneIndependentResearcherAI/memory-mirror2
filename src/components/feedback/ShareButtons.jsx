@@ -92,10 +92,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-blue-700 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950"
-        title="Share on Facebook"
       >
-        <Facebook className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">Facebook</span>
+        <Facebook className="w-4 h-4 mr-2" />
+        <span>Facebook</span>
       </Button>
 
       <Button
@@ -103,10 +102,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-sky-500 hover:bg-sky-50 dark:text-sky-400 dark:hover:bg-sky-950"
-        title="Share on Twitter"
       >
-        <Twitter className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">Twitter</span>
+        <Twitter className="w-4 h-4 mr-2" />
+        <span>Twitter</span>
       </Button>
 
       <Button
@@ -114,10 +112,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950"
-        title="Share on LinkedIn"
       >
-        <Linkedin className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">LinkedIn</span>
+        <Linkedin className="w-4 h-4 mr-2" />
+        <span>LinkedIn</span>
       </Button>
 
       <Button
@@ -125,10 +122,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
-        title="Share via Email"
       >
-        <Mail className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">Email</span>
+        <Mail className="w-4 h-4 mr-2" />
+        <span>Email</span>
       </Button>
 
       <Button
@@ -136,10 +132,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950"
-        title="Share via SMS"
       >
-        <MessageSquare className="w-4 h-4 mr-1" />
-        <span className="hidden sm:inline">SMS</span>
+        <MessageSquare className="w-4 h-4 mr-2" />
+        <span>SMS</span>
       </Button>
 
       <Button
@@ -147,10 +142,9 @@ export default function ShareButtons({ feedback }) {
         variant="outline"
         size="sm"
         className="text-slate-600 hover:bg-slate-50 dark:text-slate-400 dark:hover:bg-slate-800"
-        title={copied ? 'Copied!' : 'Copy Link'}
       >
-        {copied ? <Check className="w-4 h-4 mr-1" /> : <LinkIcon className="w-4 h-4 mr-1" />}
-        <span className="hidden sm:inline">{copied ? 'Copied' : 'Copy'}</span>
+        {copied ? <Check className="w-4 h-4 mr-2" /> : <LinkIcon className="w-4 h-4 mr-2" />}
+        <span>{copied ? 'Copied' : 'Copy'}</span>
       </Button>
     </div>
   );
