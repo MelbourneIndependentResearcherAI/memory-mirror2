@@ -168,12 +168,13 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 lang="en"
               >
-                <main 
-                  id="main-content" 
-                  className="flex-1 relative overflow-auto"
-                  role="main"
-                  aria-label="Main content"
-                >
+                <Suspense fallback={<>{children}</>}>
+                  <main 
+                    id="main-content" 
+                    className="flex-1 relative overflow-auto"
+                    role="main"
+                    aria-label="Main content"
+                  >
                   <AnimatePresence mode="wait" initial={false} custom={location.state?.direction}>
                     {isMainPage ? (
                       <motion.div
