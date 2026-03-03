@@ -46,8 +46,6 @@ function LayoutContent({ children, currentPageName }) {
   
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
-  
-  // No longer redirecting to paywall — AppTrialGate handles access control inline
 
   // Main bottom tab pages for page transitions
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
