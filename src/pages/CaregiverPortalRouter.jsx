@@ -97,8 +97,6 @@ function CaregiverPortalHome() {
     }
   };
 
-  if (!adminChecked) return null;
-
   return (
     <>
       <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 mb-6">
