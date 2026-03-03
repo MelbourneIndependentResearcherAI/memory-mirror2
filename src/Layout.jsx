@@ -40,6 +40,8 @@ function LayoutContent({ children, currentPageName }) {
         if (user?.role === 'admin') setIsAdmin(true);
       }).catch(() => {});
     });
+    // Load subscription in background - non-blocking
+    import('@/components/SubscriptionGuard').catch(() => {});
   }, []);
   
   // (debug logging removed)
