@@ -121,7 +121,7 @@ export default function QuickAccess() {
         {/* Pulsing ring effect */}
         <div className="absolute inset-0 rounded-full border-4 border-white/40 animate-ping" style={{ animationDuration: '3s' }} />
         
-        <MessageCircle className="w-36 h-36 md:w-48 md:h-48 text-red-600 drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" strokeWidth={3} />
+        <MessageCircle className="w-20 h-20 md:w-28 md:h-28 text-red-600 drop-shadow-2xl group-hover:scale-110 transition-transform duration-300" strokeWidth={3} />
         <div className="text-center">
           <div className="text-6xl md:text-7xl lg:text-8xl font-black text-red-600 leading-none mb-3 tracking-tighter" style={{
             textShadow: '0 4px 15px rgba(220,38,38,0.3)'
