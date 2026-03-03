@@ -26,13 +26,15 @@ import AppTrialGate from '@/components/AppTrialGate';
 function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
-  const { data: subscriptionData, isLoading } = useSubscriptionStatus();
-  const { pushTab, getPreviousTab } = useTabStack();
   const [isAdmin, setIsAdmin] = useState(false);
-  const isFreeTierUser = localStorage.getItem('mm_free_tier_user') === 'true';
+  const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
+
+  // Lazy load subscription status only after mount
+  const { data: subscriptionData } = useSubscriptionStatus();
+
+  const { pushTab, getPreviousTab } = useTabStack();
 
   useEffect(() => {
-    // Detect admin for AppTrialGate bypass
     import('@/api/base44Client').then(({ base44 }) => {
       base44.auth.me().then(user => {
         if (user?.role === 'admin') setIsAdmin(true);
