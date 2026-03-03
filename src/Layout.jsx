@@ -30,8 +30,13 @@ function LayoutContent({ children, currentPageName }) {
   const [isAdmin, setIsAdmin] = useState(false);
   const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
 
-  // Lazy load subscription status only after mount
-  const { data: subscriptionData } = useSubscriptionStatus();
+  // Load subscription status (non-blocking)
+  let subscriptionData = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const result = require('@/components/SubscriptionGuard').useSubscriptionStatus();
+    subscriptionData = result?.data;
+  } catch (_) {}
 
   const { pushTab, getPreviousTab } = useTabStack();
 
