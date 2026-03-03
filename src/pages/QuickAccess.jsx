@@ -79,7 +79,7 @@ export default function QuickAccess() {
       </button>
 
       {/* Welcome text - Premium */}
-      <div className="relative text-center mb-16 animate-fade-in-up z-10">
+      <div className="relative text-center mb-8 animate-fade-in-up z-10">
         <h1 className="text-4xl md:text-6xl lg:text-7xl font-extrabold text-white mb-6 tracking-tight break-words max-w-xs md:max-w-xl mx-auto" style={{
           textShadow: '0 4px 20px rgba(0,0,0,0.3), 0 0 40px rgba(255,255,255,0.2)'
         }}>
