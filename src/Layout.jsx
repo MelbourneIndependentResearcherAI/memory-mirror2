@@ -210,7 +210,8 @@ function LayoutContent({ children, currentPageName }) {
                       </motion.div>
                     )}
                   </AnimatePresence>
-                </main>
+                  </main>
+                  </Suspense>
                 <Suspense fallback={null}>
                   {showFooter && <Footer />}
                   {showBottomNav && <BottomNav />}
