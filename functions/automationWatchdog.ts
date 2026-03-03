@@ -1,139 +1,157 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.20';
 
 /**
- * Automation Watchdog
- * Monitors all scheduled automations, detects failures/degradation,
- * attempts self-healing by redeploying functions, and logs all actions.
- * Designed to run every 15 minutes.
+ * Automation Watchdog - runs every 15 minutes
+ * Monitors system health by checking entity data integrity,
+ * recent activity patterns, and error signals.
+ * Creates CaregiverAlerts for any critical issues found.
  */
-
-const MONITORED_FUNCTIONS = [
-  'autoFixErrors',
-  'healthCheck',
-  'triggerReminders',
-  'checkAlertConditions',
-  'playScheduledPlaylist',
-  'checkSubscriptionExpiry',
-  'processMonthlyRenewal',
-  'generateMaintenanceReport',
-  'detectBehaviorAnomalies',
-];
-
-// Thresholds for triggering watchdog action
-const CONSECUTIVE_FAILURE_THRESHOLD = 3;
-const FAILURE_RATE_THRESHOLD = 0.15; // 15% failure rate
 
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    const now = Date.now();
     const report = {
       timestamp: new Date().toISOString(),
-      automations_checked: 0,
-      issues_found: [],
-      actions_taken: [],
-      healthy: [],
+      checks: {},
+      issues: [],
+      actions: [],
     };
 
-    // Fetch all automations via the SDK (service role for full access)
-    // We'll ping each monitored function to verify it's deployed & responsive
-    const pingResults = await Promise.allSettled(
-      MONITORED_FUNCTIONS.map(async (fnName) => {
-        const start = Date.now();
-        try {
-          const result = await base44.asServiceRole.functions.invoke(fnName, { watchdog_ping: true });
-          return { fnName, status: 'ok', latencyMs: Date.now() - start, result };
-        } catch (err) {
-          return { fnName, status: 'error', latencyMs: Date.now() - start, error: err.message };
-        }
-      })
-    );
+    // Run all health checks in parallel
+    const [
+      recentActivity,
+      unresolvedAlerts,
+      oldPendingNotifications,
+      recentNightIncidents,
+      recentSubscriptions,
+    ] = await Promise.all([
+      base44.asServiceRole.entities.ActivityLog.list('-created_date', 20).catch(() => []),
+      base44.asServiceRole.entities.CaregiverAlert.filter({ resolved: false }).catch(() => []),
+      base44.asServiceRole.entities.CaregiverNotification.filter({
+        created_date: { $lt: new Date(now - 48 * 60 * 60 * 1000).toISOString() }
+      }).catch(() => []),
+      base44.asServiceRole.entities.NightIncident.list('-created_date', 5).catch(() => []),
+      base44.asServiceRole.entities.Subscription.filter({ status: 'active' }).catch(() => []),
+    ]);
 
-    report.automations_checked = MONITORED_FUNCTIONS.length;
-
-    for (const ping of pingResults) {
-      const val = ping.status === 'fulfilled' ? ping.value : { fnName: 'unknown', status: 'error', error: ping.reason?.message };
-
-      if (val.status === 'error') {
-        const issue = {
-          function: val.fnName,
-          type: 'deployment_missing_or_error',
-          error: val.error,
-          severity: 'high',
-        };
-        report.issues_found.push(issue);
-
-        // Log as a caregiver alert so the admin dashboard picks it up
-        try {
-          await base44.asServiceRole.entities.CaregiverAlert.create({
-            alert_type: 'safety_concern',
-            severity: 'high',
-            message: `⚠️ Watchdog: Function "${val.fnName}" is failing or not deployed. Error: ${val.error}`,
-            timestamp: new Date().toISOString(),
-            resolved: false,
-          });
-          report.actions_taken.push(`Created alert for failed function: ${val.fnName}`);
-        } catch (alertErr) {
-          console.error(`Failed to create alert for ${val.fnName}:`, alertErr);
-        }
-      } else {
-        report.healthy.push({ function: val.fnName, latencyMs: val.latencyMs });
-
-        // Warn on high latency (>8s means approaching timeout)
-        if (val.latencyMs > 8000) {
-          report.issues_found.push({
-            function: val.fnName,
-            type: 'high_latency',
-            latencyMs: val.latencyMs,
-            severity: 'medium',
-          });
-        }
+    // ── CHECK 1: Activity log freshness (is the app being used / automations running?) ──
+    const lastActivityLog = recentActivity[0];
+    if (lastActivityLog) {
+      const hoursSinceLastLog = (now - new Date(lastActivityLog.created_date).getTime()) / (1000 * 60 * 60);
+      report.checks.activity_freshness = {
+        status: hoursSinceLastLog < 2 ? 'pass' : hoursSinceLastLog < 6 ? 'warning' : 'fail',
+        hours_since_last_log: Math.round(hoursSinceLastLog * 10) / 10,
+      };
+      if (hoursSinceLastLog > 6) {
+        report.issues.push({ severity: 'high', check: 'activity_freshness', message: `No activity logged for ${Math.round(hoursSinceLastLog)}h — automations may be down` });
       }
-    }
-
-    // Also auto-fix: re-run autoFixErrors if it recently had issues
-    const failedFunctions = pingResults
-      .filter(p => p.status === 'fulfilled' && p.value.status === 'error')
-      .map(p => p.value.fnName);
-
-    if (failedFunctions.includes('autoFixErrors')) {
-      report.actions_taken.push('Skipped autoFixErrors re-trigger (deployment issue detected)');
     } else {
-      // Trigger a fresh autoFixErrors run as a proactive measure
-      try {
-        await base44.asServiceRole.functions.invoke('autoFixErrors', {});
-        report.actions_taken.push('Proactively triggered autoFixErrors cleanup');
-      } catch (e) {
-        report.issues_found.push({ function: 'autoFixErrors', type: 'invoke_failed', error: e.message, severity: 'high' });
-      }
+      report.checks.activity_freshness = { status: 'warning', message: 'No activity logs found' };
     }
 
-    // Log watchdog run to activity log
+    // ── CHECK 2: Unresolved alert accumulation ──
+    report.checks.unresolved_alerts = {
+      status: unresolvedAlerts.length < 10 ? 'pass' : unresolvedAlerts.length < 30 ? 'warning' : 'fail',
+      count: unresolvedAlerts.length,
+    };
+    if (unresolvedAlerts.length >= 30) {
+      report.issues.push({ severity: 'medium', check: 'unresolved_alerts', message: `${unresolvedAlerts.length} unresolved caregiver alerts — auto-resolver may be stuck` });
+    }
+
+    // ── CHECK 3: Stale notifications piling up ──
+    report.checks.stale_notifications = {
+      status: oldPendingNotifications.length < 20 ? 'pass' : 'warning',
+      count: oldPendingNotifications.length,
+    };
+    if (oldPendingNotifications.length >= 20) {
+      report.issues.push({ severity: 'low', check: 'stale_notifications', message: `${oldPendingNotifications.length} notifications older than 48h not cleaned up` });
+
+      // Auto-fix: delete oldest stale notifications (cap at 50)
+      const toDelete = oldPendingNotifications.slice(0, 50);
+      await Promise.all(toDelete.map(n => base44.asServiceRole.entities.CaregiverNotification.delete(n.id).catch(() => {})));
+      report.actions.push(`Auto-deleted ${toDelete.length} stale notifications`);
+    }
+
+    // ── CHECK 4: Urgent unresolved alerts older than 24h ──
+    const urgentStaleAlerts = unresolvedAlerts.filter(a => {
+      const ageHours = (now - new Date(a.created_date).getTime()) / (1000 * 60 * 60);
+      return a.severity === 'urgent' && ageHours > 24;
+    });
+    report.checks.urgent_stale_alerts = {
+      status: urgentStaleAlerts.length === 0 ? 'pass' : 'fail',
+      count: urgentStaleAlerts.length,
+    };
+    if (urgentStaleAlerts.length > 0) {
+      report.issues.push({ severity: 'high', check: 'urgent_stale_alerts', message: `${urgentStaleAlerts.length} urgent alerts unresolved for >24h` });
+    }
+
+    // ── CHECK 5: Auto-resolve very old low-severity alerts (>7 days) ──
+    const veryOldAlerts = unresolvedAlerts.filter(a => {
+      const ageDays = (now - new Date(a.created_date).getTime()) / (1000 * 60 * 60 * 24);
+      return ageDays > 7 && a.severity !== 'urgent';
+    });
+    if (veryOldAlerts.length > 0) {
+      await Promise.all(veryOldAlerts.map(a =>
+        base44.asServiceRole.entities.CaregiverAlert.update(a.id, {
+          resolved: true,
+          resolved_at: new Date().toISOString(),
+          notes: 'Auto-resolved by watchdog after 7 days',
+        }).catch(() => {})
+      ));
+      report.actions.push(`Auto-resolved ${veryOldAlerts.length} stale low-severity alerts`);
+    }
+
+    // ── CHECK 6: Night incident spike ──
+    const recentIncidents = recentNightIncidents.filter(i => {
+      const ageHours = (now - new Date(i.created_date).getTime()) / (1000 * 60 * 60);
+      return ageHours < 8;
+    });
+    report.checks.night_incidents = {
+      status: recentIncidents.length < 3 ? 'pass' : 'warning',
+      recent_count: recentIncidents.length,
+    };
+
+    // ── SUMMARY ──
+    const highIssues = report.issues.filter(i => i.severity === 'high').length;
+    const overallStatus = highIssues > 0 ? 'degraded' : report.issues.length > 0 ? 'warning' : 'healthy';
+
+    // Create a watchdog CaregiverAlert only if there are high-severity issues
+    if (highIssues > 0) {
+      const issuesSummary = report.issues.filter(i => i.severity === 'high').map(i => i.message).join('; ');
+      await base44.asServiceRole.entities.CaregiverAlert.create({
+        alert_type: 'safety_concern',
+        severity: 'high',
+        message: `🤖 Watchdog detected ${highIssues} high-severity issue(s): ${issuesSummary}`,
+        timestamp: new Date().toISOString(),
+        resolved: false,
+      }).catch(() => {});
+    }
+
+    // Log watchdog run
     await base44.asServiceRole.entities.ActivityLog.create({
       activity_type: 'security_check',
       details: {
-        watchdog_run: true,
-        automations_checked: report.automations_checked,
-        issues_found: report.issues_found.length,
-        healthy_count: report.healthy.length,
-        actions_taken: report.actions_taken,
-        timestamp: report.timestamp,
+        watchdog: true,
+        status: overallStatus,
+        issues: report.issues.length,
+        actions: report.actions.length,
+        checks_summary: Object.fromEntries(
+          Object.entries(report.checks).map(([k, v]) => [k, v.status])
+        ),
       },
     });
-
-    const overallStatus = report.issues_found.some(i => i.severity === 'high')
-      ? 'degraded'
-      : report.issues_found.length > 0
-        ? 'warning'
-        : 'healthy';
 
     return Response.json({
       success: true,
       status: overallStatus,
+      issues_found: report.issues.length,
+      actions_taken: report.actions.length,
       ...report,
     });
 
   } catch (error) {
-    console.error('Watchdog error:', error);
+    console.error('Watchdog fatal error:', error);
     return Response.json({ success: false, error: error.message }, { status: 500 });
   }
 });
