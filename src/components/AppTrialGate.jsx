@@ -48,8 +48,14 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
     const savedEmail = localStorage.getItem(TRIAL_KEY);
     if (savedEmail) {
       try {
-        const trials = await base44.entities.FreeTrialUser.filter({ email: savedEmail });
-        if (trials.length > 0) {
+        const { data: trials, error } = await supabase
+          .from('FreeTrialUser')
+          .select('*')
+          .eq('email', savedEmail);
+        
+        if (error) throw error;
+        
+        if (trials && trials.length > 0) {
           const trial = trials[0];
           const now = new Date();
           const end = new Date(trial.trial_end_date);
