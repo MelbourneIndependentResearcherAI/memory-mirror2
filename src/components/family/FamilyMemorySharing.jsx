@@ -190,7 +190,7 @@ export default function FamilyMemorySharing() {
             Family Memory Library
           </h2>
           <p className="text-slate-600 dark:text-slate-400 mt-2">
-            Share stories, photos, and audio with your loved one and care team
+            Share stories, photos, and audio privately with your linked family & care team only
           </p>
         </div>
         <Button
