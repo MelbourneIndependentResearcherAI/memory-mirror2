@@ -138,9 +138,10 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
     setSubmitting(false);
   };
 
-  // Always allow open pages and admin users
+  // Always allow open pages, admin users, free tier users, and subscribed users
   const isOpenPage = OPEN_PAGES.includes(currentPageName);
-  if (isOpenPage || isAdmin) {
+  const isFreeTierUser = localStorage.getItem('mm_free_tier_user') === 'true';
+  if (isOpenPage || isAdmin || isFreeTierUser) {
     return <>{children}</>;
   }
 
