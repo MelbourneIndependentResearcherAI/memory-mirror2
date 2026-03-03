@@ -34,7 +34,7 @@ export default function CognitiveAssessmentLink() {
 
   return (
     <>
-      <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 md:p-12 border border-blue-200 dark:border-blue-800">
+      <div className="w-full bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-6 md:p-8 border border-blue-200 dark:border-blue-800">
         <div className="flex items-start gap-6">
           <div className="flex-shrink-0 p-4 bg-blue-100 dark:bg-blue-900 rounded-xl">
             <Brain className="w-8 h-8 text-blue-600 dark:text-blue-400" />
