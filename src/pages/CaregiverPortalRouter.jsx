@@ -58,6 +58,7 @@ function CaregiverPortalHome() {
   const navigate = useNavigate();
   const [_badDayActivated, setBadDayActivated] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState(false);
+  const [adminChecked, setAdminChecked] = React.useState(false);
 
   React.useEffect(() => {
     const checkAdmin = async () => {
@@ -66,6 +67,8 @@ function CaregiverPortalHome() {
         setIsAdmin(user?.role === 'admin');
       } catch (error) {
         console.error('Failed to check admin status:', error);
+      } finally {
+        setAdminChecked(true);
       }
     };
     checkAdmin();
