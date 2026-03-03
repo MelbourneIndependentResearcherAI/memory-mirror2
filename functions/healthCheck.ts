@@ -44,22 +44,23 @@ Deno.serve(async (req) => {
     const entityCheckStart = Date.now();
     try {
       const entities = ['UserProfile', 'CareJournal', 'Memory', 'ActivityLog', 'Reminder'];
-      const entityResults = {};
       
-      for (const entity of entities) {
+      const entityChecks = await Promise.all(entities.map(async (entity) => {
         try {
           const count = await base44.asServiceRole.entities[entity].list('-created_date', 1);
-          entityResults[entity] = { status: 'pass', recordCount: count.length };
+          return [entity, { status: 'pass', recordCount: count.length }];
         } catch (err) {
-          entityResults[entity] = { status: 'fail', error: err.message };
           healthReport.issues.push({
             severity: 'high',
             component: 'entities',
             message: `Entity ${entity} check failed`,
             error: err.message
           });
+          return [entity, { status: 'fail', error: err.message }];
         }
-      }
+      }));
+      
+      const entityResults = Object.fromEntries(entityChecks);
       
       healthReport.checks.entities = {
         status: Object.values(entityResults).every(r => r.status === 'pass') ? 'pass' : 'partial',
