@@ -99,7 +99,7 @@ export default function QuickAccess() {
         onTouchEnd={() => setPressing(false)}
         className={`
           relative z-10
-          w-80 h-80 md:w-[28rem] md:h-[28rem] lg:w-[32rem] lg:h-[32rem]
+          w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96
           rounded-full
           bg-gradient-to-br from-white via-red-50 to-white
           shadow-2xl
