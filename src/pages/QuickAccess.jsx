@@ -135,7 +135,7 @@ export default function QuickAccess() {
       </button>
 
       {/* Instruction text - Premium */}
-      <div className="relative mt-16 text-center animate-fade-in-up animation-delay-200 z-10">
+      <div className="relative mt-8 text-center animate-fade-in-up animation-delay-200 z-10">
         <p className="text-2xl md:text-3xl lg:text-4xl text-white font-bold drop-shadow-2xl max-w-2xl leading-relaxed">
           Just press the big button anytime you want to talk to your companion
         </p>
