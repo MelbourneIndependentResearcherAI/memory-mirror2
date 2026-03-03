@@ -45,26 +45,7 @@ function LayoutContent({ children, currentPageName }) {
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
   
-  // Check subscription access - allow pages to render while loading
-  useEffect(() => {
-    // Don't block while loading or if no subscription data yet
-    if (isLoading || !subscriptionData) return;
-    
-    // Pages that are always accessible regardless of subscription
-    const openPages = [
-      'Paywall', 'Landing', 'CaregiverPortal', 'Registration', 'Pricing',
-      'FAQ', 'PrivacyPolicy', 'TermsOfService', 'Resources', 'SubscriptionStatus',
-      'AccessibilityStatement', 'DiagnosticTest', 'AdminSubscriptions'
-    ];
-    const isOpenPage = openPages.includes(currentPageName);
-
-    // User has valid access if subscribed (covers trial, free tier, paid) OR admin
-    const hasValidAccess = subscriptionData?.isSubscribed || subscriptionData?.isAdmin;
-
-    if (!hasValidAccess && !isOpenPage) {
-      navigate('/paywall');
-    }
-  }, [isLoading, subscriptionData, currentPageName, navigate]);
+  // No longer redirecting to paywall — AppTrialGate handles access control inline
 
   // Main bottom tab pages for page transitions
   const mainPages = ['Home', 'ChatMode', 'PhoneMode', 'Security', 'NightWatch', 'OfflineAudio', 'SyncBackup', 'Feedback'];
