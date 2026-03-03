@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/components/utils/supabaseClient';
 import { isFreeTrial, hasTrialExpired } from '@/components/subscription/FreeTrialManager';
 
 function getFreeTierUser() {
@@ -44,7 +44,7 @@ export function useSubscriptionStatus() {
     queryKey: ['subscription'],
     queryFn: async () => {
       try {
-        const user = await base44.auth.me();
+        const { data: { user } } = await supabase.auth.getUser();
         
         // Check free trial + free tier status
         const isFreeTierUser = getFreeTierUser();
@@ -66,9 +66,12 @@ export function useSubscriptionStatus() {
         }
 
         // User is authenticated - fetch fresh subscription data
-        const subscriptions = await base44.entities.Subscription.filter({
-          user_email: user.email
-        });
+        const { data: subscriptions = [], error: subError } = await supabase
+          .from('Subscription')
+          .select('*')
+          .eq('user_email', user.email);
+        
+        if (subError) throw subError;
 
         // Check for active or pending premium subscription
         const validSubscription = subscriptions.find(
