@@ -9,7 +9,9 @@ const FREE_TIER_KEY = "mm_free_tier_user";
 const TRIAL_KEY = "mm_trial_registered";
 
 export default function AppTrialGate({ children, currentPageName, isAdmin }) {
-  const [status, setStatus] = useState("loading"); // loading | open | registered | expired | show_form
+  // Start as "open" for open pages immediately to avoid blank screen flash
+  const initialStatus = OPEN_PAGES.includes(currentPageName) ? "open" : "loading";
+  const [status, setStatus] = useState(initialStatus);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
