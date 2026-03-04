@@ -144,17 +144,17 @@ export default function Landing() {
       </div>
 
       {/* Testimonials */}
-      <div className="px-5 max-w-2xl mx-auto mb-10">
-        <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4">What families say</h2>
-        <div className="space-y-3">
+      <div className="px-6 max-w-3xl mx-auto mb-14">
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-6">What families say</h2>
+        <div className="space-y-4">
           {[
             { quote: '"My mom finally smiles again. She talks to Memory Mirror like an old friend."', name: 'Sarah M.', location: 'Adelaide' },
             { quote: '"The music therapy is incredible. My dad lights up every time."', name: 'James L.', location: 'Melbourne' },
             { quote: '"As a care home manager, this has been a game-changer for our residents."', name: 'Margaret T.', location: 'Brisbane' },
           ].map((t, i) => (
-            <div key={i} className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
-              <p className="text-sm text-slate-700 dark:text-slate-300 italic mb-2">{t.quote}</p>
-              <p className="text-xs font-semibold text-slate-900 dark:text-white">{t.name} <span className="font-normal text-slate-400">· {t.location}</span></p>
+            <div key={i} className="group bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-6 hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-lg transition-all duration-300">
+              <p className="text-base text-slate-700 dark:text-slate-300 italic mb-3 font-light leading-relaxed">{t.quote}</p>
+              <p className="text-sm font-bold text-slate-900 dark:text-white">{t.name} <span className="font-normal text-slate-500 dark:text-slate-400">· {t.location}</span></p>
             </div>
           ))}
         </div>
