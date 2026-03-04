@@ -43,15 +43,21 @@ export default function VoiceCloningManager() {
       });
       setCloningProgress(70);
 
-      if (!cloneResult.data.success) {
-        throw new Error(cloneResult.data.error || 'Voice cloning failed');
+      if (!cloneResult.data?.success) {
+        throw new Error(cloneResult.data?.error || 'Voice cloning failed');
       }
 
-      // Get audio duration
+      // Get audio duration with timeout fallback (webm files often lack metadata)
       const audio = new Audio(URL.createObjectURL(data.audioFile));
       const duration = await new Promise((resolve) => {
+        const timeout = setTimeout(() => resolve(data.recordingDuration || 0), 3000);
         audio.addEventListener('loadedmetadata', () => {
-          resolve(audio.duration);
+          clearTimeout(timeout);
+          resolve(isFinite(audio.duration) ? audio.duration : (data.recordingDuration || 0));
+        });
+        audio.addEventListener('error', () => {
+          clearTimeout(timeout);
+          resolve(data.recordingDuration || 0);
         });
       });
 
