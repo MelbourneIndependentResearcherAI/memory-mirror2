@@ -127,7 +127,7 @@ export default function UserRegistrationGate() {
         </form>
 
         <p className="text-center text-xs text-slate-400 dark:text-slate-500 mt-4">
-          Your email is used only to keep you updated. We never share it. No spam.
+          Free forever. No credit card required.
         </p>
       </div>
     </div>
