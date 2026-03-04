@@ -5,7 +5,7 @@ import { useFeatureLock } from '@/components/FeatureLockManager';
 import FeatureLockModal from '@/components/FeatureLockModal';
 import { toast } from 'sonner';
 
-export default function ChatMode({ onEraChange, onModeSwitch, onBadDayActivated: _onBadDayActivated }) {
+export default function ChatMode({ onEraChange, onModeSwitch }) {
   const [showMemoryGallery, setShowMemoryGallery] = useState(false);
   const [detectedEra, setDetectedEra] = useState('present');
   const [_wakeWordActive, _setWakeWordActive] = useState(true);
