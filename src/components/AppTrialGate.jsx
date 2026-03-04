@@ -200,12 +200,11 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Your Free Trial Has Ended</h1>
           <p className="text-gray-500 mb-6">Subscribe to continue using all features, or continue with the free tier.</p>
           <div className="space-y-3">
-            <Button
-              className="w-full bg-purple-600 hover:bg-purple-700"
-              onClick={() => window.location.href = createPageUrl("Pricing")}
-            >
-              View Subscription Plans
-            </Button>
+            <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 text-center">
+              <p className="text-sm font-semibold text-purple-800 mb-1">To subscribe visit</p>
+              <a href="https://memory-mirror.app" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-purple-600 underline">memory-mirror.app</a>
+              <p className="text-sm text-gray-500 mt-1">Founder pricing — $9.99/month</p>
+            </div>
             <Button variant="outline" className="w-full" onClick={handleFreeTier}>
               Continue with Free Tier (limited)
             </Button>
