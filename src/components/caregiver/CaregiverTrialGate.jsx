@@ -140,7 +140,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
         <div className="text-center mb-8">
           <div className="text-5xl mb-3">🧠</div>
           <h1 className="text-3xl font-bold text-slate-900 dark:text-white mb-2">Caregiver Portal</h1>
-          <p className="text-slate-500 dark:text-slate-400">Start your free 3-day trial to access all caregiver tools</p>
+          <p className="text-slate-500 dark:text-slate-400">Start your free 7-day trial to access all caregiver tools</p>
         </div>
 
         {/* Features */}
