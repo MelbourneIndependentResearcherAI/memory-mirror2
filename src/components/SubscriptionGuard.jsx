@@ -44,7 +44,27 @@ export function useSubscriptionStatus() {
     queryKey: ['subscription'],
     queryFn: async () => {
       try {
-        const { data: { user } } = await supabase.auth.getUser();
+        // Always check Base44 auth first (primary auth for this app)
+        let base44User = null;
+        try {
+          const { base44 } = await import('@/api/base44Client');
+          base44User = await base44.auth.me();
+        } catch {}
+
+        // Supabase auth as secondary check (may not be configured)
+        let user = null;
+        if (supabase) {
+          try {
+            const { data } = await supabase.auth.getUser();
+            user = data?.user || null;
+          } catch {}
+        }
+
+        // Use Base44 user as primary identity
+        if (base44User) {
+          user = user || { email: base44User.email, id: base44User.id };
+        }
+        const { data: { user: _unused } } = { data: { user } };
         
         // Check free trial + free tier status
         const isFreeTierUser = getFreeTierUser();
