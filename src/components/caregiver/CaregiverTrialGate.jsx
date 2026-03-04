@@ -207,7 +207,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
           </form>
 
           <p className="text-center text-xs text-slate-400 mt-4">
-            No credit card required · Cancel anytime · Trial lasts 3 days
+          No credit card required · Cancel anytime · Trial lasts 7 days
           </p>
         </Card>
 
