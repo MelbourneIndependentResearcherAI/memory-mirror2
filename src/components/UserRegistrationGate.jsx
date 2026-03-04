@@ -71,7 +71,7 @@ export default function UserRegistrationGate() {
             Compassionate AI companion for dementia care — completely free, forever.
           </p>
           <p className="text-slate-400 dark:text-slate-500 text-xs mt-2">
-            Please introduce yourself so we can personalise your experience.
+            Tell us a little about yourself to get started.
           </p>
         </div>
 
