@@ -253,7 +253,8 @@ export default function VoiceCloningManager() {
       await createVoiceMutation.mutateAsync({
         audioFile: selectedFile,
         voiceName,
-        relationship
+        relationship,
+        recordingDuration: audioQuality?.duration || 0
       });
     } finally {
       setIsUploading(false);
