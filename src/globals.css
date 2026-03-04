@@ -309,13 +309,45 @@
     font-size: 1.125rem;
   }
 
-  /* Large Touch Targets - Accessibility */
+  /* Android Material Design 3 Touch Targets - 48dp minimum */
   button,
   a,
   input[type="checkbox"],
   input[type="radio"] {
-    min-height: 44px;
-    min-width: 44px;
+    min-height: 48px;
+    min-width: 48px;
+  }
+
+  /* Selection Controls with Enhanced Touch */
+  input[type="checkbox"],
+  input[type="radio"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    margin: 12px;
+    cursor: pointer;
+    border: 2px solid hsl(var(--border));
+    border-radius: 4px;
+    background: hsl(var(--background));
+    transition: all 0.2s;
+  }
+
+  input[type="radio"] {
+    border-radius: 50%;
+  }
+
+  input[type="checkbox"]:checked,
+  input[type="radio"]:checked {
+    background: #9333ea;
+    border-color: #9333ea;
+  }
+
+  input[type="checkbox"]:focus,
+  input[type="radio"]:focus {
+    box-shadow: 0 0 0 8px rgba(147, 51, 234, 0.2);
+    outline: none;
   }
 
   /* Form Accessibility */
@@ -336,6 +368,16 @@
     border-color: #9333ea;
     box-shadow: 0 0 0 4px rgba(147, 51, 234, 0.1);
     outline: none;
+  }
+
+  /* Select Dropdown Material Design 3 */
+  select {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 20px;
+    padding-right: 40px;
   }
 
   /* Link Accessibility - WCAG 2.1 1.4.1 */
