@@ -321,23 +321,59 @@ export default function GeofenceManager() {
                              ))}
                            </div>
                            <div className="space-y-2">
-                             <Input
-                               value={editingEmails}
-                               onChange={(e) => setEditingEmails(e.target.value)}
-                               placeholder="email1@example.com, email2@example.com"
-                               className="text-sm"
-                             />
-                             <div className="max-h-24 overflow-y-auto">
-                               {emergencyContacts.map(contact => (
-                                 <button
-                                   key={contact.id}
-                                   onClick={() => addContactEmail(contact.phone)}
-                                   className="block w-full text-left p-2 text-sm hover:bg-slate-100 rounded truncate"
-                                 >
-                                   {contact.icon} {contact.name} ({contact.phone})
-                                 </button>
-                               ))}
-                             </div>
+                             {showNewContactForm ? (
+                               <div className="p-2 border rounded-lg bg-blue-50 space-y-2">
+                                 <Input
+                                   placeholder="Contact Name"
+                                   value={newContact.name}
+                                   onChange={(e) => setNewContact({ ...newContact, name: e.target.value })}
+                                   className="text-sm"
+                                 />
+                                 <Input
+                                   placeholder="Email or Phone"
+                                   value={newContact.phone}
+                                   onChange={(e) => setNewContact({ ...newContact, phone: e.target.value })}
+                                   className="text-sm"
+                                 />
+                                 <Input
+                                   placeholder="Relationship (optional)"
+                                   value={newContact.relationship}
+                                   onChange={(e) => setNewContact({ ...newContact, relationship: e.target.value })}
+                                   className="text-sm"
+                                 />
+                                 <div className="flex gap-2">
+                                   <Button size="sm" onClick={() => createContactMutation.mutate(newContact)} className="flex-1">
+                                     Add
+                                   </Button>
+                                   <Button size="sm" variant="outline" onClick={() => setShowNewContactForm(false)} className="flex-1">
+                                     Cancel
+                                   </Button>
+                                 </div>
+                               </div>
+                             ) : (
+                               <>
+                                 <Input
+                                   value={editingEmails}
+                                   onChange={(e) => setEditingEmails(e.target.value)}
+                                   placeholder="email1@example.com, email2@example.com"
+                                   className="text-sm"
+                                 />
+                                 <Button size="sm" variant="outline" onClick={() => setShowNewContactForm(true)} className="w-full">
+                                   <Plus className="w-3 h-3 mr-1" /> New Contact
+                                 </Button>
+                                 <div className="max-h-24 overflow-y-auto">
+                                   {emergencyContacts.map(contact => (
+                                     <button
+                                       key={contact.id}
+                                       onClick={() => addContactEmail(contact.phone)}
+                                       className="block w-full text-left p-2 text-sm hover:bg-slate-100 rounded truncate"
+                                     >
+                                       {contact.icon} {contact.name} ({contact.phone})
+                                     </button>
+                                   ))}
+                                 </div>
+                               </>
+                             )}
                            </div>
                            <div className="flex gap-2">
                              <Button size="sm" onClick={() => handleSaveContacts(zone.id)} className="flex-1">
