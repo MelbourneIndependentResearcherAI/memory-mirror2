@@ -228,9 +228,20 @@ export default function LiveLocationTracker() {
     };
   }, [activeZones.length]); // Only re-track when zone count changes
 
-  const mapCenter = latestLocation 
+  const [deviceLocation, setDeviceLocation] = useState(null);
+
+  useEffect(() => {
+    if (!latestLocation && navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setDeviceLocation([pos.coords.latitude, pos.coords.longitude]),
+        () => {}
+      );
+    }
+  }, [latestLocation]);
+
+  const mapCenter = latestLocation
     ? [latestLocation.latitude, latestLocation.longitude]
-    : [-37.8136, 144.9631]; // Default to Melbourne
+    : deviceLocation || null;
 
   return (
     <div className="space-y-4">

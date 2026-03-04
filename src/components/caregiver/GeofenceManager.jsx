@@ -1,13 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { MapPin, AlertTriangle, Plus, Trash2, Navigation } from 'lucide-react';
+import { MapPin, AlertTriangle, Plus, Trash2, Navigation, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { MapContainer, TileLayer, Circle, Marker, useMapEvents } from 'react-leaflet';
+import { MapContainer, TileLayer, Circle, Marker, useMapEvents, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 
 function LocationPicker({ position, setPosition, radius }) {
@@ -29,6 +29,14 @@ function LocationPicker({ position, setPosition, radius }) {
   ) : null;
 }
 
+function MapRecenter({ center }) {
+  const map = useMap();
+  useEffect(() => {
+    if (center) map.flyTo([center.lat, center.lng], 15);
+  }, [center, map]);
+  return null;
+}
+
 export default function GeofenceManager() {
   const queryClient = useQueryClient();
   const [showAddForm, setShowAddForm] = useState(false);
@@ -37,11 +45,20 @@ export default function GeofenceManager() {
   const [radius, setRadius] = useState(50);
   const [alertEmails, setAlertEmails] = useState('');
   const [currentLocation, setCurrentLocation] = useState(null);
+  const [locating, setLocating] = useState(false);
 
   useEffect(() => {
-    // Set default map center to Sydney, Australia for initialization
-    if (!currentLocation && !position) {
-      setCurrentLocation({ lat: -33.8688, lng: 151.2093 }); // Sydney coordinates
+    // Auto-get real location on mount
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setCurrentLocation({ lat: pos.coords.latitude, lng: pos.coords.longitude });
+        },
+        () => {
+          // Silently fall back — no hardcoded default shown
+        },
+        { timeout: 8000 }
+      );
     }
   }, []);
 
