@@ -37,14 +37,8 @@ export default function Home() {
           <span className="text-lg font-semibold">Talking with Your Companion</span>
         </div>
         <div className="flex-1">
-          <ChatMode onBadDayActivated={() => setShowBadDayMode(true)} />
+          <ChatMode />
         </div>
-
-        {showBadDayMode && (
-          <Suspense fallback={null}>
-            <BadDayMode onClose={() => setShowBadDayMode(false)} userProfile={userProfile} />
-          </Suspense>
-        )}
       </div>
     );
   }
