@@ -116,12 +116,12 @@ export default function Landing() {
       {/* CTA */}
       <div className="px-5 max-w-sm mx-auto mb-10 text-center">
         <button
-          onClick={handleGetStarted}
+          onClick={() => navigate(createPageUrl('Home'))}
           className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl py-4 text-base shadow-lg active:scale-95 transition-all duration-150"
         >
-          ✨ Start Free 3-Day Trial
+          ✨ Get Started — Completely Free
         </button>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">No credit card required</p>
+        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">No sign-up required · Always free</p>
       </div>
 
       {/* Testimonials */}
