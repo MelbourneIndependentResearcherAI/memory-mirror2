@@ -150,13 +150,7 @@ function LayoutContent({ children, currentPageName }) {
         <AppStateProvider>
           <LockModeProvider>
             <FeatureLockProvider>
-              <Suspense fallback={null}>
-                <SessionTimeoutManager />
-                <OfflineIndicator />
-                <OfflineSyncStatus />
-                <OfflineFeaturesBadge />
-                <ScrollToTop />
-              </Suspense>
+
               
               {requiresRegistration && <UserRegistrationGate />}
 
