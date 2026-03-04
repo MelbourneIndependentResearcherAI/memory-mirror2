@@ -101,24 +101,25 @@ export default function GeofenceManager() {
   };
 
   const getCurrentLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const newPos = {
-            lat: pos.coords.latitude,
-            lng: pos.coords.longitude
-          };
-          setCurrentLocation(newPos);
-          setPosition(newPos);
-          toast.success('Location found');
-        },
-        (error) => {
-          toast.error('Could not get location: ' + error.message);
-        }
-      );
-    } else {
-      toast.error('Geolocation not supported');
+    if (!navigator.geolocation) {
+      toast.error('Geolocation not supported on this device');
+      return;
     }
+    setLocating(true);
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const newPos = { lat: pos.coords.latitude, lng: pos.coords.longitude };
+        setCurrentLocation(newPos);
+        setPosition(newPos);
+        setLocating(false);
+        toast.success('Location found');
+      },
+      (error) => {
+        setLocating(false);
+        toast.error('Could not get location: ' + error.message);
+      },
+      { enableHighAccuracy: true, timeout: 15000 }
+    );
   };
 
   const handleCreateZone = () => {
