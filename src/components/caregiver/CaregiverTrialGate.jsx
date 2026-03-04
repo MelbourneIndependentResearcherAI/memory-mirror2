@@ -117,15 +117,16 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Your free trial has ended</h2>
         <p className="text-slate-500">Your 3-day free trial for <strong>{trialData?.name || 'the Caregiver Portal'}</strong> has expired.</p>
         <Card className="p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 border-purple-200 dark:border-purple-700">
-          <p className="font-semibold text-slate-800 dark:text-white mb-2">Get full access for just $19.99/month</p>
           <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1 mb-4 text-left">
             {['Full Caregiver Portal access', 'AI Care Insights', 'Family collaboration tools', 'Voice cloning & memory tools'].map(f => (
               <li key={f} className="flex items-center gap-2"><CheckCircle2 className="w-3 h-3 text-green-500" />{f}</li>
             ))}
           </ul>
-          <Button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white" onClick={() => window.location.href = '/Pricing'}>
-            <Star className="w-4 h-4 mr-2" /> Subscribe Now
-          </Button>
+          <div className="bg-purple-50 dark:bg-purple-950/40 border border-purple-200 dark:border-purple-700 rounded-xl p-4 text-center">
+            <p className="text-sm font-semibold text-purple-800 dark:text-purple-300 mb-1">To subscribe visit</p>
+            <a href="https://memory-mirror.app" target="_blank" rel="noopener noreferrer" className="text-lg font-bold text-purple-600 dark:text-purple-400 underline">memory-mirror.app</a>
+            <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">Founder pricing — $9.99/month</p>
+          </div>
         </Card>
       </div>
     );
