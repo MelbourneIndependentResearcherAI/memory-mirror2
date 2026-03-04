@@ -18,6 +18,7 @@ const OfflineSyncStatus = lazy(() => import('@/components/memory-mirror/OfflineS
 const OfflineFeaturesBadge = lazy(() => import('@/components/memory-mirror/OfflineFeaturesBadge'));
 const AppTrialGate = lazy(() => import('@/components/AppTrialGate'));
 import UserRegistrationGate from '@/components/UserRegistrationGate';
+import { AuthProvider } from '@/components/AuthProvider';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
