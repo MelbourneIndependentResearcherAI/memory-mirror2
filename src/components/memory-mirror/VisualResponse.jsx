@@ -76,10 +76,10 @@ export default function VisualResponse({ suggestions, onClose }) {
         {/* Close Button */}
         <button
           onClick={onClose}
-          className="absolute top-2 right-2 bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 rounded-full p-2 transition-colors"
+          className="absolute top-4 right-4 bg-red-500 hover:bg-red-600 rounded-full p-3 transition-colors z-50 shadow-lg min-h-[44px] min-w-[44px] flex items-center justify-center"
           aria-label="Close"
         >
-          <X className="w-5 h-5 text-slate-900 dark:text-white" />
+          <X className="w-6 h-6 text-white" />
         </button>
 
         {/* Counter */}
