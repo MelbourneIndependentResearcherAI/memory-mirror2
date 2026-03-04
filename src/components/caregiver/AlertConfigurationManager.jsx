@@ -99,7 +99,17 @@ export default function AlertConfigurationManager({ patientProfileId }) {
 
   const handleEdit = (condition) => {
     setFormData(condition);
+    setSelectedContacts(condition.alert_contact_ids || []);
     setEditingId(condition.id);
+  };
+
+  const toggleContact = (contactId) => {
+    setSelectedContacts(prev =>
+      prev.includes(contactId)
+        ? prev.filter(id => id !== contactId)
+        : [...prev, contactId]
+    );
+    setFormData({ ...formData, alert_contact_ids: selectedContacts.includes(contactId) ? selectedContacts.filter(id => id !== contactId) : [...selectedContacts, contactId] });
   };
 
   const alertTypes = [
