@@ -132,14 +132,15 @@ export default function Landing() {
       </div>
 
       {/* CTA */}
-      <div className="px-5 max-w-sm mx-auto mb-10 text-center">
+      <div className="px-6 max-w-sm mx-auto mb-14 text-center">
         <button
           onClick={() => navigate(createPageUrl('Home'))}
-          className="w-full bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white font-bold rounded-xl py-4 text-base shadow-lg active:scale-95 transition-all duration-150"
+          className="w-full bg-gradient-to-r from-green-500 via-emerald-500 to-teal-500 hover:from-green-600 hover:via-emerald-600 hover:to-teal-600 text-white font-black rounded-2xl py-5 text-lg shadow-2xl hover:shadow-2xl active:scale-95 transition-all duration-300 relative overflow-hidden group"
         >
-          ✨ Get Started — Completely Free
+          <div className="absolute inset-0 bg-white/20 group-hover:bg-white/30 transition-all duration-300"></div>
+          <span className="relative z-10 flex items-center justify-center gap-2">✨ Get Started — Completely Free</span>
         </button>
-        <p className="text-xs text-slate-500 dark:text-slate-400 mt-2">No sign-up required · Always free</p>
+        <p className="text-sm text-slate-600 dark:text-slate-400 mt-3 font-medium">No sign-up required · Always free</p>
       </div>
 
       {/* Testimonials */}
