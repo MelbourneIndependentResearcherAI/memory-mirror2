@@ -18,7 +18,6 @@ const OfflineSyncStatus = lazy(() => import('@/components/memory-mirror/OfflineS
 const OfflineFeaturesBadge = lazy(() => import('@/components/memory-mirror/OfflineFeaturesBadge'));
 const AppTrialGate = lazy(() => import('@/components/AppTrialGate'));
 import UserRegistrationGate from '@/components/UserRegistrationGate';
-import { AuthProvider } from '@/components/AuthProvider';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
@@ -29,15 +28,6 @@ function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
-  
-  return (
-    <AuthProvider>
-      <LayoutContentInner children={children} currentPageName={currentPageName} location={location} navigate={navigate} isFreeTierUser={isFreeTierUser} />
-    </AuthProvider>
-  );
-}
-
-function LayoutContentInner({ children, currentPageName, location, navigate, isFreeTierUser }) {
 
   const { pushTab, getPreviousTab } = useTabStack();
   
