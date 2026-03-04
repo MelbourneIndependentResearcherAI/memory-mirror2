@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Shield, Search, Lock, Lightbulb, MessageCircle, Loader2, BookHeart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
-import CameraView from './CameraView';
+
 import SecurityLog from './SecurityLog';
 import AnxietyAlert from './AnxietyAlert';
 import PullToRefresh from '@/components/ui/pull-to-refresh';
@@ -221,11 +221,7 @@ export default function SecurityInterface({ onModeSwitch, onMemoryGalleryOpen })
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
-          {cameras.map((camera, idx) => (
-            <CameraView key={idx} label={camera.label} status={camera.status} />
-          ))}
-        </div>
+
 
         <SecurityLog entries={logs} />
 
