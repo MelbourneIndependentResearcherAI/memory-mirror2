@@ -5,7 +5,6 @@ import { base44 } from '@/api/base44Client';
 
 export default function Home() {
   const [showChat, setShowChat] = useState(false);
-  const [showBadDayMode, setShowBadDayMode] = useState(false);
   const [userProfile, setUserProfile] = useState(null);
   const [greeting, setGreeting] = useState('');
 
