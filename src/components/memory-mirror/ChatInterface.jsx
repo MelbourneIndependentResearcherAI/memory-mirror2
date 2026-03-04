@@ -1554,7 +1554,7 @@ RESPOND NOW - CRITICAL:
       
       <PullToRefresh 
         onRefresh={handleRefresh}
-        className="flex-1 bg-gradient-to-b from-blue-50 via-cyan-50 to-white dark:from-blue-950 dark:via-cyan-950 dark:to-slate-900 min-h-[400px]"
+        className="flex-1 bg-transparent min-h-[400px]"
       >
         <div 
           ref={chatContainerRef}
