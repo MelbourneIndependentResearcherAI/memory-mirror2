@@ -288,7 +288,9 @@ export default function CareJournal({ onBack }) {
           >
             {isUploading ? (
               <>
-                <Upload className="w-5 h-5 mr-2 animate-spin" />
+                <span className="inline-block animate-spin mr-2">
+                  <Upload className="w-5 h-5" />
+                </span>
                 Saving...
               </>
             ) : (
