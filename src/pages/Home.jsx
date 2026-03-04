@@ -74,20 +74,7 @@ export default function Home() {
           <span className="text-3xl font-bold">Let's Talk</span>
         </button>
 
-        {/* Having a bad day - secondary, gentle */}
-        <button
-          onClick={() => setShowBadDayMode(true)}
-          className="mt-10 px-8 py-4 bg-purple-100 dark:bg-purple-900/40 text-purple-700 dark:text-purple-300 rounded-2xl text-xl font-semibold shadow-sm active:scale-95 transition-all"
-        >
-          💜 Having a tough day?
-        </button>
       </div>
-
-      {showBadDayMode && (
-        <Suspense fallback={null}>
-          <BadDayMode onClose={() => setShowBadDayMode(false)} userProfile={userProfile} />
-        </Suspense>
-      )}
     </div>
   );
 }
