@@ -88,26 +88,26 @@ export default function Landing() {
       </div>
 
       {/* Key Features */}
-      <div className="px-5 max-w-2xl mx-auto mb-10">
-        <h2 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-4">Key Features</h2>
-        <div className="grid grid-cols-2 gap-3">
+      <div className="px-6 max-w-3xl mx-auto mb-14">
+        <h2 className="text-2xl font-black text-slate-900 dark:text-white mb-6">Key Features</h2>
+        <div className="grid grid-cols-2 gap-4">
           {features.map(({ icon: Icon, label, desc, page, color }) => (
             <button
               key={label}
               onClick={() => navigate(createPageUrl(page))}
-              className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-left hover:shadow-md active:scale-95 transition-all duration-150"
+              className="group bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700/50 rounded-2xl p-5 text-left hover:border-slate-300 dark:hover:border-slate-600 hover:shadow-lg active:scale-95 transition-all duration-300"
             >
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-2 ${color}`}>
-                <Icon className="w-5 h-5" />
+              <div className={`w-11 h-11 rounded-xl flex items-center justify-center mb-3 ${color} group-hover:scale-110 transition-transform duration-300`}>
+                <Icon className="w-6 h-6" />
               </div>
-              <p className="font-semibold text-sm text-slate-900 dark:text-white leading-tight">{label}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{desc}</p>
+              <p className="font-bold text-sm text-slate-900 dark:text-white leading-tight">{label}</p>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-1.5">{desc}</p>
             </button>
           ))}
         </div>
         <button
           onClick={() => navigate(createPageUrl('Home'))}
-          className="mt-3 w-full flex items-center justify-center gap-1 text-sm text-slate-500 dark:text-slate-400 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-2"
+          className="mt-4 w-full flex items-center justify-center gap-1 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-purple-600 dark:hover:text-purple-400 transition-colors py-3"
         >
           See all features <ChevronRight className="w-4 h-4" />
         </button>
