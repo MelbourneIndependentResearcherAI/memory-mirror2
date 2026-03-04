@@ -347,8 +347,15 @@ export default function HandsFreeMode({
         ? `IMPORTANT: Your last response was: "${lastAIResponseRef.current.substring(0, 120)}..." — Do NOT repeat this or say anything similar. Give a fresh, different response.`
         : '';
 
+      const userName = userProfile?.greeting_name || userProfile?.loved_one_name || userProfile?.preferred_name || null;
+      const userNameLine = userName
+        ? `The person you are speaking with is named ${userName}. Use their name occasionally to feel personal.`
+        : `IMPORTANT: Do NOT invent, assume, or use any name for the person. Never call them "Mary", "John", or any other name unless they tell you their name first.`;
+
       const baseSystemPrompt = currentSystemPrompt ||
         `You are a warm, compassionate AI voice companion for a person with dementia. Your role is to provide comfort, dignity, and emotional support through voice conversation.
+
+${userNameLine}
 
 DEMENTIA CARE PRINCIPLES:
 - NEVER correct, contradict, or tell them they are confused or wrong
