@@ -161,17 +161,17 @@ export default function Landing() {
       </div>
 
       {/* Footer */}
-      <div className="px-5 py-8 bg-slate-900 text-center">
-        <p className="text-white font-semibold text-sm mb-1">Memory Mirror</p>
-        <p className="text-slate-400 text-xs mb-4">Compassionate AI for Dementia Care</p>
-        <div className="flex justify-center gap-4 flex-wrap text-xs text-slate-500 mb-4">
-          <Link to={createPageUrl('Pricing')} className="hover:text-slate-300">Pricing</Link>
-          <Link to={createPageUrl('FAQ')} className="hover:text-slate-300">FAQ</Link>
-          <Link to={createPageUrl('Resources')} className="hover:text-slate-300">Resources</Link>
-          <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-slate-300">Privacy</Link>
-          <Link to={createPageUrl('TermsOfService')} className="hover:text-slate-300">Terms</Link>
+      <div className="px-6 py-12 bg-gradient-to-r from-slate-900 via-slate-950 to-slate-900 text-center border-t border-slate-800">
+        <p className="text-white font-black text-lg mb-2">Memory Mirror</p>
+        <p className="text-slate-400 text-sm mb-6 font-light">Compassionate AI for Dementia Care</p>
+        <div className="flex justify-center gap-6 flex-wrap text-sm text-slate-400 mb-6">
+          <Link to={createPageUrl('Pricing')} className="hover:text-white transition-colors duration-300 font-medium">Pricing</Link>
+          <Link to={createPageUrl('FAQ')} className="hover:text-white transition-colors duration-300 font-medium">FAQ</Link>
+          <Link to={createPageUrl('Resources')} className="hover:text-white transition-colors duration-300 font-medium">Resources</Link>
+          <Link to={createPageUrl('PrivacyPolicy')} className="hover:text-white transition-colors duration-300 font-medium">Privacy</Link>
+          <Link to={createPageUrl('TermsOfService')} className="hover:text-white transition-colors duration-300 font-medium">Terms</Link>
         </div>
-        <button onClick={() => setShowDonationModal(true)} className="text-xs text-slate-500 hover:text-slate-300">
+        <button onClick={() => setShowDonationModal(true)} className="text-sm text-slate-400 hover:text-white transition-colors duration-300 font-medium">
           💙 Support this project
         </button>
       </div>
