@@ -84,13 +84,22 @@ export function useSubscriptionStatus() {
           };
         }
 
-        // User is authenticated - fetch fresh subscription data
-        const { data: subscriptions = [], error: subError } = await supabase
-          .from('Subscription')
-          .select('*')
-          .eq('user_email', user.email);
-        
-        if (subError) throw subError;
+        // User is authenticated - fetch fresh subscription data via Base44 entities
+        let subscriptions = [];
+        try {
+          const { base44: b44 } = await import('@/api/base44Client');
+          subscriptions = await b44.entities.Subscription.filter({ user_email: user.email });
+        } catch {
+          // Fallback to Supabase if available
+          if (supabase) {
+            const { data, error: subError } = await supabase
+              .from('Subscription')
+              .select('*')
+              .eq('user_email', user.email);
+            if (subError) throw subError;
+            subscriptions = data || [];
+          }
+        }
 
         // Check for active or pending premium subscription
         const validSubscription = subscriptions.find(
