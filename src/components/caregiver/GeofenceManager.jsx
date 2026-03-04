@@ -198,24 +198,31 @@ export default function GeofenceManager() {
                 />
               </div>
 
-              <Button onClick={getCurrentLocation} variant="outline" className="w-full">
-                <Navigation className="w-4 h-4 mr-2" />
-                Use Current Location
+              <Button onClick={getCurrentLocation} variant="outline" className="w-full" disabled={locating}>
+                {locating ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Navigation className="w-4 h-4 mr-2" />}
+                {locating ? 'Getting Location...' : 'Use Current Location'}
               </Button>
 
-              <div className="h-64 rounded-lg overflow-hidden border">
-                <MapContainer
-                  center={position ? [position.lat, position.lng] : (currentLocation ? [currentLocation.lat, currentLocation.lng] : [-33.8688, 151.2093])}
-                  zoom={15}
-                  style={{ height: '100%', width: '100%' }}
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; OpenStreetMap contributors'
-                  />
-                  <LocationPicker position={position} setPosition={setPosition} radius={radius} />
-                </MapContainer>
-              </div>
+              {(position || currentLocation) ? (
+                <div className="h-64 rounded-lg overflow-hidden border">
+                  <MapContainer
+                    center={position ? [position.lat, position.lng] : [currentLocation.lat, currentLocation.lng]}
+                    zoom={15}
+                    style={{ height: '100%', width: '100%' }}
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='&copy; OpenStreetMap contributors'
+                    />
+                    <MapRecenter center={position || currentLocation} />
+                    <LocationPicker position={position} setPosition={setPosition} radius={radius} />
+                  </MapContainer>
+                </div>
+              ) : (
+                <div className="h-64 rounded-lg border flex items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-500 text-sm">
+                  Click "Use Current Location" to show map, or tap below to select manually
+                </div>
+              )}
 
               <Button onClick={handleCreateZone} className="w-full" disabled={createZoneMutation.isPending}>
                 {createZoneMutation.isPending ? 'Creating...' : 'Create Safe Zone'}
