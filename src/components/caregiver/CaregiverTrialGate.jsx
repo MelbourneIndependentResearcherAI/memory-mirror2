@@ -95,7 +95,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
     const daysLeft = getDaysRemaining(trialData);
     return (
       <div>
-        {!isAdmin && trialData && daysLeft <= 3 && (
+        {!isAdmin && trialData && daysLeft <= 7 && (
           <div className="mb-4 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-700 rounded-xl px-4 py-3 flex items-center gap-3 text-sm">
             <Clock className="w-4 h-4 text-amber-600 flex-shrink-0" />
             <span className="text-amber-800 dark:text-amber-300">
