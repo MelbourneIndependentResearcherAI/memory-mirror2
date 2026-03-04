@@ -55,9 +55,7 @@ export default function UserRegistrationGate({ children }) {
     toast.success(`Welcome, ${name.trim()}! 💙`);
   };
 
-  if (!checked) return null;
-
-  if (isRegistered) return <>{children}</>;
+  if (!checked || isRegistered) return null;
 
   return (
     <div className="fixed inset-0 z-50 bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 dark:from-slate-950 dark:via-blue-950 dark:to-slate-900 flex items-center justify-center p-4">
