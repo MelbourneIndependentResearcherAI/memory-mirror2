@@ -20,8 +20,19 @@ export default function Landing() {
     <div className="min-h-screen bg-white dark:bg-slate-950">
       <QuickAccessCheck />
 
+      {/* Caregiver Settings - tucked away top right */}
+      <div className="flex justify-end px-4 pt-4">
+        <button
+          onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+          className="w-11 h-11 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center opacity-50 hover:opacity-80 transition-opacity"
+          title="Caregiver Settings"
+        >
+          <Settings className="w-5 h-5 text-slate-500" />
+        </button>
+      </div>
+
       {/* Hero */}
-      <div className="px-5 pt-12 pb-8 max-w-2xl mx-auto text-center">
+      <div className="px-5 pt-6 pb-8 max-w-2xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
           <Heart className="w-3.5 h-3.5" />
           AI Companion for Dementia Care
