@@ -161,14 +161,18 @@ export default function VoiceCloningManager() {
 
       recorder.onstop = () => {
         clearInterval(durationInterval);
-        const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
-        const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
-        setSelectedFile(file);
-        analyzeAudioQuality(blob, Math.floor((Date.now() - startTime) / 1000));
+        const duration = Math.floor((Date.now() - startTime) / 1000);
+        // Small delay to ensure all chunks are collected
+        setTimeout(() => {
+          const blob = new Blob(recordedChunksRef.current, { type: 'audio/webm' });
+          const file = new File([blob], 'recording.webm', { type: 'audio/webm' });
+          setSelectedFile(file);
+          analyzeAudioQuality(blob, duration);
+        }, 100);
         stream.getTracks().forEach(track => track.stop());
       };
 
-      recorder.start(100); // collect data every 100ms
+      recorder.start(250); // collect data every 250ms
       setMediaRecorder(recorder);
       setIsRecording(true);
     } catch {
