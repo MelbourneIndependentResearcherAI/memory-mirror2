@@ -29,6 +29,15 @@ function LayoutContent({ children, currentPageName }) {
   const location = useLocation();
   const navigate = useNavigate();
   const isFreeTierUser = (() => { try { return localStorage.getItem('mm_free_tier_user') === 'true'; } catch { return false; } })();
+  
+  return (
+    <AuthProvider>
+      <LayoutContentInner children={children} currentPageName={currentPageName} location={location} navigate={navigate} isFreeTierUser={isFreeTierUser} />
+    </AuthProvider>
+  );
+}
+
+function LayoutContentInner({ children, currentPageName, location, navigate, isFreeTierUser }) {
 
   const { pushTab, getPreviousTab } = useTabStack();
   
