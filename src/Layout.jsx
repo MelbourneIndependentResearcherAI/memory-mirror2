@@ -244,8 +244,10 @@ function LayoutContentInner({ children, currentPageName, location, navigate, isF
 
 export default function Layout({ children, currentPageName }) {
   return (
-    <TabStackProvider>
-      <LayoutContent children={children} currentPageName={currentPageName} />
-    </TabStackProvider>
+    <AuthProvider>
+      <TabStackProvider>
+        <LayoutContent children={children} currentPageName={currentPageName} />
+      </TabStackProvider>
+    </AuthProvider>
   );
 }
