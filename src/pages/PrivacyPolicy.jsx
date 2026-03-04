@@ -60,21 +60,16 @@ export default function PrivacyPolicy() {
           {/* Section 3 */}
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">3. Data Storage and Security</h2>
-            <ul className="list-disc list-inside space-y-2 ml-2 text-slate-300">
-              <li>The App does not store video or audio data on our servers.</li>
-              <li>Any live video streams are transmitted only for the duration of the call.</li>
-              <li>We use industry-standard security measures to protect any optional information you provide.</li>
-            </ul>
+            <p className="text-slate-300">
+              We use industry-standard security measures to protect any optional information you provide. The App does not store sensitive personal data on our servers.
+            </p>
           </section>
 
           {/* Section 4 */}
           <section>
-            <h2 className="text-2xl font-bold text-white mb-4">4. Third-Party Services</h2>
-            <p className="text-slate-300 mb-3">
-              If the App uses third-party services for video transmission (e.g., WebRTC), those services may temporarily process data to enable the call.
-            </p>
+            <h2 className="text-2xl font-bold text-white mb-4">4. Device Permissions</h2>
             <p className="text-slate-300">
-              These services do not store or use your data for any other purpose.
+              This App does not request or use any device permissions. We do not access your camera, microphone, location, contacts, calendar, or any other sensitive device data.
             </p>
           </section>
 
@@ -82,7 +77,7 @@ export default function PrivacyPolicy() {
           <section>
             <h2 className="text-2xl font-bold text-white mb-4">5. Children's Privacy</h2>
             <p className="text-slate-300">
-              The App is not intended for children under 13 unless used with appropriate supervision. We do not knowingly collect personal information from children.
+              The App complies with applicable children's privacy laws. We do not knowingly collect personal information from children under 13.
             </p>
           </section>
 
@@ -91,13 +86,10 @@ export default function PrivacyPolicy() {
             <h2 className="text-2xl font-bold text-white mb-4">6. Your Rights</h2>
             <p className="text-slate-300 mb-3">Depending on your region, you may have rights to:</p>
             <ul className="list-disc list-inside space-y-2 ml-2 text-slate-300">
-              <li>Access information you have provided</li>
+              <li>Access information you have voluntarily provided</li>
               <li>Request deletion of your data</li>
-              <li>Withdraw consent for optional features</li>
+              <li>Contact us with privacy concerns</li>
             </ul>
-            <p className="text-slate-300 mt-3">
-              Since the App does not store video or audio, there is no stored call data to delete.
-            </p>
           </section>
 
           {/* Section 7 */}
