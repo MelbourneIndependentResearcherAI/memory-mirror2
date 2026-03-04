@@ -55,8 +55,10 @@ export default function AlertConfigurationManager({ patientProfileId }) {
         severity: 'medium',
         is_enabled: true,
         cooldown_minutes: 30,
-        notification_method: ['email', 'app_notification']
+        notification_method: ['email', 'app_notification'],
+        alert_contact_ids: []
       });
+      setSelectedContacts([]);
       setIsAdding(false);
       toast.success('Alert condition created');
     },
