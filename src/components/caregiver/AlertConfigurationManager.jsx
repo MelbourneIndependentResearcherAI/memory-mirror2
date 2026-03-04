@@ -10,6 +10,7 @@ export default function AlertConfigurationManager({ patientProfileId }) {
   const queryClient = useQueryClient();
   const [isAdding, setIsAdding] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [selectedContacts, setSelectedContacts] = useState([]);
   const [formData, setFormData] = useState({
     condition_name: '',
     condition_type: 'high_anxiety',
@@ -18,7 +19,8 @@ export default function AlertConfigurationManager({ patientProfileId }) {
     severity: 'medium',
     is_enabled: true,
     cooldown_minutes: 30,
-    notification_method: ['email', 'app_notification']
+    notification_method: ['email', 'app_notification'],
+    alert_contact_ids: []
   });
 
   const { data: conditions = [], isLoading } = useQuery({
