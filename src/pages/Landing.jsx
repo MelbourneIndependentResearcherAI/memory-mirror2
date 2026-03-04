@@ -158,12 +158,6 @@ export default function Landing() {
       </div>
 
       {showDonationModal && <DonationModal onClose={() => setShowDonationModal(false)} />}
-      {showTrialModal && (
-        <FreeTrialRegistration
-          onSuccess={() => { setShowTrialModal(false); navigate(createPageUrl('Home')); }}
-          onClose={() => setShowTrialModal(false)}
-        />
-      )}
     </div>
   );
 }
