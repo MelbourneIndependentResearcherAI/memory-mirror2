@@ -49,7 +49,7 @@ export default function PhoneMode() {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-blue-50 to-cyan-50 dark:from-slate-950 dark:to-blue-950">
+    <div className="h-screen flex flex-col bg-transparent">
       {/* Lock/Unlock Button - Premium Design */}
       <div className="absolute top-4 right-4 z-50">
         <Button
