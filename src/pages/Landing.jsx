@@ -46,14 +46,15 @@ export default function Landing() {
       </div>
 
       {/* Quick Access - Big Button */}
-      <div className="px-5 max-w-sm mx-auto mb-8">
+      <div className="px-6 max-w-sm mx-auto mb-12">
         <button
           onClick={() => navigate(createPageUrl('QuickAccess'))}
-          className="w-full bg-red-500 hover:bg-red-600 active:scale-95 text-white rounded-3xl shadow-xl flex flex-col items-center justify-center gap-2 py-8 transition-all duration-150 border-4 border-white dark:border-slate-800"
+          className="w-full bg-gradient-to-br from-red-500 via-red-600 to-pink-600 hover:from-red-600 hover:via-red-700 hover:to-pink-700 active:scale-95 text-white rounded-3xl shadow-2xl flex flex-col items-center justify-center gap-3 py-10 transition-all duration-300 border-0 relative overflow-hidden group"
         >
-          <span className="text-5xl">🔴</span>
-          <span className="text-2xl font-bold">Quick Access</span>
-          <span className="text-sm opacity-80">One tap to start</span>
+          <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
+          <span className="text-6xl relative z-10 group-hover:scale-110 transition-transform duration-300">🔴</span>
+          <span className="text-3xl font-black relative z-10 tracking-tight">Quick Access</span>
+          <span className="text-sm opacity-90 relative z-10 font-medium">One tap to start</span>
         </button>
       </div>
 
