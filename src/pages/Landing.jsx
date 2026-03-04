@@ -9,7 +9,7 @@ import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 
 const features = [
   { icon: Phone, label: 'Phone Mode', desc: 'Simple large-button calling interface', page: 'PhoneMode', color: 'text-green-600 bg-green-50' },
-  { icon: Shield, label: 'Security Scanner', desc: 'Scam detection & online safety', page: 'Security', color: 'text-blue-600 bg-blue-50' },
+  { icon: Shield, label: 'Home Security Scanner', desc: 'Scam detection & online safety', page: 'Security', color: 'text-blue-600 bg-blue-50' },
   { icon: Moon, label: 'Night Watch', desc: 'Overnight AI monitoring', page: 'NightWatch', color: 'text-indigo-600 bg-indigo-50' },
   { icon: Brain, label: 'Caregiver Dashboard', desc: 'Insights, reports & care management', page: 'CaregiverDashboard', color: 'text-purple-600 bg-purple-50' },
 ];
