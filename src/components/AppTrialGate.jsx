@@ -155,7 +155,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
           <div className="text-4xl mb-4">🧠</div>
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Start Your Free Trial</h1>
-          <p className="text-gray-500 mb-6">Get 3 days of full access to Memory Mirror — no credit card required.</p>
+          <p className="text-gray-500 mb-6">Get 7 days of full access to Memory Mirror — no credit card required.</p>
           <form onSubmit={handleSubmit} className="space-y-4 text-left">
             <div>
               <label className="text-sm font-medium text-gray-700 block mb-1">Your Name</label>
