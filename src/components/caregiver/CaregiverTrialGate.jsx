@@ -162,7 +162,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
         <Card className="p-6 shadow-xl border-0 bg-white dark:bg-slate-900">
           <div className="flex items-center gap-2 mb-5">
             <Shield className="w-5 h-5 text-green-500" />
-            <span className="font-semibold text-slate-800 dark:text-white">Start your free 3-day trial</span>
+            <span className="font-semibold text-slate-800 dark:text-white">Start your free 7-day trial</span>
           </div>
 
           <form onSubmit={handleRegister} className="space-y-4">
