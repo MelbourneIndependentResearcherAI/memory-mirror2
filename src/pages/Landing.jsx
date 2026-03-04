@@ -14,16 +14,7 @@ const features = [
 
 export default function Landing() {
   const [showDonationModal, setShowDonationModal] = useState(false);
-  const [showTrialModal, setShowTrialModal] = useState(false);
   const navigate = useNavigate();
-
-  const handleGetStarted = () => {
-    if (isFreeTrial()) {
-      navigate(createPageUrl('Home'));
-    } else {
-      setShowTrialModal(true);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-slate-950">
