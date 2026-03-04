@@ -114,19 +114,19 @@ export default function Landing() {
       </div>
 
       {/* Trust Badges */}
-      <div className="px-5 max-w-2xl mx-auto mb-10">
-        <div className="bg-slate-50 dark:bg-slate-900 rounded-2xl p-5 grid grid-cols-3 gap-4 text-center">
-          <div>
-            <p className="text-xl font-bold text-blue-600">24/7</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Always Available</p>
+      <div className="px-6 max-w-3xl mx-auto mb-14">
+        <div className="bg-gradient-to-r from-blue-50/50 to-purple-50/50 dark:from-slate-900/50 dark:to-slate-900/50 border border-slate-200/50 dark:border-slate-700/50 rounded-3xl p-8 grid grid-cols-3 gap-6 text-center backdrop-blur-sm">
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <p className="text-3xl font-black bg-gradient-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">24/7</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 font-medium">Always Available</p>
           </div>
-          <div>
-            <p className="text-xl font-bold text-green-600">Free</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Forever, No Cost</p>
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <p className="text-3xl font-black bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">Free</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 font-medium">Forever, No Cost</p>
           </div>
-          <div>
-            <p className="text-xl font-bold text-purple-600">100%</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Private & Secure</p>
+          <div className="group hover:scale-105 transition-transform duration-300">
+            <p className="text-3xl font-black bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">100%</p>
+            <p className="text-xs text-slate-600 dark:text-slate-400 mt-2 font-medium">Private & Secure</p>
           </div>
         </div>
       </div>
