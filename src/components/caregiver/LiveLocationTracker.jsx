@@ -68,16 +68,21 @@ export default function LiveLocationTracker() {
     });
 
     // Check geofence breaches using fresh ref
+    // Only check if GPS accuracy is good enough (don't false-alarm on poor signal)
     let isOutside = false;
     let breachedZone = null;
     let breachDistance = 0;
-    for (const zone of zonesRef.current) {
-      const dist = calculateDistance(latitude, longitude, zone.center_latitude, zone.center_longitude);
-      if (dist > zone.radius_meters) {
-        isOutside = true;
-        breachedZone = zone;
-        breachDistance = dist;
-        break;
+    const GPS_ACCURACY_THRESHOLD = 100; // metres
+    if (accuracy <= GPS_ACCURACY_THRESHOLD) {
+      for (const zone of zonesRef.current) {
+        const dist = calculateDistance(latitude, longitude, zone.center_latitude, zone.center_longitude);
+        // Only breach if outside zone by more than GPS accuracy margin
+        if (dist > zone.radius_meters + accuracy) {
+          isOutside = true;
+          breachedZone = zone;
+          breachDistance = dist;
+          break;
+        }
       }
     }
 
