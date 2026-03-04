@@ -5,9 +5,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Switch } from '@/components/ui/switch';
-import { MapPin, AlertTriangle, Plus, Trash2, Navigation, Loader2 } from 'lucide-react';
+import { MapPin, AlertTriangle, Plus, Trash2, Navigation, Loader2, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { MapContainer, TileLayer, Circle, Marker, useMapEvents, useMap } from 'react-leaflet';
+import { Badge } from '@/components/ui/badge';
 import 'leaflet/dist/leaflet.css';
 
 function LocationPicker({ position, setPosition, radius }) {
