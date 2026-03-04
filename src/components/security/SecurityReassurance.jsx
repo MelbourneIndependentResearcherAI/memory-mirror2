@@ -79,9 +79,9 @@ Important: Be extremely reassuring and calm. This is for someone who may be anxi
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center justify-center gap-3">
           <Shield className="w-10 h-10 text-green-600" />
-          Home Security
+          Home Security Checker
         </h1>
-        <p className="text-gray-600">Your home is safe and protected</p>
+        <p className="text-gray-600">Check if doors are locked and your house is secure</p>
       </div>
 
       {/* Security Status Dashboard */}
