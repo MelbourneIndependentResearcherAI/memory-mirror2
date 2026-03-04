@@ -56,14 +56,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-blue-50 dark:bg-slate-900 flex flex-col">
 
-      {/* Top bar - caregiver access only */}
-      <div className="flex justify-end px-4 pt-4">
-        <Link to={createPageUrl('CaregiverPortal')}>
-          <button className="w-12 h-12 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center shadow-sm opacity-60">
-            <Settings className="w-5 h-5 text-slate-500" />
-          </button>
-        </Link>
-      </div>
+
 
       {/* Main content - centered */}
       <div className="flex-1 flex flex-col items-center justify-center px-6 pb-16 text-center">
