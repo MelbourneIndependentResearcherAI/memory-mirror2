@@ -18,157 +18,134 @@ import CaregiverTrialGate from '@/components/caregiver/CaregiverTrialGate';
 
 
 
-const adminOnlyCards = [
-  { id: 17, title: 'System Monitoring', icon: '🤖', description: '24/7 AI-powered health monitoring & auto-maintenance', path: '/CaregiverPortal/monitoring', background: '#EFF6FF', adminOnly: true },
+const categories = [
+  {
+    label: 'Patient Care',
+    items: [
+      { id: 1, title: 'Health Monitor', icon: '❤️', path: '/HealthMonitor' },
+      { id: 2, title: 'Memory Sessions', icon: '✨', path: '/MemorySessions' },
+      { id: 13, title: 'Activity Reminders', icon: '⏰', path: '/ActivityReminders' },
+      { id: 12, title: 'Bad Day Mode', icon: '💜', path: null },
+    ]
+  },
+  {
+    label: 'Monitoring & Reports',
+    items: [
+      { id: 3, title: 'Insights & Analytics', icon: '📊', path: '/InsightsAnalytics' },
+      { id: 15, title: 'AI Care Insights', icon: '🤖', path: '/AICareInsights' },
+      { id: 8, title: 'Night Watch Log', icon: '🌙', path: '/NightWatchPage' },
+      { id: 24, title: 'Activity Reports', icon: '📋', path: '/ActivityReports' },
+      { id: 5, title: 'Chat History', icon: '💬', path: '/ChatHistory' },
+    ]
+  },
+  {
+    label: 'Media & Memories',
+    items: [
+      { id: 33, title: 'Memory Library', icon: '💝', path: '/FamilyMemoryLibrary', isNew: true },
+      { id: 4, title: 'Photo Library', icon: '📸', path: '/PhotoLibrary' },
+      { id: 6, title: 'Music Player', icon: '🎵', path: '/MusicPlayer' },
+      { id: 19, title: 'Content Library', icon: '📚', path: '/ContentLibrary' },
+      { id: 18, title: 'Family Tree', icon: '🌳', path: '/FamilyTree' },
+    ]
+  },
+  {
+    label: 'Journals & Team',
+    items: [
+      { id: 7, title: 'Care Journal', icon: '📖', path: '/CareJournalPage' },
+      { id: 28, title: 'Shared Journal', icon: '📔', path: '/SharedJournal' },
+      { id: 27, title: 'Care Team', icon: '👥', path: '/CareTeam' },
+      { id: 35, title: 'Carer Messaging', icon: '💬', path: '/CarerMessaging', isNew: true },
+      { id: 29, title: 'Team Notifications', icon: '🔔', path: '/TeamNotifications' },
+      { id: 34, title: 'Family Admin Portal', icon: '👨‍👩‍👧', path: '/FamilyAdminPortal', isNew: true },
+    ]
+  },
+  {
+    label: 'Settings & Safety',
+    items: [
+      { id: 31, title: 'User Profile', icon: '👤', path: '/UserProfile' },
+      { id: 9, title: 'Voice Setup', icon: '🎤', path: '/VoiceSetup' },
+      { id: 14, title: 'Voice Cloning', icon: '🔊', path: '/VoiceCloning' },
+      { id: 32, title: 'Location Safety', icon: '📍', path: '/GeofenceTracking' },
+      { id: 22, title: 'Emergency Alerts', icon: '🚨', path: '/EmergencyAlerts' },
+      { id: 21, title: 'Fake Bank Settings', icon: '🏦', path: '/FakeBankSettings' },
+    ]
+  },
 ];
-
-const regularCards = [
-  { id: 31, title: 'User Profile', icon: '👤', description: 'View and edit the personalization profile for your loved one', path: '/UserProfile', background: '#F0F9FF' },
-  { id: 33, title: 'Family Memory Library', icon: '💝', description: 'Share memories, photos, audio & collaborate with family', path: '/FamilyMemoryLibrary', background: '#FCE7F3', isNew: true },
-  { id: 1, title: 'Health Monitor', icon: '❤️', description: 'View current emotional state and anxiety levels', path: '/HealthMonitor', background: '#FFF5F5' },
-  { id: 2, title: 'Memory Sessions', icon: '✨', description: 'AI-guided interactive memory experiences', path: '/MemorySessions', background: '#FFFBEB' },
-  { id: 3, title: 'Insights & Analytics', icon: '📊', description: 'Emotional trends and cognitive patterns', path: '/InsightsAnalytics', background: '#EFF6FF' },
-  { id: 4, title: 'Photo Library', icon: '📸', description: 'Upload and organize memory photos', path: '/PhotoLibrary', background: '#FAF5FF' },
-  { id: 5, title: 'Chat History', icon: '💬', description: 'Review conversations and key moments', path: '/ChatHistory', background: '#F0FDF4' },
-  { id: 6, title: 'Music Player', icon: '🎵', description: 'Era-specific songs and playlists', path: '/MusicPlayer', background: '#FFF7ED' },
-  { id: 7, title: 'Care Journal', icon: '📖', description: 'Document observations and changes', path: '/CareJournalPage', background: '#F0FDFA' },
-  { id: 8, title: 'Night Watch Log', icon: '🌙', description: 'Review nighttime incidents and patterns', path: '/NightWatchPage', background: '#1E1B4B' },
-  { id: 9, title: 'Voice Setup', icon: '🎤', description: 'Configure always-on wake word detection', path: '/VoiceSetup', background: '#EFF6FF' },
-  { id: 12, title: 'Activate Bad Day Mode', icon: '💜', description: 'Remotely activate calming mode for your loved one', path: null, background: '#FDF2F8' },
-  { id: 13, title: 'Activity Reminders', icon: '⏰', description: 'Set up gentle reminders for daily activities', path: '/ActivityReminders', background: '#FFFBEB' },
-  { id: 14, title: 'Voice Cloning', icon: '🎤', description: 'Clone family voices for personalized comfort', path: '/VoiceCloning', background: '#FDF4FF' },
-  { id: 15, title: 'AI Care Insights', icon: '✨', description: 'Personalized recommendations from intelligent analysis', path: '/AICareInsights', background: '#FAF5FF' },
-  { id: 18, title: 'Family Tree', icon: '🌳', description: 'Build a visual family tree with photos and memories', path: '/FamilyTree', background: '#FEF3C7' },
-  { id: 19, title: 'Content Library', icon: '📚', description: 'Upload personalized stories, music, photos & activities', path: '/ContentLibrary', background: '#F3E8FF' },
-  { id: 21, title: 'Fake Bank Settings', icon: '🏦', description: 'Configure fake bank account balances for patient reassurance', path: '/FakeBankSettings', background: '#E0F2FE' },
-  { id: 32, title: 'Location Safety', icon: '📍', description: 'Set up safe zones and track patient location in real-time', path: '/GeofenceTracking', background: '#D1FAE5' },
-  { id: 22, title: 'Emergency Alerts', icon: '🚨', description: 'Configure emergency contacts and automated alert conditions', path: '/EmergencyAlerts', background: '#FEE2E2' },
-  { id: 24, title: 'Activity Reports', icon: '📊', description: 'Generate daily/weekly/monthly summaries with mood trends & events', path: '/ActivityReports', background: '#E0E7FF' },
-  { id: 27, title: 'Care Team', icon: '👥', description: 'Manage caregivers and collaboration', path: '/CareTeam', background: '#EFF6FF' },
-  { id: 28, title: 'Shared Journal', icon: '📔', description: 'Collaborative care notes and observations', path: '/SharedJournal', background: '#F0F9FF' },
-  { id: 29, title: 'Team Notifications', icon: '🔔', description: 'Alerts and updates for care team', path: '/TeamNotifications', background: '#FEF3C7' },
-  { id: 30, title: 'AI Agent Team', icon: '🤖', description: 'Autonomous maintenance and monitoring agents', path: '/AIAgentTeam', background: '#F0FDF4' },
-  { id: 34, title: 'Family Admin Portal', icon: '👨‍👩‍👧', description: 'Manage family member permissions, care goals, shared documents & activity reports', path: '/FamilyAdminPortal', background: '#FAF5FF', isNew: true },
-  { id: 35, title: 'Carer Messaging', icon: '💬', description: 'Send quick messages, voice notes & manage contacts — one tap communication', path: '/CarerMessaging', background: '#ECFDF5', isNew: true },
-];
-
-const getFeatureCards = (admin) => admin ? [...regularCards, ...adminOnlyCards] : regularCards;
 
 function CaregiverPortalHome() {
   const navigate = useNavigate();
-  const [_badDayActivated, setBadDayActivated] = React.useState(false);
   const [isAdmin, setIsAdmin] = React.useState(false);
 
   React.useEffect(() => {
-    const checkAdmin = async () => {
-      try {
-        const user = await base44.auth.me();
-        setIsAdmin(user?.role === 'admin');
-      } catch (error) {
-        console.error('Failed to check admin status:', error);
-      }
-    };
-    checkAdmin();
+    base44.auth.me().then(user => setIsAdmin(user?.role === 'admin')).catch(() => {});
   }, []);
 
   const handleCardClick = async (card) => {
     if (card.id === 12) {
-      setBadDayActivated(true);
       try {
         await base44.entities.ActivityLog.create({
           activity_type: 'anxiety_detected',
           details: { trigger: 'caregiver_activated_bad_day_mode', severity: 'medium' },
           anxiety_level: 6
         });
-        // Use toast instead of alert for better UX
         const { toast } = await import('sonner');
-        toast.success('💜 Bad Day Mode activated! Your loved one will receive gentle comfort and support.');
-      } catch (error) {
-        console.error('Failed to activate:', error);
+        toast.success('💜 Bad Day Mode activated!');
+      } catch {
         const { toast } = await import('sonner');
-        toast.error('Failed to activate Bad Day Mode. Please try again.');
+        toast.error('Failed to activate Bad Day Mode.');
       }
-      setTimeout(() => setBadDayActivated(false), 3000);
       return;
     }
-    
-    if (card.path) {
-      navigate(card.path);
-    }
+    if (card.path) navigate(card.path);
   };
 
+  const allCategories = isAdmin
+    ? [...categories, { label: 'Admin', items: [{ id: 17, title: 'System Monitoring', icon: '🖥️', path: '/CaregiverPortal/monitoring' }, { id: 30, title: 'AI Agent Team', icon: '🤖', path: '/AIAgentTeam' }] }]
+    : categories;
+
   return (
-    <>
-      <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-xl p-6 md:p-8 mb-6">
-        <div className="flex items-center gap-4 mb-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate(-1)}
-            className="min-h-[44px] min-w-[44px] hover:bg-slate-100 dark:hover:bg-slate-800"
-          >
-            <ArrowLeft className="w-6 h-6" />
-          </Button>
-          <div>
-            <h1 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-slate-100">
-              Caregiver Portal
-            </h1>
-            <p className="text-slate-600 dark:text-slate-400 mt-2">
-              Manage care, monitor wellbeing, and access insights
-            </p>
-          </div>
-        </div>
-        
-        <div className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
-          <div className="flex items-start gap-3">
-            <span className="text-2xl">🔒</span>
-            <div className="flex-1">
-              <h3 className="font-bold text-amber-900 dark:text-amber-300 mb-2">
-                Lock Mode Feature - Keep Patients Safe
-              </h3>
-              <p className="text-sm text-amber-800 dark:text-amber-400 mb-3">
-                You can lock Phone Mode or Security Mode to prevent patients from exiting these screens.
-              </p>
-              <div className="bg-white dark:bg-slate-800 rounded-lg p-3 space-y-2">
-                <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold text-slate-700 dark:text-slate-300">Default PIN:</span>
-                  <code className="bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded text-blue-600 dark:text-blue-400 font-mono">1234</code>
-                </div>
-              </div>
-            </div>
-          </div>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="min-h-[44px] min-w-[44px]">
+          <ArrowLeft className="w-5 h-5" />
+        </Button>
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-slate-100">Caregiver Portal</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400">Manage care and monitor wellbeing</p>
         </div>
       </div>
 
       <OfflineReadyIndicator />
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {getFeatureCards(isAdmin).map((card) => (
-          <button
-            key={card.id}
-            onClick={() => handleCardClick(card)}
-            className="text-left p-6 rounded-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer min-h-[160px] flex flex-col items-start relative"
-            style={{
-              backgroundColor: card.background,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.08)'
-            }}
-          >
-            {card.isNew && (
-              <div className="absolute top-3 right-3 bg-gradient-to-r from-pink-500 to-rose-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-lg">
-                NEW
-              </div>
-            )}
-            <div className="text-4xl mb-4">{card.icon}</div>
-            <h3 className="text-xl font-extrabold text-slate-900 mb-3" style={{ color: '#1e293b' }}>
-              {card.title}
-            </h3>
-            <p className="text-base font-medium text-slate-700" style={{ color: '#475569' }}>
-              {card.description}
-            </p>
-          </button>
-        ))}
+      {/* PIN reminder - compact */}
+      <div className="flex items-center gap-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 text-sm">
+        <span>🔒</span>
+        <p className="text-amber-800 dark:text-amber-300">Lock Mode PIN: <code className="font-mono font-bold">1234</code></p>
       </div>
-    </>
+
+      {/* Categorised sections */}
+      {allCategories.map((cat) => (
+        <div key={cat.label}>
+          <h2 className="text-xs font-semibold uppercase tracking-widest text-slate-400 dark:text-slate-500 mb-3">{cat.label}</h2>
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+            {cat.items.map((card) => (
+              <button
+                key={card.id}
+                onClick={() => handleCardClick(card)}
+                className="relative bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 text-left hover:shadow-md active:scale-95 transition-all duration-150"
+              >
+                {card.isNew && (
+                  <span className="absolute top-2 right-2 bg-pink-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">NEW</span>
+                )}
+                <span className="text-2xl block mb-2">{card.icon}</span>
+                <p className="text-xs font-semibold text-slate-800 dark:text-slate-100 leading-tight">{card.title}</p>
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
