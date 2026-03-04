@@ -104,11 +104,16 @@ export default function PlaylistManager({ onBack }) {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="upload">Upload Music</TabsTrigger>
           <TabsTrigger value="playlists">My Playlists</TabsTrigger>
           <TabsTrigger value="create">Create New</TabsTrigger>
           <TabsTrigger value="search">Search Songs</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="upload" className="space-y-4">
+          <MusicUploader />
+        </TabsContent>
 
         <TabsContent value="playlists" className="space-y-4">
           {playlists.length === 0 ? (
