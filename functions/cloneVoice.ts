@@ -41,12 +41,21 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Failed to fetch audio file' }, { status: 400 });
     }
     
-    const audioBlob = await audioResponse.blob();
+    const audioArrayBuffer = await audioResponse.arrayBuffer();
+    const contentType = audioResponse.headers.get('content-type') || 'audio/webm';
+    
+    // Determine file extension from content type
+    let filename = 'sample.webm';
+    if (contentType.includes('mp3') || contentType.includes('mpeg')) filename = 'sample.mp3';
+    else if (contentType.includes('wav')) filename = 'sample.wav';
+    else if (contentType.includes('m4a') || contentType.includes('mp4')) filename = 'sample.m4a';
+    
+    const audioBlob = new Blob([audioArrayBuffer], { type: contentType });
 
     // Create form data for ElevenLabs API
     const formData = new FormData();
     formData.append('name', voice_name);
-    formData.append('files', audioBlob, 'sample.mp3');
+    formData.append('files', audioBlob, filename);
     
     if (voice_description) {
       formData.append('description', voice_description);
