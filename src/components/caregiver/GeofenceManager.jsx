@@ -46,6 +46,8 @@ export default function GeofenceManager() {
   const [alertEmails, setAlertEmails] = useState('');
   const [currentLocation, setCurrentLocation] = useState(null);
   const [locating, setLocating] = useState(false);
+  const [editingZoneId, setEditingZoneId] = useState(null);
+  const [editingEmails, setEditingEmails] = useState('');
 
   useEffect(() => {
     // Auto-get real location on mount
