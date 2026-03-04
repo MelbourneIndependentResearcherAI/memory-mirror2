@@ -1611,7 +1611,7 @@ RESPOND NOW - CRITICAL:
         </div>
       </PullToRefresh>
 
-      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-blue-950 space-y-4">
+      <div className="p-6 border-t-2 border-slate-200 dark:border-slate-700 bg-transparent space-y-4">
         {/* Mode Toggle */}
         <div className="flex gap-2 gap-y-2 justify-center flex-wrap">
           <Button
