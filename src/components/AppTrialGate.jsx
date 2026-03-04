@@ -97,7 +97,7 @@ export default function AppTrialGate({ children, currentPageName, isAdmin }) {
         trial = existing[0];
       } else {
         const now = new Date();
-        const end = new Date(now.getTime() + 3 * 24 * 60 * 60 * 1000);
+        const end = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
         
         const { data: newTrial, error: createError } = await supabase
           .from('FreeTrialUser')
