@@ -167,7 +167,7 @@ function LayoutContent({ children, currentPageName }) {
               {requiresRegistration && <UserRegistrationGate />}
 
               <div 
-                className="min-h-screen bg-background text-foreground flex flex-col"
+                className="min-h-screen bg-gradient-to-b from-slate-900 via-slate-950 to-slate-900 text-foreground flex flex-col"
                 style={{
                   paddingTop: '0px',
                   paddingBottom: showBottomNav ? '160px' : '20px',
