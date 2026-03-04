@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import MusicUploader from './MusicUploader';
 import { Plus, Music, Play, Trash2, Save, Sparkles, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
