@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 import { Plus, Trash2, Edit2, Check, X } from 'lucide-react';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function AlertConfigurationManager({ patientProfileId }) {
   const queryClient = useQueryClient();
