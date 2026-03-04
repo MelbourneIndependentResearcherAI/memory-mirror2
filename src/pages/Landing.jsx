@@ -59,24 +59,30 @@ export default function Landing() {
       </div>
 
       {/* Two Main Access Cards */}
-      <div className="px-5 max-w-2xl mx-auto mb-10">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="px-6 max-w-3xl mx-auto mb-14">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <button
             onClick={() => navigate(createPageUrl('PatientAccess'))}
-            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-left shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150"
+            className="group bg-gradient-to-br from-blue-600 via-blue-500 to-cyan-500 hover:from-blue-700 hover:via-blue-600 hover:to-cyan-600 rounded-3xl p-8 text-left shadow-2xl hover:shadow-2xl active:scale-95 transition-all duration-300 relative overflow-hidden"
           >
-            <MessageCircle className="w-10 h-10 text-white mb-3" />
-            <h3 className="text-xl font-bold text-white mb-1">Start Companion</h3>
-            <p className="text-blue-100 text-sm">For patients — no login required</p>
+            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
+            <div className="relative z-10">
+              <MessageCircle className="w-12 h-12 text-white mb-4" />
+              <h3 className="text-2xl font-black text-white mb-2">Start Companion</h3>
+              <p className="text-blue-100 text-base">For patients — no login required</p>
+            </div>
           </button>
 
           <button
             onClick={() => navigate(createPageUrl('CaregiverPortal'))}
-            className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 text-left shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150"
+            className="group bg-gradient-to-br from-purple-600 via-purple-500 to-pink-500 hover:from-purple-700 hover:via-purple-600 hover:to-pink-600 rounded-3xl p-8 text-left shadow-2xl hover:shadow-2xl active:scale-95 transition-all duration-300 relative overflow-hidden"
           >
-            <Brain className="w-10 h-10 text-white mb-3" />
-            <h3 className="text-xl font-bold text-white mb-1">Caregiver Portal</h3>
-            <p className="text-purple-100 text-sm">Dashboard, controls & insights</p>
+            <div className="absolute inset-0 bg-white/10 group-hover:bg-white/20 transition-all duration-300"></div>
+            <div className="relative z-10">
+              <Brain className="w-12 h-12 text-white mb-4" />
+              <h3 className="text-2xl font-black text-white mb-2">Caregiver Portal</h3>
+              <p className="text-purple-100 text-base">Dashboard, controls & insights</p>
+            </div>
           </button>
         </div>
       </div>
