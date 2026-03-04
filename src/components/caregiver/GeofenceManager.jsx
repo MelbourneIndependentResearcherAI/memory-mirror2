@@ -276,15 +276,39 @@ export default function GeofenceManager() {
                       </div>
                     </div>
                     <div className="text-sm text-slate-600 space-y-1">
-                      <p>Radius: {zone.radius_meters}m</p>
-                      <p>Alerts: {zone.alert_contacts?.join(', ') || 'None'}</p>
-                      {zone.breach_count > 0 && (
-                        <p className="text-orange-600 flex items-center gap-1">
-                          <AlertTriangle className="w-3 h-3" />
-                          Breached {zone.breach_count} times
-                        </p>
-                      )}
-                    </div>
+                       <p>Radius: {zone.radius_meters}m</p>
+                       {editingZoneId === zone.id ? (
+                         <div className="space-y-2">
+                           <Input
+                             value={editingEmails}
+                             onChange={(e) => setEditingEmails(e.target.value)}
+                             placeholder="email1@example.com, email2@example.com"
+                             className="text-sm"
+                           />
+                           <div className="flex gap-2">
+                             <Button size="sm" onClick={() => handleSaveContacts(zone.id)} className="flex-1">
+                               Save
+                             </Button>
+                             <Button size="sm" variant="outline" onClick={() => setEditingZoneId(null)} className="flex-1">
+                               Cancel
+                             </Button>
+                           </div>
+                         </div>
+                       ) : (
+                         <div className="flex items-center justify-between">
+                           <p>Alerts: {zone.alert_contacts?.join(', ') || 'None'}</p>
+                           <Button size="sm" variant="ghost" onClick={() => handleEditContacts(zone)}>
+                             Edit
+                           </Button>
+                         </div>
+                       )}
+                       {zone.breach_count > 0 && (
+                         <p className="text-orange-600 flex items-center gap-1">
+                           <AlertTriangle className="w-3 h-3" />
+                           Breached {zone.breach_count} times
+                         </p>
+                       )}
+                     </div>
                   </CardContent>
                 </Card>
               ))
