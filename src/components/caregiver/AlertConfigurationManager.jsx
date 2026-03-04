@@ -38,6 +38,11 @@ export default function AlertConfigurationManager({ patientProfileId }) {
     retry: 1
   });
 
+  const { data: emergencyContacts = [] } = useQuery({
+    queryKey: ['emergencyContacts'],
+    queryFn: () => base44.entities.EmergencyContact.list()
+  });
+
   const createMutation = useMutation({
     mutationFn: (data) => base44.entities.AlertCondition.create(data),
     onSuccess: () => {
