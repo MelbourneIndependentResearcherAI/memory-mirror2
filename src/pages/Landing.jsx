@@ -57,16 +57,27 @@ export default function Landing() {
         </button>
       </div>
 
-      {/* Main Access Card */}
-      <div className="px-5 max-w-sm mx-auto mb-10">
-        <button
-          onClick={() => navigate(createPageUrl('PatientAccess'))}
-          className="w-full bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-left shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150"
-        >
-          <MessageCircle className="w-10 h-10 text-white mb-3" />
-          <h3 className="text-xl font-bold text-white mb-1">Start Companion</h3>
-          <p className="text-blue-100 text-sm">For patients — no login required</p>
-        </button>
+      {/* Two Main Access Cards */}
+      <div className="px-5 max-w-2xl mx-auto mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <button
+            onClick={() => navigate(createPageUrl('PatientAccess'))}
+            className="bg-gradient-to-br from-blue-600 to-cyan-600 rounded-2xl p-6 text-left shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150"
+          >
+            <MessageCircle className="w-10 h-10 text-white mb-3" />
+            <h3 className="text-xl font-bold text-white mb-1">Start Companion</h3>
+            <p className="text-blue-100 text-sm">For patients — no login required</p>
+          </button>
+
+          <button
+            onClick={() => navigate(createPageUrl('CaregiverPortal'))}
+            className="bg-gradient-to-br from-purple-600 to-pink-600 rounded-2xl p-6 text-left shadow-lg hover:shadow-xl active:scale-95 transition-all duration-150"
+          >
+            <Brain className="w-10 h-10 text-white mb-3" />
+            <h3 className="text-xl font-bold text-white mb-1">Caregiver Portal</h3>
+            <p className="text-purple-100 text-sm">Dashboard, controls & insights</p>
+          </button>
+        </div>
       </div>
 
       {/* Key Features */}
