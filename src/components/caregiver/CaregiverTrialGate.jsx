@@ -7,7 +7,7 @@ import { toast } from 'sonner';
 import { base44 } from '@/api/base44Client';
 
 const STORAGE_KEY = 'caregiver_trial_registration';
-const TRIAL_DAYS = 3;
+const TRIAL_DAYS = 7;
 
 function getTrialData() {
   try {
