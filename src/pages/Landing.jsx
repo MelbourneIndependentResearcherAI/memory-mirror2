@@ -17,31 +17,31 @@ export default function Landing() {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-950">
+    <div className="min-h-screen bg-gradient-to-b from-white via-blue-50/30 to-purple-50/20 dark:from-slate-950 dark:via-slate-900 dark:to-slate-950">
       <QuickAccessCheck />
 
       {/* Caregiver Settings - tucked away top right */}
-      <div className="flex justify-end px-4 pt-4">
+      <div className="flex justify-end px-6 pt-6">
         <button
           onClick={() => navigate(createPageUrl('CaregiverPortal'))}
-          className="w-11 h-11 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl flex items-center justify-center opacity-50 hover:opacity-80 transition-opacity"
+          className="w-11 h-11 bg-white dark:bg-slate-900 border border-slate-200/50 dark:border-slate-700 rounded-xl flex items-center justify-center opacity-60 hover:opacity-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 shadow-sm hover:shadow-md"
           title="Caregiver Settings"
         >
-          <Settings className="w-5 h-5 text-slate-500" />
+          <Settings className="w-5 h-5 text-slate-600 dark:text-slate-400" />
         </button>
       </div>
 
       {/* Hero */}
-      <div className="px-5 pt-6 pb-8 max-w-2xl mx-auto text-center">
-        <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-950 text-blue-700 dark:text-blue-300 px-4 py-1.5 rounded-full text-sm font-medium mb-6">
-          <Heart className="w-3.5 h-3.5" />
+      <div className="px-6 pt-12 pb-12 max-w-3xl mx-auto text-center">
+        <div className="inline-flex items-center gap-2 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950/40 dark:to-purple-950/40 text-blue-700 dark:text-blue-300 px-5 py-2 rounded-full text-sm font-semibold mb-8 border border-blue-200/50 dark:border-blue-800/50 backdrop-blur-sm">
+          <Heart className="w-4 h-4" />
           AI Companion for Dementia Care
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-3 leading-tight">
+        <h1 className="text-5xl md:text-6xl font-black text-slate-950 dark:text-white mb-6 leading-tight bg-clip-text text-transparent bg-gradient-to-r from-slate-900 via-purple-800 to-blue-700 dark:from-white dark:via-purple-200 dark:to-blue-300">
           Memory Mirror
         </h1>
-        <p className="text-lg text-slate-600 dark:text-slate-400 leading-relaxed">
-          Compassionate AI support — meeting your loved one where they are, with dignity and warmth.
+        <p className="text-xl text-slate-700 dark:text-slate-300 leading-relaxed max-w-2xl mx-auto font-light">
+          Compassionate AI support — meeting your loved one where they are, with dignity, warmth, and presence.
         </p>
       </div>
 
