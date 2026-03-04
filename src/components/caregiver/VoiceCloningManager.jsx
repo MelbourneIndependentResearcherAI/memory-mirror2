@@ -30,8 +30,17 @@ export default function VoiceCloningManager() {
     mutationFn: async (data) => {
       setCloningProgress(10);
       
-      // Upload audio file first
-      const uploadResult = await base44.integrations.Core.UploadFile({ file: data.audioFile });
+      // Upload audio file first - ensure we have a proper File object
+      let audioFileToUpload = data.audioFile;
+      // If it's a webm blob from recording, re-wrap it to ensure proper mime
+      if (audioFileToUpload.name === 'recording.webm' || audioFileToUpload.type === 'audio/webm') {
+        const arrayBuffer = await audioFileToUpload.arrayBuffer();
+        audioFileToUpload = new File([arrayBuffer], 'recording.webm', { type: 'audio/webm' });
+      }
+      const uploadResult = await base44.integrations.Core.UploadFile({ file: audioFileToUpload });
+      if (!uploadResult?.file_url) {
+        throw new Error('File upload failed — no URL returned');
+      }
       const audioUrl = uploadResult.file_url;
       setCloningProgress(30);
 
