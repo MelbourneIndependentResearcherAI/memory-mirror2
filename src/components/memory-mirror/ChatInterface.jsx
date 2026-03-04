@@ -390,12 +390,13 @@ export default function ChatInterface({ onEraChange, onModeSwitch, _onMemoryGall
     // Start proactive check-ins (every 5-10 minutes)
     startProactiveCheckIns();
 
-    // Evaluate alert conditions every 2 minutes
-    const alertCheckInterval = setInterval(() => {
-      if (isMountedRef.current) {
-        evaluateAlertConditions();
-      }
-    }, 2 * 60 * 1000);
+    // Evaluate alert conditions disabled - wastes credits constantly
+    // Only check when user sends messages, not on timer
+    // const alertCheckInterval = setInterval(() => {
+    //   if (isMountedRef.current) {
+    //     evaluateAlertConditions();
+    //   }
+    // }, 2 * 60 * 1000);
     
     return () => {
       clearInterval(alertCheckInterval);
