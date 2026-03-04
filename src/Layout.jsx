@@ -8,15 +8,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { TabStackProvider, useTabStack } from '@/components/TabStackManager';
 import { FeatureLockProvider } from '@/components/FeatureLockManager';
 
-// Lazy load non-critical layout components to prevent them crashing the render tree
-const Footer = lazy(() => import('@/components/Footer'));
-const BottomNav = lazy(() => import('@/components/BottomNav'));
-const ScrollToTop = lazy(() => Promise.resolve({ default: () => null }));
-const SessionTimeoutManager = lazy(() => Promise.resolve({ default: () => null }));
-const OfflineIndicator = lazy(() => Promise.resolve({ default: () => null }));
-const OfflineSyncStatus = lazy(() => Promise.resolve({ default: () => null }));
-const OfflineFeaturesBadge = lazy(() => Promise.resolve({ default: () => null }));
-const AppTrialGate = lazy(() => Promise.resolve({ default: () => null }));
+// Import critical layout components
+import Footer from '@/components/Footer';
+import BottomNav from '@/components/BottomNav';
 import UserRegistrationGate from '@/components/UserRegistrationGate';
 
 /**
