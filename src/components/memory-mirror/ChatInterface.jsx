@@ -1424,14 +1424,6 @@ RESPOND NOW - CRITICAL:
 
   return (
     <div className="flex flex-col h-full">
-      <LanguageSelector 
-        selectedLanguage={selectedLanguage}
-        onLanguageChange={handleLanguageChange}
-      />
-      
-      <VoiceSetup />
-      
-      <EraSelector selectedEra={selectedEra} onEraChange={handleEraChange} />
       
 
 
