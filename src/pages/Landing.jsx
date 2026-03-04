@@ -103,11 +103,11 @@ export default function Landing() {
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Always Available</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-purple-600">Offline</p>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Works Without WiFi</p>
+            <p className="text-xl font-bold text-green-600">Free</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Forever, No Cost</p>
           </div>
           <div>
-            <p className="text-xl font-bold text-green-600">100%</p>
+            <p className="text-xl font-bold text-purple-600">100%</p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Private & Secure</p>
           </div>
         </div>
