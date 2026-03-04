@@ -25,7 +25,6 @@ const categories = [
       { id: 1, title: 'Health Monitor', icon: '❤️', path: '/HealthMonitor' },
       { id: 2, title: 'Memory Sessions', icon: '✨', path: '/MemorySessions' },
       { id: 13, title: 'Activity Reminders', icon: '⏰', path: '/ActivityReminders' },
-      { id: 12, title: 'Bad Day Mode', icon: '💜', path: null },
     ]
   },
   {
