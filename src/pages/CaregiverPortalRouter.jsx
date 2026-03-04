@@ -80,21 +80,6 @@ function CaregiverPortalHome() {
   }, []);
 
   const handleCardClick = async (card) => {
-    if (card.id === 12) {
-      try {
-        await base44.entities.ActivityLog.create({
-          activity_type: 'anxiety_detected',
-          details: { trigger: 'caregiver_activated_bad_day_mode', severity: 'medium' },
-          anxiety_level: 6
-        });
-        const { toast } = await import('sonner');
-        toast.success('💜 Bad Day Mode activated!');
-      } catch {
-        const { toast } = await import('sonner');
-        toast.error('Failed to activate Bad Day Mode.');
-      }
-      return;
-    }
     if (card.path) navigate(card.path);
   };
 
