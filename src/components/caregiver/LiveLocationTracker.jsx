@@ -289,9 +289,14 @@ export default function LiveLocationTracker() {
             </div>
           )}
 
-          <div className="h-96 rounded-lg overflow-hidden border">
+          {!mapCenter ? (
+            <div className="h-96 rounded-lg border flex items-center justify-center bg-slate-50 dark:bg-slate-800 text-slate-500 text-sm">
+              Waiting for GPS location...
+            </div>
+          ) : null}
+          <div className={`h-96 rounded-lg overflow-hidden border ${!mapCenter ? 'hidden' : ''}`}>
             <MapContainer
-              center={mapCenter}
+              center={mapCenter || [0, 0]}
               zoom={15}
               style={{ height: '100%', width: '100%' }}
             >
