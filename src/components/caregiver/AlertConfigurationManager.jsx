@@ -209,6 +209,26 @@ export default function AlertConfigurationManager({ patientProfileId }) {
               </div>
             </div>
 
+            <div>
+              <label className="block text-sm font-medium mb-3">Notify These Contacts</label>
+              <div className="space-y-2 max-h-40 overflow-y-auto">
+                {emergencyContacts.length === 0 ? (
+                  <p className="text-sm text-slate-500">No emergency contacts available</p>
+                ) : (
+                  emergencyContacts.map(contact => (
+                    <div key={contact.id} className="flex items-center gap-2 p-2 border border-slate-200 dark:border-slate-700 rounded-lg">
+                      <Checkbox
+                        checked={selectedContacts.includes(contact.id)}
+                        onCheckedChange={() => toggleContact(contact.id)}
+                      />
+                      <span className="text-sm">{contact.icon} {contact.name}</span>
+                      <span className="text-xs text-slate-500">{contact.phone}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+
             <div className="flex gap-2">
               <Button onClick={handleSubmit} variant="default" className="flex-1">
                 <Check className="w-4 h-4 mr-2" /> Save
