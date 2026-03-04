@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Brain, Heart, Shield, Moon, Phone, ChevronRight } from 'lucide-react';
+import { MessageCircle, Brain, Heart, Shield, Moon, Phone, ChevronRight, Settings } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';

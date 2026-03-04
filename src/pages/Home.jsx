@@ -1,6 +1,4 @@
 import React, { useState, useEffect, Suspense } from 'react';
-import { Settings } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import ChatMode from './ChatMode';
 import BadDayMode from '@/components/memory-mirror/BadDayMode';
