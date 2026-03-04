@@ -15,7 +15,7 @@ export function useIsRegistered() {
   }
 }
 
-export default function UserRegistrationGate({ children }) {
+export default function UserRegistrationGate() {
   const [isRegistered, setIsRegistered] = useState(true); // start true to avoid flash
   const [checked, setChecked] = useState(false);
   const [name, setName] = useState('');
