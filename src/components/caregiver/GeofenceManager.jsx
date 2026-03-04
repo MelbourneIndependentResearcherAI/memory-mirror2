@@ -149,6 +149,21 @@ export default function GeofenceManager() {
     });
   };
 
+  const handleEditContacts = (zone) => {
+    setEditingZoneId(zone.id);
+    setEditingEmails(zone.alert_contacts?.join(', ') || '');
+  };
+
+  const handleSaveContacts = (zoneId) => {
+    const emails = editingEmails.split(',').map(e => e.trim()).filter(e => e);
+    updateZoneMutation.mutate({
+      id: zoneId,
+      data: { alert_contacts: emails }
+    });
+    setEditingZoneId(null);
+    setEditingEmails('');
+  };
+
   return (
     <div className="space-y-6">
       <Card>
