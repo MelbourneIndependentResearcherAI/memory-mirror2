@@ -212,8 +212,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
         </Card>
 
         <p className="text-center text-sm text-slate-500 mt-4">
-          After your trial,{' '}
-          <a href="/Pricing" className="text-purple-600 dark:text-purple-400 underline">subscribe for full access</a>
+          After your trial, visit <a href="https://memory-mirror.app" target="_blank" rel="noopener noreferrer" className="text-purple-600 dark:text-purple-400 underline">memory-mirror.app</a> to subscribe — $9.99/month
         </p>
       </div>
     </div>
