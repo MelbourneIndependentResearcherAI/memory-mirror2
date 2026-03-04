@@ -64,7 +64,6 @@ export function useSubscriptionStatus() {
         if (base44User) {
           user = user || { email: base44User.email, id: base44User.id };
         }
-        const { data: { user: _unused } } = { data: { user } };
         
         // Check free trial + free tier status
         const isFreeTierUser = getFreeTierUser();
