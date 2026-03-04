@@ -70,6 +70,11 @@ export default function GeofenceManager() {
     queryFn: () => base44.entities.GeofenceZone.list('-created_date')
   });
 
+  const { data: emergencyContacts = [] } = useQuery({
+    queryKey: ['emergencyContacts'],
+    queryFn: () => base44.entities.EmergencyContact.list(),
+  });
+
   const createZoneMutation = useMutation({
     mutationFn: (data) => base44.entities.GeofenceZone.create(data),
     onSuccess: () => {
