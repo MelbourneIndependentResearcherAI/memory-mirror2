@@ -170,6 +170,18 @@ export default function GeofenceManager() {
     setEditingEmails('');
   };
 
+  const addContactEmail = (contactPhone) => {
+    const currentEmails = editingEmails ? editingEmails.split(',').map(e => e.trim()) : [];
+    if (!currentEmails.includes(contactPhone)) {
+      setEditingEmails(currentEmails.length > 0 ? currentEmails.join(', ') + ', ' + contactPhone : contactPhone);
+    }
+  };
+
+  const removeContactEmail = (email) => {
+    const currentEmails = editingEmails.split(',').map(e => e.trim()).filter(e => e);
+    setEditingEmails(currentEmails.filter(e => e !== email).join(', '));
+  };
+
   return (
     <div className="space-y-6">
       <Card>
