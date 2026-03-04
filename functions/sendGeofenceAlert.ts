@@ -29,6 +29,7 @@ Deno.serve(async (req) => {
       await base44.asServiceRole.entities.CaregiverNotification.create({
         notification_type: 'safety_concern',
         severity: 'urgent',
+        patient_profile_id: 'system',
         title: `Patient Left Safe Zone - ${zone_name}`,
         message: `Patient has left the ${zone_name} safe zone. Distance: ${distance_from_zone}m. View location immediately.`,
         data: {
