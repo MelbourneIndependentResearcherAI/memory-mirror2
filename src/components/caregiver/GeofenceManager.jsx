@@ -297,12 +297,35 @@ export default function GeofenceManager() {
                        <p>Radius: {zone.radius_meters}m</p>
                        {editingZoneId === zone.id ? (
                          <div className="space-y-2">
-                           <Input
-                             value={editingEmails}
-                             onChange={(e) => setEditingEmails(e.target.value)}
-                             placeholder="email1@example.com, email2@example.com"
-                             className="text-sm"
-                           />
+                           <div className="flex flex-wrap gap-1 mb-2">
+                             {editingEmails.split(',').map(e => e.trim()).filter(e => e).map((email, idx) => (
+                               <Badge key={idx} variant="secondary" className="flex items-center gap-1">
+                                 {email}
+                                 <button onClick={() => removeContactEmail(email)} className="ml-1 hover:text-red-600">
+                                   <X className="w-3 h-3" />
+                                 </button>
+                               </Badge>
+                             ))}
+                           </div>
+                           <div className="space-y-2">
+                             <Input
+                               value={editingEmails}
+                               onChange={(e) => setEditingEmails(e.target.value)}
+                               placeholder="email1@example.com, email2@example.com"
+                               className="text-sm"
+                             />
+                             <div className="max-h-24 overflow-y-auto">
+                               {emergencyContacts.map(contact => (
+                                 <button
+                                   key={contact.id}
+                                   onClick={() => addContactEmail(contact.phone)}
+                                   className="block w-full text-left p-2 text-sm hover:bg-slate-100 rounded truncate"
+                                 >
+                                   {contact.icon} {contact.name} ({contact.phone})
+                                 </button>
+                               ))}
+                             </div>
+                           </div>
                            <div className="flex gap-2">
                              <Button size="sm" onClick={() => handleSaveContacts(zone.id)} className="flex-1">
                                Save
