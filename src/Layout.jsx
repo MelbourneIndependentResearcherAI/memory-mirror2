@@ -166,6 +166,7 @@ function LayoutContent({ children, currentPageName }) {
                 }}
                 lang="en"
               >
+                {showAppBar && <AndroidAppBar title={currentPageName} />}
                 <Suspense fallback={<>{children}</>}>
                   <main 
                     id="main-content" 
