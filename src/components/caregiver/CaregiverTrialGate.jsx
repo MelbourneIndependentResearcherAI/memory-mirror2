@@ -115,7 +115,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
       <div className="max-w-md mx-auto mt-12 text-center space-y-6 px-4">
         <div className="text-6xl">⏰</div>
         <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Your free trial has ended</h2>
-        <p className="text-slate-500">Your 3-day free trial for <strong>{trialData?.name || 'the Caregiver Portal'}</strong> has expired.</p>
+        <p className="text-slate-500">Your 7-day free trial for <strong>{trialData?.name || 'the Caregiver Portal'}</strong> has expired.</p>
         <Card className="p-6 bg-gradient-to-br from-purple-50 to-indigo-50 dark:from-purple-950/30 dark:to-indigo-950/30 border-purple-200 dark:border-purple-700">
           <ul className="text-sm text-slate-600 dark:text-slate-300 space-y-1 mb-4 text-left">
             {['Full Caregiver Portal access', 'AI Care Insights', 'Family collaboration tools', 'Voice cloning & memory tools'].map(f => (
