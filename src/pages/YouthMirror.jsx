@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Camera, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft, Trash2, Loader2, Send, Mic, MicOff } from 'lucide-react';
+import { Sparkles, Calendar, Heart, MessageCircle, Image, Music, BookOpen, ArrowLeft, Trash2, Loader2, Send, Mic, MicOff } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -461,7 +461,7 @@ export default function YouthMirror() {
     { id: 'chat', title: 'AI Chat Buddy', description: 'Talk about your day, memories, or anything on your mind', icon: MessageCircle, color: 'from-green-500 to-emerald-500', page: null },
     { id: 'music', title: 'Music from Your Life', description: 'Discover songs from important years', icon: Music, color: 'from-indigo-500 to-purple-500', page: null },
     { id: 'timeline', title: 'Life Timeline', description: 'Build your personal history with milestones', icon: Calendar, color: 'from-purple-500 to-pink-500', page: 'FamilyTimeline' },
-    { id: 'photos', title: 'Photo Library', description: 'Upload and organise your cherished photos', icon: Camera, color: 'from-blue-500 to-cyan-500', page: 'FamilyPhotoAlbum' },
+
     { id: 'collage', title: 'Memory Collages', description: 'View your photos in beautiful layouts', icon: Image, color: 'from-pink-500 to-rose-500', page: 'FamilyMediaAlbum' },
   ];
 
