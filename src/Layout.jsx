@@ -33,6 +33,10 @@ function LayoutContent({ children, currentPageName }) {
   
   // (debug logging removed)
   
+  // Pages that don't need registration gate
+  const noGatePages = ['Landing', 'PrivacyPolicy', 'TermsOfService', 'FAQ', 'Resources', 'Pricing'];
+  const requiresRegistration = !noGatePages.includes(currentPageName);
+
   const showFooter = currentPageName === 'Landing' || currentPageName === 'CaregiverPortal';
   const showBottomNav = !showFooter;
 
