@@ -11,12 +11,12 @@ import { FeatureLockProvider } from '@/components/FeatureLockManager';
 // Lazy load non-critical layout components to prevent them crashing the render tree
 const Footer = lazy(() => import('@/components/Footer'));
 const BottomNav = lazy(() => import('@/components/BottomNav'));
-const ScrollToTop = lazy(() => import('@/components/ScrollToTop'));
-const SessionTimeoutManager = lazy(() => import('@/components/SessionTimeoutManager'));
-const OfflineIndicator = lazy(() => import('@/components/OfflineIndicator'));
-const OfflineSyncStatus = lazy(() => import('@/components/memory-mirror/OfflineSyncStatus'));
-const OfflineFeaturesBadge = lazy(() => import('@/components/memory-mirror/OfflineFeaturesBadge'));
-const AppTrialGate = lazy(() => import('@/components/AppTrialGate'));
+const ScrollToTop = lazy(() => ({ default: () => null })); // Disabled
+const SessionTimeoutManager = lazy(() => ({ default: () => null })); // Disabled
+const OfflineIndicator = lazy(() => ({ default: () => null })); // Disabled
+const OfflineSyncStatus = lazy(() => ({ default: () => null })); // Disabled
+const OfflineFeaturesBadge = lazy(() => ({ default: () => null })); // Disabled
+const AppTrialGate = lazy(() => ({ default: () => null })); // Disabled
 import UserRegistrationGate from '@/components/UserRegistrationGate';
 
 /**
