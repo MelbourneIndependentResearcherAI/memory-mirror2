@@ -100,7 +100,7 @@ export default function CaregiverTrialGate({ children, isAdmin }) {
             <Clock className="w-4 h-4 text-amber-600 flex-shrink-0" />
             <span className="text-amber-800 dark:text-amber-300">
               <strong>{daysLeft} day{daysLeft !== 1 ? 's' : ''} left</strong> on your free trial.{' '}
-              <a href="/Pricing" className="underline font-semibold hover:text-amber-900">Subscribe to keep access →</a>
+              To subscribe visit <a href="https://memory-mirror.app" target="_blank" rel="noopener noreferrer" className="underline font-semibold hover:text-amber-900">memory-mirror.app</a> — Founder pricing $9.99/month
             </span>
           </div>
         )}
