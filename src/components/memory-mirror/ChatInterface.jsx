@@ -399,7 +399,7 @@ export default function ChatInterface({ onEraChange, onModeSwitch, _onMemoryGall
     // }, 2 * 60 * 1000);
     
     return () => {
-      clearInterval(alertCheckInterval);
+      // clearInterval(alertCheckInterval); // Disabled
       isMountedRef.current = false;
       if (greetingTimeout) clearTimeout(greetingTimeout);
       
