@@ -3,8 +3,6 @@ import { MessageCircle, Brain, Heart, Shield, Moon, Phone, ChevronRight } from '
 import { createPageUrl } from '@/utils';
 import { Link, useNavigate } from 'react-router-dom';
 import DonationModal from '@/components/DonationModal';
-import FreeTrialRegistration from '@/components/subscription/FreeTrialRegistration';
-import { isFreeTrial } from '@/components/subscription/FreeTrialManager';
 import QuickAccessCheck from '@/components/utils/QuickAccessCheck';
 
 const features = [
