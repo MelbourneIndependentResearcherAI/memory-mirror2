@@ -164,8 +164,6 @@ function LayoutContent({ children, currentPageName }) {
                 <ScrollToTop />
               </Suspense>
               
-              {requiresRegistration && <UserRegistrationGate>{null}</UserRegistrationGate>}
-
               <div 
                 className="min-h-screen bg-background text-foreground flex flex-col"
                 style={{
