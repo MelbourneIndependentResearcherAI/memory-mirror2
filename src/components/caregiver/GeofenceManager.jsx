@@ -103,6 +103,17 @@ export default function GeofenceManager() {
     }
   });
 
+  const createContactMutation = useMutation({
+    mutationFn: (data) => base44.entities.EmergencyContact.create(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['emergencyContacts'] });
+      toast.success('Contact added');
+      addContactEmail(newContact.phone);
+      setNewContact({ name: '', phone: '', relationship: '', icon: '👨‍👩‍👧‍👦' });
+      setShowNewContactForm(false);
+    }
+  });
+
   const resetForm = () => {
     setZoneName('');
     setPosition(null);
