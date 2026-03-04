@@ -12,6 +12,7 @@ import { FeatureLockProvider } from '@/components/FeatureLockManager';
 import Footer from '@/components/Footer';
 import BottomNav from '@/components/BottomNav';
 import UserRegistrationGate from '@/components/UserRegistrationGate';
+import AndroidAppBar from '@/components/AndroidAppBar';
 
 /**
  * Memory Mirror - AI Companion for Dementia Care
