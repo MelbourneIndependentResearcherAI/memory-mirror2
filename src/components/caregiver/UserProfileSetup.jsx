@@ -30,9 +30,19 @@ export default function UserProfileSetup({ onBack }) {
     country_or_mob: ''
   });
 
+  const { data: currentUser } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: () => base44.auth.me(),
+  });
+
   const { data: profiles = [] } = useQuery({
-    queryKey: ['userProfiles'],
-    queryFn: () => base44.entities.UserProfile.list(),
+    queryKey: ['userProfiles', currentUser?.email],
+    queryFn: async () => {
+      if (!currentUser?.email) return [];
+      const allProfiles = await base44.entities.UserProfile.filter({ created_by: currentUser.email }, '-created_date', 1);
+      return allProfiles || [];
+    },
+    enabled: !!currentUser?.email,
   });
 
   useEffect(() => {
