@@ -202,6 +202,17 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
         <h2 className="text-3xl font-semibold mb-2 text-white">{contactName || 'Emergency Operator'}</h2>
         <p className="text-slate-400 text-lg mb-2">{phoneNumber}</p>
 
+        {!isConnected && (
+          <motion.button
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            onClick={handleConnect}
+            className="mt-6 px-10 py-4 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white text-xl font-semibold rounded-full shadow-2xl border-2 border-emerald-400 hover:from-emerald-600 hover:to-emerald-700 transition-all"
+          >
+            🔊 Connect Call
+          </motion.button>
+        )}
+
         {!isOnline && (
           <motion.div 
             initial={{ opacity: 0 }}
