@@ -45,24 +45,23 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
 
   // Initialize connection
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsConnected(true);
-      const greeting = "Hello, this is your emergency support operator. I'm here to help you. Can you tell me what's going on?";
-      setMessages([{ role: 'assistant', content: greeting }]);
-      setConversationHistory([{ role: 'assistant', content: greeting }]);
-      speakMessage(greeting);
-      setTimeout(() => startListening(), 2000);
-    }, 1500);
-
-    window.addEventListener('online', () => setIsOnline(true));
-    window.addEventListener('offline', () => setIsOnline(false));
-
+    const onOnline = () => setIsOnline(true);
+    const onOffline = () => setIsOnline(false);
+    window.addEventListener('online', onOnline);
+    window.addEventListener('offline', onOffline);
     return () => {
-      clearTimeout(timer);
-      window.removeEventListener('online', () => setIsOnline(true));
-      window.removeEventListener('offline', () => setIsOnline(false));
+      window.removeEventListener('online', onOnline);
+      window.removeEventListener('offline', onOffline);
     };
   }, []);
+
+  const handleConnect = () => {
+    setIsConnected(true);
+    const greeting = "Hello, this is your emergency support operator. I'm here to help you. Can you tell me what's going on?";
+    setMessages([{ role: 'assistant', content: greeting }]);
+    setConversationHistory([{ role: 'assistant', content: greeting }]);
+    speakMessage(greeting).then(() => startListening());
+  };
 
   const initializeSpeechRecognition = () => {
     if (recognitionRef.current) return;
@@ -129,7 +128,7 @@ export default function HandsFreeCallScreen({ phoneNumber, contactName, onEndCal
     try {
       let operatorMessage = '';
 
-      if (isOnline()) {
+      if (isOnline) {
         // Use API response
         try {
           const response = await base44.integrations.Core.InvokeLLM({
