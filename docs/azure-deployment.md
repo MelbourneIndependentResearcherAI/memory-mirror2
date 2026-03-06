@@ -231,30 +231,30 @@ Add these secrets to **Settings → Secrets and variables → Actions**:
 
 | Secret name | Value |
 |---|---|
+| `AZURE_CREDENTIALS` | Service principal JSON for Memory Mirror's Azure subscription (see below) |
 | `CARER_HIRE_AI_APP_NAME` | Azure App Service name (e.g. `carer-hire-ai`) |
-| `CARER_HIRE_AI_PUBLISH_PROFILE` | Download from Azure Portal → App Service → Get publish profile |
 | `LITTLE_ONES_AI_APP_NAME` | Azure App Service name (e.g. `little-ones-ai`) |
-| `LITTLE_ONES_AI_PUBLISH_PROFILE` | Download from Azure Portal → App Service → Get publish profile |
 
 The `VITE_BASE44_APP_ID` and `VITE_BASE44_APP_BASE_URL` secrets are shared with the Memory Mirror workflow.
 
-### Fetching the Publish Profile
+Both apps authenticate using the **same `AZURE_CREDENTIALS` service principal** that requires Contributor access to the `memory-mirror-production` resource group — the same subscription Memory Mirror is deployed under.
+
+### Creating the AZURE_CREDENTIALS service principal
+
+If you already have `AZURE_CREDENTIALS` set up for Memory Mirror's subscription, reuse it here.  To create a new one:
 
 ```bash
-# Carer Hire AI
-az webapp deployment list-publishing-profiles \
-  --name carer-hire-ai \
-  --resource-group memory-mirror-production \
-  --xml
+SUBSCRIPTION_ID=$(az account show --query id -o tsv)
+RESOURCE_GROUP="memory-mirror-production"
 
-# Little Ones AI
-az webapp deployment list-publishing-profiles \
-  --name little-ones-ai \
-  --resource-group memory-mirror-production \
-  --xml
+az ad sp create-for-rbac \
+  --name "memory-mirror-github-actions" \
+  --role Contributor \
+  --scopes "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
+  --sdk-auth
 ```
 
-Copy the full XML output as the value of `CARER_HIRE_AI_PUBLISH_PROFILE` / `LITTLE_ONES_AI_PUBLISH_PROFILE`.
+Copy the entire JSON output (including the outer `{}`) as the value of the `AZURE_CREDENTIALS` secret.
 
 ### Triggering a Deployment
 

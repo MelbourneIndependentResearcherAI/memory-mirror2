@@ -41,14 +41,22 @@ jobs:
 
       - name: Check deployment credentials
         run: |
-          if [ -z "${{ secrets.CARER_HIRE_AI_PUBLISH_PROFILE }}" ] || [ -z "${{ secrets.CARER_HIRE_AI_APP_NAME }}" ]; then
-            echo "::error::CARER_HIRE_AI_PUBLISH_PROFILE or CARER_HIRE_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
+          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ] || [ -z "${{ secrets.CARER_HIRE_AI_APP_NAME }}" ]; then
+            echo "::error::AZURE_CREDENTIALS or CARER_HIRE_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
             exit 1
           fi
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.CARER_HIRE_AI_APP_NAME }}
-          publish-profile: ${{ secrets.CARER_HIRE_AI_PUBLISH_PROFILE }}
           package: apps/carer-hire-ai
+
+      - name: Azure logout
+        if: always()
+        run: az logout

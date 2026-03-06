@@ -41,14 +41,22 @@ jobs:
 
       - name: Check deployment credentials
         run: |
-          if [ -z "${{ secrets.LITTLE_ONES_AI_PUBLISH_PROFILE }}" ] || [ -z "${{ secrets.LITTLE_ONES_AI_APP_NAME }}" ]; then
-            echo "::error::LITTLE_ONES_AI_PUBLISH_PROFILE or LITTLE_ONES_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
+          if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ] || [ -z "${{ secrets.LITTLE_ONES_AI_APP_NAME }}" ]; then
+            echo "::error::AZURE_CREDENTIALS or LITTLE_ONES_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
             exit 1
           fi
+
+      - name: Log in to Azure
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure App Service
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.LITTLE_ONES_AI_APP_NAME }}
-          publish-profile: ${{ secrets.LITTLE_ONES_AI_PUBLISH_PROFILE }}
           package: apps/little-ones-ai
+
+      - name: Azure logout
+        if: always()
+        run: az logout

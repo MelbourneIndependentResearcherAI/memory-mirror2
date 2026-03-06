@@ -55,23 +55,24 @@ Both workflows also:
 
 ### Secrets required to activate deployment
 
-Add these four secrets at **Settings → Secrets and variables → Actions**:
+Add these three secrets at **Settings → Secrets and variables → Actions**:
 
 | Secret name | Where to get the value |
 |---|---|
+| `AZURE_CREDENTIALS` | Service principal JSON for Memory Mirror's subscription — see `docs/azure-deployment.md → Creating the AZURE_CREDENTIALS service principal` |
 | `CARER_HIRE_AI_APP_NAME` | Azure App Service name (e.g. `carer-hire-ai`) from `terraform.tfvars` |
-| `CARER_HIRE_AI_PUBLISH_PROFILE` | Azure Portal → App Service → *Get publish profile* (download XML) |
 | `LITTLE_ONES_AI_APP_NAME` | Azure App Service name (e.g. `little-ones-ai`) from `terraform.tfvars` |
-| `LITTLE_ONES_AI_PUBLISH_PROFILE` | Azure Portal → App Service → *Get publish profile* (download XML) |
 
-See `docs/azure-deployment.md → Deploying Carer Hire AI and Little Ones AI` for the full CLI commands to retrieve the publish profiles.
+Both apps share the **same `AZURE_CREDENTIALS`** service principal — the subscription Memory Mirror is already deployed under — so no per-app publish profile is needed.
 
 ### What the workflows do (end-to-end)
 
 1. **Checkout** the repository.
 2. **Install** npm dependencies inside the relevant `apps/<name>/` directory.
 3. **Build** the Vite production bundle (output: `apps/<name>/dist/`).
-4. **Guard step** – checks whether the publish-profile and app-name secrets are set.  If either is empty, the job **fails** with a `::error::` annotation so the pipeline stays red until deployment is properly configured.
-5. **Deploy** to Azure App Service via `azure/webapps-deploy@v3` using the publish-profile credential (zip push deployment).
+4. **Guard step** – checks whether `AZURE_CREDENTIALS` and the app-name secret are set.  If either is empty, the job **fails** with a `::error::` annotation so the pipeline stays red until deployment is properly configured.
+5. **Azure login** – authenticates to Memory Mirror's Azure subscription using `AZURE_CREDENTIALS` via `azure/login@v2`.
+6. **Deploy** to Azure App Service via `azure/webapps-deploy@v3` using the subscription service principal.
+7. **Azure logout** – always runs to clean up the login context.
 
 Both workflows trigger on **every push to `main`** (no path filter) and set `cancel-in-progress: false` so a running deployment is never cancelled by a subsequent commit.
