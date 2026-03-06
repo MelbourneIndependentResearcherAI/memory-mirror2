@@ -59,13 +59,23 @@ Both workflows also:
 
 ### Secrets required to activate deployment
 
-Add these three secrets at **Settings → Secrets and variables → Actions**:
+Add these three secrets at **Settings → Secrets and variables → Actions** (or run the one-command helper script below):
 
 | Secret name | Where to get the value |
 |---|---|
-| `AZURE_CREDENTIALS` | Service principal JSON for Memory Mirror's subscription — see `docs/azure-deployment.md → Creating the AZURE_CREDENTIALS service principal` |
-| `CARER_HIRE_AI_APP_NAME` | Azure App Service name (e.g. `carer-hire-ai`) from `terraform.tfvars` |
-| `LITTLE_ONES_AI_APP_NAME` | Azure App Service name (e.g. `little-ones-ai`) from `terraform.tfvars` |
+| `AZURE_CREDENTIALS` | Service principal JSON for Memory Mirror's subscription — see `docs/azure-deployment.md → Required GitHub Secrets` |
+| `CARER_HIRE_AI_APP_NAME` | `carer_hire_ai_app_name` value from `infrastructure/terraform.tfvars` (default: `carer-hire-ai`) |
+| `LITTLE_ONES_AI_APP_NAME` | `little_ones_ai_app_name` value from `infrastructure/terraform.tfvars` (default: `little-ones-ai`) |
+
+#### One-command setup
+
+With `az login` and `gh auth login` already completed, run from the repository root:
+
+```bash
+bash scripts/setup-github-secrets.sh
+```
+
+This script creates the service principal, reads the app names from `terraform.tfvars`, and sets all three secrets automatically.
 
 Both apps share the **same `AZURE_CREDENTIALS`** service principal — the subscription Memory Mirror is already deployed under — so no per-app publish profile is needed.
 
