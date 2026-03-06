@@ -15,10 +15,21 @@
 
 ```bash
 az login
-az account set --subscription "<your-subscription-id>"
 ```
 
-Verify the correct subscription is active:
+If you have access to multiple subscriptions, identify the correct one (the subscription Memory Mirror is deployed under):
+
+```bash
+az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
+```
+
+Then set the active subscription:
+
+```bash
+az account set --subscription "<subscription-id-or-name>"
+```
+
+Verify:
 ```bash
 az account show --query "{name:name, id:id}" -o table
 ```
@@ -227,34 +238,83 @@ portal.azure.com → Resource groups → memory-mirror-production
 
 ### Required GitHub Secrets
 
-Add these secrets to **Settings → Secrets and variables → Actions**:
+Three GitHub repository secrets must be set before the deployment workflows will run:
 
 | Secret name | Value |
 |---|---|
 | `AZURE_CREDENTIALS` | Service principal JSON for Memory Mirror's Azure subscription (see below) |
-| `CARER_HIRE_AI_APP_NAME` | Azure App Service name (e.g. `carer-hire-ai`) |
-| `LITTLE_ONES_AI_APP_NAME` | Azure App Service name (e.g. `little-ones-ai`) |
+| `CARER_HIRE_AI_APP_NAME` | Azure App Service name — value of `carer_hire_ai_app_name` in `terraform.tfvars` |
+| `LITTLE_ONES_AI_APP_NAME` | Azure App Service name — value of `little_ones_ai_app_name` in `terraform.tfvars` |
 
 The `VITE_BASE44_APP_ID` and `VITE_BASE44_APP_BASE_URL` secrets are shared with the Memory Mirror workflow.
 
 Both apps authenticate using the **same `AZURE_CREDENTIALS` service principal** that requires Contributor access to the `memory-mirror-production` resource group — the same subscription Memory Mirror is deployed under.
 
-### Creating the AZURE_CREDENTIALS service principal
+#### Option A — Automated setup (recommended)
 
-If you already have `AZURE_CREDENTIALS` set up for Memory Mirror's subscription, reuse it here.  To create a new one:
+Run the provided helper script from the repository root.  It reads the app names from `terraform.tfvars`, creates the service principal, and pushes all three secrets to GitHub in one step.
+
+```bash
+# Prerequisites: az login && gh auth login
+
+# Use the currently active subscription (script will show the name/ID and ask to confirm):
+bash scripts/setup-github-secrets.sh
+
+# Or pass the subscription ID directly to skip the az account set step:
+bash scripts/setup-github-secrets.sh --subscription "<subscription-id-or-name>"
+
+# Non-interactive (e.g. in a local automation script) — skips the confirmation prompt:
+bash scripts/setup-github-secrets.sh --subscription "<subscription-id-or-name>" --yes
+```
+
+Not sure which subscription to use?  Run:
+```bash
+az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
+```
+
+#### Option B — Manual setup
+
+**1. Create the service principal (`AZURE_CREDENTIALS`)**
 
 ```bash
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
 RESOURCE_GROUP="memory-mirror-production"
 
-az ad sp create-for-rbac \
+SP_JSON=$(az ad sp create-for-rbac \
   --name "memory-mirror-github-actions" \
   --role Contributor \
   --scopes "/subscriptions/${SUBSCRIPTION_ID}/resourceGroups/${RESOURCE_GROUP}" \
-  --sdk-auth
+  --output json)
+
+# Build the JSON object that azure/login@v2 expects.
+# Values are passed as environment variables to avoid shell injection.
+CLIENT_ID=$(echo "$SP_JSON"     | python3 -c "import sys,json; print(json.load(sys.stdin)['appId'])")
+CLIENT_SECRET=$(echo "$SP_JSON" | python3 -c "import sys,json; print(json.load(sys.stdin)['password'])")
+TENANT_ID=$(echo "$SP_JSON"     | python3 -c "import sys,json; print(json.load(sys.stdin)['tenant'])")
+
+CLIENT_ID="$CLIENT_ID" \
+  CLIENT_SECRET="$CLIENT_SECRET" \
+  SUBSCRIPTION_ID="$SUBSCRIPTION_ID" \
+  TENANT_ID="$TENANT_ID" \
+  python3 - <<'PYEOF'
+import json, os
+print(json.dumps({
+  "clientId":       os.environ["CLIENT_ID"],
+  "clientSecret":   os.environ["CLIENT_SECRET"],
+  "subscriptionId": os.environ["SUBSCRIPTION_ID"],
+  "tenantId":       os.environ["TENANT_ID"],
+}, indent=2))
+PYEOF
 ```
 
-Copy the entire JSON output (including the outer `{}`) as the value of the `AZURE_CREDENTIALS` secret.
+Copy the entire JSON output (including the outer `{}`) and add it as the `AZURE_CREDENTIALS` repository secret.
+
+**2. Add the app-name secrets**
+
+Go to **Settings → Secrets and variables → Actions → New repository secret** and add:
+
+- `CARER_HIRE_AI_APP_NAME` → value from `carer_hire_ai_app_name` in `infrastructure/terraform.tfvars` (default: `carer-hire-ai`)
+- `LITTLE_ONES_AI_APP_NAME` → value from `little_ones_ai_app_name` in `infrastructure/terraform.tfvars` (default: `little-ones-ai`)
 
 ### Triggering a Deployment
 

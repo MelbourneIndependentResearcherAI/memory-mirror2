@@ -40,16 +40,10 @@ jobs:
           VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
 
       - name: Check deployment credentials
-        id: check_credentials
         run: |
           if [ -z "${{ secrets.AZURE_CREDENTIALS }}" ] || [ -z "${{ secrets.CARER_HIRE_AI_APP_NAME }}" ]; then
             echo "::error::AZURE_CREDENTIALS or CARER_HIRE_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
             exit 1
-          if [ -z "${{ secrets.CARER_HIRE_AI_PUBLISH_PROFILE }}" ] || [ -z "${{ secrets.CARER_HIRE_AI_APP_NAME }}" ]; then
-            echo "::warning::CARER_HIRE_AI_PUBLISH_PROFILE or CARER_HIRE_AI_APP_NAME secret is not set. Skipping deployment. See docs/azure-deployment.md for setup instructions."
-            echo "has_credentials=false" >> "$GITHUB_OUTPUT"
-          else
-            echo "has_credentials=true" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Log in to Azure
@@ -58,7 +52,6 @@ jobs:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure App Service
-        if: steps.check_credentials.outputs.has_credentials == 'true'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.CARER_HIRE_AI_APP_NAME }}
