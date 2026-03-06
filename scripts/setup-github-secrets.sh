@@ -15,14 +15,28 @@
 #   az   – Azure CLI, authenticated with: az login
 #   gh   – GitHub CLI, authenticated with: gh auth login
 #
-# The active Azure subscription must be the one Memory Mirror is deployed
-# under.  Switch subscriptions with:
-#   az account set --subscription "<subscription-id>"
-#
 # Usage
 # -----
 #   cd <repo-root>
+#   bash scripts/setup-github-secrets.sh [OPTIONS]
+#
+# Options
+# -------
+#   --subscription <id-or-name>   Azure subscription ID or name to use.
+#                                 If omitted the currently active subscription
+#                                 is used (same as the output of `az account show`).
+#   --yes                         Skip the interactive confirmation prompt.
+#                                 Useful in non-interactive / CI environments.
+#
+# Examples
+# --------
+#   # Use the currently active subscription (prompted to confirm)
 #   bash scripts/setup-github-secrets.sh
+#
+#   # Explicitly target a subscription by ID, no confirmation prompt
+#   bash scripts/setup-github-secrets.sh \
+#     --subscription "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" \
+#     --yes
 #
 # The script is idempotent – re-running it overwrites existing secrets with
 # fresh values.
@@ -40,6 +54,38 @@ error()   { echo "[ERROR] $*" >&2; exit 1; }
 require_tool() {
   command -v "$1" >/dev/null 2>&1 || error "'$1' is not installed or not on PATH. $2"
 }
+
+# ---------------------------------------------------------------------------
+# Argument parsing
+# ---------------------------------------------------------------------------
+SUBSCRIPTION_ARG=""
+AUTO_YES=false
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --subscription)
+      [[ $# -ge 2 ]] || error "--subscription requires a value (subscription ID or name)."
+      SUBSCRIPTION_ARG="$2"
+      shift 2
+      ;;
+    --yes|-y)
+      AUTO_YES=true
+      shift
+      ;;
+    --help|-h)
+      # Print the Usage/Options/Examples block from the header comment.
+      # awk uses ERE; {70,} matches the 75-dash separator that closes the
+      # header block while safely ignoring the short underlines (5–8 dashes)
+      # used beneath section titles like "Usage" and "Options".
+      awk '/^# -{70,}/ && p{exit} /^# Usage/{p=1} p' "$0" \
+        | sed 's/^# \?//'
+      exit 0
+      ;;
+    *)
+      error "Unknown option: $1  (use --help for usage)"
+      ;;
+  esac
+done
 
 # ---------------------------------------------------------------------------
 # Prerequisite checks
@@ -96,10 +142,40 @@ info "carer_hire_ai_app_name  = $CARER_HIRE_AI_APP_NAME"
 info "little_ones_ai_app_name = $LITTLE_ONES_AI_APP_NAME"
 
 # ---------------------------------------------------------------------------
-# Resolve Azure subscription and resource group
+# Resolve Azure subscription
 # ---------------------------------------------------------------------------
+
+# If --subscription was passed, switch to it now so all subsequent az calls
+# target the correct subscription.
+if [ -n "$SUBSCRIPTION_ARG" ]; then
+  info "Switching to subscription: $SUBSCRIPTION_ARG"
+  az account set --subscription "$SUBSCRIPTION_ARG" \
+    || error "Could not set subscription '$SUBSCRIPTION_ARG'. Check the ID/name and try again."
+fi
+
+# Read the now-active subscription details
 SUBSCRIPTION_ID=$(az account show --query id -o tsv)
-info "Azure subscription: $SUBSCRIPTION_ID"
+SUBSCRIPTION_NAME=$(az account show --query name -o tsv)
+
+echo ""
+echo "  Active Azure subscription"
+echo "  ─────────────────────────────────────────────────"
+echo "  Name : $SUBSCRIPTION_NAME"
+echo "  ID   : $SUBSCRIPTION_ID"
+echo "  ─────────────────────────────────────────────────"
+echo ""
+
+if [ "$AUTO_YES" = false ]; then
+  read -r -p "  Proceed with this subscription? [y/N] " CONFIRM
+  case "$CONFIRM" in
+    [yY][eE][sS]|[yY]) ;;
+    *)
+      # Empty input (pressing Enter alone) defaults to 'No' and aborts.
+      error "Aborted. Re-run with --subscription to choose a different subscription."
+      ;;
+  esac
+  echo ""
+fi
 
 RESOURCE_GROUP=$(extract_tfvar resource_group_name)
 [ -n "$RESOURCE_GROUP" ] || RESOURCE_GROUP="memory-mirror-production"

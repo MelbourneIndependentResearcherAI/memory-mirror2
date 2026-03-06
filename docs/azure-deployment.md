@@ -15,10 +15,21 @@
 
 ```bash
 az login
-az account set --subscription "<your-subscription-id>"
 ```
 
-Verify the correct subscription is active:
+If you have access to multiple subscriptions, identify the correct one (the subscription Memory Mirror is deployed under):
+
+```bash
+az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
+```
+
+Then set the active subscription:
+
+```bash
+az account set --subscription "<subscription-id-or-name>"
+```
+
+Verify:
 ```bash
 az account show --query "{name:name, id:id}" -o table
 ```
@@ -241,11 +252,24 @@ Both apps authenticate using the **same `AZURE_CREDENTIALS` service principal** 
 
 #### Option A — Automated setup (recommended)
 
-Run the provided helper script from the repository root.  It reads the app names from `terraform.tfvars`, creates the service principal, and pushes all three secrets to GitHub in one step:
+Run the provided helper script from the repository root.  It reads the app names from `terraform.tfvars`, creates the service principal, and pushes all three secrets to GitHub in one step.
 
 ```bash
 # Prerequisites: az login && gh auth login
+
+# Use the currently active subscription (script will show the name/ID and ask to confirm):
 bash scripts/setup-github-secrets.sh
+
+# Or pass the subscription ID directly to skip the az account set step:
+bash scripts/setup-github-secrets.sh --subscription "<subscription-id-or-name>"
+
+# Non-interactive (e.g. in a local automation script) — skips the confirmation prompt:
+bash scripts/setup-github-secrets.sh --subscription "<subscription-id-or-name>" --yes
+```
+
+Not sure which subscription to use?  Run:
+```bash
+az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
 ```
 
 #### Option B — Manual setup

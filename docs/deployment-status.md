@@ -72,7 +72,16 @@ Add these three secrets at **Settings → Secrets and variables → Actions** (o
 With `az login` and `gh auth login` already completed, run from the repository root:
 
 ```bash
+# Uses the currently active subscription (will show the subscription name and ask to confirm):
 bash scripts/setup-github-secrets.sh
+
+# Pass the subscription ID directly to skip `az account set`:
+bash scripts/setup-github-secrets.sh --subscription "<subscription-id-or-name>"
+```
+
+Not sure which subscription to use?
+```bash
+az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
 ```
 
 This script creates the service principal, reads the app names from `terraform.tfvars`, and sets all three secrets automatically.
