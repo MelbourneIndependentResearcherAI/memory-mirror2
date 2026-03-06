@@ -186,3 +186,73 @@ terraform destroy -var-file="terraform.tfvars.local"
 ```
 
 > ⚠️  This is irreversible.  Export any data from Blob Storage before destroying.
+
+---
+
+## Deploying Carer Hire AI and Little Ones AI
+
+Carer Hire AI and Little Ones AI are deployed as separate **Azure App Service** applications in the **same resource group** as Memory Mirror.
+
+### Infrastructure
+
+Terraform provisions:
+- One **App Service Plan** (`memory-mirror-apps-plan`) — Linux B1, shared by both apps.
+- `azurerm_linux_web_app.carer_hire_ai` — serves the Carer Hire AI React app.
+- `azurerm_linux_web_app.little_ones_ai` — serves the Little Ones AI React app.
+
+After running `terraform apply`, the apps will appear in the Azure Portal at:
+
+```
+portal.azure.com → Resource groups → memory-mirror-production
+```
+
+### Required GitHub Secrets
+
+Add these secrets to **Settings → Secrets and variables → Actions**:
+
+| Secret name | Value |
+|---|---|
+| `CARER_HIRE_AI_APP_NAME` | Azure App Service name (e.g. `carer-hire-ai`) |
+| `CARER_HIRE_AI_PUBLISH_PROFILE` | Download from Azure Portal → App Service → Get publish profile |
+| `LITTLE_ONES_AI_APP_NAME` | Azure App Service name (e.g. `little-ones-ai`) |
+| `LITTLE_ONES_AI_PUBLISH_PROFILE` | Download from Azure Portal → App Service → Get publish profile |
+
+The `VITE_BASE44_APP_ID` and `VITE_BASE44_APP_BASE_URL` secrets are shared with the Memory Mirror workflow.
+
+### Fetching the Publish Profile
+
+```bash
+# Carer Hire AI
+az webapp deployment list-publishing-profiles \
+  --name carer-hire-ai \
+  --resource-group memory-mirror-production \
+  --xml
+
+# Little Ones AI
+az webapp deployment list-publishing-profiles \
+  --name little-ones-ai \
+  --resource-group memory-mirror-production \
+  --xml
+```
+
+Copy the full XML output as the value of `CARER_HIRE_AI_PUBLISH_PROFILE` / `LITTLE_ONES_AI_PUBLISH_PROFILE`.
+
+### Triggering a Deployment
+
+Deployments are triggered automatically when files under `apps/carer-hire-ai/` or `apps/little-ones-ai/` change on `main`.
+
+To deploy manually:
+
+```
+GitHub → Actions → "Deploy Carer Hire AI to Azure App Service" → Run workflow
+GitHub → Actions → "Deploy Little Ones AI to Azure App Service" → Run workflow
+```
+
+### Verifying the Deployment
+
+After a successful workflow run, visit:
+
+- `https://carer-hire-ai.azurewebsites.net`
+- `https://little-ones-ai.azurewebsites.net`
+
+(Replace the app names with the values set in `carer_hire_ai_app_name` and `little_ones_ai_app_name` in `terraform.tfvars`.)

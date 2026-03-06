@@ -68,3 +68,27 @@ output "key_vault_uri" {
   description = "Key Vault URI for secret retrieval"
   value       = azurerm_key_vault.main.vault_uri
 }
+
+# Carer Hire AI App Service
+output "carer_hire_ai_hostname" {
+  description = "Default hostname of the Carer Hire AI App Service"
+  value       = azurerm_linux_web_app.carer_hire_ai.default_hostname
+}
+
+output "carer_hire_ai_publish_profile" {
+  description = "Publish profile for the Carer Hire AI App Service (used in GitHub Actions)"
+  value       = azurerm_linux_web_app.carer_hire_ai.name
+  sensitive   = false
+}
+
+# Little Ones AI App Service
+output "little_ones_ai_hostname" {
+  description = "Default hostname of the Little Ones AI App Service"
+  value       = azurerm_linux_web_app.little_ones_ai.default_hostname
+}
+
+output "little_ones_ai_publish_profile" {
+  description = "Publish profile for the Little Ones AI App Service (used in GitHub Actions)"
+  value       = azurerm_linux_web_app.little_ones_ai.name
+  sensitive   = false
+}
