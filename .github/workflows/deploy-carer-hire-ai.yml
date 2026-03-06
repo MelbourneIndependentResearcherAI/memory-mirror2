@@ -4,14 +4,11 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'apps/carer-hire-ai/**'
-      - '.github/workflows/deploy-carer-hire-ai.yml'
   workflow_dispatch:
 
 concurrency:
   group: deploy-carer-hire-ai-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build_and_deploy:
@@ -43,17 +40,13 @@ jobs:
           VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
 
       - name: Check deployment credentials
-        id: check_creds
         run: |
           if [ -z "${{ secrets.CARER_HIRE_AI_PUBLISH_PROFILE }}" ] || [ -z "${{ secrets.CARER_HIRE_AI_APP_NAME }}" ]; then
-            echo "::warning::CARER_HIRE_AI_PUBLISH_PROFILE or CARER_HIRE_AI_APP_NAME secret is not set — skipping Azure deployment. See docs/azure-deployment.md for setup instructions."
-            echo "skip=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "skip=false" >> "$GITHUB_OUTPUT"
+            echo "::error::CARER_HIRE_AI_PUBLISH_PROFILE or CARER_HIRE_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
+            exit 1
           fi
 
       - name: Deploy to Azure App Service
-        if: steps.check_creds.outputs.skip == 'false'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.CARER_HIRE_AI_APP_NAME }}
