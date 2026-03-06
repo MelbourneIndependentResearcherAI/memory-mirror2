@@ -66,6 +66,7 @@ import CaregiverPortal from './pages/CaregiverPortal';
 import CaregiverPortalAdmin from './pages/CaregiverPortalAdmin';
 import CaregiverPortalCore from './pages/CaregiverPortalCore';
 import CaregiverPortalRouter from './pages/CaregiverPortalRouter';
+import CarerHireAI from './pages/CarerHireAI';
 import CarerMessaging from './pages/CarerMessaging';
 import ChatCompanionDashboard from './pages/ChatCompanionDashboard';
 import ChatHistory from './pages/ChatHistory';
@@ -106,6 +107,7 @@ import Home from './pages/Home';
 import ImportArticle from './pages/ImportArticle';
 import InsightsAnalytics from './pages/InsightsAnalytics';
 import Landing from './pages/Landing';
+import LittleOnesAI from './pages/LittleOnesAI';
 import ManualProcessing from './pages/ManualProcessing';
 import MemoryGames from './pages/MemoryGames';
 import MemorySessions from './pages/MemorySessions';
@@ -185,6 +187,7 @@ export const PAGES = {
     "CaregiverPortalAdmin": CaregiverPortalAdmin,
     "CaregiverPortalCore": CaregiverPortalCore,
     "CaregiverPortalRouter": CaregiverPortalRouter,
+    "CarerHireAI": CarerHireAI,
     "CarerMessaging": CarerMessaging,
     "ChatCompanionDashboard": ChatCompanionDashboard,
     "ChatHistory": ChatHistory,
@@ -225,6 +228,7 @@ export const PAGES = {
     "ImportArticle": ImportArticle,
     "InsightsAnalytics": InsightsAnalytics,
     "Landing": Landing,
+    "LittleOnesAI": LittleOnesAI,
     "ManualProcessing": ManualProcessing,
     "MemoryGames": MemoryGames,
     "MemorySessions": MemorySessions,
