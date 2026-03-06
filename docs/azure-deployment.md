@@ -238,7 +238,9 @@ portal.azure.com → Resource groups → memory-mirror-production
 
 ### Required GitHub Secrets
 
-Three GitHub repository secrets must be set before the deployment workflows will run:
+Two authentication methods are supported. **Choose one** — the deployment workflow automatically selects the method based on which secrets are present.
+
+#### Option A — Service principal (one credential shared by both apps)
 
 | Secret name | Value |
 |---|---|
@@ -246,11 +248,24 @@ Three GitHub repository secrets must be set before the deployment workflows will
 | `CARER_HIRE_AI_APP_NAME` | Azure App Service name — value of `carer_hire_ai_app_name` in `terraform.tfvars` |
 | `LITTLE_ONES_AI_APP_NAME` | Azure App Service name — value of `little_ones_ai_app_name` in `terraform.tfvars` |
 
+#### Option B — Publish profiles (per-app, simplest to obtain)
+
+| Secret name | Value |
+|---|---|
+| `CARER_HIRE_AI_APP_NAME` | Azure App Service name — value of `carer_hire_ai_app_name` in `terraform.tfvars` |
+| `LITTLE_ONES_AI_APP_NAME` | Azure App Service name — value of `little_ones_ai_app_name` in `terraform.tfvars` |
+| `CARER_HIRE_AI_PUBLISH_PROFILE` | XML publish profile downloaded from the Azure Portal for Carer Hire AI |
+| `LITTLE_ONES_AI_PUBLISH_PROFILE` | XML publish profile downloaded from the Azure Portal for Little Ones AI |
+
 The `VITE_BASE44_APP_ID` and `VITE_BASE44_APP_BASE_URL` secrets are shared with the Memory Mirror workflow.
 
-Both apps authenticate using the **same `AZURE_CREDENTIALS` service principal** that requires Contributor access to the `memory-mirror-production` resource group — the same subscription Memory Mirror is deployed under.
+> **Precedence**: if `AZURE_CREDENTIALS` is set, Option A is used; otherwise Option B is tried.
 
-#### Option A — Automated setup (recommended)
+---
+
+### Setting up authentication
+
+#### Option A — Automated setup (recommended for Option A)
 
 Run the provided helper script from the repository root.  It reads the app names from `terraform.tfvars`, creates the service principal, and pushes all three secrets to GitHub in one step.
 
@@ -272,7 +287,21 @@ Not sure which subscription to use?  Run:
 az account list --query "[].{name:name, id:id, isDefault:isDefault}" -o table
 ```
 
-#### Option B — Manual setup
+#### Option B — Automated publish-profile setup (simplest)
+
+The helper script can also fetch publish profiles automatically using the Azure CLI and push them to GitHub as secrets.  **The App Service resources must already exist** (run `terraform apply` first).
+
+```bash
+# Prerequisites: az login && gh auth login
+# (No service principal permissions needed — just access to the resource group)
+
+bash scripts/setup-github-secrets.sh --publish-profiles
+
+# Or with an explicit subscription and no confirmation prompt:
+bash scripts/setup-github-secrets.sh --publish-profiles --subscription "<subscription-id-or-name>" --yes
+```
+
+#### Manual setup — Service principal (Option A)
 
 **1. Create the service principal (`AZURE_CREDENTIALS`)**
 
@@ -315,6 +344,25 @@ Go to **Settings → Secrets and variables → Actions → New repository secret
 
 - `CARER_HIRE_AI_APP_NAME` → value from `carer_hire_ai_app_name` in `infrastructure/terraform.tfvars` (default: `carer-hire-ai`)
 - `LITTLE_ONES_AI_APP_NAME` → value from `little_ones_ai_app_name` in `infrastructure/terraform.tfvars` (default: `little-ones-ai`)
+
+#### Manual setup — Publish profiles (Option B)
+
+**1. Download each publish profile from the Azure Portal**
+
+```
+Azure Portal → App Services → <app name> → Overview → Get publish profile
+```
+
+This downloads an XML file.
+
+**2. Add the secrets**
+
+Go to **Settings → Secrets and variables → Actions → New repository secret** and add:
+
+- `CARER_HIRE_AI_APP_NAME` → `carer-hire-ai` (or your custom app name)
+- `LITTLE_ONES_AI_APP_NAME` → `little-ones-ai` (or your custom app name)
+- `CARER_HIRE_AI_PUBLISH_PROFILE` → paste the full XML content of the Carer Hire AI publish profile
+- `LITTLE_ONES_AI_PUBLISH_PROFILE` → paste the full XML content of the Little Ones AI publish profile
 
 ### Triggering a Deployment
 
