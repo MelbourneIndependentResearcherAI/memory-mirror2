@@ -147,6 +147,25 @@ After the first successful deployment:
 4. **App Insights** – open Azure Portal → Application Insights → Live Metrics; navigate pages in the app and confirm telemetry appears
 5. **Blob Storage** – upload a photo/media file in the app; confirm it appears in the `user-media` container in the Azure Portal
 6. **Email** – trigger a welcome email (registration) and confirm it arrives
+7. **New pages** – navigate to `/#/LittleOnesAI` and `/#/CarerHireAI` and confirm both pages load correctly
+
+---
+
+## Troubleshooting
+
+### "The number of static files was too large"
+
+Azure Static Web Apps enforces a **20,000-file limit** per deployment.  The `node_modules`
+directory installed during the CI build contains ~35,000 files and will cause this error if
+it is present in the workspace when the deploy action runs.
+
+The workflow already handles this by:
+1. Removing `node_modules` after the build step and before the deploy step.
+2. Setting `app_location: 'dist'` so the deploy action only scans the pre-built output
+   directory (≈ 14 files).
+
+If you ever see this error again, ensure these two measures are in place in
+`.github/workflows/azure-static-web-apps.yml`.
 
 ---
 
