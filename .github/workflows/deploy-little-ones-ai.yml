@@ -42,7 +42,18 @@ jobs:
           VITE_BASE44_APP_ID: ${{ secrets.VITE_BASE44_APP_ID }}
           VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
 
+      - name: Check deployment credentials
+        id: check_creds
+        run: |
+          if [ -z "${{ secrets.LITTLE_ONES_AI_PUBLISH_PROFILE }}" ] || [ -z "${{ secrets.LITTLE_ONES_AI_APP_NAME }}" ]; then
+            echo "::warning::LITTLE_ONES_AI_PUBLISH_PROFILE or LITTLE_ONES_AI_APP_NAME secret is not set — skipping Azure deployment. See docs/azure-deployment.md for setup instructions."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Deploy to Azure App Service
+        if: steps.check_creds.outputs.skip == 'false'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.LITTLE_ONES_AI_APP_NAME }}
