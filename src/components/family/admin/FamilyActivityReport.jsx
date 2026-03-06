@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { BarChart2, Activity, MessageSquare, Moon, Music, Brain } from 'lucide-react';
+import { BarChart2, Activity, MessageSquare, Brain } from 'lucide-react';
 
 const activityIcons = {
   chat: MessageSquare,

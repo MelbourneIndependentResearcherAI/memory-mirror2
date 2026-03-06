@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, Bell, Lock } from 'lucide-react';
+import React, { useState } from 'react';
+import { ArrowLeft, Lock } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import BigClockDisplay from '@/components/clock/BigClockDisplay';
 import AlarmList from '@/components/clock/AlarmList';

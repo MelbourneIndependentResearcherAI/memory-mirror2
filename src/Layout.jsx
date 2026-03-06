@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, Suspense } from 'react';
 import { ThemeProvider } from 'next-themes';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import { AppStateProvider } from '@/components/AppStateManager';

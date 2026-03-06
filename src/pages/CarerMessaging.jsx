@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, MessageSquare, Mic, Users, Phone } from 'lucide-react';
+import React from 'react';
+import { ArrowLeft, MessageSquare, Mic, Users } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
