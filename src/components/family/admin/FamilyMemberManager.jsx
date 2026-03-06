@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { UserPlus, Trash2, Crown, Users, Eye, Edit } from 'lucide-react';
+import { UserPlus, Trash2, Crown, Users, Edit } from 'lucide-react';
 import { toast } from 'sonner';
 
 const roleColors = {
