@@ -44,10 +44,14 @@ Both standalone apps (`apps/carer-hire-ai` and `apps/little-ones-ai`) are deploy
 
 | App | Build | Deploy |
 |---|---|---|
-| `apps/carer-hire-ai` | ✅ Succeeds (Vite, 1 729 modules, ~3.5 s) | ⚠️ Awaiting secrets |
-| `apps/little-ones-ai` | ✅ Succeeds (Vite, 1 728 modules, ~3.3 s) | ⚠️ Awaiting secrets |
+| `apps/carer-hire-ai` | ✅ Succeeds (Vite, 1 729 modules, ~3.5 s) | ❌ Fails until secrets are configured |
+| `apps/little-ones-ai` | ✅ Succeeds (Vite, 1 728 modules, ~3.3 s) | ❌ Fails until secrets are configured |
 
-The build step for both apps has been confirmed working (verified in CI run IDs `66016636071` and `66016635893` on 2026-03-06).  The deployment step is skipped gracefully until the required GitHub repository secrets are configured.
+The build step for both apps has been confirmed working (verified in CI run IDs `66016636071` and `66016635893` on 2026-03-06).  The deployment step now **fails** (rather than silently skipping) until the required GitHub repository secrets are configured, keeping the pipeline red until a real deployment has occurred.
+
+Both workflows also:
+- Trigger on **every push to `main`** (no path filter), not only when app files change.
+- Use `cancel-in-progress: false` so an in-flight deployment is never cancelled by a subsequent push.
 
 ### Secrets required to activate deployment
 
@@ -67,7 +71,7 @@ See `docs/azure-deployment.md → Deploying Carer Hire AI and Little Ones AI` fo
 1. **Checkout** the repository.
 2. **Install** npm dependencies inside the relevant `apps/<name>/` directory.
 3. **Build** the Vite production bundle (output: `apps/<name>/dist/`).
-4. **Guard step** – checks whether the publish-profile and app-name secrets are set.  If either is empty, the deploy step is skipped with a `::warning::` annotation rather than failing the run.
+4. **Guard step** – checks whether the publish-profile and app-name secrets are set.  If either is empty, the job **fails** with a `::error::` annotation so the pipeline stays red until deployment is properly configured.
 5. **Deploy** to Azure App Service via `azure/webapps-deploy@v3` using the publish-profile credential (zip push deployment).
 
-Once the secrets are configured and a deployment completes, this table should be updated with the live URL and successful run ID.
+Both workflows trigger on **every push to `main`** (no path filter) and set `cancel-in-progress: false` so a running deployment is never cancelled by a subsequent commit.
