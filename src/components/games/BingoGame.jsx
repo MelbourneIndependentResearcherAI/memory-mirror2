@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Trophy, Volume2, RefreshCw, Star } from 'lucide-react';
+import { Volume2, RefreshCw, Star } from 'lucide-react';
 import { speakWithRealisticVoice } from '../memory-mirror/voiceUtils';
 import { base44 } from '@/api/base44Client';
 

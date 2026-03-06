@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { createPageUrl } from '@/utils';
 import ChatMode from './ChatMode';
 import { base44 } from '@/api/base44Client';
 

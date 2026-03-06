@@ -105,3 +105,34 @@ variable "alert_email" {
   type        = string
   default     = ""
 }
+
+variable "app_service_sku" {
+  description = "SKU for the Azure App Service Plan (B1 is cheapest plan with custom domains)"
+  type        = string
+  default     = "B1"
+}
+
+variable "carer_hire_ai_app_name" {
+  description = "Name for the Carer Hire AI Azure App Service resource (must be globally unique)"
+  type        = string
+  default     = "carer-hire-ai"
+}
+
+variable "little_ones_ai_app_name" {
+  description = "Name for the Little Ones AI Azure App Service resource (must be globally unique)"
+  type        = string
+  default     = "little-ones-ai"
+}
+
+variable "base44_app_id" {
+  description = "Base44 application ID"
+  type        = string
+  sensitive   = true
+  default     = ""
+}
+
+variable "base44_app_base_url" {
+  description = "Base44 application base URL"
+  type        = string
+  default     = ""
+}

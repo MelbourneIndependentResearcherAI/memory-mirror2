@@ -1,0 +1,50 @@
+name: Deploy Little Ones AI to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/little-ones-ai/**'
+      - '.github/workflows/deploy-little-ones-ai.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-little-ones-ai-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy Little Ones AI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/little-ones-ai/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apps/little-ones-ai
+        run: npm ci
+
+      - name: Build
+        working-directory: apps/little-ones-ai
+        run: npm run build
+        env:
+          VITE_BASE44_APP_ID: ${{ secrets.VITE_BASE44_APP_ID }}
+          VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.LITTLE_ONES_AI_APP_NAME }}
+          publish-profile: ${{ secrets.LITTLE_ONES_AI_PUBLISH_PROFILE }}
+          package: apps/little-ones-ai

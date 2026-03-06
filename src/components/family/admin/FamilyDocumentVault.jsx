@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { FileText, Upload, Trash2, Lock, Eye, Phone, Plus, Loader2, ExternalLink } from 'lucide-react';
+import { FileText, Upload, Trash2, Lock, Phone, Plus, Loader2, ExternalLink } from 'lucide-react';
 import { toast } from 'sonner';
 
 const typeColors = {

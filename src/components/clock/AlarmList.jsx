@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Bell, BellOff } from 'lucide-react';
+import { Bell } from 'lucide-react';
 
 export default function AlarmList() {
   const [alarms, setAlarms] = useState([]);

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { MessageCircle, Music, Gamepad2, Map, Moon, Home, CreditCard, Clock } from 'lucide-react';
+import { MessageCircle, Music, Gamepad2, Map, Moon, Home, CreditCard } from 'lucide-react';
 import { createPageUrl } from '@/utils';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';

@@ -28,3 +28,15 @@ blob_lifecycle_delete_days   = 365
 
 # Set to your email address to receive monitoring alerts
 alert_email = ""
+
+# -------------------------------------------------------------------
+# Carer Hire AI and Little Ones AI App Service settings
+# App names must be globally unique across Azure (used as subdomains)
+# -------------------------------------------------------------------
+app_service_sku         = "B1"
+carer_hire_ai_app_name  = "carer-hire-ai"
+little_ones_ai_app_name = "little-ones-ai"
+
+# Base44 credentials (shared with Memory Mirror if using the same app)
+base44_app_id       = ""
+base44_app_base_url = ""

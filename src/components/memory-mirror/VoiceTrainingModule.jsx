@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Mic, MicOff, CheckCircle2, ChevronRight, RotateCcw, X, Award, AlertCircle, Loader2 } from 'lucide-react';
+import { Mic, CheckCircle2, ChevronRight, RotateCcw, X, Award, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
