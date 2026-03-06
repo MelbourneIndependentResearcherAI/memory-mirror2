@@ -48,37 +48,41 @@ jobs:
           HAS_PUBLISH_PROFILE="${{ secrets.LITTLE_ONES_AI_PUBLISH_PROFILE }}"
 
           if [ -z "$APP_NAME" ]; then
-            echo "::error::LITTLE_ONES_AI_APP_NAME secret is not set. See docs/azure-deployment.md for setup instructions."
-            exit 1
+            echo "::warning::LITTLE_ONES_AI_APP_NAME secret is not set — skipping deployment. See docs/azure-deployment.md for setup instructions."
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           if [ -n "$HAS_SERVICE_PRINCIPAL" ]; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
             echo "auth_method=service_principal" >> "$GITHUB_OUTPUT"
           elif [ -n "$HAS_PUBLISH_PROFILE" ]; then
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
             echo "auth_method=publish_profile" >> "$GITHUB_OUTPUT"
           else
-            echo "::error::No deployment credentials found. Set either:"
-            echo "::error::  Option A (service principal): AZURE_CREDENTIALS"
-            echo "::error::  Option B (publish profile):   LITTLE_ONES_AI_PUBLISH_PROFILE"
-            echo "::error::See docs/azure-deployment.md for setup instructions."
-            exit 1
+            echo "::warning::No deployment credentials found — skipping deployment. Set either:"
+            echo "::warning::  Option A (service principal): AZURE_CREDENTIALS"
+            echo "::warning::  Option B (publish profile):   LITTLE_ONES_AI_PUBLISH_PROFILE"
+            echo "::warning::See docs/azure-deployment.md for setup instructions."
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
       - name: Log in to Azure (service principal)
-        if: steps.check_creds.outputs.auth_method == 'service_principal'
+        if: steps.check_creds.outputs.should_deploy == 'true' && steps.check_creds.outputs.auth_method == 'service_principal'
         uses: azure/login@v2
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
       - name: Deploy to Azure App Service (service principal)
-        if: steps.check_creds.outputs.auth_method == 'service_principal'
+        if: steps.check_creds.outputs.should_deploy == 'true' && steps.check_creds.outputs.auth_method == 'service_principal'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.LITTLE_ONES_AI_APP_NAME }}
           package: apps/little-ones-ai
 
       - name: Deploy to Azure App Service (publish profile)
-        if: steps.check_creds.outputs.auth_method == 'publish_profile'
+        if: steps.check_creds.outputs.should_deploy == 'true' && steps.check_creds.outputs.auth_method == 'publish_profile'
         uses: azure/webapps-deploy@v3
         with:
           app-name: ${{ secrets.LITTLE_ONES_AI_APP_NAME }}
@@ -86,5 +90,5 @@ jobs:
           package: apps/little-ones-ai
 
       - name: Azure logout
-        if: always() && steps.check_creds.outputs.auth_method == 'service_principal'
+        if: always() && steps.check_creds.outputs.should_deploy == 'true' && steps.check_creds.outputs.auth_method == 'service_principal'
         run: az logout
