@@ -35,19 +35,23 @@ Both new companion-app pages were merged to `main` via **PR #99** ("Add LittleOn
 
 ## Standalone Apps – Azure App Service
 
-Both standalone apps (`apps/carer-hire-ai` and `apps/little-ones-ai`) are deployed separately as **Azure App Service** applications.  The CI/CD workflows live at:
+Both standalone apps (`apps/carer-hire-ai` and `apps/little-ones-ai`) are configured to deploy separately as **Azure App Service** applications.  The CI/CD workflows live at:
 
 - `.github/workflows/deploy-carer-hire-ai.yml`
 - `.github/workflows/deploy-little-ones-ai.yml`
+
+### Deployment confirmation
+
+> **Neither app has been deployed to Azure App Service yet.**
+
+All previous workflow runs on `main` that reported "success" had the **Deploy** step silently **skipped**.  This happened because the required `AZURE_CREDENTIALS` and app-name secrets were not configured, so `has_credentials=false` was set and the deploy step's conditional never fired.  A subsequent commit then introduced a bash syntax error in the guard step (an unclosed `if` block), causing the most recent runs to fail outright before even reaching the deploy step.  Both issues have been fixed in this PR.
 
 ### Build pipeline status
 
 | App | Build | Deploy |
 |---|---|---|
-| `apps/carer-hire-ai` | ✅ Succeeds (Vite, 1 729 modules, ~3.5 s) | ❌ Fails until secrets are configured |
-| `apps/little-ones-ai` | ✅ Succeeds (Vite, 1 728 modules, ~3.3 s) | ❌ Fails until secrets are configured |
-
-The build step for both apps has been confirmed working (verified in CI run IDs `66016636071` and `66016635893` on 2026-03-06).  The deployment step now **fails** (rather than silently skipping) until the required GitHub repository secrets are configured, keeping the pipeline red until a real deployment has occurred.
+| `apps/carer-hire-ai` | ✅ Succeeds (Vite, 1 729 modules, ~3.5 s) | ❌ Not yet deployed — secrets not configured |
+| `apps/little-ones-ai` | ✅ Succeeds (Vite, 1 728 modules, ~3.3 s) | ❌ Not yet deployed — secrets not configured |
 
 Both workflows also:
 - Trigger on **every push to `main`** (no path filter), not only when app files change.
