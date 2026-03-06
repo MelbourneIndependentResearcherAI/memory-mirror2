@@ -1,3 +1,5 @@
+// Import statements
+
 // Other components and logic
 
 const Layout = () => {
