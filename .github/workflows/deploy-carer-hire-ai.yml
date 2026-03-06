@@ -1,0 +1,50 @@
+name: Deploy Carer Hire AI to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/carer-hire-ai/**'
+      - '.github/workflows/deploy-carer-hire-ai.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-carer-hire-ai-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build_and_deploy:
+    name: Build and Deploy Carer Hire AI
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: apps/carer-hire-ai/package-lock.json
+
+      - name: Install dependencies
+        working-directory: apps/carer-hire-ai
+        run: npm ci
+
+      - name: Build
+        working-directory: apps/carer-hire-ai
+        run: npm run build
+        env:
+          VITE_BASE44_APP_ID: ${{ secrets.VITE_BASE44_APP_ID }}
+          VITE_BASE44_APP_BASE_URL: ${{ secrets.VITE_BASE44_APP_BASE_URL }}
+
+      - name: Deploy to Azure App Service
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: ${{ secrets.CARER_HIRE_AI_APP_NAME }}
+          publish-profile: ${{ secrets.CARER_HIRE_AI_PUBLISH_PROFILE }}
+          package: apps/carer-hire-ai
